@@ -31,4 +31,4 @@ python -m unittest -v
 
 ## 요구 사항
 
-- Pyhton 3.10 이상 (외부 의존성 없음)
+- Python 3.10 이상 (외부 의존성 없음)
