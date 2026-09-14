@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { animate, motion, useAnimation, useMotionValue } from "framer-motion";
-import { X, Truck, RotateCcw, Sparkles, Play, Coins } from "lucide-react";
+import { X, Truck, RotateCcw, Sparkles, Play, Coins, Zap } from "lucide-react";
 import { useGachaStore } from "@/store/useGachaStore";
 import { TIER_META, REFUND_RATE, type Item, type OwnedItem } from "@/lib/types";
 import { bestOf } from "@/lib/rng";
@@ -223,7 +223,7 @@ export function TheaterGacha() {
   }, [sessionKey]);
 
   if (!theater || !highlight) return null;
-  const { box, count, results, demo } = theater;
+  const { box, count, results, demo, boosterTriggered } = theater;
   const best = results.find((r) => r.item.id === highlight.id) ?? results[0];
 
   return (
@@ -251,6 +251,11 @@ export function TheaterGacha() {
             {demo ? "FREE DEMO ROLL" : `NOW OPENING · ${count === 10 ? "10x" : "1x"}`}
           </div>
           <div className="text-lg font-black uppercase">{box.title}</div>
+          {boosterTriggered && !demo && (
+            <div className="mt-1 inline-flex items-center gap-1 rounded border border-gold bg-gold/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-gold">
+              <Zap className="h-3 w-3" /> BOOST ON: 상위 등급 출현 확률 500% 상승 중!
+            </div>
+          )}
         </div>
         {phase === "reveal" && (
           <button onClick={closeTheater} className="rounded-full bg-white/10 p-2 hover:bg-white/20">
@@ -273,7 +278,13 @@ export function TheaterGacha() {
         )}
 
         {phase !== "dim" && (
-          <div ref={stageRef} className="relative w-full">
+          <div
+            ref={stageRef}
+            className={cn(
+              "relative w-full",
+              boosterTriggered && !demo && "border-y-2 border-gold/60 shadow-[0_0_60px_rgba(255,215,0,0.25)]",
+            )}
+          >
             {/* 중앙 인디케이터 */}
             <div className="pointer-events-none absolute inset-y-0 left-1/2 z-20 w-[2px] -translate-x-1/2 bg-accent shadow-[0_0_20px_#E50914]" />
             <div className="pointer-events-none absolute -top-3 left-1/2 z-20 -translate-x-1/2 border-x-[10px] border-t-[12px] border-x-transparent border-t-accent" />

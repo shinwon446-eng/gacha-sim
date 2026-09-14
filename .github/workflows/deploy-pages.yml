@@ -30,6 +30,8 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
       - run: npm ci
+      # 정적 export 는 POST 라우트 핸들러를 지원하지 않는다 — API는 서버 배포 전용, Pages 빌드에서는 제거
+      - run: rm -rf app/api
       - run: npm run build
         env:
           GITHUB_PAGES: "true"

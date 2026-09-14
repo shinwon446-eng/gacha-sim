@@ -7,6 +7,7 @@ import { BOXES } from "@/lib/data";
 import { useGachaStore } from "@/store/useGachaStore";
 import { topItem, tierProbabilities, formatProb } from "@/lib/rng";
 import { compactUsd } from "@/lib/format";
+import { BoosterGauge } from "./BoosterGauge";
 
 const FEATURED = BOXES.filter((b) => b.featured);
 const ROTATE_MS = 9000;
@@ -91,7 +92,10 @@ export function HeroBillboard() {
               </span>
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            {/* 개봉 버튼 바로 상단 — 부스터(확률업) 게이지 */}
+            <BoosterGauge box={box} className="mt-5 max-w-xl" />
+
+            <div className="mt-4 flex flex-wrap items-center gap-3">
               <button
                 onClick={() => openBox(box.id, 1)}
                 className="flex items-center gap-2 rounded bg-white px-6 py-2.5 text-base font-bold text-black transition hover:bg-white/80"

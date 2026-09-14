@@ -37,6 +37,13 @@ export const DEMO_FEED: OpenEvent[] = [
   demo("d8", "s***", "pokemon-151", "p151-zard-sar", 90),
 ];
 
+/**
+ * 이탈 방지 다이얼로그의 실시간 가입자 수 문구.
+ * ⚠️ 실제 분석 데이터 연동 전까지 isDemo:true 로 두고 UI에 DEMO 태그를 붙인다.
+ * 실측 없는 수치를 사실처럼 표기하면 기만 광고(표시광고법)에 해당할 수 있다. null 이면 문구 미노출.
+ */
+export const EXIT_SOCIAL_PROOF: { count: number; isDemo: boolean } | null = { count: 3120, isDemo: true };
+
 /** 입금 주소 — 자리 표시. 실제 커스터디 지갑 주소로 교체할 것. */
 export const DEPOSIT_ADDRESSES: Record<"TRC-20" | "ERC-20", string> = {
   "TRC-20": "TXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",

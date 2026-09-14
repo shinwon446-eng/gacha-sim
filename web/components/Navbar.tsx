@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Bell, Search, Wallet, Package } from "lucide-react";
 import { useGachaStore } from "@/store/useGachaStore";
+import { tierFor } from "@/lib/engine";
 import { usdt, cn } from "@/lib/format";
 import { CATEGORY_META } from "@/lib/types";
 
@@ -21,6 +22,9 @@ export function Navbar() {
   const setDepositOpen = useGachaStore((s) => s.setDepositOpen);
   const setInventoryOpen = useGachaStore((s) => s.setInventoryOpen);
   const openLogCount = useGachaStore((s) => s.openLog.length);
+  const points = useGachaStore((s) => s.points);
+  const totalSpent = useGachaStore((s) => s.totalSpent);
+  const tierName = tierFor(totalSpent).name;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -68,10 +72,12 @@ export function Navbar() {
         <div className="flex items-center gap-3 md:gap-5">
           <Search className="hidden h-5 w-5 cursor-pointer text-white md:block" />
 
-          {/* 실시간 USDT 잔액 */}
+          {/* 실시간 USDT 잔액 + 등급/포인트 */}
           <div className="flex items-center gap-2 rounded border border-white/15 bg-black/40 px-3 py-1.5 font-mono text-sm tabular-nums">
             <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
             <span className="font-semibold">{usdt(balance)}</span>
+            <span className="hidden rounded border border-white/20 px-1 text-[10px] text-gray-400 md:inline">{tierName}</span>
+            {points > 0 && <span className="hidden text-[11px] font-bold text-gold md:inline">{points.toLocaleString()} P</span>}
           </div>
 
           <button

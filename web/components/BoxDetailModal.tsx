@@ -8,6 +8,7 @@ import { BOX_MAP } from "@/lib/data";
 import { TIER_META } from "@/lib/types";
 import { itemProbability, tierProbabilities, formatProb, TIER_ORDER } from "@/lib/rng";
 import { compactUsd, timeAgo, cn } from "@/lib/format";
+import { BoosterGauge } from "./BoosterGauge";
 
 type Tab = "items" | "log";
 
@@ -76,7 +77,8 @@ export function BoxDetailModal() {
               <div className="absolute bottom-6 left-6 right-6 md:left-10">
                 <h2 className="neon-title text-3xl font-black uppercase leading-none md:text-5xl">{box.title}</h2>
                 <p className="mt-2 text-sm text-gray-300 md:text-base">{box.subtitle}</p>
-                <div className="mt-4 flex flex-wrap items-center gap-2">
+                <BoosterGauge box={box} compact className="mt-3 max-w-md" />
+                <div className="mt-3 flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => openBox(box.id, 1)}
                     className="flex items-center gap-2 rounded bg-white px-5 py-2 font-bold text-black hover:bg-white/80"

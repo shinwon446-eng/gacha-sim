@@ -12,6 +12,8 @@ import { DepositModal } from "@/components/DepositModal";
 import { InventoryDrawer } from "@/components/InventoryDrawer";
 import { TheaterGacha } from "@/components/TheaterGacha";
 import { Toasts } from "@/components/Toasts";
+import { GuestTrialBanner } from "@/components/GuestTrialBanner";
+import { TrialSystem } from "@/components/TrialSystem";
 
 const trending = BOXES.filter((b) => b.featured).concat(BOXES.filter((b) => !b.featured).slice(0, 4));
 const byCategory = (c: keyof typeof CATEGORY_META) => BOXES.filter((b) => b.category === c);
@@ -25,6 +27,7 @@ export default function Home() {
 
       {/* 히어로 하단 그라디언트 위로 살짝 겹치게 */}
       <div className="relative -mt-[8vh]">
+        <GuestTrialBanner />
         <ContentRow title="지금 뜨는 박스" boxes={trending} />
         <ContentRow id={CATEGORY_META.tech.anchor} title={CATEGORY_META.tech.label} boxes={byCategory("tech")} />
         <ContentRow id={CATEGORY_META.tcg.anchor} title={CATEGORY_META.tcg.label} boxes={byCategory("tcg")} />
@@ -45,6 +48,7 @@ export default function Home() {
       <DepositModal />
       <InventoryDrawer />
       <TheaterGacha />
+      <TrialSystem />
       <Toasts />
     </main>
   );

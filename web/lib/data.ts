@@ -90,7 +90,7 @@ export const BOXES: Box[] = [
       item("rx-tudor", "Tudor Black Bay 58", "R", 3900, 4, "TUDOR-CARD-2023-1109", "🕰️", G.blue),
       item("rx-seiko", "Seiko Prospex Diver", "R", 520, 10, "SEIKO-SN-0B771", "🐢", G.blue),
       item("rx-strap", "이탈리안 가죽 스트랩 세트", "N", 90, 30, "STRAP-SET-IT", "🧵", G.gray),
-      item("rx-winder", "워치 와인더 케이스", "N", 45, 54.54, "WINDER-BASIC", "📦", G.gray),
+      item("rx-winder", "워치 와인더 케이스", "N", 45, 54.57, "WINDER-BASIC", "📦", G.gray),
     ],
   },
   {
