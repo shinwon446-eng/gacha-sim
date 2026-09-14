@@ -12,8 +12,10 @@ export interface Item {
   /** 인증서/인보이스 식별자 (PSA 번호, 딜러십 인보이스 등) */
   cert: string;
   emoji: string;
-  /** CSS background */
+  /** CSS background (이미지 폴백) */
   art: string;
+  /** 검증된 로컬 제품 사진 (public/images/products/...) */
+  image?: string;
 }
 
 export interface Box {
@@ -25,6 +27,8 @@ export interface Box {
   price: number;
   art: string;
   emoji: string;
+  /** 대표 이미지 — 기본값은 최고 등급 상품의 사진 */
+  image?: string;
   tagline: string;
   description: string;
   items: Item[];

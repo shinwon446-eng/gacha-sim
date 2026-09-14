@@ -1,0 +1,876 @@
+{
+  "ct-foundation": {
+    "slug": "ct-foundation",
+    "name": "Cybertruck Foundation Series",
+    "category": "tech",
+    "file": "public/images/products/tech/ct-foundation.webp",
+    "width": 2400,
+    "height": 1350,
+    "bytes": 771680,
+    "original": {
+      "width": 4032,
+      "height": 2268,
+      "bytes": 3199891
+    },
+    "source": "wikimedia:Tesla Cybertruck",
+    "title": "File:Cybertruck's at Warner Bros Studios (54062857623).jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/48/Cybertruck%27s_at_Warner_Bros_Studios_%2854062857623%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Cybertruck%27s_at_Warner_Bros_Studios_(54062857623).jpg",
+    "license": "CC BY 2.0"
+  },
+  "ct-powerwall": {
+    "slug": "ct-powerwall",
+    "name": "Tesla Powerwall 3",
+    "category": "tech",
+    "file": "public/images/products/tech/ct-powerwall.webp",
+    "width": 1590,
+    "height": 2400,
+    "bytes": 87592,
+    "original": {
+      "width": 3264,
+      "height": 4928,
+      "bytes": 7444987
+    },
+    "source": "wikimedia",
+    "title": "File:TeslaPowerwall2-2.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/30/TeslaPowerwall2-2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:TeslaPowerwall2-2.jpg",
+    "license": "CC0"
+  },
+  "ct-vision": {
+    "slug": "ct-vision",
+    "name": "Apple Vision Pro 1TB",
+    "category": "tech",
+    "file": "public/images/products/tech/ct-vision.webp",
+    "width": 1800,
+    "height": 2400,
+    "bytes": 199132,
+    "original": {
+      "width": 6048,
+      "height": 8064,
+      "bytes": 3557662
+    },
+    "source": "wikimedia",
+    "title": "File:Apple Vision Pro on display.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Apple_Vision_Pro_on_display.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Apple_Vision_Pro_on_display.jpg",
+    "license": "CC BY 4.0"
+  },
+  "ct-iphone": {
+    "slug": "ct-iphone",
+    "name": "iPhone 16 Pro Max 1TB",
+    "category": "tech",
+    "file": "public/images/products/tech/ct-iphone.webp",
+    "width": 2048,
+    "height": 1536,
+    "bytes": 176928,
+    "original": {
+      "width": 2048,
+      "height": 1536,
+      "bytes": 1524898
+    },
+    "source": "wikimedia:IPhone 16 Pro Max",
+    "title": "File:IPhone 16 Pro Max Desert Titanium Rear.png",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/e2/IPhone_16_Pro_Max_Desert_Titanium_Rear.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:IPhone_16_Pro_Max_Desert_Titanium_Rear.png",
+    "license": "CC BY 4.0"
+  },
+  "ct-deck": {
+    "slug": "ct-deck",
+    "name": "Steam Deck OLED 1TB",
+    "category": "tech",
+    "file": "public/images/products/tech/ct-deck.webp",
+    "width": 2400,
+    "height": 1603,
+    "bytes": 103316,
+    "original": {
+      "width": 7366,
+      "height": 4920,
+      "bytes": 2873520
+    },
+    "source": "wikimedia",
+    "title": "File:System 7 on the Steamdeck running in a web browser, fullscreen.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/49/System_7_on_the_Steamdeck_running_in_a_web_browser%2C_fullscreen.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:System_7_on_the_Steamdeck_running_in_a_web_browser,_fullscreen.jpg",
+    "license": "CC BY 2.0"
+  },
+  "ct-airpods": {
+    "slug": "ct-airpods",
+    "name": "AirPods Pro 2",
+    "category": "tech",
+    "file": "public/images/products/tech/ct-airpods.webp",
+    "width": 1351,
+    "height": 2400,
+    "bytes": 131326,
+    "original": {
+      "width": 5344,
+      "height": 3008,
+      "bytes": 3285920
+    },
+    "source": "wikimedia:AirPods Pro",
+    "title": "File:Apple AirPods and Apple AirPods Pro at the Media Markt, Rotterdam-Centrum, Rotterdam (2021) 01.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/13/Apple_AirPods_and_Apple_AirPods_Pro_at_the_Media_Markt%2C_Rotterdam-Centrum%2C_Rotterdam_%282021%29_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Apple_AirPods_and_Apple_AirPods_Pro_at_the_Media_Markt,_Rotterdam-Centrum,_Rotterdam_(2021)_01.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  "mb-max": {
+    "slug": "mb-max",
+    "name": "MacBook Pro 16 M4 Max 128GB",
+    "category": "tech",
+    "file": "public/images/products/tech/mb-max.webp",
+    "width": 2400,
+    "height": 1597,
+    "bytes": 75254,
+    "original": {
+      "width": 5410,
+      "height": 3600,
+      "bytes": 1797607
+    },
+    "source": "wikimedia:pick",
+    "title": "File:Apple MacBook Pro 16\" M2 Max 3.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Apple_MacBook_Pro_16%22_M2_Max_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Apple_MacBook_Pro_16%22_M2_Max_3.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  "mb-pro": {
+    "slug": "mb-pro",
+    "name": "MacBook Pro 14 M4 Pro",
+    "category": "tech",
+    "file": "public/images/products/tech/mb-pro.webp",
+    "width": 2400,
+    "height": 1800,
+    "bytes": 876340,
+    "original": {
+      "width": 5712,
+      "height": 4284,
+      "bytes": 2095361
+    },
+    "source": "wikimedia",
+    "title": "File:MacBook Pro (14-inch, M5, Space Black).jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/MacBook_Pro_%2814-inch%2C_M5%2C_Space_Black%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:MacBook_Pro_(14-inch,_M5,_Space_Black).jpg",
+    "license": "CC0"
+  },
+  "mb-air": {
+    "slug": "mb-air",
+    "name": "MacBook Air 15 M3",
+    "category": "tech",
+    "file": "public/images/products/tech/mb-air.webp",
+    "width": 2400,
+    "height": 1800,
+    "bytes": 681482,
+    "original": {
+      "width": 5712,
+      "height": 4284,
+      "bytes": 1836083
+    },
+    "source": "wikimedia",
+    "title": "File:MacBook Air (15-inch, M4, Silver).jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/c/c0/MacBook_Air_%2815-inch%2C_M4%2C_Silver%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:MacBook_Air_(15-inch,_M4,_Silver).jpg",
+    "license": "CC0"
+  },
+  "mb-ipad": {
+    "slug": "mb-ipad",
+    "name": "iPad Air M2",
+    "category": "tech",
+    "file": "public/images/products/tech/mb-ipad.webp",
+    "width": 2400,
+    "height": 1797,
+    "bytes": 239884,
+    "original": {
+      "width": 5760,
+      "height": 4312,
+      "bytes": 4457116
+    },
+    "source": "wikimedia",
+    "title": "File:IPad Air 5th Generation 2024.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/4b/IPad_Air_5th_Generation_2024.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:IPad_Air_5th_Generation_2024.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  "mb-magic": {
+    "slug": "mb-magic",
+    "name": "Magic Keyboard + Mouse",
+    "category": "tech",
+    "file": "public/images/products/tech/mb-magic.webp",
+    "width": 1500,
+    "height": 1461,
+    "bytes": 267736,
+    "original": {
+      "width": 1500,
+      "height": 1461,
+      "bytes": 3647151
+    },
+    "source": "wikimedia:Apple Magic Keyboard",
+    "title": "File:Apple Keyboards 2nd 3rd Gen right.png",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/7/71/Apple_Keyboards_2nd_3rd_Gen_right.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Apple_Keyboards_2nd_3rd_Gen_right.png",
+    "license": "CC BY-SA 4.0"
+  },
+  "mb-cable": {
+    "slug": "mb-cable",
+    "name": "Thunderbolt 4 케이블",
+    "category": "tech",
+    "file": "public/images/products/tech/mb-cable.webp",
+    "width": 2400,
+    "height": 1600,
+    "bytes": 108760,
+    "original": {
+      "width": 5760,
+      "height": 3840,
+      "bytes": 2001488
+    },
+    "source": "wikimedia",
+    "title": "File:AGOZ STUDIO21408.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a8/AGOZ_STUDIO21408.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:AGOZ_STUDIO21408.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  "ps-pro": {
+    "slug": "ps-pro",
+    "name": "PS5 Pro",
+    "category": "tech",
+    "file": "public/images/products/tech/ps-pro.webp",
+    "width": 1800,
+    "height": 2400,
+    "bytes": 152402,
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 2987653
+    },
+    "source": "wikimedia",
+    "title": "File:PlayStation 5 and DualSense with transparent background.png",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/1b/PlayStation_5_and_DualSense_with_transparent_background.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:PlayStation_5_and_DualSense_with_transparent_background.png",
+    "license": "CC BY-SA 4.0"
+  },
+  "ps-dualsense": {
+    "slug": "ps-dualsense",
+    "name": "DualSense Edge",
+    "category": "tech",
+    "file": "public/images/products/tech/ps-dualsense.webp",
+    "width": 2400,
+    "height": 2123,
+    "bytes": 109344,
+    "original": {
+      "width": 3120,
+      "height": 2760,
+      "bytes": 3411742
+    },
+    "source": "wikimedia:DualSense",
+    "title": "File:Playstation DualSense Controller.png",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Playstation_DualSense_Controller.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Playstation_DualSense_Controller.png",
+    "license": "CC BY-SA 4.0"
+  },
+  "sc-gt3": {
+    "slug": "sc-gt3",
+    "name": "Porsche 911 GT3 (992)",
+    "category": "tech",
+    "file": "public/images/products/tech/sc-gt3.webp",
+    "width": 2400,
+    "height": 1571,
+    "bytes": 433162,
+    "original": {
+      "width": 6773,
+      "height": 4434,
+      "bytes": 4485982
+    },
+    "source": "wikimedia",
+    "title": "File:Porsche 911 992 GT3 Touring.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Porsche_911_992_GT3_Touring.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Porsche_911_992_GT3_Touring.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  "sc-model3": {
+    "slug": "sc-model3",
+    "name": "Tesla Model 3 Performance",
+    "category": "tech",
+    "file": "public/images/products/tech/sc-model3.webp",
+    "width": 2399,
+    "height": 1202,
+    "bytes": 344498,
+    "original": {
+      "width": 5673,
+      "height": 2842,
+      "bytes": 10208252
+    },
+    "source": "wikimedia",
+    "title": "File:Tesla Model 3 Performance (Facelift) – f 01012025.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Tesla_Model_3_Performance_%28Facelift%29_%E2%80%93_f_01012025.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Tesla_Model_3_Performance_(Facelift)_%E2%80%93_f_01012025.jpg",
+    "license": "CC BY-SA 3.0 de"
+  },
+  "sc-sim": {
+    "slug": "sc-sim",
+    "name": "레이싱 시뮬레이터 풀세트",
+    "category": "tech",
+    "file": "public/images/products/tech/sc-sim.webp",
+    "width": 2400,
+    "height": 1600,
+    "bytes": 152374,
+    "original": {
+      "width": 5616,
+      "height": 3744,
+      "bytes": 5656050
+    },
+    "source": "wikimedia",
+    "title": "File:6 DOF Reality Motion Simulator Racing Platform.png",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/7/79/6_DOF_Reality_Motion_Simulator_Racing_Platform.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:6_DOF_Reality_Motion_Simulator_Racing_Platform.png",
+    "license": "CC BY-SA 4.0"
+  },
+  "sc-wheel": {
+    "slug": "sc-wheel",
+    "name": "Fanatec DD Pro 휠",
+    "category": "tech",
+    "file": "public/images/products/tech/sc-wheel.webp",
+    "width": 2400,
+    "height": 1590,
+    "bytes": 291396,
+    "original": {
+      "width": 4928,
+      "height": 3264,
+      "bytes": 5827873
+    },
+    "source": "wikimedia",
+    "title": "File:Caterham steering wheel at Goodwood 2012.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Caterham_steering_wheel_at_Goodwood_2012.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Caterham_steering_wheel_at_Goodwood_2012.jpg",
+    "license": "CC BY-SA 2.0"
+  },
+  "sc-keychain": {
+    "slug": "sc-keychain",
+    "name": "슈퍼카 스마트키 세트",
+    "category": "tech",
+    "file": "public/images/products/tech/sc-keychain.webp",
+    "width": 2400,
+    "height": 1800,
+    "bytes": 680726,
+    "original": {
+      "width": 4160,
+      "height": 3120,
+      "bytes": 4741803
+    },
+    "source": "wikimedia:pick",
+    "title": "File:Wireless car key.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/02/Wireless_car_key.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Wireless_car_key.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  "pk-charizard10": {
+    "slug": "pk-charizard10",
+    "name": "Charizard 1st Ed. Shadowless PSA 10",
+    "category": "tcg",
+    "file": "public/images/products/tcg/pk-charizard10.webp",
+    "width": 2400,
+    "height": 1600,
+    "bytes": 618530,
+    "original": {
+      "width": 5184,
+      "height": 3456,
+      "bytes": 1943775
+    },
+    "source": "wikimedia",
+    "title": "File:2021-10-8 to 2021-10-9 - NYCC (Touch Edits - 009) (51573445803).jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/0b/2021-10-8_to_2021-10-9_-_NYCC_%28Touch_Edits_-_009%29_%2851573445803%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:2021-10-8_to_2021-10-9_-_NYCC_(Touch_Edits_-_009)_(51573445803).jpg",
+    "license": "CC BY-SA 2.0"
+  },
+  "rx-daytona": {
+    "slug": "rx-daytona",
+    "name": "Rolex Daytona 126500LN Panda",
+    "category": "luxury",
+    "file": "public/images/products/luxury/rx-daytona.webp",
+    "width": 1200,
+    "height": 1200,
+    "bytes": 157920,
+    "original": {
+      "width": 1200,
+      "height": 1200,
+      "bytes": 426932
+    },
+    "source": "wikimedia",
+    "title": "File:Rolex Daytona 126500LN Panda Replica.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Rolex_Daytona_126500LN_Panda_Replica.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Rolex_Daytona_126500LN_Panda_Replica.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  "rx-sub": {
+    "slug": "rx-sub",
+    "name": "Rolex Submariner Date",
+    "category": "luxury",
+    "file": "public/images/products/luxury/rx-sub.webp",
+    "width": 2048,
+    "height": 1536,
+    "bytes": 217880,
+    "original": {
+      "width": 2048,
+      "height": 1536,
+      "bytes": 1280949
+    },
+    "source": "wikimedia:pick",
+    "title": "File:Rolex Oyster Perpetual Date Submariner Watch.JPG",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/7/72/Rolex_Oyster_Perpetual_Date_Submariner_Watch.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Rolex_Oyster_Perpetual_Date_Submariner_Watch.JPG",
+    "license": "Public domain"
+  },
+  "rx-omega": {
+    "slug": "rx-omega",
+    "name": "Omega Speedmaster Moonwatch",
+    "category": "luxury",
+    "file": "public/images/products/luxury/rx-omega.webp",
+    "width": 1800,
+    "height": 2400,
+    "bytes": 354382,
+    "original": {
+      "width": 3456,
+      "height": 4608,
+      "bytes": 3877146
+    },
+    "source": "wikimedia",
+    "title": "File:Classic Speedy (24067321725).jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Classic_Speedy_%2824067321725%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Classic_Speedy_(24067321725).jpg",
+    "license": "CC BY 2.0"
+  },
+  "rx-seiko": {
+    "slug": "rx-seiko",
+    "name": "Seiko Prospex Diver",
+    "category": "luxury",
+    "file": "public/images/products/luxury/rx-seiko.webp",
+    "width": 1566,
+    "height": 2400,
+    "bytes": 345302,
+    "original": {
+      "width": 3648,
+      "height": 5592,
+      "bytes": 10887768
+    },
+    "source": "wikimedia",
+    "title": "File:Seiko Automatic Diver's 200m.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/16/Seiko_Automatic_Diver%27s_200m.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Seiko_Automatic_Diver%27s_200m.jpg",
+    "license": "CC BY-SA 3.0"
+  },
+  "rx-strap": {
+    "slug": "rx-strap",
+    "name": "다이버 러버 스트랩 세트",
+    "category": "luxury",
+    "file": "public/images/products/luxury/rx-strap.webp",
+    "width": 2149,
+    "height": 2082,
+    "bytes": 299968,
+    "original": {
+      "width": 2149,
+      "height": 2082,
+      "bytes": 403221
+    },
+    "source": "wikimedia:pick",
+    "title": "File:Polyurethane watch strap on a diving watch.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Polyurethane_watch_strap_on_a_diving_watch.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Polyurethane_watch_strap_on_a_diving_watch.jpg",
+    "license": "CC0"
+  },
+  "rx-winder": {
+    "slug": "rx-winder",
+    "name": "워치 박스 케이스",
+    "category": "luxury",
+    "file": "public/images/products/luxury/rx-winder.webp",
+    "width": 2400,
+    "height": 2400,
+    "bytes": 217696,
+    "original": {
+      "width": 2821,
+      "height": 2821,
+      "bytes": 1761767
+    },
+    "source": "wikimedia:pick",
+    "title": "File:Orient Capital FUG1R003W9 wrist watch box open.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/87/Orient_Capital_FUG1R003W9_wrist_watch_box_open.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Orient_Capital_FUG1R003W9_wrist_watch_box_open.jpg",
+    "license": "WTFPL"
+  },
+  "hm-birkin": {
+    "slug": "hm-birkin",
+    "name": "Hermès Birkin 30 Crocodile",
+    "category": "luxury",
+    "file": "public/images/products/luxury/hm-birkin.webp",
+    "width": 2400,
+    "height": 1800,
+    "bytes": 708172,
+    "original": {
+      "width": 2560,
+      "height": 1920,
+      "bytes": 789886
+    },
+    "source": "wikimedia:pick",
+    "title": "File:Croc Birkin bag.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Croc_Birkin_bag.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Croc_Birkin_bag.jpg",
+    "license": "CC BY 3.0"
+  },
+  "hm-lv": {
+    "slug": "hm-lv",
+    "name": "Louis Vuitton Neverfull MM",
+    "category": "luxury",
+    "file": "public/images/products/luxury/hm-lv.webp",
+    "width": 2400,
+    "height": 1911,
+    "bytes": 519440,
+    "original": {
+      "width": 5728,
+      "height": 4560,
+      "bytes": 5920426
+    },
+    "source": "wikimedia",
+    "title": "File:Hacking bandouliere sac Louis Vuitton noe Toile monogram avant apres.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Hacking_bandouliere_sac_Louis_Vuitton_noe_Toile_monogram_avant_apres.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Hacking_bandouliere_sac_Louis_Vuitton_noe_Toile_monogram_avant_apres.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  "hm-wallet": {
+    "slug": "hm-wallet",
+    "name": "Hermès Bearn 지갑",
+    "category": "luxury",
+    "file": "public/images/products/luxury/hm-wallet.webp",
+    "width": 1280,
+    "height": 1280,
+    "bytes": 401638,
+    "original": {
+      "width": 1280,
+      "height": 1280,
+      "bytes": 291824
+    },
+    "source": "wikimedia",
+    "title": "File:Hermes-太陽--得意-kelly錢包手包 原廠進口頭層牛皮荔枝紋Togo 顏色齊全 現貨尺寸：20cm*11cm (38870043271).jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Hermes-%E5%A4%AA%E9%99%BD--%E5%BE%97%E6%84%8F-kelly%E9%8C%A2%E5%8C%85%E6%89%8B%E5%8C%85_%E5%8E%9F%E5%BB%A0%E9%80%B2%E5%8F%A3%E9%A0%AD%E5%B1%A4%E7%89%9B%E7%9A%AE%E8%8D%94%E6%9E%9D%E7%B4%8BTogo_%E9%A1%8F%E8%89%B2%E9%BD%8A%E5%85%A8_%E7%8F%BE%E8%B2%A8%E5%B0%BA%E5%AF%B8%EF%BC%9A20cm%2A11cm_%2838870043271%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Hermes-%E5%A4%AA%E9%99%BD--%E5%BE%97%E6%84%8F-kelly%E9%8C%A2%E5%8C%85%E6%89%8B%E5%8C%85_%E5%8E%9F%E5%BB%A0%E9%80%B2%E5%8F%A3%E9%A0%AD%E5%B1%A4%E7%89%9B%E7%9A%AE%E8%8D%94%E6%9E%9D%E7%B4%8BTogo_%E9%A1%8F%E8%89%B2%E9%BD%8A%E5%85%A8_%E7%8F%BE%E8%B2%A8%E5%B0%BA%E5%AF%B8%EF%BC%9A20cm*11cm_(38870043271).jpg",
+    "license": "CC BY-SA 2.0"
+  },
+  "hm-twilly": {
+    "slug": "hm-twilly",
+    "name": "Hermès Twilly 스카프",
+    "category": "luxury",
+    "file": "public/images/products/luxury/hm-twilly.webp",
+    "width": 1971,
+    "height": 2400,
+    "bytes": 372292,
+    "original": {
+      "width": 2132,
+      "height": 2596,
+      "bytes": 1681638
+    },
+    "source": "wikimedia:Hermès carrés",
+    "title": "File:Hermes scarves at Zurich airport.JPG",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Hermes_scarves_at_Zurich_airport.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Hermes_scarves_at_Zurich_airport.JPG",
+    "license": "CC BY 3.0"
+  },
+  "sn-yeezy": {
+    "slug": "sn-yeezy",
+    "name": "Yeezy 350 V2",
+    "category": "luxury",
+    "file": "public/images/products/luxury/sn-yeezy.webp",
+    "width": 2400,
+    "height": 1779,
+    "bytes": 440848,
+    "original": {
+      "width": 4856,
+      "height": 3600,
+      "bytes": 6965841
+    },
+    "source": "wikimedia",
+    "title": "File:2023 Adidas Yeezy Boost 350 V2 Sesame.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/8f/2023_Adidas_Yeezy_Boost_350_V2_Sesame.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:2023_Adidas_Yeezy_Boost_350_V2_Sesame.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  "sn-socks": {
+    "slug": "sn-socks",
+    "name": "Nike 삭스 3팩",
+    "category": "luxury",
+    "file": "public/images/products/luxury/sn-socks.webp",
+    "width": 1350,
+    "height": 2400,
+    "bytes": 696106,
+    "original": {
+      "width": 2268,
+      "height": 4032,
+      "bytes": 2812715
+    },
+    "source": "wikimedia",
+    "title": "File:White Nike socks, Hillegersberg, Rotterdam (2022) 02.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d2/White_Nike_socks%2C_Hillegersberg%2C_Rotterdam_%282022%29_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:White_Nike_socks,_Hillegersberg,_Rotterdam_(2022)_02.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  "ct-watch": {
+    "slug": "ct-watch",
+    "name": "Apple Watch Series 10",
+    "category": "tech",
+    "file": "public/images/products/tech/ct-watch.webp",
+    "width": 2400,
+    "height": 1800,
+    "bytes": 115708,
+    "original": {
+      "width": 4032,
+      "height": 3024,
+      "bytes": 3128940
+    },
+    "source": "wikimedia:Apple Watch Series 10",
+    "title": "File:Apple Watch (42mm & 46mm).png",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Apple_Watch_%2842mm_%26_46mm%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Apple_Watch_(42mm_%26_46mm).png",
+    "license": "Public domain"
+  },
+  "ps-vr2": {
+    "slug": "ps-vr2",
+    "name": "PlayStation VR2 + PS5 Pro 번들",
+    "category": "tech",
+    "file": "public/images/products/tech/ps-vr2.webp",
+    "width": 2400,
+    "height": 1570,
+    "bytes": 118644,
+    "original": {
+      "width": 4491,
+      "height": 2938,
+      "bytes": 5527361
+    },
+    "source": "wikimedia:PlayStation VR2",
+    "title": "File:PSVR2 (Non-Stereoscopic).png",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/7/74/PSVR2_%28Non-Stereoscopic%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:PSVR2_(Non-Stereoscopic).png",
+    "license": "CC BY-SA 4.0"
+  },
+  "ps-ds4": {
+    "slug": "ps-ds4",
+    "name": "DualShock 4 컨트롤러",
+    "category": "tech",
+    "file": "public/images/products/tech/ps-ds4.webp",
+    "width": 2400,
+    "height": 1200,
+    "bytes": 187692,
+    "original": {
+      "width": 6000,
+      "height": 3000,
+      "bytes": 12451009
+    },
+    "source": "wikimedia:DualShock 4",
+    "title": "File:PS4-Console-wDS4.png",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/8c/PS4-Console-wDS4.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:PS4-Console-wDS4.png",
+    "license": "Public domain"
+  },
+  "ps-ps4pro": {
+    "slug": "ps-ps4pro",
+    "name": "PlayStation 4 Pro 1TB",
+    "category": "tech",
+    "file": "public/images/products/tech/ps-ps4pro.webp",
+    "width": 1603,
+    "height": 2400,
+    "bytes": 166852,
+    "original": {
+      "width": 2984,
+      "height": 4468,
+      "bytes": 6945740
+    },
+    "source": "wikimedia:PlayStation 4 Pro",
+    "title": "File:PS4 consoles montage.png",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/8f/PS4_consoles_montage.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:PS4_consoles_montage.png",
+    "license": "CC BY 4.0"
+  },
+  "sc-model": {
+    "slug": "sc-model",
+    "name": "Porsche 911 1:18 다이캐스트 모델",
+    "category": "tech",
+    "file": "public/images/products/tech/sc-model.webp",
+    "width": 2400,
+    "height": 1446,
+    "bytes": 327204,
+    "original": {
+      "width": 2853,
+      "height": 1719,
+      "bytes": 769175
+    },
+    "source": "wikimedia:Porsche model cars",
+    "title": "File:Scalextric Model Porsche 997 With White Background.JPG",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/43/Scalextric_Model_Porsche_997_With_White_Background.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Scalextric_Model_Porsche_997_With_White_Background.JPG",
+    "license": "CC BY 3.0"
+  },
+  "pk-charizard7": {
+    "slug": "pk-charizard7",
+    "name": "Charizard Base Set Unlimited PSA 7",
+    "category": "tcg",
+    "file": "public/images/products/tcg/pk-charizard7.webp",
+    "width": 2400,
+    "height": 1600,
+    "bytes": 404400,
+    "original": {
+      "width": 5184,
+      "height": 3456,
+      "bytes": 1277307
+    },
+    "source": "wikimedia",
+    "title": "File:2021 New York Comic Con (Batch Edits - 031) (51573823689).jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/ad/2021_New_York_Comic_Con_%28Batch_Edits_-_031%29_%2851573823689%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:2021_New_York_Comic_Con_(Batch_Edits_-_031)_(51573823689).jpg",
+    "license": "CC BY-SA 2.0"
+  },
+  "rx-breitling": {
+    "slug": "rx-breitling",
+    "name": "Breitling Navitimer",
+    "category": "luxury",
+    "file": "public/images/products/luxury/rx-breitling.webp",
+    "width": 2400,
+    "height": 2400,
+    "bytes": 201336,
+    "original": {
+      "width": 4000,
+      "height": 4000,
+      "bytes": 842822
+    },
+    "source": "wikimedia:Breitling Navitimer",
+    "title": "File:Breitling Navitimer-P5200001-black.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Breitling_Navitimer-P5200001-black.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Breitling_Navitimer-P5200001-black.jpg",
+    "license": "CC BY-SA 3.0 fr"
+  },
+  "sn-aj1-1": {
+    "slug": "sn-aj1-1",
+    "name": "Air Jordan 1 Retro High OG",
+    "category": "luxury",
+    "file": "public/images/products/luxury/sn-aj1-1.webp",
+    "width": 2400,
+    "height": 1800,
+    "bytes": 627436,
+    "original": {
+      "width": 5152,
+      "height": 3864,
+      "bytes": 8321550
+    },
+    "source": "wikimedia:Air Jordan 1",
+    "title": "File:Air Jordan 1 Banned.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/5/59/Air_Jordan_1_Banned.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Air_Jordan_1_Banned.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  "sn-aj1-2": {
+    "slug": "sn-aj1-2",
+    "name": "Air Jordan 1 Low",
+    "category": "luxury",
+    "file": "public/images/products/luxury/sn-aj1-2.webp",
+    "width": 2400,
+    "height": 1800,
+    "bytes": 1026822,
+    "original": {
+      "width": 5152,
+      "height": 3864,
+      "bytes": 8744927
+    },
+    "source": "wikimedia:Air Jordan 1",
+    "title": "File:Air Jordan Royal blue 2016.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Air_Jordan_Royal_blue_2016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Air_Jordan_Royal_blue_2016.jpg",
+    "license": "CC BY-SA 4.0"
+  },
+  "sn-af1": {
+    "slug": "sn-af1",
+    "name": "Nike Air Force 1",
+    "category": "luxury",
+    "file": "public/images/products/luxury/sn-af1.webp",
+    "width": 2400,
+    "height": 1800,
+    "bytes": 392846,
+    "original": {
+      "width": 4032,
+      "height": 3024,
+      "bytes": 14412651
+    },
+    "source": "wikimedia:Nike Air Force",
+    "title": "File:Nike Air Force 1 '07 LV8 (53783096186).png",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Nike_Air_Force_1_%2707_LV8_%2853783096186%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Nike_Air_Force_1_%2707_LV8_(53783096186).png",
+    "license": "CC BY 2.0"
+  },
+  "ps-vita": {
+    "slug": "ps-vita",
+    "name": "PlayStation Vita PCH-1000",
+    "category": "tech",
+    "file": "public/images/products/tech/ps-vita.webp",
+    "width": 2400,
+    "height": 1464,
+    "bytes": 124044,
+    "original": {
+      "width": 5310,
+      "height": 3240,
+      "bytes": 5661233
+    },
+    "source": "wikimedia:pick",
+    "title": "File:PlayStation-Vita-1101-FL.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/b4/PlayStation-Vita-1101-FL.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:PlayStation-Vita-1101-FL.jpg",
+    "license": "Public domain"
+  },
+  "hm-leica": {
+    "slug": "hm-leica",
+    "name": "Leica MP Hermès Edition",
+    "category": "luxury",
+    "file": "public/images/products/luxury/hm-leica.webp",
+    "width": 2400,
+    "height": 1808,
+    "bytes": 721290,
+    "original": {
+      "width": 4079,
+      "height": 3073,
+      "bytes": 4787883
+    },
+    "source": "wikimedia:pick",
+    "title": "File:Leica MP Hermes.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/92/Leica_MP_Hermes.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Leica_MP_Hermes.jpg",
+    "license": "CC0"
+  },
+  "hm-kelly": {
+    "slug": "hm-kelly",
+    "name": "Hermès Kelly 클러치 Togo",
+    "category": "luxury",
+    "file": "public/images/products/luxury/hm-kelly.webp",
+    "width": 1280,
+    "height": 1280,
+    "bytes": 343854,
+    "original": {
+      "width": 1280,
+      "height": 1280,
+      "bytes": 242175
+    },
+    "source": "wikimedia:pick",
+    "title": "File:Hermes-太陽--得意-kelly錢包手包 原廠進口頭層牛皮荔枝紋Togo 顏色齊全 現貨尺寸：20cm*11cm (37983494475).jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Hermes-%E5%A4%AA%E9%99%BD--%E5%BE%97%E6%84%8F-kelly%E9%8C%A2%E5%8C%85%E6%89%8B%E5%8C%85_%E5%8E%9F%E5%BB%A0%E9%80%B2%E5%8F%A3%E9%A0%AD%E5%B1%A4%E7%89%9B%E7%9A%AE%E8%8D%94%E6%9E%9D%E7%B4%8BTogo_%E9%A1%8F%E8%89%B2%E9%BD%8A%E5%85%A8_%E7%8F%BE%E8%B2%A8%E5%B0%BA%E5%AF%B8%EF%BC%9A20cm%2A11cm_%2837983494475%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Hermes-%E5%A4%AA%E9%99%BD--%E5%BE%97%E6%84%8F-kelly%E9%8C%A2%E5%8C%85%E6%89%8B%E5%8C%85_%E5%8E%9F%E5%BB%A0%E9%80%B2%E5%8F%A3%E9%A0%AD%E5%B1%A4%E7%89%9B%E7%9A%AE%E8%8D%94%E6%9E%9D%E7%B4%8BTogo_%E9%A1%8F%E8%89%B2%E9%BD%8A%E5%85%A8_%E7%8F%BE%E8%B2%A8%E5%B0%BA%E5%AF%B8%EF%BC%9A20cm*11cm_(37983494475).jpg",
+    "license": "CC BY-SA 2.0"
+  },
+  "sn-am90": {
+    "slug": "sn-am90",
+    "name": "Nike Air Max 90 Infrared",
+    "category": "luxury",
+    "file": "public/images/products/luxury/sn-am90.webp",
+    "width": 2400,
+    "height": 1800,
+    "bytes": 285626,
+    "original": {
+      "width": 3648,
+      "height": 2736,
+      "bytes": 2170971
+    },
+    "source": "wikimedia:pick",
+    "title": "File:Nike Air Max 90 Infrared (4805905007).jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Nike_Air_Max_90_Infrared_%284805905007%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "page": "https://commons.wikimedia.org/wiki/File:Nike_Air_Max_90_Infrared_(4805905007).jpg",
+    "license": "CC BY 2.0"
+  }
+}

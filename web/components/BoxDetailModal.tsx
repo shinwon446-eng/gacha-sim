@@ -8,6 +8,7 @@ import { BOX_MAP } from "@/lib/data";
 import { TIER_META } from "@/lib/types";
 import { itemProbability, tierProbabilities, formatProb, TIER_ORDER } from "@/lib/rng";
 import { compactUsd, timeAgo, cn } from "@/lib/format";
+import { ProductImage } from "./ProductImage";
 
 type Tab = "items" | "log";
 
@@ -57,14 +58,16 @@ export function BoxDetailModal() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* 상단 시네마틱 쇼케이스 */}
-            <div className="relative aspect-video w-full overflow-hidden" style={{ background: box.art }}>
-              <div className="holo absolute inset-0 overflow-hidden" />
-              <div className="shimmer-bg absolute inset-0 opacity-40" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="animate-floaty text-[9rem] drop-shadow-[0_30px_50px_rgba(0,0,0,0.9)] md:text-[12rem]">
-                  {box.emoji}
-                </span>
-              </div>
+            <div className="relative aspect-video w-full overflow-hidden">
+              <ProductImage
+                src={box.image}
+                emoji={box.emoji}
+                art={box.art}
+                priority
+                className="absolute inset-0"
+                emojiClassName="animate-floaty text-[9rem] drop-shadow-[0_30px_50px_rgba(0,0,0,0.9)] md:text-[12rem]"
+              />
+              <div className="holo absolute inset-0 overflow-hidden opacity-50" />
               <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/30 to-transparent" />
               <button
                 onClick={() => setDetail(null)}
@@ -166,12 +169,13 @@ export function BoxDetailModal() {
                             className="flex items-center gap-4 rounded px-2 py-3 transition hover:bg-white/5"
                           >
                             <div className="w-6 text-right text-lg text-gray-500">{idx + 1}</div>
-                            <div
-                              className="flex h-14 w-24 flex-none items-center justify-center rounded text-3xl"
-                              style={{ background: it.art }}
-                            >
-                              {it.emoji}
-                            </div>
+                            <ProductImage
+                              src={it.image}
+                              emoji={it.emoji}
+                              art={it.art}
+                              className="h-14 w-24 flex-none rounded"
+                              emojiClassName="text-3xl"
+                            />
                             <div className="min-w-0 flex-1">
                               <div className="truncate text-sm font-bold">{it.name}</div>
                               <div className="mt-0.5 flex flex-wrap items-center gap-x-3 text-[11px] text-gray-400">
@@ -209,12 +213,13 @@ export function BoxDetailModal() {
                       .slice(0, 30)
                       .map((e) => (
                         <div key={e.id} className="flex items-center gap-3 border-b border-white/5 py-2.5 text-sm">
-                          <div
-                            className="flex h-9 w-9 items-center justify-center rounded text-lg"
-                            style={{ background: e.item.art }}
-                          >
-                            {e.item.emoji}
-                          </div>
+                          <ProductImage
+                            src={e.item.image}
+                            emoji={e.item.emoji}
+                            art={e.item.art}
+                            className="h-9 w-9 flex-none rounded"
+                            emojiClassName="text-lg"
+                          />
                           <div className="min-w-0 flex-1">
                             <span className="font-semibold">{e.user}</span>
                             <span className="text-gray-400"> 님이 </span>

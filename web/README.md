@@ -29,6 +29,22 @@ npm run build   # 프로덕션 빌드 (TypeScript 검사 포함)
 | `components/TheaterGacha.tsx` | 암전 → 릴 스핀 → 파티클/카메라 셰이크 → [배송 / 80% 환급] |
 | `components/InventoryDrawer.tsx` | 보관함 (배송/환급) |
 
+## 제품 이미지 파이프라인
+
+```bash
+npm run images            # 미보유 상품만 수집 (검색 → 메타 필터 → 다운로드 → sharp 검증 → WebP 저장)
+npm run images -- --redo  # 검수 미통과 항목만 재수집
+npm run images:report     # 저장 파일 재검증 + 전수 검증 표 출력 + lib/product-images.json 갱신
+npm run images:credits    # public/images/products/CREDITS.md (출처/저작자/라이선스) 생성
+```
+
+- 기준: 가로·세로 모두 1200px 이상(1000px 미만은 무조건 Reject), 비율 0.5~2.0, 5KB 미만(HTML 에러 파일) 거부, `sharp`로 실측.
+- 소스 우선순위: Wikimedia Commons 카테고리 → Commons 풀텍스트 → Pexels/Unsplash(API 키 있을 때) → Openverse.
+  `PEXELS_API_KEY`, `UNSPLASH_ACCESS_KEY` 환경 변수를 넣으면 스톡 소스가 활성화됩니다.
+- `scripts/image-manifest.mjs`: 상품별 검색어/카테고리/강제 지정(`pick`). `scripts/image-review.json`: 시각 검수 결과(`ok: true`인 항목만 프론트에 매핑).
+- Commons 사진 대부분이 CC BY / CC BY-SA 이므로 서비스 화면 또는 크레딧 페이지에 저작자 표기가 필요합니다 (`CREDITS.md` 참고).
+- **미확보**: 포켓몬/원피스 카드 상품 17종. Commons는 저작권 정책상 카드 실물 사진을 보유하지 않고, Openverse 익명 한도가 낮아 확보하지 못했습니다. Pexels/Unsplash 키를 넣고 `npm run images -- --redo`를 실행하면 채워집니다.
+
 ## 출시 전 반드시 확인
 
 - `lib/config.ts`의 `TRUST_MESSAGES`, `DEPOSIT_ADDRESSES`는 자리 표시자입니다. 검증 가능한 실제 링크/주소로 교체하세요. 실존 감사기관·투자사 명칭을 사실과 다르게 표기하면 허위 광고에 해당합니다.

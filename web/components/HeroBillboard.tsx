@@ -40,13 +40,23 @@ export function HeroBillboard() {
           exit={{ opacity: 0 }}
           transition={{ duration: 1.4, ease: "easeOut" }}
         >
-          {/* 쇼케이스 대체: 거대 이모지 + 홀로그램 스윕 + 부유 애니메이션 */}
-          <div className="holo absolute inset-0 overflow-hidden">
-            <div className="absolute right-[8%] top-[18%] animate-floaty select-none text-[22vw] leading-none opacity-90 drop-shadow-[0_30px_60px_rgba(0,0,0,0.8)] md:text-[18vw]">
-              {box.emoji}
+          {box.image ? (
+            // 검증된 실물 제품 사진 (≥1200px). 느린 줌으로 시네마틱 연출
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={box.image}
+              alt=""
+              draggable={false}
+              className="absolute inset-0 h-full w-full select-none object-cover"
+            />
+          ) : (
+            <div className="holo absolute inset-0 overflow-hidden">
+              <div className="absolute right-[8%] top-[18%] animate-floaty select-none text-[22vw] leading-none opacity-90 drop-shadow-[0_30px_60px_rgba(0,0,0,0.8)] md:text-[18vw]">
+                {box.emoji}
+              </div>
             </div>
-          </div>
-          <div className="shimmer-bg absolute inset-0 opacity-40" />
+          )}
+          <div className="holo absolute inset-0 overflow-hidden opacity-60" />
         </motion.div>
       </AnimatePresence>
 
