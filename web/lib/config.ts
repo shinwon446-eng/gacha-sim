@@ -30,10 +30,10 @@ export const DEMO_FEED: OpenEvent[] = [
   demo("d1", "0x7a…d3", "pokemon-shadowless", "pk-charizard10", 3),
   demo("d2", "k***", "cybertruck-beast", "ct-foundation", 11),
   demo("d3", "0x19…4f", "rolex-daytona", "rx-sub", 18),
-  demo("d4", "m***", "sneaker-grail", "sn-aj1-1", 26),
+  demo("d4", "m***", "sneaker-grail", "sn-ts", 26),
   demo("d5", "0xb2…91", "birkin-drop", "hm-kelly", 41),
   demo("d6", "j***", "macbook-silicon", "mb-max", 55),
-  demo("d7", "0xe0…7c", "ps5-pro-drop", "ps-vr2", 72),
+  demo("d7", "0xe0…7c", "ps5-pro-drop", "ps-30th", 72),
   demo("d8", "s***", "pokemon-151", "p151-zard-sar", 90),
 ];
 

@@ -8,7 +8,6 @@ import { TIER_META } from "@/lib/types";
 import { topItem, tierProbabilities, formatProb } from "@/lib/rng";
 import { compactUsd } from "@/lib/format";
 import { useGachaStore } from "@/store/useGachaStore";
-import { ProductImage } from "./ProductImage";
 
 export type EdgePosition = "first" | "last" | "middle";
 
@@ -61,10 +60,14 @@ export function BoxCard({ box, edge, onExpandChange }: Props) {
       onMouseLeave={leave}
     >
       {/* 기본 카드 */}
-      <button onClick={() => setDetail(box.id)} className="relative block aspect-video w-full overflow-hidden rounded bg-surface">
-        <ProductImage src={box.image} emoji={box.emoji} art={box.art} className="absolute inset-0" emojiClassName="text-5xl" />
-        <div className="holo absolute inset-0 overflow-hidden opacity-50" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/30" />
+      <button
+        onClick={() => setDetail(box.id)}
+        className="relative block aspect-video w-full overflow-hidden rounded bg-surface"
+        style={{ background: box.art }}
+      >
+        <div className="holo absolute inset-0 overflow-hidden" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+        <div className="absolute left-2 top-2 text-3xl drop-shadow-lg">{box.emoji}</div>
         {box.badge && (
           <span className="absolute right-2 top-2 rounded bg-accent px-1.5 py-0.5 text-[10px] font-bold">{box.badge}</span>
         )}
@@ -86,15 +89,12 @@ export function BoxCard({ box, edge, onExpandChange }: Props) {
             transition={{ duration: 0.25, ease: "easeOut" }}
           >
             {/* 자동 재생 미니 티저 (홀로그램 스윕 + 부유 아이템) */}
-            <div className="relative aspect-video w-full overflow-hidden">
-              <ProductImage
-                src={top.image ?? box.image}
-                emoji={top.emoji}
-                art={box.art}
-                className="absolute inset-0"
-                emojiClassName="animate-floaty text-6xl drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]"
-              />
-              <div className="holo absolute inset-0 overflow-hidden opacity-60" />
+            <div className="relative aspect-video w-full overflow-hidden" style={{ background: box.art }}>
+              <div className="holo absolute inset-0 overflow-hidden" />
+              <div className="shimmer-bg absolute inset-0 opacity-50" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="animate-floaty text-6xl drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]">{top.emoji}</span>
+              </div>
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-elevation to-transparent" />
               <div className="absolute left-2 top-2 flex items-center gap-1 rounded bg-black/60 px-1.5 py-0.5 text-[9px] font-bold">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" /> LIVE TEASER

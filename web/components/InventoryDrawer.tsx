@@ -6,7 +6,6 @@ import { useGachaStore } from "@/store/useGachaStore";
 import { TIER_META, REFUND_RATE } from "@/lib/types";
 import { BOX_MAP } from "@/lib/data";
 import { compactUsd } from "@/lib/format";
-import { ProductImage } from "./ProductImage";
 
 /** 우측 슬라이드 보관함 — 넷플릭스 '내가 찜한 콘텐츠' 느낌 */
 export function InventoryDrawer() {
@@ -59,13 +58,12 @@ export function InventoryDrawer() {
                   const meta = TIER_META[r.item.tier];
                   return (
                     <div key={r.uid} className="mb-2 flex gap-3 rounded border border-white/10 bg-surface p-2">
-                      <ProductImage
-                        src={r.item.image}
-                        emoji={r.item.emoji}
-                        art={r.item.art}
-                        className="h-16 w-24 flex-none rounded"
-                        emojiClassName="text-3xl"
-                      />
+                      <div
+                        className="flex h-16 w-24 flex-none items-center justify-center rounded text-3xl"
+                        style={{ background: r.item.art }}
+                      >
+                        {r.item.emoji}
+                      </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
                           <span className="rounded px-1 text-[9px] font-black" style={{ background: meta.color, color: "#000" }}>

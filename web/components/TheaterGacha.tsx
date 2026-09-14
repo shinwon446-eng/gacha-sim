@@ -8,7 +8,6 @@ import { TIER_META, REFUND_RATE, type Item, type OwnedItem } from "@/lib/types";
 import { bestOf } from "@/lib/rng";
 import { compactUsd, cn } from "@/lib/format";
 import { playTaDum, playTick, playWin } from "@/lib/audio";
-import { ProductImage } from "./ProductImage";
 
 type Phase = "dim" | "spin" | "reveal";
 
@@ -36,16 +35,10 @@ function ReelCell({ item, hot }: { item: Item; hot: boolean }) {
         "relative flex h-[216px] flex-none flex-col items-center justify-center overflow-hidden rounded-md border-2 transition-shadow",
         hot ? meta.glow : "",
       )}
-      style={{ width: CELL_W, marginRight: GAP, borderColor: hot ? meta.color : "rgba(255,255,255,0.08)" }}
+      style={{ width: CELL_W, marginRight: GAP, background: item.art, borderColor: hot ? meta.color : "rgba(255,255,255,0.08)" }}
     >
-      <ProductImage
-        src={item.image}
-        emoji={item.emoji}
-        art={item.art}
-        className="absolute inset-0"
-        emojiClassName="text-6xl drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]"
-      />
-      <div className="holo absolute inset-0 overflow-hidden opacity-50" />
+      <div className="holo absolute inset-0 overflow-hidden" />
+      <div className="text-6xl drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]">{item.emoji}</div>
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent px-2 pb-2 pt-6 text-center">
         <div className="truncate text-[11px] font-bold">{item.name}</div>
         <div className="text-[10px] font-mono" style={{ color: meta.color }}>
@@ -74,16 +67,14 @@ function ResultCard({ r, large, demo }: { r: OwnedItem; large: boolean; demo: bo
       )}
       style={{ borderColor: meta.color }}
     >
-      <div className={cn("relative", large ? "h-56" : "h-24")}>
-        <ProductImage
-          src={r.item.image}
-          emoji={r.item.emoji}
-          art={r.item.art}
-          priority={large}
-          className="absolute inset-0"
-          emojiClassName={cn("drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]", large ? "text-8xl" : "text-4xl")}
-        />
-        <div className="holo absolute inset-0 overflow-hidden opacity-50" />
+      <div
+        className={cn("relative flex items-center justify-center", large ? "h-56" : "h-24")}
+        style={{ background: r.item.art }}
+      >
+        <div className="holo absolute inset-0 overflow-hidden" />
+        <span className={cn("drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]", large ? "text-8xl" : "text-4xl")}>
+          {r.item.emoji}
+        </span>
         <span
           className="absolute left-2 top-2 rounded px-1.5 py-0.5 text-[10px] font-black"
           style={{ background: meta.color, color: "#000" }}

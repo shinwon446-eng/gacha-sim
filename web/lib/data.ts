@@ -1,9 +1,4 @@
 import type { Box, Item, Tier } from "./types";
-import PRODUCT_IMAGES from "./product-images.json";
-
-// scripts/fetch-images.mjs 가 생성 — 해상도(≥1200px)·시각 검수를 모두 통과한 사진만 들어 있다
-const IMG = PRODUCT_IMAGES as Record<string, { src: string; width: number; height: number; credit: string; license: string }>;
-export const productImage = (id: string): string | undefined => IMG[id]?.src;
 
 // 확률 가중치: 박스 내 합계 기준으로 정규화된다 (rng.ts 참고)
 const item = (
@@ -15,7 +10,7 @@ const item = (
   cert: string,
   emoji: string,
   art: string,
-): Item => ({ id, name, tier, value, weight, cert, emoji, art, image: productImage(id) });
+): Item => ({ id, name, tier, value, weight, cert, emoji, art });
 
 const G = {
   gold: "linear-gradient(135deg,#3a2a00 0%,#b8860b 45%,#ffe680 60%,#8a6508 100%)",
@@ -49,7 +44,7 @@ export const BOXES: Box[] = [
       item("ct-iphone", "iPhone 16 Pro Max 1TB", "R", 1599, 6, "APPLE-SN-IP-19C4", "📱", G.blue),
       item("ct-deck", "Steam Deck OLED 1TB", "R", 649, 9, "VALVE-SN-SD-0C31", "🎮", G.blue),
       item("ct-airpods", "AirPods Pro 2", "N", 249, 25, "APPLE-SN-AP-88F1", "🎧", G.gray),
-      item("ct-watch", "Apple Watch Series 10", "N", 399, 58.38, "APPLE-SN-AW10-2211", "⌚", G.gray),
+      item("ct-cybercup", "Tesla CyberWhistle + 굿즈 세트", "N", 60, 58.38, "TESLA-MERCH-2211", "🎁", G.gray),
     ],
   },
   {
@@ -90,12 +85,12 @@ export const BOXES: Box[] = [
     badge: "TOP 3",
     items: [
       item("rx-daytona", "Rolex Daytona 126500LN Panda", "SSR", 36000, 0.03, "RSC-WARRANTY-2024-88121", "⌚", G.gold),
-      item("rx-sub", "Rolex Submariner Date", "SR", 13500, 0.4, "RSC-WARRANTY-2024-31007", "🤿", G.purple),
+      item("rx-sub", "Rolex Submariner 126610LN", "SR", 13500, 0.4, "RSC-WARRANTY-2024-31007", "🤿", G.purple),
       item("rx-omega", "Omega Speedmaster Moonwatch", "SR", 6800, 1.0, "OMEGA-CARD-2023-4402", "🌙", G.purple),
-      item("rx-breitling", "Breitling Navitimer", "R", 4500, 4, "BREITLING-CARD-2023-1109", "🕰️", G.blue),
+      item("rx-tudor", "Tudor Black Bay 58", "R", 3900, 4, "TUDOR-CARD-2023-1109", "🕰️", G.blue),
       item("rx-seiko", "Seiko Prospex Diver", "R", 520, 10, "SEIKO-SN-0B771", "🐢", G.blue),
-      item("rx-strap", "다이버 러버 스트랩 세트", "N", 90, 30, "STRAP-SET-RUBBER", "🧵", G.gray),
-      item("rx-winder", "워치 박스 케이스", "N", 45, 54.54, "WATCHBOX-BASIC", "📦", G.gray),
+      item("rx-strap", "이탈리안 가죽 스트랩 세트", "N", 90, 30, "STRAP-SET-IT", "🧵", G.gray),
+      item("rx-winder", "워치 와인더 케이스", "N", 45, 54.54, "WINDER-BASIC", "📦", G.gray),
     ],
   },
   {
@@ -120,20 +115,20 @@ export const BOXES: Box[] = [
   {
     id: "ps5-pro-drop",
     title: "PS5 PRO DROP",
-    subtitle: "PS VR2 풀 번들 포함",
+    subtitle: "30주년 한정판 포함",
     category: "tech",
     price: 15,
     emoji: "🎮",
     art: "linear-gradient(120deg,#020617 0%,#1e3a8a 50%,#93c5fd 75%,#020617 100%)",
-    tagline: "거실을 극장으로. PS5 Pro와 VR2까지 한 번에.",
+    tagline: "품절된 30주년 에디션이 여기 있다.",
     description: "플레이스테이션 하드웨어와 주변기기 박스.",
     items: [
-      item("ps-vr2", "PlayStation VR2 + PS5 Pro 번들", "SSR", 1300, 0.15, "SONY-SN-VR2B-0021", "🥽", G.gold),
+      item("ps-30th", "PS5 Pro 30th Anniversary Bundle", "SSR", 2800, 0.15, "SONY-SN-30TH-0021", "🎮", G.gold),
       item("ps-pro", "PS5 Pro", "SR", 699, 3, "SONY-SN-PRO-1188", "🎮", G.purple),
-      item("ps-vita", "PlayStation Vita PCH-1000", "R", 199, 8, "SONY-SN-VITA-31", "📺", G.blue),
+      item("ps-portal", "PlayStation Portal", "R", 199, 8, "SONY-SN-PORTAL-31", "📺", G.blue),
       item("ps-dualsense", "DualSense Edge", "R", 199, 9, "SONY-SN-DSE-77", "🕹️", G.blue),
-      item("ps-ps4pro", "PlayStation 4 Pro 1TB", "N", 150, 25, "SONY-SN-PS4P-04", "🎮", G.gray),
-      item("ps-ds4", "DualShock 4 컨트롤러", "N", 59, 54.85, "SONY-SN-DS4-10", "🎮", G.gray),
+      item("ps-pulse", "Pulse Elite 헤드셋", "N", 149, 25, "SONY-SN-PULSE-04", "🎧", G.gray),
+      item("ps-psn", "PSN 기프트 카드 $10", "N", 10, 54.85, "PSN-GC-10", "🎫", G.gray),
     ],
   },
   {
@@ -177,7 +172,7 @@ export const BOXES: Box[] = [
   {
     id: "birkin-drop",
     title: "HERMÈS BIRKIN DROP",
-    subtitle: "버킨 30 크로커다일 포함",
+    subtitle: "버킨 25 토고 포함",
     category: "luxury",
     price: 60,
     emoji: "👜",
@@ -185,18 +180,18 @@ export const BOXES: Box[] = [
     tagline: "부티크에서 못 받은 초대장, 여기서 열린다.",
     description: "하이엔드 가죽 제품 박스. 정품 감정서 동봉.",
     items: [
-      item("hm-birkin", "Hermès Birkin 30 Crocodile", "SSR", 38000, 0.03, "HERMES-AUTH-B30-1102", "👜", G.gold),
-      item("hm-leica", "Leica MP Hermès Edition", "SR", 14000, 0.3, "LEICA-HERMES-0431", "📷", G.purple),
-      item("hm-kelly", "Hermès Kelly 클러치 Togo", "SR", 8000, 0.5, "HERMES-AUTH-KC-7781", "👝", G.purple),
-      item("hm-lv", "Louis Vuitton 모노그램 Noé", "R", 2100, 2, "LV-AUTH-NOE-7781", "🛍️", G.blue),
+      item("hm-birkin", "Hermès Birkin 25 Togo Gold", "SSR", 24000, 0.03, "HERMES-AUTH-B25-1102", "👜", G.gold),
+      item("hm-kelly", "Hermès Kelly 28 Epsom", "SR", 15000, 0.3, "HERMES-AUTH-K28-0431", "👝", G.purple),
+      item("hm-lv", "Louis Vuitton Neverfull MM", "SR", 2100, 2, "LV-AUTH-NF-7781", "🛍️", G.purple),
       item("hm-wallet", "Hermès Bearn 지갑", "R", 1200, 5, "HERMES-AUTH-BW-2210", "👛", G.blue),
-      item("hm-twilly", "Hermès 실크 스카프", "N", 230, 92.17, "HERMES-TW-3301", "🧣", G.gray),
+      item("hm-twilly", "Hermès Twilly 스카프", "N", 230, 30, "HERMES-TW-3301", "🧣", G.gray),
+      item("hm-orange", "오렌지 박스 + 더스트백", "N", 40, 62.67, "HERMES-BOX", "📦", G.gray),
     ],
   },
   {
     id: "sneaker-grail",
     title: "SNEAKER GRAIL VAULT",
-    subtitle: "Air Jordan 1 'Bred' 포함",
+    subtitle: "Travis Scott x Jordan 1 포함",
     category: "luxury",
     price: 20,
     emoji: "👟",
@@ -204,12 +199,12 @@ export const BOXES: Box[] = [
     tagline: "리셀가 신경 쓰지 마. 그냥 신어.",
     description: "하이프 스니커 박스. StockX 인증 태그 동봉.",
     items: [
-      item("sn-aj1-1", "Air Jordan 1 Retro High OG 'Bred'", "SSR", 1800, 0.17, "STOCKX-TAG-AJ1B-0044", "👟", G.gold),
-      item("sn-aj1-2", "Air Jordan 1 Retro High OG 'Royal'", "SR", 900, 2, "STOCKX-TAG-AJ1R-2211", "👟", G.purple),
-      item("sn-am90", "Nike Air Max 90 Infrared", "R", 260, 8, "STOCKX-TAG-AM90-9901", "👟", G.blue),
+      item("sn-ts", "Travis Scott x AJ1 Low OG Mocha", "SSR", 1800, 0.15, "STOCKX-TAG-TSAJ1-0044", "👟", G.gold),
+      item("sn-dior", "Dior x AJ1 High", "SSR", 8500, 0.02, "STOCKX-TAG-DIOR-0009", "👟", G.gold),
+      item("sn-offwhite", "Off-White x Nike Dunk Low", "SR", 900, 2, "STOCKX-TAG-OW-2211", "👟", G.purple),
       item("sn-yeezy", "Yeezy 350 V2", "R", 260, 8, "STOCKX-TAG-YZ-9901", "👟", G.blue),
-      item("sn-af1", "Nike Air Force 1 '07", "N", 110, 30, "STOCKX-TAG-AF1-3120", "👟", G.gray),
-      item("sn-socks", "Nike 삭스 3팩", "N", 20, 51.83, "NIKE-SOCKS", "🧦", G.gray),
+      item("sn-dunk", "Nike Dunk Low Panda", "N", 110, 30, "STOCKX-TAG-DK-3120", "👟", G.gray),
+      item("sn-socks", "Nike 삭스 3팩", "N", 20, 59.83, "NIKE-SOCKS", "🧦", G.gray),
     ],
   },
   {
@@ -227,17 +222,11 @@ export const BOXES: Box[] = [
       item("sc-model3", "Tesla Model 3 Performance", "SR", 54000, 0.06, "TESLA-INV-M3P-7710", "🚗", G.purple),
       item("sc-sim", "레이싱 시뮬레이터 풀세트", "SR", 4500, 1.2, "SIMRIG-INV-0392", "🕹️", G.purple),
       item("sc-wheel", "Fanatec DD Pro 휠", "R", 900, 6, "FANATEC-SN-DDP-441", "🛞", G.blue),
-      item("sc-model", "Porsche 911 1:18 다이캐스트 모델", "N", 220, 30, "PORSCHE-MODEL-118", "🏎️", G.gray),
-      item("sc-keychain", "슈퍼카 스마트키 세트", "N", 35, 62.735, "MERCH-SMARTKEY", "🔑", G.gray),
+      item("sc-jacket", "Porsche 모터스포츠 자켓", "N", 220, 30, "PORSCHE-MERCH-JK", "🧥", G.gray),
+      item("sc-keychain", "슈퍼카 키링 세트", "N", 35, 62.735, "MERCH-KEYRING", "🔑", G.gray),
     ],
   },
 ];
-
-// 박스 대표 이미지 = 최고 등급(가중치 최소) 상품의 사진. 없으면 사진이 있는 첫 상품, 그것도 없으면 그라디언트 폴백.
-for (const b of BOXES) {
-  const top = [...b.items].sort((x, y) => x.weight - y.weight);
-  b.image = top.find((i) => i.image)?.image;
-}
 
 export const BOX_MAP: Record<string, Box> = Object.fromEntries(BOXES.map((b) => [b.id, b]));
 
