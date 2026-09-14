@@ -1,11 +1,12 @@
 import { create } from "zustand";
 import { getBox } from "@/lib/data";
-import { rollOnce, TRIAL_MAP, isBoosterActive, BOOSTER_THRESHOLD } from "@/lib/engine";
-import { apiOpenBox, apiGuestTrial } from "@/lib/gateway";
+import { isBoosterActive, BOOSTER_THRESHOLD, DEMO_DURATION_MS } from "@/lib/engine";
+import { apiOpenBox, apiGuestDemo } from "@/lib/gateway";
 import { getFingerprint } from "@/lib/fingerprint";
+import { topItem } from "@/lib/rng";
 import { uid } from "@/lib/format";
-import { DEMO_FEED, INITIAL_BALANCE, SHOW_DEMO_FEED } from "@/lib/config";
-import { MULTI_DISCOUNT, REFUND_RATE, type Box, type OpenEvent, type OwnedItem } from "@/lib/types";
+import { DEMO_BOX_ID, DEMO_FEED, INITIAL_BALANCE, SHOW_DEMO_FEED } from "@/lib/config";
+import { MULTI_DISCOUNT, REFUND_RATE, type Box, type Item, type OpenEvent, type OwnedItem } from "@/lib/types";
 
 export type OpenCount = 1 | 10;
 
@@ -13,8 +14,6 @@ export interface TheaterSession {
   box: Box;
   count: OpenCount;
   results: OwnedItem[];
-  /** 무료 체험 뽑기 — 잔액 차감/인벤토리 저장 없음 */
-  demo: boolean;
   /** 이번 세션에서 부스터가 발동했는지 (골드 연출) */
   boosterTriggered?: boolean;
 }
@@ -28,34 +27,35 @@ export interface Toast {
 
 export type DepositMethod = "usdt" | "card";
 
-/** 게스트 무료체험 상태 머신: idle → won → (claimed | expired) */
-export interface TrialState {
-  status: "idle" | "won" | "claimed" | "expired";
-  prizeId?: string;
+/**
+ * 비회원 모의 체험 상태 머신: idle → shown → expired
+ *
+ * ⚠️ 이 체험은 어떤 경우에도 상품을 지급하지 않는다.
+ * 보관함(inventory)·잔액·포인트 어디에도 상품이 인입되지 않으며, 표시만 하고 소멸한다.
+ */
+export interface GuestDemoState {
+  status: "idle" | "shown" | "expired";
   deadline?: number;
 }
 
-// 스펙 명세 키: localStorage 이중 플래그 (서버 HttpOnly 쿠키와 함께 사용)
-const TRIAL_LS_KEY = "_guest_trial_claim";
+/** 스펙 지정 키 — 중복 체험 원천 차단 */
+const DEMO_LS_KEY = "guest_trial_completed";
 
-function readTrialLS(): TrialState | null {
+const readDemoDone = (): boolean => {
   try {
-    const raw = localStorage.getItem(TRIAL_LS_KEY);
-    if (!raw) return null;
-    const t = JSON.parse(raw) as TrialState;
-    return t && typeof t.status === "string" ? t : null;
+    return localStorage.getItem(DEMO_LS_KEY) === "true";
   } catch {
-    return null;
+    return false;
   }
-}
+};
 
-function writeTrialLS(t: TrialState) {
+const markDemoDone = () => {
   try {
-    localStorage.setItem(TRIAL_LS_KEY, JSON.stringify(t));
+    localStorage.setItem(DEMO_LS_KEY, "true");
   } catch {
     /* 시크릿 창 등 */
   }
-}
+};
 
 interface GachaState {
   balance: number;
@@ -70,10 +70,12 @@ interface GachaState {
   isMember: boolean;
   firstChargeUsed: boolean;
 
-  // ── 게스트 무료체험 ──
-  trial: TrialState;
-  trialHydrated: boolean;
-  trialModalOpen: boolean;
+  // ── 비회원 모의 체험 ──
+  guestDemo: GuestDemoState;
+  demoHydrated: boolean;
+  demoModalOpen: boolean;
+  /** 이미 체험을 마친 유저가 다시 눌렀을 때의 안내 모드 */
+  demoRepeat: boolean;
 
   // ── UI ──
   detailBoxId: string | null;
@@ -85,17 +87,15 @@ interface GachaState {
   // ── Actions ──
   priceFor: (box: Box, count: OpenCount) => number;
   openBox: (boxId: string, count: OpenCount) => Promise<OwnedItem[] | null>;
-  demoRoll: (boxId: string) => OwnedItem[];
   refundItem: (uid: string) => number;
   shipItem: (uid: string) => string;
   deposit: (amount: number, method: DepositMethod) => void;
 
-  guestTrial: () => Promise<void>;
-  claimTrialSignup: (provider: string) => void;
-  expireTrial: () => void;
-  hydrateTrial: () => void;
-  setTrialModalOpen: (open: boolean) => void;
-  copyInviteLink: () => Promise<void>;
+  runGuestDemo: () => Promise<void>;
+  signupFromDemo: (provider: string) => void;
+  expireDemo: () => void;
+  hydrateDemo: () => void;
+  setDemoModalOpen: (open: boolean) => void;
 
   setDetail: (id: string | null) => void;
   setDepositOpen: (open: boolean) => void;
@@ -113,6 +113,10 @@ const patchResult = (theater: TheaterSession | null, itemUid: string, patch: Par
     ? { ...theater, results: theater.results.map((r) => (r.uid === itemUid ? { ...r, ...patch } : r)) }
     : null;
 
+/** 모의 체험에 노출되는 고정 상품 = 데모 박스의 1등 상품 (지급되지 않음) */
+export const demoBox = (): Box => getBox(DEMO_BOX_ID);
+export const demoPrize = (): Item => topItem(demoBox());
+
 export const useGachaStore = create<GachaState>()((set, get) => ({
   balance: INITIAL_BALANCE,
   inventory: [],
@@ -125,9 +129,10 @@ export const useGachaStore = create<GachaState>()((set, get) => ({
   isMember: false,
   firstChargeUsed: false,
 
-  trial: { status: "idle" },
-  trialHydrated: false,
-  trialModalOpen: false,
+  guestDemo: { status: "idle" },
+  demoHydrated: false,
+  demoModalOpen: false,
+  demoRepeat: false,
 
   detailBoxId: null,
   depositOpen: false,
@@ -167,23 +172,14 @@ export const useGachaStore = create<GachaState>()((set, get) => ({
     set((s) => ({
       inventory: [...results, ...s.inventory],
       openLog: [...events, ...s.openLog].slice(0, 200),
-      theater: { box, count, results, demo: false, boosterTriggered: r.boosterTriggered },
+      theater: { box, count, results, boosterTriggered: r.boosterTriggered },
       detailBoxId: null,
       pityCount: r.pityCount,
       totalSpent: r.totalSpent,
     }));
     if (r.boosterTriggered) {
-      get().pushToast({ title: "BOOST 발동!", body: "상위 등급 확률 500% 상승이 적용된 뽑기였습니다", tone: "gold" });
+      get().pushToast({ title: "부스터 발동!", body: "[초대박 라인업] 확률 5배가 적용된 오픈이었습니다", tone: "gold" });
     }
-    return results;
-  },
-
-  demoRoll: (boxId) => {
-    const box = getBox(boxId);
-    const results: OwnedItem[] = [
-      { uid: uid(), boxId: box.id, item: rollOnce(box, { boost: false, tierMult: 1 }), obtainedAt: Date.now(), status: "owned" },
-    ];
-    set({ theater: { box, count: 1, results, demo: true }, detailBoxId: null });
     return results;
   },
 
@@ -222,7 +218,7 @@ export const useGachaStore = create<GachaState>()((set, get) => ({
 
   deposit: (amount, method) => {
     const s = get();
-    // Step 3 리워드: 회원 첫 충전 시 100% 더블 + 부스터 게이지 9/10
+    // 첫 충전 리워드: 1+1 더블 충전 + 부스터 게이지 9/10
     const isFirstChargeBonus = s.isMember && !s.firstChargeUsed;
     const credited = isFirstChargeBonus ? amount * 2 : amount;
     set((st) => ({
@@ -244,93 +240,56 @@ export const useGachaStore = create<GachaState>()((set, get) => ({
     });
   },
 
-  // ── 게스트 무료체험 ──
-  guestTrial: async () => {
-    const { trial } = get();
-    if (trial.status === "won") {
-      set({ trialModalOpen: true });
+  // ── 비회원 모의 체험 ──
+  // 결과는 고정(데모 박스 1등 상품)이며, 어떤 저장소에도 인입되지 않는다.
+  runGuestDemo: async () => {
+    const s = get();
+    if (s.guestDemo.status === "shown") {
+      set({ demoModalOpen: true, demoRepeat: false });
       return;
     }
-    if (trial.status === "claimed" || trial.status === "expired") {
-      get().pushToast({ title: "이미 체험을 완료하셨습니다", body: "가입하고 다음 혜택을 받아보세요", tone: "red" });
+    // 이미 체험 완료 → 연출 없이 재진입 안내 모달
+    if (s.guestDemo.status === "expired" || readDemoDone()) {
+      set({ guestDemo: { status: "expired" }, demoModalOpen: true, demoRepeat: true });
       return;
     }
     const fp = await getFingerprint();
-    const r = await apiGuestTrial(fp, readTrialLS() !== null);
+    const r = await apiGuestDemo(fp, readDemoDone());
+    markDemoDone();
     if (!r.ok) {
-      // 서버가 이미 사용을 기록한 경우 — 로컬 상태 동기화 + 가입 모달 트리거
-      const ls = readTrialLS();
-      if (ls && ls.status === "won") {
-        set({ trial: ls, trialModalOpen: true });
-      } else {
-        if (ls) set({ trial: ls });
-        else {
-          const t: TrialState = { status: "expired" };
-          writeTrialLS(t);
-          set({ trial: t });
-        }
-        get().pushToast({ title: r.message, body: "가입하면 새로운 혜택이 열립니다", tone: "red" });
-      }
+      set({ guestDemo: { status: "expired" }, demoModalOpen: true, demoRepeat: true });
       return;
     }
-    const t: TrialState = { status: "won", prizeId: r.prize.id, deadline: r.deadline };
-    writeTrialLS(t);
-    set({ trial: t, trialModalOpen: true });
+    set({ guestDemo: { status: "shown", deadline: r.deadline }, demoModalOpen: true, demoRepeat: false });
   },
 
-  claimTrialSignup: (provider) => {
-    const { trial } = get();
-    if (trial.status !== "won" || !trial.prizeId) return;
-    const prize = TRIAL_MAP[trial.prizeId];
-    const owned: OwnedItem = {
-      uid: uid(),
-      boxId: "guest-trial",
-      item: prize,
-      obtainedAt: Date.now(),
-      status: "owned",
-    };
-    const t: TrialState = { status: "claimed", prizeId: trial.prizeId };
-    writeTrialLS(t);
+  /** 가입 보상은 포인트만. 체험 상품은 지급되지 않는다. */
+  signupFromDemo: (provider) => {
     set((s) => ({
       isMember: true,
       points: s.points + 3000,
-      inventory: [owned, ...s.inventory],
-      trial: t,
-      trialModalOpen: false,
+      demoModalOpen: false,
+      guestDemo: { status: "expired" },
     }));
+    markDemoDone();
     get().pushToast({
       title: `${provider} 간편가입 완료`,
-      body: `${prize.name} 확정 수령 + 가입 축하 3,000P 지급`,
+      body: "웰컴 보너스 3,000P 적립 — 체험 상품은 지급되지 않습니다",
       tone: "gold",
     });
   },
 
-  expireTrial: () => {
-    const { trial } = get();
-    if (trial.status !== "won") return;
-    const t: TrialState = { status: "expired", prizeId: trial.prizeId };
-    writeTrialLS(t);
-    set({ trial: t, trialModalOpen: false });
-    get().pushToast({ title: "임시 보관 상품이 소멸되었습니다", body: "보관 시간이 만료되었습니다", tone: "red" });
+  expireDemo: () => {
+    if (get().guestDemo.status !== "shown") return;
+    markDemoDone();
+    set({ guestDemo: { status: "expired" } });
   },
 
-  // 새로고침 시 임시 보관함 상태 복원 (시나리오 B)
-  hydrateTrial: () => {
-    const ls = readTrialLS();
-    set({ trial: ls ?? { status: "idle" }, trialHydrated: true });
+  hydrateDemo: () => {
+    set({ guestDemo: readDemoDone() ? { status: "expired" } : { status: "idle" }, demoHydrated: true });
   },
 
-  setTrialModalOpen: (open) => set({ trialModalOpen: open }),
-
-  copyInviteLink: async () => {
-    const link = `${location.origin}${location.pathname}?ref=me`;
-    try {
-      await navigator.clipboard.writeText(link);
-      get().pushToast({ title: "초대 링크 복사 완료", body: "친구가 가입하면 티켓 1장 + 5% 캐시백", tone: "gold" });
-    } catch {
-      get().pushToast({ title: "복사 실패", body: link, tone: "neutral" });
-    }
-  },
+  setDemoModalOpen: (open) => set({ demoModalOpen: open }),
 
   setDetail: (id) => set({ detailBoxId: id }),
   setDepositOpen: (open) => set({ depositOpen: open }),
@@ -345,4 +304,4 @@ export const useGachaStore = create<GachaState>()((set, get) => ({
   dismissToast: (id) => set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) })),
 }));
 
-export { isBoosterActive, BOOSTER_THRESHOLD };
+export { isBoosterActive, BOOSTER_THRESHOLD, DEMO_DURATION_MS };

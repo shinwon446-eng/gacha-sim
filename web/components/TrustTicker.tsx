@@ -4,7 +4,7 @@ import { Link2, ShieldCheck, Newspaper, BadgeCheck, Trophy } from "lucide-react"
 import { TRUST_MESSAGES } from "@/lib/config";
 import { useGachaStore } from "@/store/useGachaStore";
 import { compactUsd } from "@/lib/format";
-import { TIER_META } from "@/lib/types";
+import { LINE_META, itemLine } from "@/lib/types";
 
 const ICONS = {
   chain: Link2,
@@ -16,7 +16,7 @@ const ICONS = {
 /** GNB 최상단: 온체인 인증/뉴스 + 실시간 당첨 롤링 티커 */
 export function TrustTicker() {
   const openLog = useGachaStore((s) => s.openLog);
-  const wins = openLog.filter((e) => e.item.tier === "SSR" || e.item.tier === "SR").slice(0, 8);
+  const wins = openLog.filter((e) => itemLine(e.item) === "jackpot").slice(0, 8);
 
   const entries = [
     ...TRUST_MESSAGES.map((m, i) => {
@@ -30,10 +30,10 @@ export function TrustTicker() {
     }),
     ...wins.map((w) => (
       <span key={w.id} className="inline-flex items-center gap-1.5">
-        <Trophy className="h-3 w-3" style={{ color: TIER_META[w.item.tier].color }} />
+        <Trophy className="h-3 w-3" style={{ color: LINE_META[itemLine(w.item)].color }} />
         <span className="font-semibold text-white">{w.user}</span>
         <span className="text-gray-400">님이</span>
-        <span className="font-semibold" style={{ color: TIER_META[w.item.tier].color }}>
+        <span className="font-semibold" style={{ color: LINE_META[itemLine(w.item)].color }}>
           [{w.item.name}]
         </span>
         <span className="text-gray-400">획득 ({compactUsd(w.item.value)} 상당)</span>

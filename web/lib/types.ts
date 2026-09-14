@@ -1,11 +1,51 @@
-export type Tier = "SSR" | "SR" | "R" | "N";
 export type Category = "tech" | "tcg" | "luxury";
+
+/**
+ * 상품 라인업 — 게임식 등급 표기 대신 실판매가 기준의 현실적 구분.
+ * 라인은 임의로 붙이지 않고 `value`(실판매가 USD)에서 결정적으로 파생된다 → 조작 여지 없음.
+ */
+export type Line = "jackpot" | "value" | "start";
+
+/** 실판매가(USD) 경계 — 100만원 ≈ $700 */
+export const LINE_THRESHOLDS = { jackpot: 700, value: 100 } as const;
+
+export const lineOf = (valueUsd: number): Line =>
+  valueUsd >= LINE_THRESHOLDS.jackpot ? "jackpot" : valueUsd >= LINE_THRESHOLDS.value ? "value" : "start";
+
+export const LINE_META: Record<
+  Line,
+  { label: string; short: string; desc: string; color: string; glow: string }
+> = {
+  jackpot: {
+    label: "초대박 라인업",
+    short: "초대박",
+    desc: "실판매가 100만원 이상 — 최신 아이폰·맥북·명품",
+    color: "#FFD700",
+    glow: "shadow-[0_0_60px_rgba(255,215,0,0.6)]",
+  },
+  value: {
+    label: "본전 이상 실속템",
+    short: "본전 이상",
+    desc: "에어팟·인기 게이밍 기어·백화점 상품권 5~10만원대",
+    color: "#38BDF8",
+    glow: "shadow-[0_0_28px_rgba(56,189,248,0.45)]",
+  },
+  start: {
+    label: "스타트 라인업",
+    short: "스타트",
+    desc: "필수 액세서리·모바일 기프티콘",
+    color: "#9CA3AF",
+    glow: "",
+  },
+};
+
+/** 확률표·정렬에서 쓰는 고정 순서 */
+export const LINE_ORDER: Line[] = ["jackpot", "value", "start"];
 
 export interface Item {
   id: string;
   name: string;
-  tier: Tier;
-  /** 실시간 시세(USD) */
+  /** 실판매가(USD) — 라인 구분의 유일한 기준 */
   value: number;
   /** 상대 가중치. 박스 내 합계로 나눠 확률을 계산한다. */
   weight: number;
@@ -15,6 +55,9 @@ export interface Item {
   /** CSS background */
   art: string;
 }
+
+/** 아이템의 라인 (value 에서 파생) */
+export const itemLine = (item: Item): Line => lineOf(item.value);
 
 export interface Box {
   id: string;
@@ -52,40 +95,6 @@ export interface OpenEvent {
   /** 샘플 데이터 여부 — UI에 DEMO 태그로 표시된다 */
   isDemo?: boolean;
 }
-
-export const TIER_META: Record<
-  Tier,
-  { label: string; color: string; text: string; glow: string; ring: string }
-> = {
-  SSR: {
-    label: "SSR 신화급",
-    color: "#FFD700",
-    text: "text-gold",
-    glow: "shadow-[0_0_60px_rgba(255,215,0,0.6)]",
-    ring: "ring-gold",
-  },
-  SR: {
-    label: "SR 전설급",
-    color: "#C084FC",
-    text: "text-purple-400",
-    glow: "shadow-[0_0_40px_rgba(192,132,252,0.5)]",
-    ring: "ring-purple-400",
-  },
-  R: {
-    label: "Rare",
-    color: "#60A5FA",
-    text: "text-blue-400",
-    glow: "shadow-[0_0_24px_rgba(96,165,250,0.4)]",
-    ring: "ring-blue-400",
-  },
-  N: {
-    label: "Normal",
-    color: "#9CA3AF",
-    text: "text-gray-400",
-    glow: "",
-    ring: "ring-gray-500",
-  },
-};
 
 export const CATEGORY_META: Record<Category, { label: string; anchor: string }> = {
   tech: { label: "테크/사이버트럭", anchor: "row-tech" },

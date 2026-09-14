@@ -51,3 +51,6 @@ export const DEPOSIT_ADDRESSES: Record<"TRC-20" | "ERC-20", string> = {
 };
 
 export const INITIAL_BALANCE = 1000;
+
+/** 비회원 모의 체험에 노출할 박스 — 이 박스의 1등 상품이 고정 노출된다(지급 없음). */
+export const DEMO_BOX_ID = "cybertruck-beast";

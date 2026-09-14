@@ -1,5 +1,5 @@
 // Web Audio API 기반 시네마틱 효과음 (외부 오디오 에셋 불필요)
-import type { Tier } from "./types";
+import type { Line } from "./types";
 
 let ctx: AudioContext | null = null;
 
@@ -56,20 +56,18 @@ export function playTick() {
   tone(ac, 1600, t, 0.045, { type: "square", gain: 0.05, slideTo: 900 });
 }
 
-/** 당첨 — 티어별 아르페지오 */
-export function playWin(tier: Tier) {
+/** 당첨 — 라인업별 아르페지오 */
+export function playWin(line: Line) {
   const ac = getCtx();
   if (!ac) return;
   const t = ac.currentTime;
-  const chords: Record<Tier, number[]> = {
-    SSR: [523, 659, 784, 1047, 1319, 1568],
-    SR: [440, 554, 659, 880, 1109],
-    R: [392, 494, 587, 784],
-    N: [330, 392],
+  const chords: Record<Line, number[]> = {
+    jackpot: [523, 659, 784, 1047, 1319, 1568],
+    value: [392, 494, 587, 784],
+    start: [330, 392],
   };
-  const notes = chords[tier];
-  notes.forEach((f, i) => tone(ac, f, t + i * 0.09, 0.9, { type: "triangle", gain: 0.14 }));
-  if (tier === "SSR") tone(ac, 65, t, 2.5, { type: "sawtooth", gain: 0.2, slideTo: 55 });
+  chords[line].forEach((f, i) => tone(ac, f, t + i * 0.09, 0.9, { type: "triangle", gain: 0.14 }));
+  if (line === "jackpot") tone(ac, 65, t, 2.5, { type: "sawtooth", gain: 0.2, slideTo: 55 });
 }
 
 /** 결제/충전 완료 */

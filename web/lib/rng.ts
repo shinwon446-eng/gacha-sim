@@ -1,15 +1,4 @@
-import type { Box, Item, Tier } from "./types";
-
-/** 가중치 기반 무작위 추출 */
-export function pickWeighted(items: Item[], rand: () => number = Math.random): Item {
-  const total = items.reduce((s, i) => s + i.weight, 0);
-  let r = rand() * total;
-  for (const it of items) {
-    r -= it.weight;
-    if (r <= 0) return it;
-  }
-  return items[items.length - 1];
-}
+import { itemLine, LINE_ORDER, type Box, type Item, type Line } from "./types";
 
 /** 아이템별 확률(%) */
 export function itemProbability(box: Box, item: Item): number {
@@ -17,10 +6,10 @@ export function itemProbability(box: Box, item: Item): number {
   return (item.weight / total) * 100;
 }
 
-/** 티어별 확률(%) */
-export function tierProbabilities(box: Box): Record<Tier, number> {
-  const out: Record<Tier, number> = { SSR: 0, SR: 0, R: 0, N: 0 };
-  for (const it of box.items) out[it.tier] += itemProbability(box, it);
+/** 라인별 합산 확률(%) */
+export function lineProbabilities(box: Box): Record<Line, number> {
+  const out: Record<Line, number> = { jackpot: 0, value: 0, start: 0 };
+  for (const it of box.items) out[itemLine(it)] += itemProbability(box, it);
   return out;
 }
 
@@ -30,12 +19,16 @@ export function formatProb(p: number): string {
   return p.toFixed(3) + "%";
 }
 
-export const TIER_ORDER: Tier[] = ["SSR", "SR", "R", "N"];
-
+/** 라인 우선 → 실판매가 순으로 가장 좋은 아이템 */
 export function bestOf(items: Item[]): Item {
-  return [...items].sort((a, b) => TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier) || b.value - a.value)[0];
+  return [...items].sort(
+    (a, b) => LINE_ORDER.indexOf(itemLine(a)) - LINE_ORDER.indexOf(itemLine(b)) || b.value - a.value,
+  )[0];
 }
 
-export function topItem(box: Box): Item {
-  return bestOf(box.items);
-}
+/** 박스의 1등 상품 */
+export const topItem = (box: Box): Item => bestOf(box.items);
+
+/** 박스 내 특정 라인의 아이템 목록 (실판매가 내림차순) */
+export const itemsOfLine = (box: Box, line: Line): Item[] =>
+  box.items.filter((i) => itemLine(i) === line).sort((a, b) => b.value - a.value);

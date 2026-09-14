@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { useGachaStore } from "@/store/useGachaStore";
-import { TIER_META } from "@/lib/types";
+import { LINE_META, itemLine } from "@/lib/types";
 import { BOX_MAP } from "@/lib/data";
 import { compactUsd, timeAgo } from "@/lib/format";
 
@@ -23,7 +23,7 @@ export function RankingSection() {
       </h2>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
         {top.map((e, i) => {
-          const meta = TIER_META[e.item.tier];
+          const meta = LINE_META[itemLine(e.item)];
           return (
             <button
               key={e.id}

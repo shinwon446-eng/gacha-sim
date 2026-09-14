@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { X, Truck, Coins, Package } from "lucide-react";
 import { useGachaStore } from "@/store/useGachaStore";
-import { TIER_META, REFUND_RATE } from "@/lib/types";
+import { LINE_META, itemLine, REFUND_RATE } from "@/lib/types";
 import { BOX_MAP } from "@/lib/data";
 import { compactUsd } from "@/lib/format";
 
@@ -55,7 +55,7 @@ export function InventoryDrawer() {
                 <div className="py-20 text-center text-sm text-gray-500">아직 뽑은 아이템이 없습니다.</div>
               ) : (
                 inventory.map((r) => {
-                  const meta = TIER_META[r.item.tier];
+                  const meta = LINE_META[itemLine(r.item)];
                   return (
                     <div key={r.uid} className="mb-2 flex gap-3 rounded border border-white/10 bg-surface p-2">
                       <div
@@ -67,7 +67,7 @@ export function InventoryDrawer() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
                           <span className="rounded px-1 text-[9px] font-black" style={{ background: meta.color, color: "#000" }}>
-                            {r.item.tier}
+                            {meta.short}
                           </span>
                           <span className="truncate text-sm font-bold">{r.item.name}</span>
                         </div>

@@ -4,16 +4,17 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   runPulls,
-  tierProbWith,
+  lineProbWith,
   effectiveItems,
   tierFor,
   isBoosterActive,
   pickWeightedAdjusted,
   BOOSTER_THRESHOLD,
   BOOST_MULT,
-  TRIAL_POOL,
 } from "../lib/engine.ts";
 import { getBox, BOXES } from "../lib/data.ts";
+import { itemLine, lineOf, LINE_ORDER } from "../lib/types.ts";
+import { lineProbabilities, topItem } from "../lib/rng.ts";
 
 const box = getBox("ps5-pro-drop");
 
@@ -35,7 +36,30 @@ test("모든 박스의 가중치 합이 100", () => {
   }
 });
 
-test("pity: 10회 도달 시 부스터 활성화, 발동 후 0으로 리셋", () => {
+test("라인업은 실판매가에서 결정적으로 파생된다", () => {
+  assert.equal(lineOf(99990), "jackpot");
+  assert.equal(lineOf(700), "jackpot");
+  assert.equal(lineOf(699), "value");
+  assert.equal(lineOf(100), "value");
+  assert.equal(lineOf(99), "start");
+});
+
+test("모든 박스가 3개 라인업을 모두 포함한다", () => {
+  for (const b of BOXES) {
+    const lines = new Set(b.items.map(itemLine));
+    for (const l of LINE_ORDER) assert.ok(lines.has(l), `${b.id} 에 ${l} 없음`);
+  }
+});
+
+test("라인별 확률 합이 100%", () => {
+  for (const b of BOXES) {
+    const p = lineProbabilities(b);
+    const sum = p.jackpot + p.value + p.start;
+    assert.ok(Math.abs(sum - 100) < 1e-6, `${b.id} 합 ${sum}`);
+  }
+});
+
+test("부스터: 10회 도달 시 활성화, 발동 후 0으로 리셋", () => {
   const rand = seeded(42);
   let state = { pityCount: 0, totalSpent: 0 };
   const seen: number[] = [];
@@ -47,29 +71,26 @@ test("pity: 10회 도달 시 부스터 활성화, 발동 후 0으로 리셋", ()
     seen.push(r.pityCount);
     if (r.boosterTriggered && firedAt < 0) firedAt = i;
   }
-  assert.equal(seen[9], BOOSTER_THRESHOLD, "10번째 뽑기 후 게이지 만충");
+  assert.equal(seen[9], BOOSTER_THRESHOLD, "10번째 개봉 후 게이지 만충");
   assert.equal(isBoosterActive(seen[9]), true);
-  assert.equal(firedAt, 10, "11번째 뽑기에서 부스터 발동");
+  assert.equal(firedAt, 10, "11번째 개봉에서 부스터 발동");
   assert.equal(seen[10], 0, "발동 후 게이지 리셋");
 });
 
-test("부스터: 상위 등급 가중치가 정확히 5배", () => {
+test("부스터: [초대박 라인업] 가중치가 정확히 5배", () => {
   const base = effectiveItems(box.items, { boost: false, tierMult: 1 });
   const boosted = effectiveItems(box.items, { boost: true, tierMult: 1 });
   for (let i = 0; i < base.length; i++) {
-    const tier = base[i].item.tier;
-    const expected = tier === "SSR" || tier === "SR" ? base[i].w * BOOST_MULT : base[i].w;
-    assert.equal(boosted[i].w, expected, `${base[i].item.id} (${tier})`);
+    const expected = itemLine(base[i].item) === "jackpot" ? base[i].w * BOOST_MULT : base[i].w;
+    assert.equal(boosted[i].w, expected, base[i].item.id);
   }
 });
 
-test("부스터: SSR 확률이 상승한다 (가중치 5배 → 확률은 5배 미만)", () => {
-  const b = tierProbWith(box, "SSR", { boost: false, tierMult: 1 });
-  const a = tierProbWith(box, "SSR", { boost: true, tierMult: 1 });
-  assert.ok(a > b, "부스트 시 SSR 확률 상승");
-  const ratio = a / b;
-  // 분모(전체 가중치)도 함께 커지므로 배율은 5배에 근접하되 그보다 작다
-  assert.ok(ratio > 4 && ratio < BOOST_MULT, `실제 배율 ${ratio.toFixed(2)}x`);
+test("부스터: 확률 상승 — 가중치 5배이므로 확률 배율은 5배 미만", () => {
+  const b = lineProbWith(box, "jackpot", { boost: false, tierMult: 1 });
+  const a = lineProbWith(box, "jackpot", { boost: true, tierMult: 1 });
+  assert.ok(a > b, "부스트 시 확률 상승");
+  assert.ok(a / b < BOOST_MULT, `실제 배율 ${(a / b).toFixed(2)}x 는 ${BOOST_MULT}배 미만이어야 한다`);
 });
 
 test("등급 배율: 누적 결제액에 따라 Bronze→VIP", () => {
@@ -80,31 +101,31 @@ test("등급 배율: 누적 결제액에 따라 Bronze→VIP", () => {
   assert.ok(tierFor(5000).mult > tierFor(0).mult);
 });
 
-test("통계: 부스트 표본의 상위 등급 출현율이 유의하게 높다 (N=200k)", () => {
+test("통계: 부스트 표본의 [초대박] 출현율이 공시 확률과 일치 (N=200k)", () => {
   const N = 200_000;
-  const count = (boost: boolean) => {
+  const rate = (boost: boolean) => {
     const rand = seeded(boost ? 7 : 13);
-    let top = 0;
+    let hit = 0;
     for (let i = 0; i < N; i++) {
-      const t = pickWeightedAdjusted(box.items, { boost, tierMult: 1 }, rand).tier;
-      if (t === "SSR" || t === "SR") top++;
+      if (itemLine(pickWeightedAdjusted(box.items, { boost, tierMult: 1 }, rand)) === "jackpot") hit++;
     }
-    return top / N;
+    return hit / N;
   };
-  const base = count(false);
-  const boosted = count(true);
-  const expected = tierProbWith(box, "SSR", { boost: true, tierMult: 1 }) / 100 +
-    tierProbWith(box, "SR", { boost: true, tierMult: 1 }) / 100;
-  assert.ok(boosted > base * 3, `base=${(base * 100).toFixed(2)}% boosted=${(boosted * 100).toFixed(2)}%`);
+  const base = rate(false);
+  const boosted = rate(true);
+  const expected = lineProbWith(box, "jackpot", { boost: true, tierMult: 1 }) / 100;
+  assert.ok(boosted > base, `base=${(base * 100).toFixed(2)}% boosted=${(boosted * 100).toFixed(2)}%`);
   assert.ok(Math.abs(boosted - expected) < 0.01, `기대 ${(expected * 100).toFixed(2)}% vs 실측 ${(boosted * 100).toFixed(2)}%`);
 });
 
-test("게스트 체험 풀: 꽝 없음 + 가중치 합 100", () => {
-  assert.equal(TRIAL_POOL.reduce((s, i) => s + i.weight, 0), 100);
-  assert.ok(TRIAL_POOL.every((i) => i.value > 0), "모든 항목이 실제 가치를 가진다");
+test("데모 노출 상품은 데모 박스의 1등 상품이며 [초대박 라인업]이다", () => {
+  const demo = getBox("cybertruck-beast");
+  const prize = topItem(demo);
+  assert.equal(itemLine(prize), "jackpot");
+  assert.equal(prize.value, Math.max(...demo.items.map((i) => i.value)));
 });
 
-test("10연속 뽑기는 정확히 10개를 반환한다", () => {
+test("10연속 개봉은 정확히 10개를 반환한다", () => {
   const r = runPulls(box, 10, { pityCount: 0, totalSpent: 0 }, seeded(99));
   assert.equal(r.items.length, 10);
 });

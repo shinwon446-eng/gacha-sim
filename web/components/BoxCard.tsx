@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Play, Info, ChevronDown, Gift } from "lucide-react";
+import { Play, Info, ChevronDown } from "lucide-react";
 import type { Box } from "@/lib/types";
-import { TIER_META } from "@/lib/types";
-import { topItem, tierProbabilities, formatProb } from "@/lib/rng";
+import { LINE_META, itemLine } from "@/lib/types";
+import { topItem } from "@/lib/rng";
 import { compactUsd } from "@/lib/format";
 import { useGachaStore } from "@/store/useGachaStore";
 
@@ -30,11 +30,9 @@ export function BoxCard({ box, edge, onExpandChange }: Props) {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const openBox = useGachaStore((s) => s.openBox);
-  const demoRoll = useGachaStore((s) => s.demoRoll);
   const setDetail = useGachaStore((s) => s.setDetail);
 
   const top = topItem(box);
-  const probs = tierProbabilities(box);
   const origin = edge === "first" ? "left center" : edge === "last" ? "right center" : "center center";
 
   const enter = () => {
@@ -100,10 +98,10 @@ export function BoxCard({ box, edge, onExpandChange }: Props) {
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" /> LIVE TEASER
               </div>
               <span
-                className="absolute right-2 top-2 rounded px-1.5 py-0.5 text-[9px] font-black uppercase"
-                style={{ background: TIER_META[top.tier].color, color: "#000" }}
+                className="absolute right-2 top-2 rounded px-1.5 py-0.5 text-[9px] font-black"
+                style={{ background: LINE_META[itemLine(top)].color, color: "#000" }}
               >
-                최고 당첨 {compactUsd(top.value)}
+                1등 {compactUsd(top.value)}
               </span>
             </div>
 
@@ -116,13 +114,6 @@ export function BoxCard({ box, edge, onExpandChange }: Props) {
                   title={`1회 오픈 (${box.price} USDT)`}
                 >
                   <Play className="h-3.5 w-3.5 fill-black" />
-                </button>
-                <button
-                  onClick={() => demoRoll(box.id)}
-                  className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-400 text-white transition hover:border-white"
-                  title="무료 체험 뽑기"
-                >
-                  <Gift className="h-3.5 w-3.5" />
                 </button>
                 <button
                   onClick={() => setDetail(box.id)}
@@ -143,11 +134,10 @@ export function BoxCard({ box, edge, onExpandChange }: Props) {
               <div className="text-[11px] font-bold leading-tight">{box.title}</div>
               <div className="flex flex-wrap items-center gap-x-2 text-[9px] text-gray-300">
                 <span className="font-semibold text-emerald-400">{box.price} USDT</span>
-                <span className="rounded border border-gray-500 px-1">SSR {formatProb(probs.SSR)}</span>
-                <span className="rounded border border-gray-500 px-1">SR {formatProb(probs.SR)}</span>
+                <span className="text-gray-500">확률 공시는 상세에서</span>
               </div>
               <div className="truncate text-[9px] text-gray-400">
-                <span style={{ color: TIER_META[top.tier].color }}>●</span> {top.name}
+                <span style={{ color: LINE_META[itemLine(top)].color }}>●</span> {top.name}
               </div>
             </div>
           </motion.div>

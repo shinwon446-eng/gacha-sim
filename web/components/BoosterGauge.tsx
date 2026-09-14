@@ -1,21 +1,19 @@
 "use client";
 
-import { Zap, Info } from "lucide-react";
+import { Zap, AlertTriangle } from "lucide-react";
 import { useGachaStore, BOOSTER_THRESHOLD, isBoosterActive } from "@/store/useGachaStore";
-import { tierFor, tierProbWith, BOOST_MULT } from "@/lib/engine";
-import { formatProb } from "@/lib/rng";
+import { tierFor, lineProbWith, BOOST_MULT } from "@/lib/engine";
 import { cn } from "@/lib/format";
-import type { Box } from "@/lib/types";
+import { LINE_META, type Box } from "@/lib/types";
 
 interface Props {
-  /** 확률 변환 텍스트("1.5% → 7.5%")를 보여줄 기준 박스 */
-  box?: Box;
-  compact?: boolean;
+  /** 확률 변환 표기의 기준 박스 */
+  box: Box;
   className?: string;
 }
 
-/** 개봉 버튼 상단의 부스터(확률업) 게이지 — Phase 3 */
-export function BoosterGauge({ box, compact, className }: Props) {
+/** 확률 부스터 게이지 — 개봉 버튼 상단의 단일 진행도 UI */
+export function BoosterGauge({ box, className }: Props) {
   const pity = useGachaStore((s) => s.pityCount);
   const totalSpent = useGachaStore((s) => s.totalSpent);
 
@@ -23,31 +21,34 @@ export function BoosterGauge({ box, compact, className }: Props) {
   const shown = Math.min(pity, BOOSTER_THRESHOLD);
   const { name: tierName, mult } = tierFor(totalSpent);
 
-  const baseSSR = box ? tierProbWith(box, "SSR", { boost: false, tierMult: mult }) : null;
-  const boostSSR = box ? tierProbWith(box, "SSR", { boost: true, tierMult: mult }) : null;
+  const base = lineProbWith(box, "jackpot", { boost: false, tierMult: mult });
+  const boosted = lineProbWith(box, "jackpot", { boost: true, tierMult: mult });
+  const jackpot = LINE_META.jackpot.label;
+
+  // 9칸까지 찼을 때 = 다음 개봉이 부스터 발동분
+  const nextIsBoost = shown === BOOSTER_THRESHOLD - 1;
 
   return (
     <div
       className={cn(
         "rounded-md border px-3 py-2",
-        active
+        active || nextIsBoost
           ? "animate-pulseGlow border-gold bg-gradient-to-r from-gold/20 via-yellow-500/10 to-gold/20"
           : "border-white/15 bg-black/40",
         className,
       )}
     >
-      <div className="flex items-center gap-2">
-        <Zap className={cn("h-4 w-4 flex-none", active ? "text-gold" : "text-gray-400")} />
-        <span className={cn("text-xs font-bold", active ? "text-gold" : "text-gray-200")}>
+      <div className="flex flex-wrap items-center gap-2">
+        <Zap className={cn("h-4 w-4 flex-none", active || nextIsBoost ? "text-gold" : "text-gray-400")} />
+        <span className={cn("text-xs font-bold", active || nextIsBoost ? "text-gold" : "text-gray-200")}>
           부스터 충전율: {shown} / {BOOSTER_THRESHOLD}
         </span>
         <span className="rounded border border-white/20 px-1.5 py-px text-[10px] font-semibold text-gray-300">
           {tierName} 등급 x{mult}
         </span>
-        <div className="flex-1" />
         {active && (
           <span className="rounded bg-gold px-1.5 py-0.5 text-[10px] font-black uppercase text-black">
-            BOOST ON: 상위 등급 출현 확률 {BOOST_MULT * 100}% 상승 중!
+            부스터 발동 상태 · [{jackpot}] 가중치 {BOOST_MULT}배 적용 중
           </span>
         )}
       </div>
@@ -60,7 +61,7 @@ export function BoosterGauge({ box, compact, className }: Props) {
             className={cn(
               "h-1.5 flex-1 rounded-sm transition-colors",
               i < shown
-                ? active
+                ? active || nextIsBoost
                   ? "bg-gradient-to-r from-yellow-300 to-gold shadow-[0_0_6px_rgba(255,215,0,0.8)]"
                   : "bg-gradient-to-r from-accent to-orange-400"
                 : "bg-white/10",
@@ -69,29 +70,31 @@ export function BoosterGauge({ box, compact, className }: Props) {
         ))}
       </div>
 
-      {!compact && (
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10px] text-gray-400">
-          {shown === BOOSTER_THRESHOLD - 1 && !active && (
-            <span className="font-bold text-gold">다음 뽑기 완료 시 100% 확률 부스터 발동!</span>
-          )}
-          {box && baseSSR !== null && boostSSR !== null && (
-            <span className="inline-flex items-center gap-1">
-              <Info className="h-3 w-3" />
-              SSR{" "}
-              {active ? (
-                <>
-                  <s className="text-gray-500">{formatProb(baseSSR)}</s>{" "}
-                  <b className="text-gold">→ {formatProb(boostSSR)} 적용 중</b>
-                </>
-              ) : (
-                <>
-                  기본 {formatProb(baseSSR)} → 부스트 시 <b className="text-gray-200">{formatProb(boostSSR)}</b>
-                </>
-              )}
+      <div className="mt-1.5 text-[11px] leading-relaxed">
+        {nextIsBoost ? (
+          <p className="flex items-start gap-1 font-bold text-gold">
+            <AlertTriangle className="mt-px h-3 w-3 flex-none" />
+            <span>
+              경고: 다음 1회 개봉 시 [{jackpot}] 가중치 {BOOST_MULT}배 적용 —{" "}
+              <span className="font-mono">
+                {base.toFixed(2)}% → {boosted.toFixed(2)}%
+              </span>{" "}
+              (절대 놓치지 마세요)
             </span>
-          )}
-        </div>
-      )}
+          </p>
+        ) : active ? (
+          <p className="font-mono text-gold">
+            [{jackpot}] {base.toFixed(2)}% → {boosted.toFixed(2)}% 적용 중
+          </p>
+        ) : (
+          <p className="text-gray-400">
+            {BOOSTER_THRESHOLD}번째 개봉에 [{jackpot}] 가중치 {BOOST_MULT}배{" "}
+            <span className="font-mono text-gray-300">
+              ({base.toFixed(2)}% → {boosted.toFixed(2)}%)
+            </span>
+          </p>
+        )}
+      </div>
     </div>
   );
 }

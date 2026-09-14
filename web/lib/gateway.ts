@@ -2,15 +2,7 @@
 // 기본: API 라우트 호출(확률·난수는 서버에서만). 정적 데모(GitHub Pages, 서버 없음)에서는
 // 동일한 엔진을 클라이언트에서 실행하는 폴백으로 전환된다 — 빌드 시 NEXT_PUBLIC_STATIC_DEMO 로 결정.
 import { getBox } from "./data";
-import {
-  runPulls,
-  pickWeightedAdjusted,
-  TRIAL_POOL,
-  TRIAL_MAP,
-  TRIAL_DURATION_MS,
-  type PullState,
-  type UserTier,
-} from "./engine";
+import { runPulls, DEMO_DURATION_MS, type PullState, type UserTier } from "./engine";
 import type { Item } from "./types";
 
 const IS_STATIC_DEMO = process.env.NEXT_PUBLIC_STATIC_DEMO === "true";
@@ -66,34 +58,31 @@ export async function apiOpenBox(
   return { ...res, totalSpent: local.totalSpent + local.cost, source: "local" };
 }
 
-export type TrialResponse =
-  | { ok: true; prize: Item; deadline: number; source: "server" | "local" }
-  | { ok: false; reason: "already_claimed"; message: string };
+/**
+ * 비회원 모의 체험 세션 개시.
+ * 결과 상품은 고정(데모 박스 1등)이라 서버가 추첨하지 않는다 — 서버는 중복 체험만 차단한다.
+ * 어떤 경우에도 상품 지급 데이터를 반환하지 않는다.
+ */
+export type DemoResponse = { ok: true; deadline: number } | { ok: false; reason: "already_claimed" };
 
-export async function apiGuestTrial(fingerprint: string, locallyClaimed: boolean): Promise<TrialResponse> {
+export async function apiGuestDemo(fingerprint: string, locallyDone: boolean): Promise<DemoResponse> {
+  if (locallyDone) return { ok: false, reason: "already_claimed" };
   if (!IS_STATIC_DEMO) {
     try {
-      const r = await fetch("/api/guest/trial", {
+      const r = await fetch("/api/guest/demo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fingerprint }),
       });
-      const j = await r.json().catch(() => null);
-      if (r.ok && j?.prizeId && TRIAL_MAP[j.prizeId]) {
-        return { ok: true, prize: TRIAL_MAP[j.prizeId], deadline: j.deadline, source: "server" };
+      if (r.ok) {
+        const j = await r.json();
+        return { ok: true, deadline: j.deadline };
       }
-      if (r.status === 429) {
-        return { ok: false, reason: "already_claimed", message: j?.message ?? "이미 체험을 완료하셨습니다" };
-      }
-      warnFallback("apiGuestTrial", `HTTP ${r.status}`);
+      if (r.status === 429) return { ok: false, reason: "already_claimed" };
+      warnFallback("apiGuestDemo", `HTTP ${r.status}`);
     } catch (e) {
-      warnFallback("apiGuestTrial", e);
+      warnFallback("apiGuestDemo", e);
     }
   }
-  // 정적 데모 폴백: localStorage 플래그만으로 차단 (서버 방어 없음 — README 명시)
-  if (locallyClaimed) {
-    return { ok: false, reason: "already_claimed", message: "이미 체험을 완료하셨습니다" };
-  }
-  const prize = pickWeightedAdjusted(TRIAL_POOL, { boost: false, tierMult: 1 });
-  return { ok: true, prize, deadline: Date.now() + TRIAL_DURATION_MS, source: "local" };
+  return { ok: true, deadline: Date.now() + DEMO_DURATION_MS };
 }

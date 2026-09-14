@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { animate, motion, useAnimation, useMotionValue } from "framer-motion";
 import { X, Truck, RotateCcw, Sparkles, Play, Coins, Zap } from "lucide-react";
 import { useGachaStore } from "@/store/useGachaStore";
-import { TIER_META, REFUND_RATE, type Item, type OwnedItem } from "@/lib/types";
+import { LINE_META, itemLine, REFUND_RATE, type Item, type OwnedItem } from "@/lib/types";
 import { bestOf } from "@/lib/rng";
 import { compactUsd, cn } from "@/lib/format";
 import { playTaDum, playTick, playWin } from "@/lib/audio";
@@ -28,7 +28,7 @@ function buildReel(items: Item[], target: Item): Item[] {
 }
 
 function ReelCell({ item, hot }: { item: Item; hot: boolean }) {
-  const meta = TIER_META[item.tier];
+  const meta = LINE_META[itemLine(item)];
   return (
     <div
       className={cn(
@@ -41,8 +41,8 @@ function ReelCell({ item, hot }: { item: Item; hot: boolean }) {
       <div className="text-6xl drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]">{item.emoji}</div>
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent px-2 pb-2 pt-6 text-center">
         <div className="truncate text-[11px] font-bold">{item.name}</div>
-        <div className="text-[10px] font-mono" style={{ color: meta.color }}>
-          {item.tier} · {compactUsd(item.value)}
+        <div className="text-[10px]" style={{ color: meta.color }}>
+          {meta.short} · <span className="font-mono">{compactUsd(item.value)}</span>
         </div>
       </div>
     </div>
@@ -50,19 +50,20 @@ function ReelCell({ item, hot }: { item: Item; hot: boolean }) {
 }
 
 /** 결과 아이템 + 손실 방어 액션 ([실물 배송] / [★ 80% 환급]) */
-function ResultCard({ r, large, demo }: { r: OwnedItem; large: boolean; demo: boolean }) {
+function ResultCard({ r, large }: { r: OwnedItem; large: boolean }) {
   const refundItem = useGachaStore((s) => s.refundItem);
   const shipItem = useGachaStore((s) => s.shipItem);
-  const meta = TIER_META[r.item.tier];
+  const line = itemLine(r.item);
+  const meta = LINE_META[line];
   const refund = r.item.value * REFUND_RATE;
-  const low = r.item.tier === "N" || r.item.tier === "R";
+  const low = line !== "jackpot";
 
   return (
     <div
       className={cn(
         "relative flex flex-col overflow-hidden rounded-lg border bg-elevation",
         large ? "w-full max-w-md" : "w-full",
-        r.item.tier === "SSR" && "animate-pulseGlow",
+        line === "jackpot" && "animate-pulseGlow",
         meta.glow,
       )}
       style={{ borderColor: meta.color }}
@@ -94,14 +95,7 @@ function ResultCard({ r, large, demo }: { r: OwnedItem; large: boolean; demo: bo
           )}
         </div>
 
-        {demo ? (
-          large && (
-            <div className="mt-3 rounded border border-white/15 bg-black/30 p-2 text-xs text-gray-400">
-              무료 체험 결과입니다. 실제 오픈에서 획득하면 실물 배송 또는{" "}
-              <span className="font-bold text-gold">{compactUsd(refund)} USDT 즉시 환급</span>이 가능합니다.
-            </div>
-          )
-        ) : r.status === "refunded" ? (
+        {r.status === "refunded" ? (
           <div className={cn("mt-2 rounded bg-gold/15 text-center font-bold text-gold", large ? "p-2 text-sm" : "p-1 text-[10px]")}>
             +{compactUsd(refund)} USDT 환급 완료
           </div>
@@ -193,8 +187,9 @@ export function TheaterGacha() {
         onComplete: () => {
           setHotIndex(TARGET_INDEX);
           setPhase("reveal");
-          playWin(highlight.tier);
-          if (highlight.tier === "SSR" || highlight.tier === "SR") {
+          const line = itemLine(highlight);
+          playWin(line);
+          if (line === "jackpot") {
             void import("canvas-confetti").then(({ default: confetti }) => {
               const gold = ["#FFD700", "#FFF2A8", "#E50914", "#ffffff"];
               confetti({ particleCount: 180, spread: 100, origin: { y: 0.6 }, colors: gold, scalar: 1.2 });
@@ -202,7 +197,7 @@ export function TheaterGacha() {
               setTimeout(() => confetti({ particleCount: 120, angle: 120, spread: 70, origin: { x: 1 }, colors: gold }), 400);
             });
           }
-          if (highlight.tier === "SSR") {
+          if (line === "jackpot") {
             void shake.start({
               x: [0, -14, 12, -10, 8, -5, 3, 0],
               y: [0, 8, -10, 7, -5, 3, -1, 0],
@@ -223,7 +218,8 @@ export function TheaterGacha() {
   }, [sessionKey]);
 
   if (!theater || !highlight) return null;
-  const { box, count, results, demo, boosterTriggered } = theater;
+  const { box, count, results, boosterTriggered } = theater;
+  const highlightLine = itemLine(highlight);
   const best = results.find((r) => r.item.id === highlight.id) ?? results[0];
 
   return (
@@ -241,19 +237,19 @@ export function TheaterGacha() {
           "pointer-events-none absolute inset-0 transition-opacity duration-[1500ms]",
           phase === "dim" ? "opacity-0" : "opacity-100",
         )}
-        style={{ background: `radial-gradient(ellipse at 50% 50%, ${TIER_META[highlight.tier].color}22, transparent 55%)` }}
+        style={{ background: `radial-gradient(ellipse at 50% 50%, ${LINE_META[highlightLine].color}22, transparent 55%)` }}
       />
 
       {/* 헤더 */}
       <div className="relative z-10 flex items-center justify-between px-6 py-4">
         <div>
           <div className="text-[10px] uppercase tracking-[0.3em] text-gray-500">
-            {demo ? "FREE DEMO ROLL" : `NOW OPENING · ${count === 10 ? "10x" : "1x"}`}
+            {`NOW OPENING · ${count === 10 ? "10x" : "1x"}`}
           </div>
           <div className="text-lg font-black uppercase">{box.title}</div>
-          {boosterTriggered && !demo && (
-            <div className="mt-1 inline-flex items-center gap-1 rounded border border-gold bg-gold/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-gold">
-              <Zap className="h-3 w-3" /> BOOST ON: 상위 등급 출현 확률 500% 상승 중!
+          {boosterTriggered && (
+            <div className="mt-1 inline-flex items-center gap-1 rounded border border-gold bg-gold/15 px-2 py-0.5 text-[10px] font-black tracking-wider text-gold">
+              <Zap className="h-3 w-3" /> 부스터 발동 · [{LINE_META.jackpot.label}] 가중치 5배 적용
             </div>
           )}
         </div>
@@ -282,7 +278,7 @@ export function TheaterGacha() {
             ref={stageRef}
             className={cn(
               "relative w-full",
-              boosterTriggered && !demo && "border-y-2 border-gold/60 shadow-[0_0_60px_rgba(255,215,0,0.25)]",
+              boosterTriggered && "border-y-2 border-gold/60 shadow-[0_0_60px_rgba(255,215,0,0.25)]",
             )}
           >
             {/* 중앙 인디케이터 */}
@@ -310,21 +306,24 @@ export function TheaterGacha() {
             transition={{ type: "spring", stiffness: 220, damping: 22 }}
             className="absolute inset-0 z-30 flex flex-col items-center justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-sm"
           >
-            <div className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.3em]" style={{ color: TIER_META[highlight.tier].color }}>
+            <div
+              className="mb-3 flex items-center gap-2 text-xs font-bold tracking-[0.2em]"
+              style={{ color: LINE_META[highlightLine].color }}
+            >
               <Sparkles className="h-4 w-4" />
-              {highlight.tier === "SSR" ? "LEGENDARY DROP" : highlight.tier === "SR" ? "EPIC DROP" : count === 10 ? "10x RESULTS" : "DROP"}
+              {LINE_META[highlightLine].label} 획득
             </div>
 
             {count === 1 ? (
-              <ResultCard r={results[0]} large demo={demo} />
+              <ResultCard r={results[0]} large />
             ) : (
               <div className="w-full max-w-5xl">
                 <div className="mb-4 flex justify-center">
-                  <ResultCard r={best} large demo={demo} />
+                  <ResultCard r={best} large />
                 </div>
                 <div className="grid grid-cols-5 gap-2">
                   {results.map((r) => (
-                    <ResultCard key={r.uid} r={r} large={false} demo={demo} />
+                    <ResultCard key={r.uid} r={r} large={false} />
                   ))}
                 </div>
               </div>
@@ -332,30 +331,19 @@ export function TheaterGacha() {
 
             {/* 다시보기 자리 = 재도전 CTA */}
             <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-              {demo ? (
+              <button
+                onClick={() => openBox(box.id, count)}
+                className="flex items-center gap-2 rounded bg-white px-6 py-2.5 font-bold text-black hover:bg-white/80"
+              >
+                <RotateCcw className="h-4 w-4" /> 다시 오픈 ({priceFor(box, count)} USDT)
+              </button>
+              {count === 1 && (
                 <button
-                  onClick={() => openBox(box.id, 1)}
-                  className="flex items-center gap-2 rounded bg-white px-6 py-2.5 font-bold text-black hover:bg-white/80"
+                  onClick={() => openBox(box.id, 10)}
+                  className="flex items-center gap-2 rounded bg-gold px-6 py-2.5 font-bold text-black hover:bg-yellow-300"
                 >
-                  <Play className="h-4 w-4 fill-black" /> 지금 실제로 오픈 ({priceFor(box, 1)} USDT)
+                  <Play className="h-4 w-4 fill-black" /> 10연속 ({priceFor(box, 10)} USDT · 10% OFF)
                 </button>
-              ) : (
-                <>
-                  <button
-                    onClick={() => openBox(box.id, count)}
-                    className="flex items-center gap-2 rounded bg-white px-6 py-2.5 font-bold text-black hover:bg-white/80"
-                  >
-                    <RotateCcw className="h-4 w-4" /> 다시 오픈 ({priceFor(box, count)} USDT)
-                  </button>
-                  {count === 1 && (
-                    <button
-                      onClick={() => openBox(box.id, 10)}
-                      className="flex items-center gap-2 rounded bg-gold px-6 py-2.5 font-bold text-black hover:bg-yellow-300"
-                    >
-                      <Play className="h-4 w-4 fill-black" /> 10연속 ({priceFor(box, 10)} USDT · 10% OFF)
-                    </button>
-                  )}
-                </>
               )}
               <button onClick={closeTheater} className="rounded border border-white/30 px-5 py-2.5 font-semibold hover:bg-white/10">
                 닫기
