@@ -1,231 +1,114 @@
-import type { Box, Item } from "./types";
+import type { Box, Category, Item } from "./types";
+import { CATALOG, type CatalogBox, type CatalogEntry } from "./catalog";
 
-// 확률 가중치: 박스 내 합계 기준으로 정규화된다 (rng.ts 참고)
-const item = (
-  id: string,
-  name: string,
-  value: number,
-  weight: number,
-  cert: string,
-  emoji: string,
-  art: string,
-): Item => ({ id, name, value, weight, cert, emoji, art });
+/**
+ * 카탈로그 → 앱 모델 어댑터.
+ *
+ * lib/catalog.ts 가 유일한 상품 데이터 원천이며, 이 파일은 표시 계층이 쓰는 형태로 옮기기만 한다.
+ * 가격·가중치·확률·인증번호는 어떤 경우에도 여기서 변형하지 않는다.
+ */
 
-const G = {
-  gold: "linear-gradient(135deg,#3a2a00 0%,#b8860b 45%,#ffe680 60%,#8a6508 100%)",
-  purple: "linear-gradient(135deg,#1e0a3c 0%,#5b21b6 50%,#a78bfa 100%)",
-  blue: "linear-gradient(135deg,#0b1c3a 0%,#1d4ed8 55%,#60a5fa 100%)",
-  gray: "linear-gradient(135deg,#1f1f1f 0%,#3f3f46 60%,#71717a 100%)",
-  steel: "linear-gradient(135deg,#0f172a 0%,#334155 50%,#94a3b8 100%)",
-  fire: "linear-gradient(135deg,#3b0a0a 0%,#dc2626 50%,#fb923c 100%)",
-  teal: "linear-gradient(135deg,#042f2e 0%,#0d9488 55%,#5eead4 100%)",
-  rose: "linear-gradient(135deg,#4a0416 0%,#be123c 55%,#fda4af 100%)",
+/** 애셋 톤 램프. 전부 무채색이며, 박스당 최고 실판매가 1개에만 crimson 을 허용한다. */
+const TONE = {
+  crimson: "linear-gradient(135deg,#080808 0%,#3a0206 48%,#e50914 78%,#120103 100%)",
+  steel: "linear-gradient(135deg,#0d0d0d 0%,#2e2e2e 45%,#6b6b6b 78%,#0d0d0d 100%)",
+  graphite: "linear-gradient(135deg,#0a0a0a 0%,#242424 50%,#454545 80%,#0a0a0a 100%)",
+  coal: "linear-gradient(135deg,#050505 0%,#151515 55%,#282828 100%)",
 };
 
-export const BOXES: Box[] = [
+/** 실판매가 내림차순 순위로 톤을 결정한다. 1위만 crimson. */
+function toneForRank(rank: number, total: number): string {
+  if (rank === 0) return TONE.crimson;
+  if (rank < Math.ceil(total * 0.35)) return TONE.steel;
+  if (rank < Math.ceil(total * 0.7)) return TONE.graphite;
+  return TONE.coal;
+}
+
+function toItem(e: CatalogEntry, rank: number, total: number): Item {
+  return {
+    id: e.item_id,
+    name: e.name_en,
+    name_en: e.name_en,
+    name_zh: e.name_zh,
+    value: e.value_usd,
+    weight: e.weight,
+    cert: e.cert,
+    code: e.image_placeholder,
+    art: toneForRank(rank, total),
+  };
+}
+
+/** 시리즈별 표시 메타 — 카탈로그에 없는 순수 표시 문구만 여기서 보강한다. */
+const PRESENTATION: Record<
+  string,
   {
-    id: "cybertruck-beast",
-    title: "CYBERTRUCK BEAST EDITION",
-    subtitle: "테슬라 사이버트럭 Foundation Series 포함",
-    category: "tech",
-    price: 50,
-    emoji: "🛻",
-    art: "linear-gradient(120deg,#0b0b0b 0%,#2b2f36 45%,#8b949e 70%,#0b0b0b 100%)",
-    tagline: "스테인리스 외골격, 0-60mph 2.6초. 박스 하나로 전부 가져가라.",
+    category: Category;
+    subtitle: string;
+    tagline: string;
+    description: string;
+    art: string;
+    featured?: boolean;
+    badge?: string;
+  }
+> = {
+  "black-label-apex-tech": {
+    category: "apex",
+    subtitle: "플래그십 컴퓨팅 · XR · 모바일",
+    tagline: "최상위 실리콘만 수록한 시리즈.",
     description:
-      "테슬라 공식 딜러십 인보이스 형태로 인증되는 사이버트럭 Foundation Series가 1등 상품인 테크 박스. 파워월, Vision Pro, 아이폰까지 실물 배송 또는 즉시 80% USDT 환급이 가능합니다.",
+      "MacBook Pro M4 Max, Vision Pro, 폴더블 플래그십으로 구성된 시리즈. 전 항목 시리얼 기반 정품 인증이며 실물 발송 또는 즉시 회수를 선택한다.",
+    art: "linear-gradient(120deg,#080808 0%,#1e1e1e 42%,#6e6e6e 72%,#080808 100%)",
     featured: true,
-    badge: "TOP 1",
-    items: [
-      item("ct-foundation", "Cybertruck Foundation Series", 99990, 0.02, "TESLA-INV-FS-2024-0182", "🛻", G.gold),
-      item("ct-powerwall", "Tesla Powerwall 3", 9300, 0.4, "TESLA-INV-PW3-5541", "🔋", G.purple),
-      item("ct-vision", "Apple Vision Pro 1TB", 3899, 1.2, "APPLE-SN-VP-77A2", "🥽", G.purple),
-      item("ct-iphone", "iPhone 16 Pro Max 1TB", 1599, 6, "APPLE-SN-IP-19C4", "📱", G.blue),
-      item("ct-deck", "Steam Deck OLED 1TB", 649, 9, "VALVE-SN-SD-0C31", "🎮", G.blue),
-      item("ct-airpods", "AirPods Pro 2", 249, 25, "APPLE-SN-AP-88F1", "🎧", G.gray),
-      item("ct-cybercup", "Tesla CyberWhistle + 굿즈 세트", 60, 58.38, "TESLA-MERCH-2211", "🎁", G.gray),
-    ],
+    badge: "SERIES 01",
   },
-  {
-    id: "pokemon-shadowless",
-    title: "POKEMON 1ST EDITION SHADOWLESS",
-    subtitle: "1세대 리자몽 PSA 10 포함",
-    category: "tcg",
-    price: 100,
-    emoji: "🔥",
-    art: "linear-gradient(120deg,#1a0500 0%,#b91c1c 40%,#f59e0b 65%,#1a0500 100%)",
-    tagline: "1999년, 그 카드. 홀로그램 반사광까지 그대로.",
+  "overclock-battle-station": {
+    category: "battle",
+    subtitle: "GPU · 디스플레이 · 입력장치",
+    tagline: "한 번의 시퀀스로 워크스테이션을 구성한다.",
     description:
-      "PSA 등급 인증 카드만으로 구성된 빈티지 TCG 박스. 1등 상품인 1st Edition Shadowless 리자몽 PSA 10은 PSA 인증 번호로 실시간 조회가 가능합니다.",
+      "풀빌드 데스크톱, RTX 5090, 49인치 OLED 울트라와이드를 포함한 시리즈. 전 항목 인보이스 또는 시리얼로 인증된다.",
+    art: "linear-gradient(120deg,#060606 0%,#202020 44%,#5c5c5c 70%,#060606 100%)",
     featured: true,
-    badge: "TOP 2",
-    items: [
-      item("pk-charizard10", "Charizard 1st Ed. Shadowless PSA 10", 45000, 0.03, "PSA-CERT-2019-10-4482", "🔥", G.gold),
-      item("pk-blastoise9", "Blastoise 1st Ed. Shadowless PSA 9", 8200, 0.5, "PSA-CERT-6103-9-1120", "🌊", G.purple),
-      item("pk-venusaur9", "Venusaur 1st Ed. Shadowless PSA 9", 5400, 0.9, "PSA-CERT-4402-9-7781", "🌿", G.purple),
-      item("pk-charizard7", "Charizard Base Set Unlimited PSA 7", 950, 5, "PSA-CERT-9910-7-2231", "🐉", G.blue),
-      item("pk-pikachu8", "Pikachu Base Set PSA 8", 220, 9, "PSA-CERT-1200-8-0091", "⚡", G.blue),
-      item("pk-holo", "Base Set 홀로 카드 (랜덤)", 35, 30, "RAW-HOLO-BS", "✨", G.gray),
-      item("pk-pack", "151 부스터 팩 1개", 6, 54.57, "SEALED-151-PACK", "🎴", G.gray),
-    ],
+    badge: "SERIES 02",
   },
-  {
-    id: "rolex-daytona",
-    title: "ROLEX DAYTONA VAULT",
-    subtitle: "데이토나 판다 다이얼 포함",
-    category: "luxury",
-    price: 80,
-    emoji: "⌚",
-    art: "linear-gradient(120deg,#050505 0%,#1c1917 40%,#a16207 65%,#050505 100%)",
-    tagline: "웨이팅 리스트 5년? 오늘 밤 금고가 열린다.",
+  "studio-zero-sound-stage": {
+    category: "sound",
+    subtitle: "모니터링 · 마이크 · 인터페이스",
+    tagline: "레퍼런스 체인 전체를 수록했다.",
     description:
-      "공식 리테일러 보증서와 풀 박스 구성의 럭셔리 워치 박스. 데이토나, 서브마리너, 스피드마스터를 실물 배송 또는 즉시 환급.",
+      "Genelec 모니터, Neumann U 87 Ai, Apollo x8p 로 구성된 음향 시리즈. 전 항목 시리얼 기반 정품 인증.",
+    art: "linear-gradient(120deg,#050505 0%,#1a1a1a 40%,#585858 68%,#050505 100%)",
     featured: true,
-    badge: "TOP 3",
-    items: [
-      item("rx-daytona", "Rolex Daytona 126500LN Panda", 36000, 0.03, "RSC-WARRANTY-2024-88121", "⌚", G.gold),
-      item("rx-sub", "Rolex Submariner 126610LN", 13500, 0.4, "RSC-WARRANTY-2024-31007", "🤿", G.purple),
-      item("rx-omega", "Omega Speedmaster Moonwatch", 6800, 1.0, "OMEGA-CARD-2023-4402", "🌙", G.purple),
-      item("rx-tudor", "Tudor Black Bay 58", 3900, 4, "TUDOR-CARD-2023-1109", "🕰️", G.blue),
-      item("rx-seiko", "Seiko Prospex Diver", 520, 10, "SEIKO-SN-0B771", "🐢", G.blue),
-      item("rx-strap", "이탈리안 가죽 스트랩 세트", 90, 30, "STRAP-SET-IT", "🧵", G.gray),
-      item("rx-winder", "워치 와인더 케이스", 45, 54.57, "WINDER-BASIC", "📦", G.gray),
-    ],
+    badge: "SERIES 03",
   },
-  {
-    id: "macbook-silicon",
-    title: "MACBOOK SILICON SERIES",
-    subtitle: "M4 Max 풀스펙 포함",
-    category: "tech",
-    price: 20,
-    emoji: "💻",
-    art: "linear-gradient(120deg,#0a0a0a 0%,#374151 50%,#d1d5db 75%,#0a0a0a 100%)",
-    tagline: "크리에이터의 무기고. 1등 상품은 M4 Max 128GB.",
-    description: "애플 실리콘 라인업으로 구성된 박스. 시리얼 넘버 기반 정품 인증.",
-    items: [
-      item("mb-max", "MacBook Pro 16 M4 Max 128GB", 6999, 0.1, "APPLE-SN-MBP-M4X-01", "💻", G.gold),
-      item("mb-pro", "MacBook Pro 14 M4 Pro", 2499, 1.5, "APPLE-SN-MBP-M4P-22", "💻", G.purple),
-      item("mb-air", "MacBook Air 15 M3", 1299, 6, "APPLE-SN-MBA-M3-19", "💻", G.blue),
-      item("mb-ipad", "iPad Air M2", 599, 10, "APPLE-SN-IPA-M2-40", "📱", G.blue),
-      item("mb-magic", "Magic Keyboard + Mouse", 179, 30, "APPLE-ACC-MK-77", "⌨️", G.gray),
-      item("mb-cable", "Thunderbolt 4 케이블", 69, 52.4, "APPLE-ACC-TB4", "🔌", G.gray),
-    ],
-  },
-  {
-    id: "ps5-pro-drop",
-    title: "PS5 PRO DROP",
-    subtitle: "30주년 한정판 포함",
-    category: "tech",
-    price: 15,
-    emoji: "🎮",
-    art: "linear-gradient(120deg,#020617 0%,#1e3a8a 50%,#93c5fd 75%,#020617 100%)",
-    tagline: "품절된 30주년 에디션이 여기 있다.",
-    description: "플레이스테이션 하드웨어와 주변기기 박스.",
-    items: [
-      item("ps-30th", "PS5 Pro 30th Anniversary Bundle", 2800, 0.15, "SONY-SN-30TH-0021", "🎮", G.gold),
-      item("ps-pro", "PS5 Pro", 699, 3, "SONY-SN-PRO-1188", "🎮", G.purple),
-      item("ps-portal", "PlayStation Portal", 199, 8, "SONY-SN-PORTAL-31", "📺", G.blue),
-      item("ps-dualsense", "DualSense Edge", 199, 9, "SONY-SN-DSE-77", "🕹️", G.blue),
-      item("ps-pulse", "Pulse Elite 헤드셋", 149, 25, "SONY-SN-PULSE-04", "🎧", G.gray),
-      item("ps-psn", "PSN 기프트 카드 $10", 10, 54.85, "PSN-GC-10", "🎫", G.gray),
-    ],
-  },
-  {
-    id: "pokemon-151",
-    title: "POKEMON 151 BOOSTER BOX",
-    subtitle: "리자몽 ex SAR 포함",
-    category: "tcg",
-    price: 10,
-    emoji: "🎴",
-    art: "linear-gradient(120deg,#052e16 0%,#15803d 45%,#facc15 70%,#052e16 100%)",
-    tagline: "151마리, 전부 모을 때까지.",
-    description: "포켓몬 카드 151 세트 기반 박스. PSA 그레이딩 카드와 실드 제품 혼합.",
-    items: [
-      item("p151-zard-sar", "Charizard ex SAR PSA 10", 1200, 0.2, "PSA-CERT-151-199-10", "🔥", G.gold),
-      item("p151-box", "151 부스터 박스 (실드)", 260, 2, "SEALED-151-BOX", "📦", G.purple),
-      item("p151-mew", "Mew ex SIR PSA 9", 180, 3, "PSA-CERT-151-205-9", "💫", G.purple),
-      item("p151-etb", "151 엘리트 트레이너 박스", 90, 8, "SEALED-151-ETB", "🎁", G.blue),
-      item("p151-tin", "151 컬렉션 틴", 30, 30, "SEALED-151-TIN", "🥫", G.gray),
-      item("p151-pack", "151 부스터 팩 1개", 6, 56.8, "SEALED-151-PACK", "🎴", G.gray),
-    ],
-  },
-  {
-    id: "onepiece-op01",
-    title: "ONE PIECE OP-01 ROMANCE DAWN",
-    subtitle: "루피 리더 패러렐 포함",
-    category: "tcg",
-    price: 12,
-    emoji: "🏴‍☠️",
-    art: "linear-gradient(120deg,#1a0a00 0%,#c2410c 45%,#fde047 70%,#1a0a00 100%)",
-    tagline: "해적왕이 될 카드는 이 안에 있다.",
-    description: "원피스 카드게임 초기 세트 박스.",
-    items: [
-      item("op-luffy-manga", "Luffy 만화 일러스트 한정판 PSA 10", 3200, 0.1, "PSA-CERT-OP01-MR-10", "👒", G.gold),
-      item("op-shanks", "Shanks Alt Art PSA 10", 450, 2, "PSA-CERT-OP01-SHK-10", "🗡️", G.purple),
-      item("op-box", "OP-01 부스터 박스 (실드)", 220, 3, "SEALED-OP01-BOX", "📦", G.purple),
-      item("op-zoro", "Zoro Leader Parallel", 80, 8, "RAW-OP01-ZORO-P", "⚔️", G.blue),
-      item("op-starter", "스타터 덱", 15, 30, "SEALED-OP-ST", "🃏", G.gray),
-      item("op-pack", "OP-01 부스터 팩 1개", 5, 56.9, "SEALED-OP01-PACK", "🎴", G.gray),
-    ],
-  },
-  {
-    id: "birkin-drop",
-    title: "HERMÈS BIRKIN DROP",
-    subtitle: "버킨 25 토고 포함",
-    category: "luxury",
-    price: 60,
-    emoji: "👜",
-    art: "linear-gradient(120deg,#1c0a00 0%,#ea580c 45%,#fed7aa 70%,#1c0a00 100%)",
-    tagline: "부티크에서 못 받은 초대장, 여기서 열린다.",
-    description: "하이엔드 가죽 제품 박스. 정품 감정서 동봉.",
-    items: [
-      item("hm-birkin", "Hermès Birkin 25 Togo Gold", 24000, 0.03, "HERMES-AUTH-B25-1102", "👜", G.gold),
-      item("hm-kelly", "Hermès Kelly 28 Epsom", 15000, 0.3, "HERMES-AUTH-K28-0431", "👝", G.purple),
-      item("hm-lv", "Louis Vuitton Neverfull MM", 2100, 2, "LV-AUTH-NF-7781", "🛍️", G.purple),
-      item("hm-wallet", "Hermès Bearn 지갑", 1200, 5, "HERMES-AUTH-BW-2210", "👛", G.blue),
-      item("hm-twilly", "Hermès Twilly 스카프", 230, 30, "HERMES-TW-3301", "🧣", G.gray),
-      item("hm-orange", "오렌지 박스 + 더스트백", 40, 62.67, "HERMES-BOX", "📦", G.gray),
-    ],
-  },
-  {
-    id: "sneaker-grail",
-    title: "SNEAKER GRAIL VAULT",
-    subtitle: "Travis Scott x Jordan 1 포함",
-    category: "luxury",
-    price: 20,
-    emoji: "👟",
-    art: "linear-gradient(120deg,#0a0a0a 0%,#7f1d1d 45%,#fca5a5 70%,#0a0a0a 100%)",
-    tagline: "리셀가 신경 쓰지 마. 그냥 신어.",
-    description: "하이프 스니커 박스. StockX 인증 태그 동봉.",
-    items: [
-      item("sn-ts", "Travis Scott x AJ1 Low OG Mocha", 1800, 0.15, "STOCKX-TAG-TSAJ1-0044", "👟", G.gold),
-      item("sn-dior", "Dior x AJ1 High", 8500, 0.02, "STOCKX-TAG-DIOR-0009", "👟", G.gold),
-      item("sn-offwhite", "Off-White x Nike Dunk Low", 900, 2, "STOCKX-TAG-OW-2211", "👟", G.purple),
-      item("sn-yeezy", "Yeezy 350 V2", 260, 8, "STOCKX-TAG-YZ-9901", "👟", G.blue),
-      item("sn-dunk", "Nike Dunk Low Panda", 110, 30, "STOCKX-TAG-DK-3120", "👟", G.gray),
-      item("sn-socks", "Nike 삭스 3팩", 20, 59.83, "NIKE-SOCKS", "🧦", G.gray),
-    ],
-  },
-  {
-    id: "supercar-key",
-    title: "SUPERCAR KEY DROP",
-    subtitle: "포르쉐 911 GT3 포함",
-    category: "tech",
-    price: 120,
-    emoji: "🏎️",
-    art: "linear-gradient(120deg,#000 0%,#111827 40%,#f59e0b 70%,#000 100%)",
-    tagline: "키 하나. 차 한 대. 배기음이 증명한다.",
-    description: "딜러십 인보이스 형태로 인증되는 슈퍼카 박스.",
-    items: [
-      item("sc-gt3", "Porsche 911 GT3 (992)", 230000, 0.005, "PORSCHE-INV-GT3-2024-01", "🏎️", G.gold),
-      item("sc-model3", "Tesla Model 3 Performance", 54000, 0.06, "TESLA-INV-M3P-7710", "🚗", G.purple),
-      item("sc-sim", "레이싱 시뮬레이터 풀세트", 4500, 1.2, "SIMRIG-INV-0392", "🕹️", G.purple),
-      item("sc-wheel", "Fanatec DD Pro 휠", 900, 6, "FANATEC-SN-DDP-441", "🛞", G.blue),
-      item("sc-jacket", "Porsche 모터스포츠 자켓", 220, 30, "PORSCHE-MERCH-JK", "🧥", G.gray),
-      item("sc-keychain", "슈퍼카 키링 세트", 35, 62.735, "MERCH-KEYRING", "🔑", G.gray),
-    ],
-  },
-];
+};
+
+function toBox(c: CatalogBox): Box {
+  const p = PRESENTATION[c.id];
+  if (!p) throw new Error(`presentation meta missing for ${c.id}`);
+  const ranked = [...c.probability_table].sort((a, b) => b.value_usd - a.value_usd);
+  const rankOf = new Map(ranked.map((e, i) => [e.item_id, i]));
+  return {
+    id: c.id,
+    title: c.name_en,
+    name_en: c.name_en,
+    name_zh: c.name_zh,
+    subtitle: p.subtitle,
+    category: p.category,
+    price: c.price_usd,
+    guaranteed_min_value: c.guaranteed_min_value,
+    art: p.art,
+    code: c.image_placeholder,
+    tagline: p.tagline,
+    description: p.description,
+    // 카탈로그 선언 순서를 그대로 보존한다
+    items: c.probability_table.map((e) => toItem(e, rankOf.get(e.item_id) ?? 0, c.probability_table.length)),
+    featured: p.featured,
+    badge: p.badge,
+  };
+}
+
+export const BOXES: Box[] = CATALOG.map(toBox);
 
 export const BOX_MAP: Record<string, Box> = Object.fromEntries(BOXES.map((b) => [b.id, b]));
 

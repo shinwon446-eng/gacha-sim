@@ -6,17 +6,20 @@ import { useGachaStore } from "@/store/useGachaStore";
 import { tierFor } from "@/lib/engine";
 import { usdt, cn } from "@/lib/format";
 import { CATEGORY_META } from "@/lib/types";
+import { LOCALES, LOCALE_LABEL, useLocale } from "@/lib/i18n";
 
 const MENU: { label: string; anchor: string }[] = [
   { label: "홈", anchor: "top" },
-  { label: CATEGORY_META.tech.label, anchor: CATEGORY_META.tech.anchor },
-  { label: CATEGORY_META.tcg.label, anchor: CATEGORY_META.tcg.anchor },
-  { label: CATEGORY_META.luxury.label, anchor: CATEGORY_META.luxury.anchor },
-  { label: "실시간 당첨 랭킹", anchor: "ranking" },
+  { label: CATEGORY_META.apex.label, anchor: CATEGORY_META.apex.anchor },
+  { label: CATEGORY_META.battle.label, anchor: CATEGORY_META.battle.anchor },
+  { label: CATEGORY_META.sound.label, anchor: CATEGORY_META.sound.anchor },
+  { label: "실시간 획득 랭킹", anchor: "ranking" },
 ];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const locale = useLocale((s) => s.locale);
+  const setLocale = useLocale((s) => s.setLocale);
   const balance = useGachaStore((s) => s.balance);
   const inventoryCount = useGachaStore((s) => s.inventory.filter((i) => i.status === "owned").length);
   const setDepositOpen = useGachaStore((s) => s.setDepositOpen);
@@ -41,27 +44,25 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-7 z-[60] transition-all duration-500",
-        scrolled ? "bg-[#141414]/95 shadow-[0_2px_24px_rgba(0,0,0,0.6)] backdrop-blur-md" : "bg-transparent",
+        "fixed inset-x-0 top-7 z-[60] transition-all duration-600 ease-cine",
+        scrolled ? "border-b border-white/[0.08] bg-canvas/95 backdrop-blur-md" : "border-b border-transparent bg-transparent",
       )}
     >
       {/* 스크롤 탑에서는 상단 그라디언트로 로고/메뉴 가독성 확보 */}
       {!scrolled && (
         <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-black/70 to-transparent" />
       )}
-      <div className="flex h-[68px] items-center justify-between px-[4%]">
+      <div className="flex h-[64px] items-center justify-between px-[4%]">
         <div className="flex items-center gap-8">
-          <button onClick={() => go("top")} className="flex items-center gap-1 select-none">
-            <span className="text-2xl font-black tracking-tighter text-accent drop-shadow-[0_0_12px_rgba(229,9,20,0.6)] md:text-3xl">
-              GACHAFLIX
-            </span>
+          <button onClick={() => go("top")} className="select-none">
+            <span className="display text-2xl font-bold text-white md:text-3xl">GACHAFLIX</span>
           </button>
-          <nav className="hidden items-center gap-5 lg:flex">
+          <nav className="hidden items-center gap-6 lg:flex">
             {MENU.map((m) => (
               <button
                 key={m.anchor}
                 onClick={() => go(m.anchor)}
-                className="text-sm text-gray-200 transition hover:text-gray-400"
+                className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-400 transition duration-600 ease-cine hover:text-white"
               >
                 {m.label}
               </button>
@@ -69,43 +70,70 @@ export function Navbar() {
           </nav>
         </div>
 
-        <div className="flex items-center gap-3 md:gap-5">
-          <Search className="hidden h-5 w-5 cursor-pointer text-white md:block" />
+        <div className="flex items-center gap-3 md:gap-4">
+          <Search className="hidden h-5 w-5 cursor-pointer text-neutral-300 transition hover:text-white md:block" />
+
+          {/* 로케일 — 표시 계층 전용 */}
+          <div className="hidden items-center border border-white/[0.08] sm:flex">
+            {LOCALES.map((l) => (
+              <button
+                key={l}
+                onClick={() => setLocale(l)}
+                aria-pressed={locale === l}
+                className={cn(
+                  "px-2 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] transition-colors duration-300 ease-cine",
+                  locale === l ? "bg-white text-black" : "text-neutral-400 hover:text-white",
+                )}
+              >
+                {LOCALE_LABEL[l]}
+              </button>
+            ))}
+          </div>
 
           {/* 실시간 USDT 잔액 + 등급/포인트 */}
-          <div className="flex items-center gap-2 rounded border border-white/15 bg-black/40 px-3 py-1.5 font-mono text-sm tabular-nums">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-            <span className="font-semibold">{usdt(balance)}</span>
-            <span className="hidden rounded border border-white/20 px-1 text-[10px] text-gray-400 md:inline">{tierName}</span>
-            {points > 0 && <span className="hidden text-[11px] font-bold text-gold md:inline">{points.toLocaleString()} P</span>}
+          <div className="flex items-center gap-2 border border-white/[0.08] bg-ink/70 px-3 py-1.5 font-mono text-sm tabular-nums">
+            <span className="h-1.5 w-1.5 flex-none animate-flicker bg-neutral-400" />
+            <span className="font-semibold text-white">{usdt(balance)}</span>
+            <span className="hidden border border-white/[0.08] px-1 text-[10px] uppercase tracking-[0.18em] text-neutral-400 md:inline">
+              {tierName}
+            </span>
+            {points > 0 && (
+              <span className="hidden text-[11px] font-semibold text-neutral-300 md:inline">
+                {points.toLocaleString()} P
+              </span>
+            )}
           </div>
 
           <button
             onClick={() => setDepositOpen(true)}
-            className="flex items-center gap-1.5 rounded bg-accent px-3 py-1.5 text-sm font-bold transition hover:bg-[#f6121d]"
+            className="flex items-center gap-1.5 bg-crimson px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white outline outline-1 outline-transparent transition duration-600 ease-cine hover:scale-[1.02] hover:outline-white"
           >
             <Wallet className="h-4 w-4" />
-            <span className="hidden sm:inline">입금/충전</span>
+            <span className="hidden sm:inline">입금 / 충전</span>
           </button>
 
-          <button onClick={() => setInventoryOpen(true)} className="relative" title="내 보관함">
+          <button
+            onClick={() => setInventoryOpen(true)}
+            className="relative text-neutral-300 transition hover:text-white"
+            title="획득 목록"
+          >
             <Package className="h-5 w-5" />
             {inventoryCount > 0 && (
-              <span className="absolute -right-2 -top-2 rounded-full bg-accent px-1.5 text-[10px] font-bold">
+              <span className="absolute -right-2 -top-2 bg-white px-1.5 font-mono text-[10px] font-bold tabular-nums text-black">
                 {inventoryCount}
               </span>
             )}
           </button>
 
-          <button className="relative hidden md:block" title="온체인 알림">
+          <button className="relative hidden text-neutral-300 transition hover:text-white md:block" title="온체인 알림">
             <Bell className="h-5 w-5" />
-            {openLogCount > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 h-2.5 w-2.5 rounded-full bg-accent ring-2 ring-[#141414]" />
-            )}
+            {openLogCount > 0 && <span className="absolute -right-1 -top-1 h-1.5 w-1.5 bg-white" />}
           </button>
 
-          <div className="h-8 w-8 overflow-hidden rounded bg-gradient-to-br from-accent to-purple-600">
-            <div className="flex h-full w-full items-center justify-center text-sm font-black">G</div>
+          <div className="h-8 w-8 overflow-hidden border border-white/[0.08] bg-surface">
+            <div className="display flex h-full w-full items-center justify-center text-base font-bold text-neutral-300">
+              G
+            </div>
           </div>
         </div>
       </div>

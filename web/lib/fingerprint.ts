@@ -22,7 +22,8 @@ export async function getFingerprint(): Promise<string> {
       ctx.fillStyle = "#f60";
       ctx.fillRect(0, 0, 120, 30);
       ctx.fillStyle = "#069";
-      ctx.fillText("GACHAFLIX🎰fp", 2, 2);
+      // ASCII 전용 토큰 — 글리프 폴백 차이로 해시가 흔들리지 않게 한다
+      ctx.fillText("GACHAFLIX-FP-0x1A", 2, 2);
       ctx.strokeStyle = "rgba(102,204,0,0.7)";
       ctx.beginPath();
       ctx.arc(60, 30, 20, 0, Math.PI * 2);

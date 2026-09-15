@@ -8,6 +8,7 @@ import { LINE_META, itemLine } from "@/lib/types";
 import { topItem } from "@/lib/rng";
 import { compactUsd } from "@/lib/format";
 import { useGachaStore } from "@/store/useGachaStore";
+import { AssetPlate } from "@/components/AssetPlate";
 
 export type EdgePosition = "first" | "last" | "middle";
 
@@ -20,9 +21,10 @@ interface Props {
 const HOVER_DELAY_MS = 300;
 
 /**
- * 넷플릭스 호버 카드.
- * - 300ms 지연 후 1.3배 확대
- * - 첫 카드 origin-left / 마지막 카드 origin-right / 나머지 center → 화면 밖 클리핑 방지
+ * 행 단위 타일 + 호버 확장 패널.
+ * - 기본 타일 호버: 1.02 배 + 크리스프 1px 화이트 엣지
+ * - 300ms 지연 후 1.02 에서 1.3 배로 확장
+ * - 첫 카드 origin-left / 마지막 카드 origin-right / 나머지 center — 화면 밖 클리핑 방지
  * - z-50 으로 인접 카드 위로 부상
  */
 export function BoxCard({ box, edge, onExpandChange }: Props) {
@@ -33,6 +35,8 @@ export function BoxCard({ box, edge, onExpandChange }: Props) {
   const setDetail = useGachaStore((s) => s.setDetail);
 
   const top = topItem(box);
+  const topLine = itemLine(top);
+  const topMeta = LINE_META[topLine];
   const origin = edge === "first" ? "left center" : edge === "last" ? "right center" : "center center";
 
   const enter = () => {
@@ -57,87 +61,117 @@ export function BoxCard({ box, edge, onExpandChange }: Props) {
       onMouseEnter={enter}
       onMouseLeave={leave}
     >
-      {/* 기본 카드 */}
+      {/* 기본 타일 */}
       <button
         onClick={() => setDetail(box.id)}
-        className="relative block aspect-video w-full overflow-hidden rounded bg-surface"
-        style={{ background: box.art }}
+        title={`${box.title} — 에피소드 정보`}
+        className="relative block aspect-video w-full overflow-hidden border border-hairline bg-ink outline-offset-0 transition-transform duration-300 ease-cine hover:scale-[1.02] hover:outline hover:outline-1 hover:outline-white"
       >
-        <div className="holo absolute inset-0 overflow-hidden" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
-        <div className="absolute left-2 top-2 text-3xl drop-shadow-lg">{box.emoji}</div>
+        <AssetPlate
+          code={box.code}
+          tone={box.art}
+          size="md"
+          className="absolute inset-0 !h-full !w-full !border-0"
+        />
+        {/* 하단 블랙 스크림 */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-ink/25 to-transparent"
+        />
         {box.badge && (
-          <span className="absolute right-2 top-2 rounded bg-accent px-1.5 py-0.5 text-[10px] font-bold">{box.badge}</span>
+          <span className="absolute right-0 top-0 border-b border-l border-hairline bg-ink/90 px-1.5 py-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-neutral-200">
+            {box.badge}
+          </span>
         )}
-        <div className="absolute inset-x-2 bottom-2 text-left">
-          <div className="truncate text-[13px] font-bold leading-tight drop-shadow">{box.title}</div>
-          <div className="text-[11px] text-gray-300">{box.price} USDT / 오픈</div>
-        </div>
+        <span className="absolute inset-x-2 bottom-1.5 block text-left">
+          <span className="display block truncate text-[15px] font-bold text-white">{box.title}</span>
+          <span className="label-caps mt-1 block truncate">
+            {box.price} USDT · 1회 재생
+          </span>
+        </span>
       </button>
 
-      {/* 확장 카드 */}
+      {/* 확장 패널 */}
       <AnimatePresence>
         {expanded && (
           <motion.div
-            className="absolute left-[3px] right-[3px] top-0 z-50 overflow-hidden rounded-md bg-elevation shadow-[0_24px_60px_rgba(0,0,0,0.9)]"
+            className="absolute left-[3px] right-[3px] top-0 z-50 overflow-hidden border border-hairline bg-elevation shadow-[0_18px_44px_rgba(0,0,0,0.9)] outline outline-1 outline-white outline-offset-0"
             style={{ transformOrigin: origin }}
-            initial={{ scale: 1, opacity: 0 }}
+            initial={{ scale: 1.02, opacity: 0 }}
             animate={{ scale: 1.3, opacity: 1 }}
-            exit={{ scale: 1, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            exit={{ scale: 1.02, opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
-            {/* 자동 재생 미니 티저 (홀로그램 스윕 + 부유 아이템) */}
-            <div className="relative aspect-video w-full overflow-hidden" style={{ background: box.art }}>
-              <div className="holo absolute inset-0 overflow-hidden" />
-              <div className="shimmer-bg absolute inset-0 opacity-50" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="animate-floaty text-6xl drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]">{top.emoji}</span>
-              </div>
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-elevation to-transparent" />
-              <div className="absolute left-2 top-2 flex items-center gap-1 rounded bg-black/60 px-1.5 py-0.5 text-[9px] font-bold">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" /> LIVE TEASER
-              </div>
+            {/* 최고가 애셋 프리뷰 */}
+            <div className="film-grain relative aspect-video w-full overflow-hidden bg-ink">
+              <AssetPlate
+                code={top.code}
+                tone={top.art}
+                size="lg"
+                active={topLine === "jackpot"}
+                className="absolute inset-0 !h-full !w-full"
+              />
               <span
-                className="absolute right-2 top-2 rounded px-1.5 py-0.5 text-[9px] font-black"
-                style={{ background: LINE_META[itemLine(top)].color, color: "#000" }}
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-elevation via-transparent to-ink/60"
+              />
+              <span
+                className="absolute left-2 top-2 z-10 border border-hairline bg-ink/85 px-1.5 py-[3px] text-[9px] font-bold uppercase tracking-[0.18em]"
+                style={{ color: topMeta.color }}
               >
-                1등 {compactUsd(top.value)}
+                {topMeta.grade}
+              </span>
+              <span className="absolute right-2 top-2 z-10 flex items-baseline gap-1 border border-hairline bg-ink/85 px-1.5 py-[3px]">
+                <span className="text-[8px] font-semibold uppercase tracking-[0.18em] text-neutral-500">최고가</span>
+                <span className="font-display text-[12px] font-bold uppercase leading-none tracking-tighter text-white">
+                  {compactUsd(top.value)}
+                </span>
               </span>
             </div>
 
             <div className="space-y-2 p-2.5">
-              {/* 즉시 뽑기 액션 바 */}
+              {/* 재생 컨트롤 */}
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => openBox(box.id, 1)}
-                  className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-black transition hover:bg-white/80"
-                  title={`1회 오픈 (${box.price} USDT)`}
+                  className="flex h-7 w-7 items-center justify-center bg-white text-black transition-colors duration-300 ease-cine hover:bg-neutral-300"
+                  title={`1회 재생 (${box.price} USDT)`}
+                  aria-label="1회 재생"
                 >
-                  <Play className="h-3.5 w-3.5 fill-black" />
+                  <Play className="h-3.5 w-3.5 fill-black" strokeWidth={1.5} />
                 </button>
                 <button
                   onClick={() => setDetail(box.id)}
-                  className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-400 text-white transition hover:border-white"
-                  title="상세 정보"
+                  className="flex h-7 w-7 items-center justify-center border border-hairline text-neutral-300 outline-offset-0 transition-colors duration-300 ease-cine hover:text-white hover:outline hover:outline-1 hover:outline-white"
+                  title="에피소드 정보"
+                  aria-label="에피소드 정보"
                 >
-                  <Info className="h-3.5 w-3.5" />
+                  <Info className="h-3.5 w-3.5" strokeWidth={1.5} />
                 </button>
                 <div className="flex-1" />
                 <button
                   onClick={() => setDetail(box.id)}
-                  className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-400 text-white transition hover:border-white"
+                  className="flex h-7 w-7 items-center justify-center border border-hairline text-neutral-300 outline-offset-0 transition-colors duration-300 ease-cine hover:text-white hover:outline hover:outline-1 hover:outline-white"
+                  title="전체 확률표"
+                  aria-label="전체 확률표"
                 >
-                  <ChevronDown className="h-3.5 w-3.5" />
+                  <ChevronDown className="h-3.5 w-3.5" strokeWidth={1.5} />
                 </button>
               </div>
 
-              <div className="text-[11px] font-bold leading-tight">{box.title}</div>
-              <div className="flex flex-wrap items-center gap-x-2 text-[9px] text-gray-300">
-                <span className="font-semibold text-emerald-400">{box.price} USDT</span>
-                <span className="text-gray-500">확률 공시는 상세에서</span>
+              <div className="display truncate text-[13px] font-bold text-white">{box.title}</div>
+
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span className="font-display text-[13px] font-bold uppercase leading-none tracking-tighter text-white">
+                  {box.price} USDT
+                </span>
+                <span aria-hidden className="h-2.5 w-px bg-white/15" />
+                <span className="label-caps">확률 공시 · 에피소드 정보</span>
               </div>
-              <div className="truncate text-[9px] text-gray-400">
-                <span style={{ color: LINE_META[itemLine(top)].color }}>●</span> {top.name}
+
+              <div className="flex items-center gap-1.5 overflow-hidden">
+                <span aria-hidden className="h-2 w-2 flex-none" style={{ background: topMeta.color }} />
+                <span className="truncate text-[10px] text-neutral-400">{top.name}</span>
               </div>
             </div>
           </motion.div>

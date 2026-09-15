@@ -2,11 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Copy, Check, CreditCard, Coins, Zap, Loader2 } from "lucide-react";
+import { X, Copy, Check, CreditCard, Coins, Loader2 } from "lucide-react";
 import { useGachaStore, type DepositMethod } from "@/store/useGachaStore";
 import { DEPOSIT_ADDRESSES } from "@/lib/config";
 import { cn, usdt } from "@/lib/format";
 import { playChime } from "@/lib/audio";
+import { useCopy } from "@/lib/i18n";
 
 type Network = keyof typeof DEPOSIT_ADDRESSES;
 const PRESETS = [50, 100, 500, 1000];
@@ -38,7 +39,7 @@ function PseudoQR({ seed }: { seed: string }) {
   }, [seed]);
 
   return (
-    <svg viewBox={`0 0 ${cells.n} ${cells.n}`} className="h-40 w-40 rounded bg-white p-2" shapeRendering="crispEdges">
+    <svg viewBox={`0 0 ${cells.n} ${cells.n}`} className="h-40 w-40 bg-white p-2" shapeRendering="crispEdges">
       {cells.out.map((on, i) =>
         on ? <rect key={i} x={i % cells.n} y={Math.floor(i / cells.n)} width={1} height={1} fill="#000" /> : null,
       )}
@@ -46,7 +47,9 @@ function PseudoQR({ seed }: { seed: string }) {
   );
 }
 
+/** 멤버십 결제 시트 레지스터. 헤어라인 탭, 무채색 표면, 크림슨은 확정 액션에만. */
 export function DepositModal() {
+  const { t: tc } = useCopy();
   const open = useGachaStore((s) => s.depositOpen);
   const setOpen = useGachaStore((s) => s.setDepositOpen);
   const deposit = useGachaStore((s) => s.deposit);
@@ -90,71 +93,85 @@ export function DepositModal() {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 p-4"
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={() => setOpen(false)}
         >
           <motion.div
-            className="relative w-full max-w-lg overflow-hidden rounded-lg bg-elevation shadow-2xl"
-            initial={{ scale: 0.92, y: 20 }}
-            animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0.92, y: 20 }}
-            transition={{ type: "spring", stiffness: 300, damping: 26 }}
+            className="relative w-full max-w-lg overflow-hidden border border-white/[0.08] bg-elevation"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 16 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* 넷플릭스 멤버십 결제창 헤더 */}
-            <div className="flex items-start justify-between border-b border-white/10 px-6 pt-6 pb-4">
+            {/* 프로토타입 고지 — 결제 화면 최상단 고정. 축약하거나 약화하지 않는다. */}
+            <div className="bg-crimson px-4 py-2 text-center text-[11px] font-bold tracking-tight text-white">
+              프로토타입 모의 결제 화면: 실제 입금 불가 · 표기된 주소는 자리 표시
+            </div>
+
+            {/* 결제 시트 헤더 */}
+            <div className="flex items-start justify-between border-b border-white/[0.08] px-6 pb-4 pt-6">
               <div>
-                <div className="text-xs uppercase tracking-widest text-gray-400">STEP 2 OF 3</div>
-                <h2 className="mt-1 text-2xl font-bold">결제 방법을 선택하세요</h2>
-                <p className="mt-1 text-sm text-gray-400">
-                  현재 잔액 <span className="font-mono text-white">{usdt(balance)}</span> · 언제든 환급 가능
+                <div className="label-caps">멤버십 결제 · 2 / 3 단계</div>
+                <h2 className="display mt-2 text-3xl font-bold text-white">결제 수단</h2>
+                <p className="mt-2 text-xs text-neutral-400">
+                  잔액 <span className="font-mono text-white">{usdt(balance)}</span>
+                  <span className="mx-1.5 text-neutral-700">/</span>
+                  보유 상품은 시세의 80% USDT 로 환급 가능
                 </p>
               </div>
-              <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-white">
-                <X className="h-6 w-6" />
+              <button
+                onClick={() => setOpen(false)}
+                aria-label="닫기"
+                className="text-neutral-500 transition duration-600 ease-cine hover:text-white"
+              >
+                <X className="h-5 w-5" />
               </button>
             </div>
 
-            {/* 탭 */}
-            <div className="grid grid-cols-2 border-b border-white/10">
+            {/* 탭 — 헤어라인, 활성 탭만 1px 하단 룰 */}
+            <div className="grid grid-cols-2 border-b border-white/[0.08]">
               {(
                 [
-                  { key: "usdt", label: "USDT 즉시 입금", icon: Coins, sub: "TRC-20 · ERC-20" },
-                  { key: "card", label: "신용카드 간편 결제", icon: CreditCard, sub: "수수료 0% 이벤트" },
+                  { key: "usdt", label: "USDT 전송", icon: Coins, sub: "TRC-20 / ERC-20" },
+                  { key: "card", label: "카드 결제", icon: CreditCard, sub: "MoonPay / Stripe" },
                 ] as const
-              ).map((t) => (
+              ).map((t, idx) => (
                 <button
                   key={t.key}
                   onClick={() => setTab(t.key)}
                   className={cn(
-                    "flex flex-col items-center gap-0.5 py-3 text-sm font-semibold transition",
-                    tab === t.key ? "border-b-2 border-accent text-white" : "text-gray-400 hover:text-gray-200",
+                    "flex flex-col items-center gap-1 py-3.5 transition duration-600 ease-cine",
+                    idx === 0 && "border-r border-white/[0.08]",
+                    tab === t.key
+                      ? "border-b border-white bg-white/[0.03] text-white"
+                      : "text-neutral-500 hover:text-neutral-200",
                   )}
                 >
-                  <span className="flex items-center gap-2">
-                    <t.icon className="h-4 w-4" />
+                  <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em]">
+                    <t.icon className="h-3.5 w-3.5" />
                     {t.label}
                   </span>
-                  <span className="text-[11px] font-normal text-gray-500">{t.sub}</span>
+                  <span className="text-[10px] tracking-wide text-neutral-600">{t.sub}</span>
                 </button>
               ))}
             </div>
 
             <div className="px-6 py-5">
               {/* 금액 */}
-              <div className="mb-4">
-                <div className="mb-2 text-xs text-gray-400">충전 금액 (USDT)</div>
-                <div className="grid grid-cols-4 gap-2">
+              <div className="mb-5">
+                <div className="label-caps mb-2">충전 금액 (USDT)</div>
+                <div className="grid grid-cols-4 gap-px bg-white/[0.08]">
                   {PRESETS.map((p) => (
                     <button
                       key={p}
                       onClick={() => setAmount(p)}
                       className={cn(
-                        "rounded border py-2 text-sm font-semibold transition",
-                        amount === p ? "border-accent bg-accent/20" : "border-white/15 hover:border-white/40",
+                        "bg-elevation py-2.5 font-display text-lg font-bold tracking-tighter transition duration-600 ease-cine",
+                        amount === p ? "bg-white/[0.06] text-white" : "text-neutral-500 hover:text-white",
                       )}
                     >
                       {p}
@@ -165,21 +182,22 @@ export function DepositModal() {
                   type="number"
                   min={1}
                   value={amount}
+                  aria-label="충전 금액"
                   onChange={(e) => setAmount(Math.max(0, Number(e.target.value)))}
-                  className="mt-2 w-full rounded border border-white/15 bg-black/40 px-3 py-2 font-mono text-sm outline-none focus:border-white/50"
+                  className="mt-px w-full border border-white/[0.08] bg-ink px-3 py-2.5 font-mono text-sm text-white outline-none transition duration-600 ease-cine focus:border-white/40"
                 />
               </div>
 
               {tab === "usdt" ? (
                 <div>
-                  <div className="mb-3 flex gap-2">
+                  <div className="mb-3 flex gap-px bg-white/[0.08]">
                     {(Object.keys(DEPOSIT_ADDRESSES) as Network[]).map((n) => (
                       <button
                         key={n}
                         onClick={() => setNetwork(n)}
                         className={cn(
-                          "rounded-full border px-3 py-1 text-xs font-semibold",
-                          network === n ? "border-emerald-400 text-emerald-300" : "border-white/15 text-gray-400",
+                          "bg-elevation px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] transition duration-600 ease-cine",
+                          network === n ? "bg-white/[0.06] text-white" : "text-neutral-500 hover:text-neutral-200",
                         )}
                       >
                         {n}
@@ -190,32 +208,38 @@ export function DepositModal() {
                     <PseudoQR seed={address + network} />
                     <div className="flex flex-1 flex-col justify-between">
                       <div>
-                        <div className="text-xs text-gray-400">입금 주소 ({network})</div>
-                        <div className="mt-1 break-all rounded bg-black/40 p-2 font-mono text-[11px] text-gray-200">
+                        <div className="label-caps">입금 주소 · {network}</div>
+                        <div className="mt-1.5 break-all border border-white/[0.08] bg-ink p-2 font-mono text-[11px] text-neutral-300">
                           {address}
                         </div>
                         <button
                           onClick={copy}
-                          className="mt-2 flex items-center gap-1 text-xs text-gray-300 hover:text-white"
+                          className="mt-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-400 transition duration-600 ease-cine hover:text-white"
                         >
-                          {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
-                          {copied ? "복사됨" : "원클릭 복사"}
+                          {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                          {copied ? "복사됨" : "주소 복사"}
                         </button>
                       </div>
-                      <p className="text-[11px] leading-snug text-gray-500">
-                        오라클 기반 즉시 잔액 동기화 — 온체인 컨펌을 기다리지 않습니다.
-                      </p>
+                      <div>
+                        <p className="text-[11px] leading-snug text-neutral-500">
+                          모의 동기화: 온체인 컨펌 절차를 실행하지 않습니다.
+                        </p>
+                        {/* 네트워크/주소 경고 — 자산 유실 고지. 축약하거나 약화하지 않는다. */}
+                        <p className="mt-2 border-l-2 border-crimson bg-crimson/[0.06] py-1.5 pl-2 text-[11px] leading-snug text-neutral-300">
+                          {tc("withdrawalWarning")}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div>
                   {/* 카드 정보는 클라이언트에서 직접 다루지 않고 PSP(MoonPay/Stripe) 위젯이 이 자리에 마운트된다 */}
-                  <div className="flex h-[168px] flex-col items-center justify-center rounded border border-dashed border-white/20 bg-black/30 text-center">
-                    <CreditCard className="h-8 w-8 text-gray-500" />
-                    <div className="mt-2 text-sm text-gray-300">MoonPay / Stripe 카드 위젯 영역</div>
-                    <div className="mt-1 text-[11px] text-gray-500">
-                      복잡한 코인 전송 없이 · 원클릭 3초 충전 · 수수료 0% 이벤트 중
+                  <div className="flex h-[168px] flex-col items-center justify-center border border-dashed border-white/15 bg-ink text-center">
+                    <CreditCard className="h-7 w-7 text-neutral-600" />
+                    <div className="label-caps mt-3">MoonPay / Stripe 위젯 영역</div>
+                    <div className="mt-2 text-[11px] text-neutral-500">
+                      코인 전송 없이 결제 · PSP 위젯 연동 예정 · 수수료 조건은 결제 단계에서 표기
                     </div>
                   </div>
                 </div>
@@ -225,21 +249,19 @@ export function DepositModal() {
                 onClick={() => confirm(tab)}
                 disabled={processing !== "idle" || amount <= 0}
                 className={cn(
-                  "mt-5 flex w-full items-center justify-center gap-2 rounded py-3 text-base font-bold transition",
-                  processing === "done" ? "bg-emerald-500" : "bg-accent hover:bg-[#f6121d]",
-                  "disabled:cursor-not-allowed disabled:opacity-80",
+                  "mt-5 flex w-full items-center justify-center gap-2 py-3.5 font-display text-lg font-bold uppercase tracking-tighter transition duration-600 ease-cine",
+                  processing === "done"
+                    ? "bg-white text-ink"
+                    : "bg-crimson text-white hover:outline hover:outline-1 hover:outline-white",
+                  "disabled:cursor-not-allowed disabled:opacity-70",
                 )}
               >
-                {processing === "idle" && (
-                  <>
-                    <Zap className="h-4 w-4" />
-                    {tab === "usdt" ? `입금 완료 확인 · ${amount} USDT` : `카드로 ${amount} USDT 충전`}
-                  </>
-                )}
+                {processing === "idle" &&
+                  (tab === "usdt" ? `입금 확인 · ${amount} USDT` : `카드 결제 · ${amount} USDT`)}
                 {processing === "sync" && (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    {tab === "usdt" ? "오라클 잔액 동기화 중…" : "카드 승인 중…"}
+                    {tab === "usdt" ? "잔액 동기화 중" : "카드 승인 중"}
                   </>
                 )}
                 {processing === "done" && (
@@ -248,8 +270,8 @@ export function DepositModal() {
                   </>
                 )}
               </button>
-              <p className="mt-3 text-center text-[11px] text-gray-500">
-                결제 시 이용약관 및 확률 고지에 동의한 것으로 간주됩니다.
+              <p className="mt-3 text-center text-[11px] leading-relaxed text-neutral-500">
+                프로토타입 화면입니다. 실제 약관 동의나 결제는 발생하지 않습니다.
               </p>
             </div>
           </motion.div>

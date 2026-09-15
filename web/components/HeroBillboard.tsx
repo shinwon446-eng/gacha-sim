@@ -6,13 +6,20 @@ import { Play, Info, ShieldCheck, Link2, ChevronRight, Loader2 } from "lucide-re
 import { BOXES } from "@/lib/data";
 import { useGachaStore } from "@/store/useGachaStore";
 import { topItem } from "@/lib/rng";
-import { compactUsd } from "@/lib/format";
+import { compactUsd, cn } from "@/lib/format";
 import { LINE_META } from "@/lib/types";
+import { AssetPlate } from "./AssetPlate";
 import { BoosterGauge } from "./BoosterGauge";
+import { useCopy } from "@/lib/i18n";
 
 const FEATURED = BOXES.filter((b) => b.featured);
 const ROTATE_MS = 9000;
-const SPIN_MS = 1500; // 룰렛 연출 1.5초
+const SPIN_MS = 1500; // 릴 스캔 연출 1.5초
+
+const JACKPOT = LINE_META.jackpot;
+
+/** cubic-bezier(0.16, 1, 0.3, 1) — 토큰의 cine 이징과 동일 */
+const CINE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 export function HeroBillboard() {
   const [idx, setIdx] = useState(0);
@@ -22,6 +29,7 @@ export function HeroBillboard() {
   const openBox = useGachaStore((s) => s.openBox);
   const setDetail = useGachaStore((s) => s.setDetail);
   const priceFor = useGachaStore((s) => s.priceFor);
+  const { t: tc } = useCopy();
   const isMember = useGachaStore((s) => s.isMember);
   const hydrated = useGachaStore((s) => s.demoHydrated);
   const runGuestDemo = useGachaStore((s) => s.runGuestDemo);
@@ -35,6 +43,7 @@ export function HeroBillboard() {
 
   const box = FEATURED[idx];
   const top = topItem(box);
+  const plate = spinning ? FEATURED[reel % FEATURED.length] : box;
 
   const startDemo = async () => {
     if (spinning) return;
@@ -51,87 +60,102 @@ export function HeroBillboard() {
   };
 
   return (
-    <section id="top" className="relative h-[85vh] min-h-[560px] w-full overflow-hidden">
+    <section id="top" className="relative h-[86vh] min-h-[580px] w-full overflow-hidden bg-canvas">
+      {/* 배경 톤 램프 */}
       <AnimatePresence mode="sync">
         <motion.div
           key={box.id}
           className="absolute inset-0"
           style={{ background: box.art }}
-          initial={{ opacity: 0, scale: 1.08 }}
+          initial={{ opacity: 0, scale: 1.06 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1.4, ease: "easeOut" }}
-        >
-          <div className="holo absolute inset-0 overflow-hidden">
-            <div className="absolute right-[8%] top-[18%] animate-floaty select-none text-[22vw] leading-none opacity-90 drop-shadow-[0_30px_60px_rgba(0,0,0,0.8)] md:text-[18vw]">
-              {spinning ? FEATURED[reel % FEATURED.length].emoji : box.emoji}
-            </div>
-          </div>
-          <div className="shimmer-bg absolute inset-0 opacity-40" />
-        </motion.div>
+          transition={{ duration: 1.4, ease: CINE }}
+        />
       </AnimatePresence>
 
-      <div className="vignette absolute inset-0" />
-      <div className="billboard-fade absolute inset-0" />
-      <div className="absolute inset-y-0 left-0 w-3/4 bg-gradient-to-r from-[#141414]/90 via-[#141414]/40 to-transparent" />
+      {/* 텍스처 레이어 — scanlines / film-grain 은 각각 별도 래퍼 */}
+      <div className="scanlines pointer-events-none absolute inset-0" />
+      <div className="film-grain pointer-events-none absolute inset-0 overflow-hidden" />
 
-      <div className="absolute bottom-[10%] left-[4%] right-[4%] max-w-3xl md:bottom-[14%]">
-        <div className="mb-3 flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-wider">
-          <span className="flex items-center gap-1 rounded border border-emerald-400/60 px-2 py-0.5 text-emerald-300">
-            <Link2 className="h-3 w-3" /> 온체인 확률 공개
+      {/* 우측 애셋 플레이트 — 부유하는 글리프를 대체한다 */}
+      <div className="pointer-events-none absolute right-[6%] top-1/2 hidden -translate-y-1/2 xl:block">
+        <AssetPlate
+          size="xl"
+          code={plate.code}
+          tone={plate.art}
+          label={spinning ? "SCANNING REEL" : (box.badge ?? "FEATURED REEL")}
+          active={spinning}
+          className={cn("transition-transform duration-700 ease-cine", spinning && "animate-flicker")}
+        />
+      </div>
+
+      <div className="pointer-events-none absolute inset-0 vignette" />
+      <div className="pointer-events-none absolute inset-0 billboard-fade" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-3/4 bg-gradient-to-r from-canvas via-canvas/70 to-transparent" />
+
+      <div className="absolute bottom-[9%] left-[4%] right-[4%] max-w-3xl md:bottom-[13%]">
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <span className="label-caps inline-flex items-center gap-1.5 border border-white/[0.08] px-2 py-1 text-neutral-300">
+            <Link2 className="h-3 w-3 text-neutral-500" /> 온체인 확률 공개
           </span>
-          <span className="flex items-center gap-1 rounded border border-white/30 px-2 py-0.5 text-gray-200">
-            <ShieldCheck className="h-3 w-3" /> 인증서 번호 공개
+          <span className="label-caps inline-flex items-center gap-1.5 border border-white/[0.08] px-2 py-1 text-neutral-300">
+            <ShieldCheck className="h-3 w-3 text-neutral-500" /> 인증서 번호 공개
           </span>
         </div>
 
-        {/* 메인 카피 */}
-        <h1 className="neon-title text-3xl font-black leading-[1.1] tracking-tight md:text-5xl">
-          남들은 이미 본전 뽑고 시작했습니다.
-          <br />
-          당신의 첫 상자는?
-        </h1>
-        <p className="text-shadow-lg mt-3 text-sm text-gray-200 md:text-base">
-          조작 없는 투명 확률. 10번 열면 [{LINE_META.jackpot.label}] 가중치 5배 부스터 가동 중
-        </p>
+        {/* 편성 표기 */}
+        <div className="label-caps mb-2 flex flex-wrap items-center gap-2">
+          <span>이번 주 편성</span>
+          <span className="text-neutral-700">/</span>
+          <span className="font-semibold text-crimson">{JACKPOT.grade}</span>
+          <span className="text-neutral-700">/</span>
+          <span>{JACKPOT.desc}</span>
+        </div>
 
-        {/* 현재 박스 */}
+        {/* 메인 타이틀 — 편성된 릴 */}
         <AnimatePresence mode="wait">
           <motion.div
             key={box.id}
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.4 }}
-            className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-300"
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.7, ease: CINE }}
           >
-            {box.badge && <span className="rounded bg-accent px-2 py-0.5 text-[11px] font-bold">{box.badge}</span>}
-            <span className="font-bold text-white">{box.title}</span>
-            <span className="text-gray-500">·</span>
-            <span>
-              1등 <span className="font-bold text-gold">{top.name}</span>{" "}
-              <span className="text-gray-400">({compactUsd(top.value)})</span>
-            </span>
+            <h1 className="display text-5xl font-bold text-white md:text-7xl">{box.title}</h1>
+            <p className="mt-3 max-w-xl text-sm text-neutral-400 md:text-base">{box.subtitle}</p>
+            <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+              {box.badge && (
+                <span className="label-caps border border-crimson/60 px-1.5 py-0.5 text-crimson">{box.badge}</span>
+              )}
+              <span className="label-caps text-neutral-500">TOP ASSET</span>
+              <span className="font-semibold text-white">{top.name}</span>
+              <span className="font-mono text-xs text-neutral-500">{compactUsd(top.value)}</span>
+            </div>
           </motion.div>
         </AnimatePresence>
+
+        <p className="mt-4 max-w-xl text-xs leading-relaxed text-neutral-400 md:text-sm">
+          확률은 전량 공개된다. 10회 재생마다 {JACKPOT.grade} 가중치 5배 부스터가 적용된다.
+        </p>
 
         <BoosterGauge box={box} className="mt-4 max-w-xl" />
 
         {/* 단일 진입점 */}
-        <div className="mt-4 flex flex-wrap items-center gap-3">
+        <div className="mt-5 flex flex-wrap items-center gap-2.5">
           {hydrated && !isMember ? (
             <button
               onClick={startDemo}
               disabled={spinning}
-              className="flex items-center gap-2 rounded bg-gold px-7 py-3 text-base font-black text-black transition hover:bg-yellow-300 disabled:opacity-80 md:text-lg"
+              className="flex items-center gap-2 bg-crimson px-7 py-3 text-sm font-bold uppercase tracking-[0.12em] text-white outline outline-1 outline-transparent transition duration-600 ease-cine hover:scale-[1.02] hover:outline-white disabled:opacity-70 md:text-base"
             >
               {spinning ? (
                 <>
-                  <Loader2 className="h-5 w-5 animate-spin" /> 오픈 중…
+                  <Loader2 className="h-5 w-5 animate-spin" /> 재생 중
                 </>
               ) : (
                 <>
-                  돈 쓰지 마세요. 내 손으로 1회 무료 체험하기
+                  {tc("previewPlay")} · 결제 없음
                   <ChevronRight className="h-5 w-5" />
                 </>
               )}
@@ -140,33 +164,45 @@ export function HeroBillboard() {
             <>
               <button
                 onClick={() => openBox(box.id, 1)}
-                className="flex items-center gap-2 rounded bg-white px-6 py-2.5 text-base font-bold text-black transition hover:bg-white/80"
+                className="flex items-center gap-2 bg-crimson px-6 py-2.5 text-sm font-bold uppercase tracking-[0.12em] text-white outline outline-1 outline-transparent transition duration-600 ease-cine hover:scale-[1.02] hover:outline-white md:text-base"
               >
-                <Play className="h-5 w-5 fill-black" /> 1회 오픈 ({priceFor(box, 1)} USDT)
+                <Play className="h-5 w-5 fill-white" /> {tc("boxOpen")} · {priceFor(box, 1)} USDT
               </button>
               <button
                 onClick={() => openBox(box.id, 10)}
-                className="flex items-center gap-2 rounded bg-gold px-6 py-2.5 text-base font-bold text-black transition hover:bg-yellow-300"
+                className="flex items-center gap-2 border border-white/[0.08] bg-white/[0.06] px-6 py-2.5 text-sm font-bold uppercase tracking-[0.12em] text-white outline outline-1 outline-transparent transition duration-600 ease-cine hover:scale-[1.02] hover:outline-white md:text-base"
               >
-                <Play className="h-5 w-5 fill-black" /> 10연속 ({priceFor(box, 10)} USDT · 10% OFF)
+                <Play className="h-5 w-5 fill-white" /> {tc("boxOpenMulti")} · {priceFor(box, 10)} USDT · 10% OFF
               </button>
             </>
           )}
           <button
             onClick={() => setDetail(box.id)}
-            className="flex items-center gap-2 rounded bg-gray-500/60 px-5 py-2.5 text-sm font-bold transition hover:bg-gray-500/40"
+            className="flex items-center gap-2 border border-white/[0.08] bg-transparent px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-neutral-300 outline outline-1 outline-transparent transition duration-600 ease-cine hover:text-white hover:outline-white md:text-sm"
           >
-            <Info className="h-5 w-5" /> 상세 정보 및 확률
+            <Info className="h-4 w-4" /> {tc("episodeInfo")}
           </button>
         </div>
+
+        {hydrated && !isMember && (
+          /* 지급 불가 고지 — 장식용 label-caps 로 낮추지 않는다. */
+          <p className="mt-3 inline-block border-l-2 border-crimson bg-crimson/[0.08] py-1.5 pl-3 pr-3 text-[12px] font-bold tracking-tight text-white">
+            비회원 모의 체험: 실제 지급 불가 / 즉시 소멸 대상
+          </p>
+        )}
       </div>
 
+      {/* 편성 인디케이터 */}
       <div className="absolute bottom-[4%] right-[4%] flex gap-1.5">
         {FEATURED.map((b, i) => (
           <button
             key={b.id}
             onClick={() => setIdx(i)}
-            className={`h-1 rounded-full transition-all ${i === idx ? "w-8 bg-white" : "w-4 bg-white/30"}`}
+            aria-label={b.title}
+            className={cn(
+              "h-[3px] transition-all duration-600 ease-cine",
+              i === idx ? "w-10 bg-white" : "w-4 bg-white/25 hover:bg-white/50",
+            )}
           />
         ))}
       </div>

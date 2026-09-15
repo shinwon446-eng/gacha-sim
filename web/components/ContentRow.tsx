@@ -50,36 +50,66 @@ export function ContentRow({ id, title, boxes }: Props) {
     return "middle";
   };
 
+  // 표시 전용 페이지 지시자 — 페이징 상태를 바꾸지 않는다
+  const pageCount = Math.max(1, Math.ceil(boxes.length / perPage));
+  const activePage = Math.min(Math.floor(start / perPage), pageCount - 1);
+
   return (
-    // 호버 중인 행은 z-50 으로 다음 행 위로 부상 → 확장 카드가 파묻히지 않음
+    // 호버 중인 행은 z-50 으로 다음 행 위로 부상 — 확장 카드가 파묻히지 않는다
     <section id={id} className={cn("group relative mb-10 scroll-mt-28", expandedCount > 0 ? "z-50" : "z-10")}>
-      <h2 className="mb-2 px-[4%] text-lg font-bold text-gray-100 md:text-xl">{title}</h2>
+      {/* 헤어라인 섹션 헤더 */}
+      <div className="mb-3 px-[4%]">
+        <div className="flex items-end justify-between gap-4 border-b border-hairline pb-2">
+          <div className="min-w-0">
+            <div className="label-caps">라인업</div>
+            <h2 className="display mt-1 truncate text-xl font-bold text-white md:text-2xl">{title}</h2>
+          </div>
+          <div className="flex flex-none items-center gap-3 pb-0.5">
+            <span className="label-caps hidden sm:block">{boxes.length} 시퀀스</span>
+            {pageCount > 1 && (
+              <div aria-hidden className="flex items-center gap-1">
+                {Array.from({ length: pageCount }).map((_, i) => (
+                  <span
+                    key={i}
+                    className={cn(
+                      "h-[2px] w-4 transition-colors duration-300 ease-cine",
+                      i === activePage ? "bg-white" : "bg-white/20",
+                    )}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       <div className="relative">
-        {/* 좌우 화살표 */}
+        {/* 좌우 페이징 — 블랙 스크림 위의 얇은 셰브론 */}
         <button
           onClick={() => setPage((p) => Math.max(0, p - 1))}
+          aria-label="이전 페이지"
           className={cn(
-            "absolute bottom-0 left-0 top-0 z-30 flex w-[4%] items-center justify-center bg-black/50 opacity-0 transition hover:bg-black/70 group-hover:opacity-100",
+            "absolute bottom-0 left-0 top-0 z-30 flex w-[4%] items-center justify-center bg-gradient-to-r from-ink/90 via-ink/70 to-transparent text-neutral-400 opacity-0 transition duration-300 ease-cine hover:text-white group-hover:opacity-100",
             !canPrev && "pointer-events-none !opacity-0",
           )}
         >
-          <ChevronLeft className="h-9 w-9" />
+          <ChevronLeft className="h-7 w-7" strokeWidth={1.25} />
         </button>
         <button
           onClick={() => setPage((p) => p + 1)}
+          aria-label="다음 페이지"
           className={cn(
-            "absolute bottom-0 right-0 top-0 z-30 flex w-[4%] items-center justify-center bg-black/50 opacity-0 transition hover:bg-black/70 group-hover:opacity-100",
+            "absolute bottom-0 right-0 top-0 z-30 flex w-[4%] items-center justify-center bg-gradient-to-l from-ink/90 via-ink/70 to-transparent text-neutral-400 opacity-0 transition duration-300 ease-cine hover:text-white group-hover:opacity-100",
             !canNext && "pointer-events-none !opacity-0",
           )}
         >
-          <ChevronRight className="h-9 w-9" />
+          <ChevronRight className="h-7 w-7" strokeWidth={1.25} />
         </button>
 
-        {/* 트랙: overflow 를 숨기지 않고 translateX 로 이동 → 확장 카드가 위/아래로 자유롭게 돌출 */}
+        {/* 트랙: overflow 를 숨기지 않고 translateX 로 이동 — 확장 카드가 위/아래로 자유롭게 돌출 */}
         <div className="px-[4%]">
           <div
-            className="flex transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
+            className="flex transition-transform duration-700 ease-cine will-change-transform"
             style={{ transform: `translateX(-${(start / perPage) * 100}%)` }}
           >
             {boxes.map((box, i) => (

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { getBox } from "@/lib/data";
-import { isBoosterActive, BOOSTER_THRESHOLD, DEMO_DURATION_MS } from "@/lib/engine";
+import { isBoosterActive, BOOSTER_THRESHOLD, BOOST_MULT, DEMO_DURATION_MS } from "@/lib/engine";
 import { apiOpenBox, apiGuestDemo } from "@/lib/gateway";
 import { getFingerprint } from "@/lib/fingerprint";
 import { topItem } from "@/lib/rng";
@@ -14,7 +14,7 @@ export interface TheaterSession {
   box: Box;
   count: OpenCount;
   results: OwnedItem[];
-  /** 이번 세션에서 부스터가 발동했는지 (골드 연출) */
+  /** 이번 세션에서 부스터가 발동했는지 (크림슨 연출) */
   boosterTriggered?: boolean;
 }
 
@@ -22,15 +22,19 @@ export interface Toast {
   id: string;
   title: string;
   body: string;
-  tone?: "gold" | "red" | "neutral";
+  /**
+   * 좌측 1px 룰의 톤. highlight = 흰색 룰, red = 크림슨 룰(오류 전용), neutral = 무채색 룰.
+   * "gold" 는 highlight 의 deprecated 별칭이며 색상 의미는 남아있지 않다.
+   */
+  tone?: "highlight" | "red" | "neutral" | "gold";
 }
 
 export type DepositMethod = "usdt" | "card";
 
 /**
- * 비회원 모의 체험 상태 머신: idle → shown → expired
+ * 비회원 모의 체험 상태 머신: idle, shown, expired 순서로만 전이한다.
  *
- * ⚠️ 이 체험은 어떤 경우에도 상품을 지급하지 않는다.
+ * 경고: 이 체험은 어떤 경우에도 상품을 지급하지 않는다.
  * 보관함(inventory)·잔액·포인트 어디에도 상품이 인입되지 않으며, 표시만 하고 소멸한다.
  */
 export interface GuestDemoState {
@@ -142,15 +146,15 @@ export const useGachaStore = create<GachaState>()((set, get) => ({
 
   priceFor,
 
-  // 확률/난수는 게이트웨이 너머(서버)에서 계산 — 응답으로 pityCount/boosterTriggered 만 동기화
+  // 확률과 난수는 게이트웨이 너머(서버)에서 계산한다. 응답으로 pityCount 와 boosterTriggered 만 동기화.
   openBox: async (boxId, count) => {
     const box = getBox(boxId);
     const cost = priceFor(box, count);
     const st = get();
     if (st.balance < cost) {
       st.pushToast({
-        title: "잔액이 부족합니다",
-        body: `${cost} USDT 필요 · 충전 후 다시 시도하세요`,
+        title: "재생 불가 · 잔액 부족",
+        body: `${cost} USDT 필요. 충전 후 다시 재생하십시오.`,
         tone: "red",
       });
       set({ depositOpen: true });
@@ -178,7 +182,12 @@ export const useGachaStore = create<GachaState>()((set, get) => ({
       totalSpent: r.totalSpent,
     }));
     if (r.boosterTriggered) {
-      get().pushToast({ title: "부스터 발동!", body: "[초대박 라인업] 확률 5배가 적용된 오픈이었습니다", tone: "gold" });
+      get().pushToast({
+        title: "부스터 적용됨",
+        // 5배는 가중치 배율이다. 분모도 함께 커지므로 확률 배율은 5배 미만이며, 확률 배수로 표기하지 않는다.
+      body: `[ORIGINALS] 가중치 ${BOOST_MULT}배가 적용된 세션입니다.`,
+        tone: "highlight",
+      });
     }
     return results;
   },
@@ -193,9 +202,9 @@ export const useGachaStore = create<GachaState>()((set, get) => ({
       theater: patchResult(s.theater, itemUid, { status: "refunded" }),
     }));
     get().pushToast({
-      title: `+${amount.toLocaleString("en-US")} USDT 환급 완료`,
-      body: `${owned.item.name} · 잔액에 즉시 반영됨`,
-      tone: "gold",
+      title: `환급 +${amount.toLocaleString("en-US")} USDT`,
+      body: `${owned.item.name} · 잔액 즉시 반영`,
+      tone: "highlight",
     });
     return amount;
   },
@@ -209,7 +218,7 @@ export const useGachaStore = create<GachaState>()((set, get) => ({
       theater: patchResult(s.theater, itemUid, { status: "shipped", tracking }),
     }));
     get().pushToast({
-      title: "실물 배송 신청 완료",
+      title: "배송 접수됨",
       body: `${owned.item.name} · 트래킹 ${tracking}`,
       tone: "neutral",
     });
@@ -229,14 +238,14 @@ export const useGachaStore = create<GachaState>()((set, get) => ({
     }));
     get().pushToast({
       title: isFirstChargeBonus
-        ? `첫 충전 1+1! +${credited.toLocaleString("en-US")} USDT`
-        : `+${credited.toLocaleString("en-US")} USDT 충전 완료`,
+        ? `첫 충전 2배 적용 · +${credited.toLocaleString("en-US")} USDT`
+        : `충전 +${credited.toLocaleString("en-US")} USDT`,
       body: isFirstChargeBonus
-        ? "충전 금액 100% 더블 지급 · 부스터 게이지 9/10 충전"
+        ? "충전 금액 100% 추가 지급 · 부스터 게이지 9/10 (1회 재생 후 무장)"
         : method === "usdt"
           ? "온체인 잔액 동기화 완료"
-          : "카드 결제 승인 · 수수료 0%",
-      tone: "gold",
+          : "카드 승인 완료 · 잔액 반영",
+      tone: "highlight",
     });
   },
 
@@ -248,7 +257,7 @@ export const useGachaStore = create<GachaState>()((set, get) => ({
       set({ demoModalOpen: true, demoRepeat: false });
       return;
     }
-    // 이미 체험 완료 → 연출 없이 재진입 안내 모달
+    // 이미 체험 완료: 연출 없이 재진입 안내 모달만 띄운다
     if (s.guestDemo.status === "expired" || readDemoDone()) {
       set({ guestDemo: { status: "expired" }, demoModalOpen: true, demoRepeat: true });
       return;
@@ -273,9 +282,9 @@ export const useGachaStore = create<GachaState>()((set, get) => ({
     }));
     markDemoDone();
     get().pushToast({
-      title: `${provider} 간편가입 완료`,
-      body: "웰컴 보너스 3,000P 적립 — 체험 상품은 지급되지 않습니다",
-      tone: "gold",
+      title: `${provider} 가입 완료`,
+      body: "가입 보너스 3,000P 적립. 모의 체험 상품은 지급되지 않습니다.",
+      tone: "highlight",
     });
   },
 

@@ -11,12 +11,14 @@ import {
   pickWeightedAdjusted,
   BOOSTER_THRESHOLD,
   BOOST_MULT,
-} from "../lib/engine.ts";
-import { getBox, BOXES } from "../lib/data.ts";
-import { itemLine, lineOf, LINE_ORDER } from "../lib/types.ts";
-import { lineProbabilities, topItem } from "../lib/rng.ts";
+} from "../lib/engine";
+import { getBox, BOXES } from "../lib/data";
+import { itemLine, lineOf, LINE_ORDER, REFUND_RATE } from "../lib/types";
+import { lineProbabilities, topItem } from "../lib/rng";
+import { CATALOG, computeGuaranteedMin, weightSum } from "../lib/catalog";
+import { COPY, LOCALES } from "../lib/i18n";
 
-const box = getBox("ps5-pro-drop");
+const box = getBox("overclock-battle-station");
 
 /** 재현 가능한 난수 (xorshift) */
 function seeded(seed: number) {
@@ -60,7 +62,9 @@ test("라인별 확률 합이 100%", () => {
 });
 
 test("부스터: 10회 도달 시 활성화, 발동 후 0으로 리셋", () => {
-  const rand = seeded(42);
+  // RNG 분포가 아니라 상태 머신을 검증한다. 항상 마지막(최저가) 항목을 뽑아
+  // [초대박] 자연 당첨에 의한 리셋을 배제하고 게이지 누적만 관찰한다.
+  const rand = () => 0.999999;
   let state = { pityCount: 0, totalSpent: 0 };
   const seen: number[] = [];
   let firedAt = -1;
@@ -119,10 +123,97 @@ test("통계: 부스트 표본의 [초대박] 출현율이 공시 확률과 일�
 });
 
 test("데모 노출 상품은 데모 박스의 1등 상품이며 [초대박 라인업]이다", () => {
-  const demo = getBox("cybertruck-beast");
+  const demo = getBox("black-label-apex-tech");
   const prize = topItem(demo);
   assert.equal(itemLine(prize), "jackpot");
   assert.equal(prize.value, Math.max(...demo.items.map((i) => i.value)));
+});
+
+// ── 카탈로그 무결성 ──────────────────────────────────────
+
+test("카탈로그: 3개 시리즈, 박스마다 가중치 합 100", () => {
+  assert.equal(CATALOG.length, 3);
+  for (const b of CATALOG) {
+    assert.ok(Math.abs(weightSum(b) - 100) < 1e-9, `${b.id} 가중치 합 ${weightSum(b)}`);
+  }
+});
+
+test("카탈로그: guaranteed_min_value 가 실제 최저 실판매가와 일치", () => {
+  for (const b of CATALOG) {
+    assert.equal(b.guaranteed_min_value, computeGuaranteedMin(b), b.id);
+  }
+});
+
+test("카탈로그: probability_pct 가 weight 에서 파생되고 합이 100", () => {
+  for (const b of CATALOG) {
+    for (const e of b.probability_table) assert.equal(e.probability_pct, e.weight, e.item_id);
+    const sum = b.probability_table.reduce((s, e) => s + e.probability_pct, 0);
+    assert.ok(Math.abs(sum - 100) < 1e-9, `${b.id} 공시 확률 합 ${sum}`);
+  }
+});
+
+test("카탈로그: 필수 메타데이터가 전부 채워져 있다", () => {
+  for (const b of CATALOG) {
+    for (const f of ["id", "name_en", "name_zh", "image_placeholder"] as const) {
+      assert.ok(String(b[f]).length > 0, `${b.id}.${f}`);
+    }
+    assert.ok(b.price_usd > 0, `${b.id}.price_usd`);
+    assert.match(b.image_placeholder, /^[A-Z0-9]{2,6}(-[A-Z0-9]{1,5})?$/, `${b.id} 애셋 코드 형식`);
+    for (const e of b.probability_table) {
+      assert.ok(e.name_en.length > 0 && e.name_zh.length > 0, `${e.item_id} 다국어 상품명`);
+      assert.ok(e.cert.length > 0, `${e.item_id}.cert`);
+      assert.match(e.image_placeholder, /^[A-Z0-9]{2,6}(-[A-Z0-9]{1,5})?$/, `${e.item_id} 애셋 코드 형식`);
+    }
+  }
+});
+
+test("카탈로그: 최저 보장가 회수액이 가격을 넘지 않는다 (무위험 차익 금지)", () => {
+  for (const b of CATALOG) {
+    const worstCaseReclaim = b.guaranteed_min_value * REFUND_RATE;
+    assert.ok(
+      worstCaseReclaim < b.price_usd,
+      `${b.id}: 최악의 결과도 ${worstCaseReclaim.toFixed(2)} 회수 > 가격 ${b.price_usd} — 무위험 차익`,
+    );
+  }
+});
+
+test("카탈로그: item_id 전역 고유", () => {
+  const ids = CATALOG.flatMap((b) => b.probability_table.map((e) => e.item_id));
+  assert.equal(new Set(ids).size, ids.length);
+});
+
+// ── 카피 사전 ────────────────────────────────────────────
+
+test("카피 사전: 지정 문자열이 정확히 일치한다", () => {
+  assert.equal(COPY.boxOpen.en, "UNLOCK SEQUENCE");
+  assert.equal(COPY.boxOpen.zh, "开启盲盒");
+  assert.equal(COPY.reclaimValue.en, "RECLAIM VALUE");
+  assert.equal(COPY.reclaimValue.zh, "即时回收");
+  assert.equal(COPY.requestDispatch.en, "REQUEST DISPATCH");
+  assert.equal(COPY.requestDispatch.zh, "申请发货");
+  assert.equal(COPY.probabilityIndex.en, "PROBABILITY INDEX");
+  assert.equal(COPY.probabilityIndex.zh, "公开概率公示");
+  assert.equal(
+    COPY.withdrawalWarning.en,
+    "Assets sent to an incompatible network or incorrect address cannot be recovered.",
+  );
+  assert.equal(
+    COPY.withdrawalWarning.zh,
+    "请核对主网协议与提现地址。若因信息填写错误导致资产丢失，平台概无法找回。",
+  );
+});
+
+test("카피 사전: 모든 키가 전 로케일을 채우고 이모지가 없다", () => {
+  // 서로게이트 페어(성상 평면) + 주요 BMP 이모지 블록.
+  // 소스 파일 자체가 ASCII 로 남도록 문자열에서 RegExp 를 만든다 (이모지 전수 검사 자체가 걸리지 않게).
+  const emoji = new RegExp("[\\uD83C-\\uDBFF][\\uDC00-\\uDFFF]|[\\u2600-\\u27BF\\u2B00-\\u2BFF\\uFE0F]");
+  for (const [key, dict] of Object.entries(COPY)) {
+    for (const loc of LOCALES) {
+      const v = dict[loc];
+      assert.ok(typeof v === "string" && v.length > 0, `${key}.${loc} 누락`);
+      assert.ok(!emoji.test(v), `${key}.${loc} 에 이모지 포함: ${v}`);
+    }
+  }
 });
 
 test("10연속 개봉은 정확히 10개를 반환한다", () => {

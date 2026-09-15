@@ -8,12 +8,17 @@
 
 html,
 body {
-  background: #141414;
+  background-color: #141414;
   color: #fff;
   overflow-x: hidden;
 }
 
-/* 넷플릭스 스타일: 얇고 눈에 안 띄는 스크롤바 */
+body {
+  background-image: radial-gradient(circle at center, #1f1f1f 0%, #141414 100%);
+  background-attachment: fixed;
+}
+
+/* 얇은 스크롤바 — 무채색 */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -22,8 +27,11 @@ body {
   background: #141414;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3a3a3a;
-  border-radius: 8px;
+  background: #262626;
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #404040;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -34,47 +42,84 @@ body {
   scrollbar-width: none;
 }
 
-/* 홀로그램 반사광 스윕 */
-.holo::after {
-  content: "";
-  position: absolute;
-  inset: -40%;
-  width: 40%;
-  background: linear-gradient(
-    100deg,
-    transparent 20%,
-    rgba(255, 255, 255, 0.12) 40%,
-    rgba(255, 0, 200, 0.18) 48%,
-    rgba(0, 255, 255, 0.18) 56%,
-    rgba(255, 255, 255, 0.12) 64%,
-    transparent 80%
-  );
-  pointer-events: none;
-  animation: holo 2.6s ease-in-out infinite;
+/* ── 표면 ───────────────────────────────────────────── */
+
+.vignette-bg {
+  background: radial-gradient(circle at center, #1f1f1f 0%, #141414 100%);
 }
 
-/* 빌보드 하단 그라디언트 */
+/* 타일링 노이즈 오버레이 */
+.film-grain::after {
+  content: "";
+  position: absolute;
+  inset: -100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  opacity: 0.06;
+  pointer-events: none;
+  animation: grain 1.2s steps(6, end) infinite;
+}
+
+/* 1px 수평 스캔라인 */
+.scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.045) 0px,
+    rgba(255, 255, 255, 0.045) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+}
+
+.hairline {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── 호버 엣지 — 확산 없는 1px 아웃라인 ─────────────── */
+
+.edge-white {
+  outline: 1px solid #fff;
+  outline-offset: 0;
+}
+
+.edge-crimson {
+  outline: 1px solid #e50914;
+  outline-offset: 0;
+}
+
+/* ── 타이포그래피 ───────────────────────────────────── */
+
+.display {
+  font-family: var(--font-display), Oswald, Impact, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+}
+
+.label-caps {
+  font-size: 10px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #737373;
+  font-weight: 600;
+}
+
+/* ── 레거시 유지 ─────────────────────────────────────── */
+
+/* 빌보드 하단 페이드 */
 .billboard-fade {
   background: linear-gradient(180deg, transparent 40%, rgba(20, 20, 20, 0.85) 75%, #141414 100%);
 }
 
 .vignette {
-  background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.7) 100%);
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.72) 100%);
 }
 
 .text-shadow-lg {
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.8), 0 0 2px rgba(0, 0, 0, 0.9);
-}
-
-.neon-title {
-  text-shadow:
-    0 0 12px rgba(255, 255, 255, 0.35),
-    0 0 40px rgba(229, 9, 20, 0.55),
-    0 4px 24px rgba(0, 0, 0, 0.9);
-}
-
-.shimmer-bg {
-  background-image: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.12) 50%, transparent 70%);
-  background-size: 200% 100%;
-  animation: shimmer 3s linear infinite;
 }
