@@ -84,7 +84,17 @@ UI = {
       "simulateTitle": "테스트용 모의 웹훅", "simulateBody": "개발 환경에서 입금 웹훅을 흉내 냅니다. 금액을 넣고 실행하면 컨펌 카운터가 돌고 잔액이 반영됩니다.",
       "amount": "금액 (USDT)", "simulate": "입금 시뮬레이션", "simulating": "컨펌 대기 중…", "belowMin": "최소 입금액은 {min} 입니다",
       "creditedToast": "+{amount} 잔액 반영 (모의 입금)",
-      "cardSoon": "신용카드 결제는 4-2 에서 연결됩니다.", "close": "닫기"
+      "close": "닫기"
+    },
+    "cardPay": {
+      "quick": "빠른 충전", "custom": "직접 입력", "amount": "결제 금액", "credit": "잔액 반영",
+      "provider": "결제 수단", "providerStripe": "Stripe · 글로벌 카드", "providerPortone": "PortOne · 국내 카드", "providerMock": "데모 결제 (PG 미설정)",
+      "mockNote": "Stripe / PortOne 키가 없어 데모 결제로 대체됩니다. 카드 정보는 입력받지 않습니다.",
+      "pay": "{amount} 결제", "processing": "결제 진행 중…", "belowMin": "최소 결제액은 {min} 입니다", "aboveMax": "최대 결제액은 {max} 입니다", "invalid": "금액을 확인하세요",
+      "declined": "카드가 거절되었습니다", "declinedHint": "데모: 끝자리가 13인 금액은 거절을 재현합니다",
+      "receipt": "영수증", "receiptId": "거래 번호", "receiptAt": "승인 시각", "receiptCard": "카드", "receiptPaid": "결제 금액", "receiptCredited": "잔액 반영", "receiptProvider": "결제 수단",
+      "done": "완료", "creditedToast": "+{amount} 잔액 반영 (카드 결제)", "history": "최근 충전 내역", "noHistory": "충전 내역이 없습니다",
+      "txDepositCard": "카드 충전", "txDepositUsdt": "USDT 입금", "txOpen": "박스 오픈", "txSellback": "즉시 판매"
     },
     "actions": {"sellBack": "즉시 판매", "claimShipping": "실물 배송 신청", "provablyFair": "공정성 검증"},
     "legal": {"disclaimer": "표기 금액은 실판매가 기준입니다. 받은 실물을 즉시 판매하면 실판매가의 {refund}를 돌려받으므로 회수액은 오픈 가격보다 낮습니다. 확률은 구성품 확인에서 전량 공개됩니다. 현재 화면은 프로토타입이며 상품 데이터는 모의값입니다."},
@@ -160,7 +170,17 @@ UI = {
       "simulateTitle": "Mock webhook (test)", "simulateBody": "Simulates the deposit webhook in development. Enter an amount and run it to watch confirmations and get credited.",
       "amount": "Amount (USDT)", "simulate": "Simulate deposit", "simulating": "Waiting for confirmations…", "belowMin": "Minimum deposit is {min}",
       "creditedToast": "+{amount} credited (mock deposit)",
-      "cardSoon": "Credit card checkout is wired in 4-2.", "close": "Close"
+      "close": "Close"
+    },
+    "cardPay": {
+      "quick": "Quick top-up", "custom": "Custom amount", "amount": "Payment amount", "credit": "Credited",
+      "provider": "Payment method", "providerStripe": "Stripe · Global cards", "providerPortone": "PortOne · Korean cards", "providerMock": "Demo checkout (no PG configured)",
+      "mockNote": "No Stripe / PortOne keys are configured, so a demo checkout is used. No card details are collected.",
+      "pay": "Pay {amount}", "processing": "Processing…", "belowMin": "Minimum payment is {min}", "aboveMax": "Maximum payment is {max}", "invalid": "Check the amount",
+      "declined": "Card declined", "declinedHint": "Demo: amounts ending in 13 reproduce a decline",
+      "receipt": "Receipt", "receiptId": "Transaction ID", "receiptAt": "Approved at", "receiptCard": "Card", "receiptPaid": "Paid", "receiptCredited": "Credited", "receiptProvider": "Method",
+      "done": "Done", "creditedToast": "+{amount} credited (card)", "history": "Recent top-ups", "noHistory": "No top-ups yet",
+      "txDepositCard": "Card top-up", "txDepositUsdt": "USDT deposit", "txOpen": "Box open", "txSellback": "Instant sell-back"
     },
     "actions": {"sellBack": "Instant Sell-Back", "claimShipping": "Claim Shipping", "provablyFair": "Provably Fair"},
     "legal": {"disclaimer": "Amounts shown are market value. Instant sell-back pays {refund} of market value, so cash recovery is below the open price. All odds are published under View Contents. This screen is a prototype and product data is mock."},
@@ -236,7 +256,17 @@ UI = {
       "simulateTitle": "测试用模拟 Webhook", "simulateBody": "在开发环境模拟充值 Webhook。输入金额并执行，确认计数器会运行并计入余额。",
       "amount": "金额 (USDT)", "simulate": "模拟充值", "simulating": "等待确认…", "belowMin": "最低充值为 {min}",
       "creditedToast": "+{amount} 已计入余额（模拟充值）",
-      "cardSoon": "信用卡支付将在 4-2 中接入。", "close": "关闭"
+      "close": "关闭"
+    },
+    "cardPay": {
+      "quick": "快捷充值", "custom": "自定义金额", "amount": "支付金额", "credit": "计入余额",
+      "provider": "支付方式", "providerStripe": "Stripe · 国际信用卡", "providerPortone": "PortOne · 韩国信用卡", "providerMock": "演示支付（未配置支付网关）",
+      "mockNote": "未配置 Stripe / PortOne 密钥，故使用演示支付。不会采集卡片信息。",
+      "pay": "支付 {amount}", "processing": "支付处理中…", "belowMin": "最低支付金额为 {min}", "aboveMax": "最高支付金额为 {max}", "invalid": "请检查金额",
+      "declined": "卡片被拒绝", "declinedHint": "演示：尾数为 13 的金额会模拟拒绝",
+      "receipt": "收据", "receiptId": "交易编号", "receiptAt": "批准时间", "receiptCard": "卡片", "receiptPaid": "支付金额", "receiptCredited": "计入余额", "receiptProvider": "支付方式",
+      "done": "完成", "creditedToast": "+{amount} 已计入余额（信用卡）", "history": "最近充值记录", "noHistory": "暂无充值记录",
+      "txDepositCard": "信用卡充值", "txDepositUsdt": "USDT 充值", "txOpen": "开启盲盒", "txSellback": "即时回收"
     },
     "actions": {"sellBack": "即时回收", "claimShipping": "申请发货", "provablyFair": "公平性验证"},
     "legal": {"disclaimer": "所示金额均为市场价。即时回收仅按市场价的 {refund} 支付，因此现金回收额低于开启价。全部概率在「查看内含」中公开。当前页面为原型，商品数据为模拟数据。"},

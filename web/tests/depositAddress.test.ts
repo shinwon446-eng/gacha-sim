@@ -6,12 +6,12 @@ import { MIN_DEPOSIT_USDT, NETWORKS, demoAddress, looksLikeAddress } from "../li
 
 const B58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 function b58decode(s: string): Uint8Array {
-  let n = 0n;
-  for (const ch of s) n = n * 58n + BigInt(B58.indexOf(ch));
+  let n = BigInt(0);
+  for (const ch of s) n = n * BigInt(58) + BigInt(B58.indexOf(ch));
   const out: number[] = [];
-  while (n > 0n) {
-    out.unshift(Number(n & 255n));
-    n >>= 8n;
+  while (n > BigInt(0)) {
+    out.unshift(Number(n & BigInt(255)));
+    n >>= BigInt(8);
   }
   for (const ch of s) {
     if (ch !== "1") break;

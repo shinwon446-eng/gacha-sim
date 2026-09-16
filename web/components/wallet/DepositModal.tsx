@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { X, Wallet, Coins, CreditCard } from "lucide-react";
 import { cn } from "@/lib/format";
 import { UsdtDepositTab } from "@/components/wallet/UsdtDepositTab";
+import { CardDepositTab } from "@/components/wallet/CardDepositTab";
 
 type Tab = "usdt" | "card";
 
@@ -13,7 +14,7 @@ export interface DepositModalProps {
   open: boolean;
   onClose: () => void;
   /** 모의 입금이 잔액에 반영된 뒤 — 호출측이 토스트를 띄운다 */
-  onCredited: (amountUsdt: number) => void;
+  onCredited: (amountUsdt: number, source: "usdt" | "card") => void;
 }
 
 /**
@@ -102,11 +103,7 @@ export function DepositModal({ open, onClose, onCredited }: DepositModalProps) {
             </div>
 
             <div className="mt-5">
-              {tab === "usdt" ? (
-                <UsdtDepositTab onCredited={onCredited} />
-              ) : (
-                <div className="border-metallic-subtle rounded-lg bg-obsidian p-8 text-center text-sm text-muted">{t("cardSoon")}</div>
-              )}
+              {tab === "usdt" ? <UsdtDepositTab onCredited={(a) => onCredited(a, "usdt")} /> : <CardDepositTab onCredited={(a) => onCredited(a, "card")} />}
             </div>
           </motion.div>
         </motion.div>

@@ -2,7 +2,7 @@
 //   npm test
 import test from "node:test";
 import assert from "node:assert/strict";
-import { formatCurrency, formatCurrencyCompact, convertFromUsdt } from "../lib/formatCurrency";
+import { formatCurrency, formatCurrencyCompact, convertFromUsdt, formatNative } from "../lib/formatCurrency";
 import { DEFAULT_RATES, CURRENCIES } from "../stores/currencyStore";
 
 test("스펙 예시 그대로: 80 USDT → 80.00 USDT / $80.00 / ₩110,400", () => {
@@ -51,4 +51,12 @@ test("compact 표기도 통화 하나로만", () => {
   assert.equal(formatCurrencyCompact(1250000, "USD"), "$1.25M");
   assert.equal(formatCurrencyCompact(1000, "KRW"), "₩138만");
   assert.equal(formatCurrencyCompact(80, "USD"), "$80.00");
+});
+
+test("formatNative 는 환산 없이 원금액을 그대로 찍는다 — 프리셋 ₩70,000 은 ₩70,000", () => {
+  assert.equal(formatNative(70000, "KRW"), "₩70,000");
+  assert.equal(formatNative(50, "USD"), "$50.00");
+  assert.equal(formatNative(20, "USDT"), "20.00 USDT");
+  // 왕복 환산이면 오차가 생긴다는 걸 기록해 둔다
+  assert.notEqual(formatCurrency(+(70000 / 1380).toFixed(2), "KRW"), "₩70,000");
 });

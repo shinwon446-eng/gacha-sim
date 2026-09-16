@@ -30,6 +30,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   const [error, setError] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const credit = useWalletStore((s) => s.credit);
+  const addTransaction = useWalletStore((s) => s.addTransaction);
   // 유저 식별자 흉내 — 클라이언트 시드를 키로 쓰면 브라우저마다 다른 고정 주소가 나온다
   const userKey = useFairStore((s) => s.clientSeed) || "anon";
 
@@ -67,6 +68,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
         if (timer.current) clearInterval(timer.current);
         timer.current = null;
         credit(usdt);
+        addTransaction({ type: "deposit_usdt", amountUsdt: usdt, ref: `${network}:mock-webhook` });
         setStatus({ kind: "credited", amount: usdt });
         if (!useSettingsStore.getState().muted) playChime();
         onCredited(usdt);
@@ -74,7 +76,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
         setStatus({ kind: "confirming", n, total, amount: usdt });
       }
     }, 220);
-  }, [amount, meta.confirmations, credit, onCredited, t, fmt]);
+  }, [amount, meta.confirmations, credit, addTransaction, network, onCredited, t, fmt]);
 
   useEffect(
     () => () => {

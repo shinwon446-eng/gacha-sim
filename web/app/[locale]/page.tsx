@@ -56,6 +56,7 @@ export default function BoxesPage() {
   const balance = useWalletStore((s) => s.balance);
   const debit = useWalletStore((s) => s.debit);
   const credit = useWalletStore((s) => s.credit);
+  const addTransaction = useWalletStore((s) => s.addTransaction);
 
   const pushToast = useCallback((toast: Omit<Toast, "id">) => {
     const id = Date.now() + Math.floor(Math.random() * 1000);
@@ -71,18 +72,20 @@ export default function BoxesPage() {
         pushToast({ title: t("unbox.insufficient", { price: fmt(cost) }), body: t("unbox.topUp"), tone: "#E50914" });
         return;
       }
+      addTransaction({ type: "open", amountUsdt: -cost, ref: `${box.slug}x${count}` });
       setDetail(null);
       setUnbox({ box, count });
     },
-    [debit, pushToast, t, fmt],
+    [debit, addTransaction, pushToast, t, fmt],
   );
 
   const onSellBack = useCallback(
-    (_results: UnboxResult[], amount: number) => {
+    (results: UnboxResult[], amount: number) => {
       credit(amount);
+      addTransaction({ type: "sellback", amountUsdt: amount, ref: results.map((r) => r.item.id).join(",") });
       pushToast({ title: t("unbox.sold", { amount: fmt(amount) }), tone: "#E6CA65" });
     },
-    [credit, pushToast, t, fmt],
+    [credit, addTransaction, pushToast, t, fmt],
   );
 
   const onShip = useCallback(() => {
@@ -252,7 +255,9 @@ export default function BoxesPage() {
       <DepositModal
         open={depositOpen}
         onClose={() => setDepositOpen(false)}
-        onCredited={(amount) => pushToast({ title: t("deposit.creditedToast", { amount: fmt(amount) }), tone: "#E6CA65" })}
+        onCredited={(amount, source) =>
+          pushToast({ title: t(source === "card" ? "cardPay.creditedToast" : "deposit.creditedToast", { amount: fmt(amount) }), tone: "#E6CA65" })
+        }
       />
 
       <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} />

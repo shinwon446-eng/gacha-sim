@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { useCurrencyStore, type Currency } from "@/stores/currencyStore";
-import { formatCurrency, formatCurrencyCompact } from "@/lib/formatCurrency";
+import { formatCurrency, formatCurrencyCompact, formatNative } from "@/lib/formatCurrency";
 
 /**
  * 컴포넌트용 훅. 선택 통화에 묶인 포맷터를 돌려준다.
@@ -14,5 +14,13 @@ export function useCurrency() {
   const setCurrency = useCurrencyStore((s) => s.setCurrency);
   const fmt = useCallback((usdt: number) => formatCurrency(usdt, currency, rates), [currency, rates]);
   const fmtCompact = useCallback((usdt: number) => formatCurrencyCompact(usdt, currency, rates), [currency, rates]);
-  return { currency, setCurrency, fmt, fmtCompact } as { currency: Currency; setCurrency: (c: Currency) => void; fmt: (usdt: number) => string; fmtCompact: (usdt: number) => string };
+  const fmtNative = useCallback((amount: number) => formatNative(amount, currency), [currency]);
+  return { currency, setCurrency, fmt, fmtCompact, fmtNative } as {
+    currency: Currency;
+    setCurrency: (c: Currency) => void;
+    fmt: (usdt: number) => string;
+    fmtCompact: (usdt: number) => string;
+    /** 이미 선택 통화 단위인 금액 — 환산 없이 표기 */
+    fmtNative: (amount: number) => string;
+  };
 }
