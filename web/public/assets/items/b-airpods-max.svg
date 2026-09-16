@@ -13,18 +13,12 @@
     </radialGradient>
   </defs>
   <g font-family="Inter, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
-    <!-- 어두운 반투명 원형 배경 -->
     <circle cx="400" cy="400" r="330" fill="url(#disc)"/>
-    <!-- 등급색 글로우 외곽선 -->
     <circle cx="400" cy="400" r="330" fill="none" stroke="#00D2FF" stroke-width="6" filter="url(#glow)" opacity="0.95"/>
     <circle cx="400" cy="400" r="318" fill="none" stroke="#00D2FF" stroke-width="1" opacity="0.35"/>
-    <!-- 등급 -->
     <text x="400" y="248" text-anchor="middle" font-size="30" font-weight="700" letter-spacing="8" fill="#00D2FF">TIER B</text>
-    <!-- 이름 -->
     <text x="400" y="398" text-anchor="middle" font-size="44" font-weight="700" fill="#FFFFFF">AirPods Max USB-C</text>
-    <!-- 밸류 -->
     <text x="400" y="464" text-anchor="middle" font-size="40" font-weight="600" fill="#00D2FF" font-family="'JetBrains Mono', Consolas, monospace">550 USDT</text>
-    <!-- 아이디 -->
     <text x="400" y="600" text-anchor="middle" font-size="18" letter-spacing="3" fill="#8A8A8A">B-AIRPODS-MAX</text>
   </g>
 </svg>
