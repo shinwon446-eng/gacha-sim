@@ -1,21 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Play, Info, ChevronDown } from "lucide-react";
+import { Play, Info } from "lucide-react";
 import { cn, formatPrice } from "@/lib/format";
-import { formatRate, dropTable, type ProductBox } from "@/lib/products";
-import {
-  boxTopTier,
-  boxFloorTier,
-  breakEvenRate,
-  formatMultiple,
-  glow,
-  tierBreakdown,
-  tierOf,
-  topMultiple,
-} from "@/lib/tiers";
-import { TierBadge, TierStrip } from "@/components/box/TierStrip";
+import { dropTable, isValueGuaranteed, type ProductBox, type ProductItem } from "@/lib/products";
+import { boxFloorTier, glow, tierBreakdown, tierOf } from "@/lib/tiers";
+import { TierStrip } from "@/components/box/TierStrip";
 
 /** 행 가장자리 — 확장 시 화면 밖 클리핑을 막기 위해 transform-origin 을 보정한다. */
 export type CardEdge = "first" | "last" | "middle";
@@ -23,7 +13,7 @@ export type CardEdge = "first" | "last" | "middle";
 export interface BoxCardProps {
   box: ProductBox;
   edge?: CardEdge;
-  /** Top 10 행에서만 전달. 카드 뒤 대형 숫자를 렌더한다. */
+  /** TRENDING 행에서만 전달. 카드 뒤 대형 숫자를 렌더한다. */
   rank?: number;
   /** 확장 상태 변화 통지 — 행이 z-index 를 올리는 데 쓴다. */
   onExpandChange?: (expanded: boolean) => void;
@@ -32,105 +22,132 @@ export interface BoxCardProps {
   className?: string;
 }
 
-const HOVER_DELAY_MS = 300;
-const EASE = [0.25, 0.46, 0.45, 0.94] as const;
-const DURATION = 0.25;
+const HOVER_DELAY_MS = 120;
+
+/** 터치 기기 판별 — 호버가 없으면 첫 탭이 확장, 두 번째 탭이 상세다. */
+function useTouchOnly(): boolean {
+  const [touch, setTouch] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: none)");
+    const sync = () => setTouch(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  return touch;
+}
 
 /**
- * 넷플릭스 포스터 페이드. 단색 위에 그라디언트만 올리는 게 아니라
- * 비네트(radial)를 함께 깔아야 가장자리가 죽고 중앙 피사체가 산다.
+ * 실물 비주얼 영역. 상단 70%.
+ * 이미지가 있으면 무광 다크 배경 위에 누끼를 얹고, 없으면 코드 플레이트로 폴백한다.
+ * 어느 쪽이든 텍스트를 합성하지 않는다 — 가격·이름은 전부 하단 메타 영역에만 존재한다.
  */
-function PosterScrim({ to }: { to: string }) {
+function ProductVisual({ box, compact = false }: { box: ProductBox; compact?: boolean }) {
+  const img = box.image;
   return (
-    <>
+    <div className="relative h-full w-full overflow-hidden bg-surface">
+      {/* 무광 다크 배경 — 중앙이 아주 살짝 밝다. 누끼의 그림자가 앉을 자리 */}
+      <span
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(70% 60% at 50% 55%, #262626 0%, #1F1F1F 55%, #171717 100%)",
+        }}
+      />
+      {img.src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={img.src}
+          alt={box.title}
+          draggable={false}
+          loading="lazy"
+          className={cn(
+            "absolute inset-0 h-full w-full",
+            img.cutout ? "object-contain p-[9%] drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)]" : "object-cover",
+          )}
+        />
+      ) : (
+        <>
+          <span aria-hidden className="absolute inset-0 opacity-60" style={{ background: box.tone }} />
+          <span
+            className={cn(
+              "absolute inset-0 flex items-center justify-center font-display font-bold uppercase leading-none tracking-tighter text-white/80",
+              compact ? "text-[22px]" : "text-[40px]",
+            )}
+          >
+            {box.code}
+          </span>
+        </>
+      )}
+      {/* 비네트 — 가장자리를 눌러 피사체를 띄운다 */}
       <span
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(120% 90% at 50% 35%, transparent 0%, rgba(0,0,0,0.35) 62%, rgba(0,0,0,0.78) 100%)",
+            "radial-gradient(110% 95% at 50% 45%, transparent 55%, rgba(0,0,0,0.45) 100%)",
         }}
       />
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: `linear-gradient(to top, ${to} 0%, ${to} 6%, rgba(20,20,20,0.72) 26%, transparent 58%)`,
-        }}
-      />
-    </>
-  );
-}
-
-/** 이미지 에셋이 있으면 그대로, 없으면 코드 플레이트로 폴백한다. */
-function BoxArt({
-  imageUrl,
-  code,
-  tone,
-  alt,
-  codeClassName,
-}: {
-  imageUrl: string | null;
-  code: string;
-  tone: string;
-  alt: string;
-  codeClassName?: string;
-}) {
-  if (imageUrl) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return (
-      <img
-        src={imageUrl}
-        alt={alt}
-        draggable={false}
-        className="absolute inset-0 h-full w-full object-cover"
-      />
-    );
-  }
-  return (
-    <>
-      <span aria-hidden className="absolute inset-0" style={{ background: tone }} />
-      <span aria-hidden className="absolute inset-0 bg-[rgba(8,8,8,0.5)]" />
-      <span aria-hidden className="absolute left-0 top-0 h-2.5 w-2.5 border-l border-t border-white/20" />
-      <span aria-hidden className="absolute bottom-0 right-0 h-2.5 w-2.5 border-b border-r border-white/20" />
-      <span
-        className={cn(
-          "absolute inset-0 flex items-center justify-center font-display font-bold uppercase leading-none tracking-tighter text-white/95",
-          codeClassName ?? "text-[34px]",
-        )}
-      >
-        {code}
-      </span>
-    </>
-  );
-}
-
-function Figure({ label, value, tone }: { label: string; value: string; tone: string }) {
-  return (
-    <div>
-      <div className="text-[8px] font-semibold uppercase tracking-[0.14em] text-[#757575]">{label}</div>
-      <div
-        className="mt-0.5 font-mono text-[11px] font-bold leading-none tabular-nums"
-        style={{ color: tone }}
-      >
-        {value}
-      </div>
     </div>
   );
 }
 
+/** 슬라이드인 패널 안의 드랍 썸네일. 등급 색 1px 보더 + 코드 플레이트. */
+function DropThumb({ item, box }: { item: ProductItem; box: ProductBox }) {
+  const t = tierOf(item.value, box.price);
+  return (
+    <li
+      className="relative flex-1 overflow-hidden rounded-[2px] border bg-surface"
+      style={{ borderColor: glow(t.accent, 0.5) }}
+      title={`${item.name} · ${formatPrice(item.value)}`}
+    >
+      <div className="relative aspect-[4/3] w-full">
+        {item.image.src ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={item.image.src}
+            alt={item.name}
+            draggable={false}
+            className={cn("absolute inset-0 h-full w-full", item.image.cutout ? "object-contain p-1.5" : "object-cover")}
+          />
+        ) : (
+          <>
+            <span aria-hidden className="absolute inset-0 opacity-70" style={{ background: item.tone }} />
+            <span className="absolute inset-0 flex items-center justify-center font-display text-[13px] font-bold uppercase leading-none tracking-tighter text-white/85">
+              {item.code}
+            </span>
+          </>
+        )}
+        <span
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-[2px]"
+          style={{ background: t.accent, boxShadow: `0 0 6px ${glow(t.accent, 0.6)}` }}
+        />
+      </div>
+      <div className="px-1 py-1">
+        <div className="truncate text-[8px] leading-none text-muted">{item.name}</div>
+        <div className="mt-0.5 font-mono text-[9px] font-bold leading-none tabular-nums" style={{ color: t.accent }}>
+          {formatPrice(item.value)}
+        </div>
+      </div>
+    </li>
+  );
+}
+
 /**
- * 넷플릭스 포스터 타일(2:3) + 호버 확장.
+ * 실물 커머스 카드 (4:5).
  *
- * 정보 위계 — 카드 한 장에서 순서대로 읽힌다.
- *   1  최고 티어 뱃지 (이 박스에서 나올 수 있는 최상위 등급)
- *   2  박스명
- *   3  지불액(디스플레이 서체, 최대 크기) — 오른쪽에 최고 당첨 배수
- *   4  티어 확률 분포 바
- *   5  최저 확정 / 본전 이상 확률
+ * 기본 상태 — 딱 네 가지만 보인다: 실물 비주얼 · 박스명 · 1회 가격 · 최소 보장 뱃지.
+ *   상단 70% 비주얼과 하단 30% 메타는 물리적으로 분리된 두 면이다. 겹치지 않는다.
  *
- * 하단 정보 블록은 불투명 서페이스다. 아트 위에 반투명으로 얹으면 톤에 따라 가격이 묻힌다.
- * 여기서 가장 중요한 건 가독성이라 이미지 면적을 양보한다.
+ * 호버(데스크톱) / 탭(모바일) — scale 1.08 로 살짝 떠오르고,
+ *   하단에서 [핵심 드랍 3종 썸네일 + 상세보기 / 바로열기] 패널이 슬라이드 인 된다.
+ *   패널은 카드 내부에 갇혀 있으므로 인접 카드 위로 튀어나오지 않는다.
+ *
+ * 뱃지는 "최고 등급"이 아니라 "최소 보장"이다.
+ *   최고 등급으로 뱃지를 달면 15개 중 12개가 DREAM 이라 변별력이 없다.
+ *   최소 보장은 박스마다 다르고, 사용자가 실제로 가져가는 하한이다.
  */
 export function BoxCard({
   box,
@@ -143,12 +160,22 @@ export function BoxCard({
 }: BoxCardProps) {
   const [expanded, setExpanded] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const touchOnly = useTouchOnly();
 
-  const originX = edge === "first" ? "0%" : edge === "last" ? "100%" : "50%";
+  const meta = useMemo(
+    () => ({
+      guaranteed: isValueGuaranteed(box),
+      floorTier: boxFloorTier(box),
+      slices: tierBreakdown(box),
+      drops: dropTable(box).slice(0, 3),
+    }),
+    [box],
+  );
 
   const enter = useCallback(() => {
+    if (touchOnly) return;
     timer.current = setTimeout(() => setExpanded(true), HOVER_DELAY_MS);
-  }, []);
+  }, [touchOnly]);
 
   const leave = useCallback(() => {
     if (timer.current) clearTimeout(timer.current);
@@ -166,200 +193,126 @@ export function BoxCard({
     [],
   );
 
-  const meta = useMemo(() => {
-    const top = boxTopTier(box);
-    return {
-      top,
-      floorTier: boxFloorTier(box),
-      floor: box.guaranteedMin,
-      mult: topMultiple(box),
-      breakEven: breakEvenRate(box),
-      slices: tierBreakdown(box),
-      grails: dropTable(box).slice(0, 3),
-    };
-  }, [box]);
+  // 터치: 첫 탭 확장, 확장 상태에서 다시 탭하면 상세. 데스크톱: 클릭 즉시 상세.
+  const onCardClick = () => {
+    if (touchOnly && !expanded) {
+      setExpanded(true);
+      return;
+    }
+    onInspect?.(box);
+  };
+
+  const origin = edge === "first" ? "left center" : edge === "last" ? "right center" : "center center";
 
   return (
     <div className={cn("relative", className)} onMouseEnter={enter} onMouseLeave={leave}>
-      {/* Top 10 대형 숫자 — 카드 뒤에 깔린다 */}
+      {/* TRENDING 대형 숫자 — 카드 뒤에 깔린다 */}
       {typeof rank === "number" && (
         <span
           aria-hidden
           className="pointer-events-none absolute -left-1 bottom-0 z-0 select-none font-display leading-[0.72] text-transparent"
-          style={{ fontSize: "9.5rem", WebkitTextStroke: "2px #2A2A2A" }}
+          style={{ fontSize: "8.5rem", WebkitTextStroke: "2px #2A2A2A" }}
         >
           {rank}
         </span>
       )}
 
-      <div className={cn("relative", typeof rank === "number" && "ml-[4rem]")}>
-        {/* ── 기본 타일 ── */}
-        <button
-          type="button"
-          onClick={() => onInspect?.(box)}
-          aria-label={`${box.title} 상세 정보`}
-          className="group relative block aspect-[2/3] w-full overflow-hidden rounded-sm border bg-[#181818] text-left transition-colors duration-200"
-          style={{ borderColor: expanded ? glow(meta.top.accent, 0.55) : "#2A2A2A" }}
-        >
-          <BoxArt imageUrl={box.image.src} code={box.code} tone={box.tone} alt={box.title} />
-          <PosterScrim to="#181818" />
+      <div
+        className={cn(
+          "relative overflow-hidden rounded-[3px] border bg-surface",
+          "transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          typeof rank === "number" && "ml-[3.75rem]",
+          expanded
+            ? "z-40 scale-[1.08] border-white/35 shadow-[0_18px_40px_rgba(0,0,0,0.75)]"
+            : "z-10 scale-100 border-line shadow-none",
+        )}
+        style={{ transformOrigin: origin }}
+        onClick={onCardClick}
+        role="button"
+        tabIndex={0}
+        aria-label={`${box.title} 상세 정보`}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onInspect?.(box);
+          }
+        }}
+      >
+        {/* 4:5 프레임. 위 70% 비주얼, 아래 30% 메타 */}
+        <div className="flex aspect-[4/5] w-full flex-col">
+          <div className="relative h-[70%] flex-none">
+            <ProductVisual box={box} />
 
-          {/* 최상위 티어 뱃지 */}
-          <span className="absolute left-2 top-2 z-10">
-            <TierBadge tier={meta.top} />
-          </span>
-          <span className="absolute right-2 top-2 z-10 rounded-sm border border-[#2A2A2A] bg-black/70 px-1.5 py-[3px] text-[8px] font-semibold uppercase tracking-[0.14em] text-[#AAAAAA]">
-            {box.badge}
-          </span>
-
-          {/* 정보 블록 — 불투명 서페이스 */}
-          <span className="absolute inset-x-0 bottom-0 z-10 block border-t border-[#2A2A2A] bg-[#181818] px-2.5 pb-2.5 pt-2">
-            <span className="block truncate text-[12px] font-bold leading-tight text-white">
-              {box.title}
-            </span>
-
-            {/* 지불액 · 최고 배수 */}
-            <span className="mt-1.5 flex items-end justify-between gap-2">
-              <span className="block">
-                <span className="block text-[8px] font-semibold uppercase tracking-[0.16em] text-[#757575]">
-                  Open
-                </span>
-                <span className="block font-display text-[21px] font-bold leading-none tracking-tight text-white">
-                  {formatPrice(box.price)}
-                </span>
-              </span>
-              <span className="block text-right">
-                <span className="block text-[8px] font-semibold uppercase tracking-[0.16em] text-[#757575]">
-                  Top pull
-                </span>
-                <span
-                  className="block font-display text-[21px] font-bold leading-none tracking-tight"
-                  style={{
-                    color: meta.top.accent,
-                    textShadow: `0 0 14px ${glow(meta.top.accent, 0.5)}`,
-                  }}
-                >
-                  {formatMultiple(meta.mult)}
-                </span>
-              </span>
-            </span>
-
-            {/* 티어 확률 분포 */}
-            <TierStrip slices={meta.slices} className="mt-2" />
-
-            <span className="mt-1.5 flex items-center justify-between gap-2 text-[9px] leading-none">
-              <span className="truncate text-[#AAAAAA]">
-                최저 <span className="font-mono tabular-nums text-white">{formatPrice(meta.floor)}</span> 확정
-              </span>
-              <span className="flex-none text-[#AAAAAA]">
-                본전 이상{" "}
-                <span className="font-mono tabular-nums text-white">{formatRate(meta.breakEven)}</span>
-              </span>
-            </span>
-          </span>
-        </button>
-
-        {/* ── 호버 확장 레이어 ── */}
-        <AnimatePresence>
-          {expanded && (
-            <motion.div
-              className="absolute inset-x-0 top-0 z-50 overflow-hidden rounded-sm border bg-[#181818] shadow-[0_16px_40px_rgba(0,0,0,0.85)]"
-              style={{ transformOrigin: `${originX} 0%`, borderColor: glow(meta.top.accent, 0.5) }}
-              initial={{ scale: 1, opacity: 0 }}
-              animate={{ scale: 1.32, opacity: 1 }}
-              exit={{ scale: 1, opacity: 0 }}
-              transition={{ duration: DURATION, ease: EASE }}
+            {/* 최소 보장 뱃지 — 유일한 오버레이. 정보가 아니라 약속이라 비주얼 위에 둔다. */}
+            <span
+              className={cn(
+                "absolute left-2 top-2 z-10 rounded-[2px] px-1.5 py-[3px] text-[9px] font-bold leading-none tracking-[0.02em]",
+                meta.guaranteed ? "text-canvas" : "border border-white/15 bg-black/70 text-white",
+              )}
+              style={
+                meta.guaranteed
+                  ? { backgroundColor: meta.floorTier.accent, boxShadow: `0 0 12px ${glow(meta.floorTier.accent, 0.5)}` }
+                  : undefined
+              }
             >
-              {/* 와이드 비주얼 */}
-              <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#0A0A0A]">
-                <BoxArt
-                  imageUrl={box.image.src}
-                  code={box.code}
-                  tone={box.tone}
-                  alt={box.title}
-                  codeClassName="text-[26px]"
-                />
-                <PosterScrim to="#181818" />
-                <span className="absolute left-2 top-2 z-10">
-                  <TierBadge tier={meta.top} size="xs" />
-                </span>
-                <span className="absolute inset-x-2 bottom-1.5 z-10 truncate text-[11px] font-bold leading-tight text-white">
-                  {box.title}
-                </span>
-              </div>
+              최소 {formatPrice(box.guaranteedMin)}
+              {meta.guaranteed ? " 보장" : ""}
+            </span>
+          </div>
 
-              {/* 메타데이터 박스 */}
-              <div className="space-y-2 bg-[#282828] p-2.5">
-                <div className="flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => onOpen?.(box)}
-                    className="flex h-[26px] shrink-0 items-center gap-1 whitespace-nowrap rounded-sm bg-[#E50914] px-2 text-[10px] font-bold leading-none text-white transition-colors duration-200 hover:bg-[#f6121d]"
-                  >
-                    <Play className="h-3 w-3 shrink-0 fill-current" strokeWidth={0} />
-                    지금 오픈
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onInspect?.(box)}
-                    aria-label="확률 상세"
-                    title="확률 상세"
-                    className="flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-full border border-[#555555] text-[#AAAAAA] transition-colors duration-200 hover:border-white hover:text-white"
-                  >
-                    <Info className="h-3.5 w-3.5" strokeWidth={1.6} />
-                  </button>
-                  <div className="flex-1" />
-                  <span className="shrink-0 font-display text-[15px] font-bold leading-none tracking-tight text-white">
-                    {formatPrice(box.price)}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => onInspect?.(box)}
-                    aria-label="전체 드롭테이블"
-                    title="전체 드롭테이블"
-                    className="flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-full border border-[#555555] text-[#AAAAAA] transition-colors duration-200 hover:border-white hover:text-white"
-                  >
-                    <ChevronDown className="h-3.5 w-3.5" strokeWidth={1.6} />
-                  </button>
-                </div>
+          {/* 메타 — 불투명, 두 줄 */}
+          <div className="flex h-[30%] flex-none flex-col justify-center border-t border-line bg-surface px-2.5">
+            <div className="truncate text-[12px] font-bold leading-tight text-white">{box.title}</div>
+            <div className="mt-1 flex items-baseline gap-1.5">
+              <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-faint">1회</span>
+              <span className="font-display text-[20px] font-bold leading-none tracking-tight text-white">
+                {formatPrice(box.price)}
+              </span>
+            </div>
+          </div>
+        </div>
 
-                {/* 핵심 수치 3종 */}
-                <div className="grid grid-cols-3 gap-1.5 border-y border-white/10 py-1.5 text-center">
-                  <Figure label="최저 확정" value={formatPrice(meta.floor)} tone={meta.floorTier.accent} />
-                  <Figure
-                    label="최고 당첨"
-                    value={formatPrice(meta.grails[0]?.value ?? 0)}
-                    tone={meta.top.accent}
-                  />
-                  <Figure label="본전 이상" value={formatRate(meta.breakEven)} tone="#FFFFFF" />
-                </div>
-
-                <TierStrip slices={meta.slices} height={4} />
-
-                {/* 최고 시세 3종 */}
-                <ul className="space-y-1">
-                  {meta.grails.map((it) => {
-                    const t = tierOf(it.value, box.price);
-                    return (
-                      <li key={it.id} className="flex items-center gap-1.5 text-[9px] leading-none">
-                        <span
-                          aria-hidden
-                          className="h-2.5 w-[2px] flex-none rounded-full"
-                          style={{ background: t.accent, boxShadow: `0 0 6px ${glow(t.accent, 0.6)}` }}
-                        />
-                        <span className="min-w-0 flex-1 truncate text-[#DDDDDD]">{it.name}</span>
-                        <span className="flex-none font-mono tabular-nums text-white">{formatPrice(it.value)}</span>
-                        <span className="flex-none font-mono tabular-nums text-[#757575]">
-                          {formatRate(it.dropRate)}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            </motion.div>
+        {/* ── 슬라이드인 패널 ──
+            메타(30%) 바로 위에 앉는다. 호버 중에도 박스명과 가격은 계속 보여야 한다.
+            비주얼의 아랫부분만 가리고 위쪽 일부는 남겨 어떤 카드인지 잃지 않게 한다. */}
+        <div
+          aria-hidden={!expanded}
+          className={cn(
+            "absolute inset-x-0 bottom-[30%] z-20 border-y border-white/10 bg-elevation/95 p-2 backdrop-blur-[2px]",
+            "transition-[transform,opacity,visibility] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+            expanded ? "visible translate-y-0 opacity-100" : "invisible translate-y-6 opacity-0",
           )}
-        </AnimatePresence>
+          onClick={(e) => e.stopPropagation()}
+        >
+          <TierStrip slices={meta.slices} height={3} className="mb-2" />
+
+          <ul className="flex gap-1.5">
+            {meta.drops.map((it) => (
+              <DropThumb key={it.id} item={it} box={box} />
+            ))}
+          </ul>
+
+          <div className="mt-2 flex items-center gap-1.5">
+            <button
+              type="button"
+              tabIndex={expanded ? 0 : -1}
+              onClick={() => onOpen?.(box)}
+              className="flex h-8 flex-1 items-center justify-center gap-1 rounded-[2px] bg-crimson text-[11px] font-bold text-white transition-colors duration-200 hover:bg-[#f6121d]"
+            >
+              <Play className="h-3 w-3 fill-current" strokeWidth={0} />
+              바로 열기
+            </button>
+            <button
+              type="button"
+              tabIndex={expanded ? 0 : -1}
+              onClick={() => onInspect?.(box)}
+              className="flex h-8 flex-1 items-center justify-center gap-1 rounded-[2px] border border-white/25 bg-white/10 text-[11px] font-semibold text-white transition-colors duration-200 hover:bg-white/20"
+            >
+              <Info className="h-3 w-3" strokeWidth={2} />
+              상세 보기
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

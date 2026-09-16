@@ -130,7 +130,7 @@ export default function BoxesPage() {
           </label>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-3 gap-y-6 md:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {visible.map((box, i) => (
             <BoxCard
               key={box.id}

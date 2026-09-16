@@ -21,15 +21,16 @@ export interface NetflixRowProps {
 
 /** 브레이크포인트별 한 화면 슬롯 수 */
 function useSlots(variant: "default" | "top10") {
-  const [slots, setSlots] = useState(variant === "top10" ? 4 : 5);
+  const [slots, setSlots] = useState(variant === "top10" ? 3 : 4);
 
+  // 4:5 카드는 2:3 포스터보다 넓다. 한 화면에 덜 넣어야 실물이 읽힌다.
   useEffect(() => {
     const calc = () => {
       const w = window.innerWidth;
       if (variant === "top10") {
-        setSlots(w >= 1280 ? 5 : w >= 1024 ? 4 : w >= 768 ? 3 : w >= 640 ? 2 : 1);
+        setSlots(w >= 1536 ? 4 : w >= 1024 ? 3 : w >= 640 ? 2 : 1);
       } else {
-        setSlots(w >= 1280 ? 6 : w >= 1024 ? 5 : w >= 768 ? 4 : w >= 640 ? 3 : 2);
+        setSlots(w >= 1536 ? 5 : w >= 1024 ? 4 : w >= 768 ? 3 : 2);
       }
     };
     calc();
@@ -93,7 +94,7 @@ export function NetflixRow({
     <section
       id={id}
       className={cn(
-        "group/row relative mb-11 scroll-mt-28",
+        "group/row relative mb-12 scroll-mt-28",
         expandedCount > 0 ? "z-50" : "z-10",
         className,
       )}
@@ -108,7 +109,7 @@ export function NetflixRow({
               <span
                 key={i}
                 aria-hidden
-                className={cn("h-0.5 w-3 transition-colors", i === activePage ? "bg-[#AAAAAA]" : "bg-[#2A2A2A]")}
+                className={cn("h-0.5 w-3 transition-colors", i === activePage ? "bg-muted" : "bg-line")}
               />
             ))}
           </div>
