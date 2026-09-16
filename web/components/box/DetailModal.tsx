@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { formatPrice } from "@/lib/format";
+import { useCurrency } from "@/lib/useCurrency";
 import { X, Play, Percent } from "lucide-react";
 import {
   formatRate,
@@ -39,6 +39,7 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 
 /** 하나의 당첨 가능 상품. 등급 색 보더 + 실판매가 + 확률. */
 function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
+  const { fmt } = useCurrency();
   return (
     <li
       className="relative overflow-hidden rounded-sm border bg-[#181818] transition-colors duration-200 hover:bg-[#282828]"
@@ -74,7 +75,7 @@ function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
               className="font-display text-[15px] font-bold leading-none tracking-tight"
               style={{ color: tier.accent }}
             >
-              {formatPrice(item.value)}
+              {fmt(item.value)}
             </div>
           </div>
           <div className="text-right">
@@ -115,6 +116,7 @@ function Stat({ label, value, tone = "#FFFFFF" }: { label: string; value: string
  *         → 등급 색 보더 + 실판매가 + 확률
  */
 export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
+  const { fmt } = useCurrency();
   const panelRef = useRef<HTMLDivElement>(null);
 
   // ESC 닫기 + 배경 스크롤 잠금
@@ -255,7 +257,7 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
                     className="flex h-11 items-center gap-2 rounded-sm bg-[#E50914] px-5 text-[14px] font-bold text-white transition-colors duration-200 hover:bg-[#f6121d]"
                   >
                     <Play className="h-4 w-4 fill-current" strokeWidth={0} />
-                    지금 오픈하기 · {formatPrice(box.price)}
+                    지금 오픈하기 · {fmt(box.price)}
                   </button>
                   <a
                     href="#drop-table"
@@ -270,11 +272,11 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
 
             {/* ── 핵심 수치 ── */}
             <section className="grid grid-cols-2 gap-x-3 gap-y-4 px-5 pt-5 md:grid-cols-4 md:px-9">
-              <Stat label="오픈 가격" value={formatPrice(box.price)} />
-              <Stat label="최저 확정" value={formatPrice(meta.floor)} tone={meta.floorTier.accent} />
+              <Stat label="오픈 가격" value={fmt(box.price)} />
+              <Stat label="최저 확정" value={fmt(meta.floor)} tone={meta.floorTier.accent} />
               <Stat
                 label="최고 당첨"
-                value={`${formatPrice(meta.table[0].value)}`}
+                value={`${fmt(meta.table[0].value)}`}
                 tone={meta.top.accent}
               />
               <Stat label="최고 배수" value={formatMultiple(meta.mult)} tone={meta.top.accent} />
@@ -285,7 +287,7 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
               <div className="flex items-baseline justify-between gap-3">
                 <h3 className="text-[13px] font-bold text-white">등급별 당첨 확률</h3>
                 <span className="text-[11px] text-[#AAAAAA]">
-                  본전({formatPrice(box.price)}) 이상{" "}
+                  본전({fmt(box.price)}) 이상{" "}
                   <span className="font-mono tabular-nums text-white">{formatRate(meta.breakEven)}</span>
                 </span>
               </div>
@@ -294,7 +296,7 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
 
               <p className="mt-3 border-l-2 border-line pl-3 text-[11px] leading-relaxed text-faint">
                 등급은 저장값이 아니라 <span className="text-muted">실판매가 ÷ 오픈 가격</span> 배수에서
-                파생됩니다. 기대 수령 실판매가 {formatPrice(meta.ev)} — 오픈 가격의{" "}
+                파생됩니다. 기대 수령 실판매가 {fmt(meta.ev)} — 오픈 가격의{" "}
                 <span className="font-mono tabular-nums text-muted">
                   {(meta.retail * 100).toFixed(1)}%
                 </span>
@@ -305,8 +307,8 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
                 </span>
                 로 오픈 가격보다 낮습니다.
                 {meta.guaranteed
-                  ? ` 이 박스는 최저 구성의 실판매가(${formatPrice(box.guaranteedMin)})가 오픈 가격 이상입니다.`
-                  : ` 이 박스의 최저 구성 실판매가는 ${formatPrice(box.guaranteedMin)} 이며 오픈 가격보다 낮습니다.`}{" "}
+                  ? ` 이 박스는 최저 구성의 실판매가(${fmt(box.guaranteedMin)})가 오픈 가격 이상입니다.`
+                  : ` 이 박스의 최저 구성 실판매가는 ${fmt(box.guaranteedMin)} 이며 오픈 가격보다 낮습니다.`}{" "}
                 현재 화면은 프로토타입이고 상품 데이터는 모의값입니다.
               </p>
             </section>

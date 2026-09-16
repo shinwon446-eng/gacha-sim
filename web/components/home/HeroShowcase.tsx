@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Play, Info } from "lucide-react";
-import { cn, formatPrice } from "@/lib/format";
+import { cn } from "@/lib/format";
+import { useCurrency } from "@/lib/useCurrency";
 import {
   dropTable,
   isValueGuaranteed,
@@ -36,6 +37,7 @@ const EASE = [0.16, 1, 0.3, 1] as const;
  *   "본전 보장" 류의 문구를 붙이지 않는다. 최소 보장가는 언제나 실측값으로만 적는다.
  */
 export function HeroShowcase({ box, onOpen, onInspect, className }: HeroShowcaseProps) {
+  const { fmt } = useCurrency();
   const top = boxTopTier(box);
   const guaranteed = isValueGuaranteed(box);
   const highlights = dropTable(box).slice(0, 3);
@@ -111,7 +113,7 @@ export function HeroShowcase({ box, onOpen, onInspect, className }: HeroShowcase
               1회 오픈
             </div>
             <div className="mt-1 font-display text-[34px] font-bold leading-none tracking-tight text-white md:text-[42px]">
-              {formatPrice(box.price)}
+              {fmt(box.price)}
             </div>
           </div>
           <div>
@@ -140,8 +142,8 @@ export function HeroShowcase({ box, onOpen, onInspect, className }: HeroShowcase
             style={guaranteed ? { backgroundColor: top.accent } : undefined}
           >
             {guaranteed
-              ? `최소 ${formatPrice(box.guaranteedMin)} 상당 보장 — 오픈가 이상`
-              : `최소 ${formatPrice(box.guaranteedMin)} 상당 보장`}
+              ? `최소 ${fmt(box.guaranteedMin)} 상당 보장 — 오픈가 이상`
+              : `최소 ${fmt(box.guaranteedMin)} 상당 보장`}
           </span>
         </div>
 
@@ -177,7 +179,7 @@ export function HeroShowcase({ box, onOpen, onInspect, className }: HeroShowcase
                   style={{ background: t.accent, boxShadow: `0 0 8px ${glow(t.accent, 0.6)}` }}
                 />
                 <span className="text-white">{item.name}</span>
-                <span className="font-mono tabular-nums text-muted">{formatPrice(item.value)}</span>
+                <span className="font-mono tabular-nums text-muted">{fmt(item.value)}</span>
               </li>
             );
           })}

@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Play, Info } from "lucide-react";
-import { cn, formatPrice } from "@/lib/format";
+import { cn } from "@/lib/format";
+import { useCurrency } from "@/lib/useCurrency";
 import { dropTable, isValueGuaranteed, type ProductBox, type ProductItem } from "@/lib/products";
 import { boxFloorTier, boxTopTier, formatMultiple, glow, tierBreakdown, tierOf, topMultiple } from "@/lib/tiers";
 import { TierStrip } from "@/components/box/TierStrip";
@@ -25,12 +26,13 @@ export interface BoxCardProps {
 
 /** 슬라이드인 패널 안의 드랍 썸네일. 등급 색 1px 보더. */
 function DropThumb({ item, box }: { item: ProductItem; box: ProductBox }) {
+  const { fmt } = useCurrency();
   const t = tierOf(item.value, box.price);
   return (
     <li
       className="relative flex-1 overflow-hidden rounded-sm border bg-neutral-900"
       style={{ borderColor: glow(t.accent, 0.5) }}
-      title={`${item.name} · ${formatPrice(item.value)}`}
+      title={`${item.name} · ${fmt(item.value)}`}
     >
       <div className="relative w-full" style={{ aspectRatio: "4 / 3" }}>
         <ProductArt image={item.image} alt={item.name} accent={t.accent} glowStrength={0.3} fallbackSize="sm" />
@@ -45,7 +47,7 @@ function DropThumb({ item, box }: { item: ProductItem; box: ProductBox }) {
           {item.name}
         </div>
         <div className="mt-0.5 font-mono font-bold leading-none tabular-nums" style={{ fontSize: 9, color: t.accent }}>
-          {formatPrice(item.value)}
+          {fmt(item.value)}
         </div>
       </div>
     </li>
@@ -72,6 +74,7 @@ export function BoxCard({
   onInspect,
   className,
 }: BoxCardProps) {
+  const { fmt } = useCurrency();
   const [hovered, setHovered] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
 
@@ -168,7 +171,7 @@ export function BoxCard({
                 : undefined
             }
           >
-            최소 {formatPrice(box.guaranteedMin)}
+            최소 {fmt(box.guaranteedMin)}
             {meta.guaranteed ? " 보장" : ""}
           </span>
         </div>
@@ -182,7 +185,7 @@ export function BoxCard({
                 1회
               </div>
               <div className="font-display text-xl font-bold leading-none tracking-tight text-white">
-                {formatPrice(box.price)}
+                {fmt(box.price)}
               </div>
             </div>
             <div className="text-right">

@@ -22,7 +22,7 @@ import {
   techAndMobility,
   trending,
 } from "../lib/products";
-import { formatPrice, formatPriceCompact } from "../lib/format";
+import { formatCurrency } from "../lib/formatCurrency";
 
 test("박스 12종 이상, slug 고유", () => {
   assert.ok(BOXES.length >= 12, `박스 ${BOXES.length}종`);
@@ -45,7 +45,7 @@ test("드롭 확률 합계는 박스마다 정확히 100", () => {
   }
 });
 
-test("금액은 전부 정수 원이다 — 통화 기호와 소수점은 데이터에 없다", () => {
+test("금액은 전부 정수 USDT 다 — 통화 기호와 소수점은 데이터에 없다", () => {
   for (const b of BOXES) {
     assert.ok(Number.isInteger(b.price), `${b.slug}: price ${b.price}`);
     assert.ok(Number.isInteger(b.guaranteedMin), `${b.slug}: guaranteedMin`);
@@ -156,13 +156,12 @@ test("dropTable 은 실판매가 내림차순이며 원본을 변형하지 않�
   }
 });
 
-test("formatPrice 는 원화 정수로만 찍는다", () => {
-  assert.equal(formatPrice(80000), "₩80,000");
-  assert.equal(formatPrice(132000000), "₩132,000,000");
-  assert.equal(formatPriceCompact(12900), "₩1.3만");
-  assert.equal(formatPriceCompact(1290000), "₩129만");
-  assert.equal(formatPriceCompact(132000000), "₩1.3억");
-  assert.equal(formatPriceCompact(9900), "₩9,900");
+test("박스 가격은 세 통화 어느 쪽으로도 혼용 없이 렌더된다", () => {
+  for (const b of BOXES) {
+    assert.match(formatCurrency(b.price, "USDT"), /^[\d,]+\.\d{2} USDT$/, b.slug);
+    assert.match(formatCurrency(b.price, "USD"), /^\$[\d,]+\.\d{2}$/, b.slug);
+    assert.match(formatCurrency(b.price, "KRW"), /^₩[\d,]+$/, b.slug);
+  }
 });
 
 test("카피와 데이터에 이모지가 없다", () => {

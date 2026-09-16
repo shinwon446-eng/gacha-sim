@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cinzel, Inter } from "next/font/google";
 import "./globals.css";
+import { CurrencyHydrator } from "@/components/layout/CurrencyHydrator";
 
 /**
  * 타이포그래피 (CLAUDE.md §2 / PROMPTS 1-1-3)
@@ -37,7 +38,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link rel="stylesheet" href={PRETENDARD_CSS} />
       </head>
-      <body className="min-h-screen bg-canvas font-sans text-white antialiased">{children}</body>
+      <body className="min-h-screen bg-canvas font-sans text-white antialiased">
+        <CurrencyHydrator />
+        {children}
+      </body>
     </html>
   );
 }

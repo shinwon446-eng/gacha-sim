@@ -22,8 +22,13 @@ import { NetflixRow } from "@/components/home/NetflixRow";
 import { BoxCard } from "@/components/box/BoxCard";
 import { DetailModal } from "@/components/box/DetailModal";
 import { TIERS, glow } from "@/lib/tiers";
+import { CurrencySelector } from "@/components/layout/CurrencySelector";
+import { useCurrency } from "@/lib/useCurrency";
+import { Wallet } from "lucide-react";
 
 const PAGE_SIZE = 12;
+/** 데모 잔액 (USDT 기준). 결제·계정 없음. */
+const DEMO_BALANCE_USDT = 1000;
 
 export default function BoxesPage() {
   const [detail, setDetail] = useState<ProductBox | null>(null);
@@ -31,6 +36,7 @@ export default function BoxesPage() {
   const [sort, setSort] = useState<SortKey>("featured");
   const [shown, setShown] = useState(PAGE_SIZE);
 
+  const { fmt } = useCurrency();
   const hero = useMemo(() => heroBox(), []);
   const grid = useMemo(() => sortBoxes(byCategory(category), sort), [category, sort]);
   const visible = grid.slice(0, shown);
@@ -47,9 +53,16 @@ export default function BoxesPage() {
           <span className="cursor-default opacity-60">배틀</span>
           <span className="cursor-default opacity-60">보관함</span>
         </nav>
-        <span className="ml-auto rounded-sm border border-line bg-black/40 px-2 py-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-faint">
-          Demo Data
-        </span>
+        <div className="ml-auto flex items-center gap-2">
+          {/* 잔액 — 데모 고정값. 선택 통화로만 표기된다. */}
+          <div className="glass-dark flex h-9 items-center gap-2 rounded-md px-3">
+            <Wallet className="h-3.5 w-3.5 text-muted" strokeWidth={2} />
+            <span className="caption-luxury hidden sm:inline">Balance</span>
+            <span className="font-display text-sm font-bold tabular-nums text-white">{fmt(DEMO_BALANCE_USDT)}</span>
+          </div>
+          <CurrencySelector />
+          <span className="caption-luxury hidden rounded-sm border border-hairline px-2 py-1 md:inline">Demo</span>
+        </div>
       </header>
 
       <HeroShowcase box={hero} onOpen={setDetail} onInspect={setDetail} />
