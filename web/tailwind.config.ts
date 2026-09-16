@@ -10,13 +10,31 @@ const config: Config = {
     extend: {
       colors: {
         ink: "#080808",
+        /** 페이지 바탕 — 무광 딥 다크 그레이 */
         canvas: "#141414",
-        surface: "#181818",
-        elevation: "#1f1f1f",
+        /** 카드 / 패널 기본 표면 */
+        surface: "#1F1F1F",
+        /** 표면의 호버·부상 상태 */
+        elevation: "#282828",
+        /** 1px 구분선 */
+        line: "#2A2A2A",
+        /** 보조 텍스트 */
+        muted: "#AAAAAA",
+        /** 라벨·캡션 */
+        faint: "#757575",
+        /** 메인 CTA 전용. 등급 표기에 쓰지 않는다. */
         crimson: "#E50914",
         hairline: "rgba(255,255,255,0.08)",
-        /** @deprecated crimson 사용. 전환 기간 동안만 유지된다. */
-        accent: "#E50914",
+        /**
+         * 가치(Value) 축 단일 등급 색.
+         * 카테고리가 아니라 "지불액 대비 몇 배인가"만을 뜻한다. lib/tiers.ts 가 유일한 원천.
+         */
+        tier: {
+          dream: "#FF4655",
+          highend: "#FFD700",
+          pro: "#00D2FF",
+          standard: "#A0AEC0",
+        },
       },
       scale: {
         "130": "1.3",
