@@ -4,7 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Play, Info } from "lucide-react";
 import { cn } from "@/lib/format";
+import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
+import { useProductText } from "@/lib/useProductText";
 import { dropTable, isValueGuaranteed, type ProductBox, type ProductItem } from "@/lib/products";
 import { boxFloorTier, boxTopTier, formatMultiple, glow, tierBreakdown, tierOf, topMultiple } from "@/lib/tiers";
 import { TierStrip } from "@/components/box/TierStrip";
@@ -33,13 +35,14 @@ const SPRING = { stiffness: 220, damping: 22, mass: 0.6 };
 /** 카드 하단 대표 명품 썸네일 — 등급색 헤어라인 + 정밀 가격 */
 function GrailThumb({ item, box }: { item: ProductItem; box: ProductBox }) {
   const { fmt } = useCurrency();
+  const { itemName } = useProductText();
   const t = tierOf(item.value, box.price);
   return (
-    <li className="min-w-0 flex-1" title={`${item.name} · ${fmt(item.value)}`}>
+    <li className="min-w-0 flex-1" title={`${itemName(item)} · ${fmt(item.value)}`}>
       <div className="relative aspect-square w-full overflow-hidden rounded-sm" style={{ boxShadow: `inset 0 0 0 1px ${glow(t.accent, 0.45)}` }}>
-        <ProductArt image={item.image} alt={item.name} accent={t.accent} glowStrength={0.28} fallbackSize="sm" />
+        <ProductArt image={item.image} alt={itemName(item)} accent={t.accent} glowStrength={0.28} fallbackSize="sm" />
       </div>
-      <div className="mt-1 truncate text-center text-[10px] leading-none text-muted">{item.name}</div>
+      <div className="mt-1 truncate text-center text-[10px] leading-none text-muted">{itemName(item)}</div>
       <div className="mt-0.5 truncate text-center font-mono text-[10px] font-bold leading-none tabular-nums" style={{ color: t.accent }}>
         {fmt(item.value)}
       </div>
@@ -61,7 +64,9 @@ function GrailThumb({ item, box }: { item: ProductItem; box: ProductBox }) {
  * 등급색은 데이터에서 오므로 인라인 style 로만 전달한다 — 그 외 레이아웃은 전부 유틸리티 클래스.
  */
 export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, onInspect, className }: BoxCardProps) {
+  const tr = useTranslations();
   const { fmt } = useCurrency();
+  const { boxTitle } = useProductText();
   const [hovered, setHovered] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
   const frameRef = useRef<HTMLDivElement>(null);
@@ -144,7 +149,7 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
         onClick={() => onInspect?.(box)}
         role="button"
         tabIndex={0}
-        aria-label={`${box.title} 상세 정보`}
+        aria-label={tr("card.details", { title: boxTitle(box) })}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
@@ -173,7 +178,7 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={box.imageUrl!}
-              alt={box.title}
+              alt={boxTitle(box)}
               draggable={false}
               loading="lazy"
               decoding="async"
@@ -182,7 +187,7 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
               className={cn("h-full w-full object-cover transition-all duration-500", hovered ? "scale-105 opacity-100" : "opacity-80")}
             />
           ) : (
-            <ProductArt image={{ src: null }} alt={box.title} accent={accent} fallbackSize="md" />
+            <ProductArt image={{ src: null }} alt={boxTitle(box)} accent={accent} fallbackSize="md" />
           )}
           {/* 페데스탈 림라이트 + 하단 페이드 */}
           <span aria-hidden className="pedestal-glow pointer-events-none absolute inset-0" />
@@ -195,8 +200,8 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
               meta.guaranteed ? "border-metallic-gold bg-obsidian/80 text-gold-champagne" : "border-metallic-subtle bg-obsidian/70 text-secondary",
             )}
           >
-            최소 {fmt(box.guaranteedMin)}
-            {meta.guaranteed ? " 보장" : ""}
+            {tr("card.guaranteedMinShort", { value: fmt(box.guaranteedMin) })}
+            {meta.guaranteed ? ` · ${tr("card.guaranteed")}` : ""}
           </span>
 
           {/* 호버: 퀵 액션 + 3px 등급 확률 바 */}
@@ -217,7 +222,7 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
                     className="flex h-8 flex-1 items-center justify-center gap-1 rounded-sm bg-crimson text-xs font-bold text-white transition-colors hover:bg-red-600"
                   >
                     <Play className="h-3 w-3 fill-current" strokeWidth={0} />
-                    지금 오픈
+                    {tr("card.openNow")}
                   </button>
                   <button
                     type="button"
@@ -225,7 +230,7 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
                     className="glass flex h-8 flex-1 items-center justify-center gap-1 rounded-sm text-xs font-semibold text-white backdrop-blur-md hover:bg-white/15"
                   >
                     <Info className="h-3 w-3" strokeWidth={2} />
-                    구성품
+                    {tr("card.contents")}
                   </button>
                 </div>
                 <TierStrip slices={meta.slices} height={3} />
@@ -236,16 +241,16 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
 
         {/* ── 메타 ── */}
         <div className="border-t border-hairline px-3 pb-2 pt-3">
-          <div className="truncate text-sm font-bold leading-tight text-white">{box.title}</div>
+          <div className="truncate text-sm font-bold leading-tight text-white">{boxTitle(box)}</div>
           <div className="mt-1.5 flex items-end justify-between gap-2">
             <div>
-              <div className="caption-luxury">1회</div>
+              <div className="caption-luxury">{tr("card.perOpen")}</div>
               <div className="font-display text-xl font-bold leading-none tracking-tight text-white">{fmt(box.price)}</div>
             </div>
             <div className="text-right">
-              <div className="caption-luxury">최고</div>
+              <div className="caption-luxury">{tr("card.top")}</div>
               <div className={cn("font-display text-xl font-bold leading-none tracking-tight", royal && "text-gold-gradient")} style={royal ? undefined : { color: accent }}>
-                {formatMultiple(meta.mult)}
+                {tr("tiers.multiple", { n: formatMultiple(meta.mult) })}
               </div>
             </div>
           </div>

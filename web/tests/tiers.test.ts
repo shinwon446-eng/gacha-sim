@@ -132,7 +132,7 @@ test("보장 박스의 본전 이상 확률은 정확히 100", () => {
 });
 
 test("formatMultiple 은 자리수에 따라 소수를 접는다", () => {
-  assert.equal(formatMultiple(4.72), "4.7배");
-  assert.equal(formatMultiple(12.46), "12배");
-  assert.equal(formatMultiple(1650.4), "1650배");
+  assert.equal(formatMultiple(4.72), "4.7");
+  assert.equal(formatMultiple(12.46), "12");
+  assert.equal(formatMultiple(1650.4), "1650");
 });

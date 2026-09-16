@@ -4,7 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Play, Info, Crown } from "lucide-react";
 import { cn } from "@/lib/format";
+import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
+import { useProductText } from "@/lib/useProductText";
 import { dropTable, isValueGuaranteed, type ProductBox } from "@/lib/products";
 import { boxTopTier, formatMultiple, glow, tierOf, topMultiple } from "@/lib/tiers";
 import { ProductArt } from "@/components/box/ProductArt";
@@ -33,7 +35,9 @@ const EASE = [0.16, 1, 0.3, 1] as const;
  * 보장 문구는 데이터가 참일 때만 나간다 (isValueGuaranteed).
  */
 export function BillboardHero({ boxes, onOpen, onInspect, intervalMs = 9000, className }: BillboardHeroProps) {
+  const t = useTranslations();
   const { fmt } = useCurrency();
+  const { boxTitle, boxTagline, boxBadge, itemName } = useProductText();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const box = boxes[Math.min(index, boxes.length - 1)];
@@ -55,7 +59,7 @@ export function BillboardHero({ boxes, onOpen, onInspect, intervalMs = 9000, cla
   return (
     <section
       className={cn("relative w-full overflow-hidden bg-canvas", "min-h-[65vh]", className)}
-      aria-label={`${box.title} 빌보드`}
+      aria-label={t("hero.billboardOf", { title: boxTitle(box) })}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -70,7 +74,7 @@ export function BillboardHero({ boxes, onOpen, onInspect, intervalMs = 9000, cla
             exit={{ opacity: 0 }}
             transition={{ duration: 1.1, ease: EASE }}
           >
-            <ProductArt image={box.image} alt={box.title} accent={top.accent} glowStrength={0.12} fallbackSize="lg" priority />
+            <ProductArt image={box.image} alt={boxTitle(box)} accent={top.accent} glowStrength={0.12} fallbackSize="lg" priority />
           </motion.div>
         </AnimatePresence>
         {/* 딥 골드 림라이트 — 피사체 아래에서 올라오는 스튜디오 조명 */}
@@ -97,46 +101,47 @@ export function BillboardHero({ boxes, onOpen, onInspect, intervalMs = 9000, cla
             <div className="flex flex-wrap items-center gap-2">
               <span className="border-metallic-gold inline-flex items-center gap-1.5 rounded-sm bg-obsidian/70 px-2.5 py-1">
                 <Crown className="h-3 w-3 text-gold-champagne" strokeWidth={2.2} />
-                <span className="caption-luxury !text-gold-champagne">Royal Selection</span>
+                <span className="caption-luxury !text-gold-champagne">{t("hero.royalSelection")}</span>
               </span>
               {typeof box.trendingRank === "number" && (
                 <span className="border-metallic-gold caption-luxury rounded-sm bg-obsidian/70 px-2.5 py-1 !text-gold-champagne">
-                  Top {box.trendingRank}
+                  {t("hero.top", { n: box.trendingRank })}
                 </span>
               )}
-              <span className="border-metallic-subtle caption-luxury rounded-sm bg-obsidian/60 px-2.5 py-1">{box.badge}</span>
+              <span className="border-metallic-subtle caption-luxury rounded-sm bg-obsidian/60 px-2.5 py-1">{boxBadge(box)}</span>
             </div>
 
             <h1 className="mt-3 font-display text-4xl font-bold uppercase leading-none tracking-tight text-white sm:text-5xl lg:text-6xl">
-              {box.title}
+              {boxTitle(box)}
             </h1>
 
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-secondary/90 md:text-base">{box.tagline}</p>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-secondary/90 md:text-base">{boxTagline(box)}</p>
 
             {/* 가격 · 최고 배수 */}
             <div className="mt-5 flex flex-wrap items-end gap-x-8 gap-y-3">
               <div>
-                <div className="caption-luxury">1회 오픈</div>
+                <div className="caption-luxury">{t("hero.pricePerOpen")}</div>
                 <div className="mt-1 font-display text-3xl font-bold leading-none tracking-tight text-white md:text-4xl">{fmt(box.price)}</div>
               </div>
               <div>
-                <div className="caption-luxury">최고 구성</div>
+                <div className="caption-luxury">{t("hero.topPull")}</div>
                 <div className="text-gold-gradient mt-1 font-display text-3xl font-bold leading-none tracking-tight md:text-4xl">
-                  {formatMultiple(topMultiple(box))}
+                  {t("tiers.multiple", { n: formatMultiple(topMultiple(box)) })}
                 </div>
               </div>
             </div>
 
             {/* 보장 — 데이터가 참인 문장만 */}
             <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold">
-              <span className="border-metallic-subtle rounded-sm bg-obsidian/50 px-2.5 py-1.5 text-secondary">100% 실물 지급 · 꽝 없음</span>
+              <span className="border-metallic-subtle rounded-sm bg-obsidian/50 px-2.5 py-1.5 text-secondary">{t("hero.noBlank")}</span>
               <span
                 className={cn(
                   "rounded-sm px-2.5 py-1.5",
                   guaranteed ? "border-metallic-gold bg-gold-champagne/15 text-gold-champagne" : "border-metallic-subtle bg-obsidian/50 text-muted",
                 )}
               >
-                최소 {fmt(box.guaranteedMin)} 상당 보장{guaranteed ? " — 오픈가 이상" : ""}
+                {t("hero.guaranteedMin", { value: fmt(box.guaranteedMin) })}
+                {guaranteed ? ` — ${t("hero.aboveOpenPrice")}` : ""}
               </span>
             </div>
 
@@ -148,7 +153,7 @@ export function BillboardHero({ boxes, onOpen, onInspect, intervalMs = 9000, cla
                 className="flex h-12 items-center gap-2 rounded-sm bg-crimson px-7 text-base font-bold text-white shadow-[0_0_28px_rgba(229,9,20,0.35)] transition-all duration-200 hover:scale-[1.03] hover:bg-red-600"
               >
                 <Play className="h-5 w-5 fill-current" strokeWidth={0} />
-                지금 오픈하기
+                {t("hero.openNow")}
               </button>
               <button
                 type="button"
@@ -156,7 +161,7 @@ export function BillboardHero({ boxes, onOpen, onInspect, intervalMs = 9000, cla
                 className="glass flex h-12 items-center gap-2 rounded-sm px-6 text-base font-semibold text-white backdrop-blur-md transition-colors duration-200 hover:border-gold-champagne/60 hover:bg-white/15"
               >
                 <Info className="h-5 w-5" strokeWidth={2} />
-                구성품 확인
+                {t("hero.viewContents")}
               </button>
             </div>
 
@@ -167,7 +172,7 @@ export function BillboardHero({ boxes, onOpen, onInspect, intervalMs = 9000, cla
                 return (
                   <li key={item.id} className="flex items-center gap-2 text-xs leading-none">
                     <span aria-hidden className="h-3 w-0.5 flex-none rounded-full" style={{ background: t.accent, boxShadow: `0 0 8px ${glow(t.accent, 0.6)}` }} />
-                    <span className="text-secondary">{item.name}</span>
+                    <span className="text-secondary">{itemName(item)}</span>
                     <span className="font-mono tabular-nums text-muted">{fmt(item.value)}</span>
                   </li>
                 );
@@ -178,14 +183,14 @@ export function BillboardHero({ boxes, onOpen, onInspect, intervalMs = 9000, cla
 
         {/* 순환 인디케이터 */}
         {boxes.length > 1 && (
-          <div className="mt-6 flex items-center gap-2" role="tablist" aria-label="빌보드 선택">
+          <div className="mt-6 flex items-center gap-2" role="tablist" aria-label={t("hero.billboardPicker")}>
             {boxes.map((b, i) => (
               <button
                 key={b.id}
                 type="button"
                 role="tab"
                 aria-selected={i === index}
-                aria-label={b.title}
+                aria-label={boxTitle(b)}
                 onClick={() => setIndex(i)}
                 className={cn(
                   "h-0.5 rounded-full transition-all duration-300",

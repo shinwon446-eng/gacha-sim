@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
+import { useProductText } from "@/lib/useProductText";
 import { X, Play, Percent } from "lucide-react";
 import {
   formatRate,
@@ -39,7 +41,9 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 
 /** 하나의 당첨 가능 상품. 등급 색 보더 + 실판매가 + 확률. */
 function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
+  const t = useTranslations("modal");
   const { fmt } = useCurrency();
+  const { itemName } = useProductText();
   return (
     <li
       className="relative overflow-hidden rounded-sm border bg-[#181818] transition-colors duration-200 hover:bg-[#282828]"
@@ -56,7 +60,7 @@ function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
       />
 
       <div className="relative aspect-[16/10] w-full overflow-hidden">
-        <ProductArt image={item.image} alt={item.name} accent={tier.accent} glowStrength={0.28} fallbackSize="sm" />
+        <ProductArt image={item.image} alt={itemName(item)} accent={tier.accent} glowStrength={0.28} fallbackSize="sm" />
         <span className="absolute left-1.5 top-1.5">
           <TierBadge tier={tier} size="xs" />
         </span>
@@ -64,12 +68,12 @@ function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
 
       <div className="p-2">
         <div className="line-clamp-2 min-h-[26px] text-[11px] font-semibold leading-tight text-white">
-          {item.name}
+          {itemName(item)}
         </div>
         <div className="mt-1.5 flex items-end justify-between gap-2 border-t border-white/10 pt-1.5">
           <div>
             <div className="text-[7px] font-semibold uppercase tracking-[0.16em] text-[#757575]">
-              실판매가
+              {t("marketValue")}
             </div>
             <div
               className="font-display text-[15px] font-bold leading-none tracking-tight"
@@ -80,7 +84,7 @@ function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
           </div>
           <div className="text-right">
             <div className="text-[7px] font-semibold uppercase tracking-[0.16em] text-[#757575]">
-              확률
+              {t("odds")}
             </div>
             <div className="font-mono text-[12px] font-bold leading-none tabular-nums text-white">
               {formatRate(item.dropRate)}
@@ -116,7 +120,9 @@ function Stat({ label, value, tone = "#FFFFFF" }: { label: string; value: string
  *         → 등급 색 보더 + 실판매가 + 확률
  */
 export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
+  const t = useTranslations();
   const { fmt } = useCurrency();
+  const { boxTitle, boxBadge } = useProductText();
   const panelRef = useRef<HTMLDivElement>(null);
 
   // ESC 닫기 + 배경 스크롤 잠금
@@ -178,7 +184,7 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
             tabIndex={-1}
             role="dialog"
             aria-modal="true"
-            aria-label={`${box.title} 상세 정보`}
+            aria-label={t("modal.details", { title: boxTitle(box) })}
             className="relative mx-auto w-full max-w-5xl overflow-hidden rounded-md bg-[#181818] shadow-[0_24px_80px_rgba(0,0,0,0.9)] outline-none"
             initial={{ opacity: 0, y: 24, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -189,7 +195,7 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
             <header className="relative aspect-[16/9] max-h-[52vh] w-full overflow-hidden bg-[#0A0A0A] md:aspect-[21/9]">
               <ProductArt
                 image={box.image}
-                alt={box.title}
+                alt={boxTitle(box)}
                 accent={meta.top.accent}
                 glowStrength={0.2}
                 fallbackSize="lg"
@@ -226,7 +232,7 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
               <button
                 type="button"
                 onClick={onClose}
-                aria-label="닫기"
+                aria-label={t("modal.close")}
                 className="absolute right-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-[#181818]/90 text-white transition-colors duration-200 hover:bg-[#282828]"
               >
                 <X className="h-5 w-5" strokeWidth={2} />
@@ -237,11 +243,11 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
                 <div className="flex flex-wrap items-center gap-2">
                   <TierBadge tier={meta.top} size="md" />
                   <span className="rounded-sm border border-[#2A2A2A] bg-black/60 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#AAAAAA]">
-                    {box.badge}
+                    {boxBadge(box)}
                   </span>
                   {typeof box.trendingRank === "number" && (
                     <span className="rounded-sm bg-[#E50914] px-2 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white">
-                      Top 10 · {box.trendingRank}위
+                      {t("modal.topRank", { n: box.trendingRank })}
                     </span>
                   )}
                 </div>
@@ -257,14 +263,14 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
                     className="flex h-11 items-center gap-2 rounded-sm bg-[#E50914] px-5 text-[14px] font-bold text-white transition-colors duration-200 hover:bg-[#f6121d]"
                   >
                     <Play className="h-4 w-4 fill-current" strokeWidth={0} />
-                    지금 오픈하기 · {fmt(box.price)}
+                    {t("modal.openNowPrice", { price: fmt(box.price) })}
                   </button>
                   <a
                     href="#drop-table"
                     className="flex h-11 items-center gap-2 rounded-sm border border-white/25 bg-[#282828]/80 px-4 text-[13px] font-semibold text-white transition-colors duration-200 hover:border-white hover:bg-[#333333]"
                   >
                     <Percent className="h-4 w-4" strokeWidth={2} />
-                    확률 전체 보기
+                    {t("modal.viewOdds")}
                   </a>
                 </div>
               </div>
@@ -272,44 +278,38 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
 
             {/* ── 핵심 수치 ── */}
             <section className="grid grid-cols-2 gap-x-3 gap-y-4 px-5 pt-5 md:grid-cols-4 md:px-9">
-              <Stat label="오픈 가격" value={fmt(box.price)} />
-              <Stat label="최저 확정" value={fmt(meta.floor)} tone={meta.floorTier.accent} />
+              <Stat label={t("modal.openPrice")} value={fmt(box.price)} />
+              <Stat label={t("modal.guaranteedMin")} value={fmt(meta.floor)} tone={meta.floorTier.accent} />
               <Stat
-                label="최고 당첨"
+                label={t("modal.topPrize")}
                 value={`${fmt(meta.table[0].value)}`}
                 tone={meta.top.accent}
               />
-              <Stat label="최고 배수" value={formatMultiple(meta.mult)} tone={meta.top.accent} />
+              <Stat label={t("modal.topMultiple")} value={t("tiers.multiple", { n: formatMultiple(meta.mult) })} tone={meta.top.accent} />
             </section>
 
             {/* ── 등급 분포 ── */}
             <section className="px-5 pt-5 md:px-9">
               <div className="flex items-baseline justify-between gap-3">
-                <h3 className="text-[13px] font-bold text-white">등급별 당첨 확률</h3>
+                <h3 className="text-[13px] font-bold text-white">{t("modal.tierOdds")}</h3>
                 <span className="text-[11px] text-[#AAAAAA]">
-                  본전({fmt(box.price)}) 이상{" "}
-                  <span className="font-mono tabular-nums text-white">{formatRate(meta.breakEven)}</span>
+                  {t("modal.breakEven", { price: fmt(box.price), rate: formatRate(meta.breakEven) })}
                 </span>
               </div>
               <TierStrip slices={meta.slices} height={10} className="mt-2.5" />
               <TierLegend slices={meta.slices} className="mt-2.5" />
 
               <p className="mt-3 border-l-2 border-line pl-3 text-[11px] leading-relaxed text-faint">
-                등급은 저장값이 아니라 <span className="text-muted">실판매가 ÷ 오픈 가격</span> 배수에서
-                파생됩니다. 기대 수령 실판매가 {fmt(meta.ev)} — 오픈 가격의{" "}
-                <span className="font-mono tabular-nums text-muted">
-                  {(meta.retail * 100).toFixed(1)}%
-                </span>
-                입니다. 다만 받은 실물을 즉시 환급하면 실판매가의 {Math.round(REFUND_RATE * 100)}%만
-                지급되므로, <span className="text-muted">현금 기준 회수율은</span>{" "}
-                <span className="font-mono tabular-nums text-muted">
-                  {(meta.cash * 100).toFixed(1)}%
-                </span>
-                로 오픈 가격보다 낮습니다.
+                {t("modal.explain", {
+                  ev: fmt(meta.ev),
+                  retail: `${(meta.retail * 100).toFixed(1)}%`,
+                  refund: `${Math.round(REFUND_RATE * 100)}%`,
+                  cash: `${(meta.cash * 100).toFixed(1)}%`,
+                })}{" "}
                 {meta.guaranteed
-                  ? ` 이 박스는 최저 구성의 실판매가(${fmt(box.guaranteedMin)})가 오픈 가격 이상입니다.`
-                  : ` 이 박스의 최저 구성 실판매가는 ${fmt(box.guaranteedMin)} 이며 오픈 가격보다 낮습니다.`}{" "}
-                현재 화면은 프로토타입이고 상품 데이터는 모의값입니다.
+                  ? t("modal.guaranteedYes", { min: fmt(box.guaranteedMin) })
+                  : t("modal.guaranteedNo", { min: fmt(box.guaranteedMin) })}{" "}
+                {t("modal.prototype")}
               </p>
             </section>
 
@@ -317,13 +317,13 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
             <section id="drop-table" className="scroll-mt-4 px-5 pb-8 pt-6 md:px-9">
               <div className="mb-3 flex items-baseline justify-between gap-3 border-b border-[#2A2A2A] pb-2">
                 <h3 className="text-[13px] font-bold text-white">
-                  전체 당첨 가능 상품{" "}
+                  {t("modal.allPrizes")}{" "}
                   <span className="ml-1 font-mono text-[11px] tabular-nums text-[#757575]">
-                    {meta.table.length}종
+                    {t("modal.count", { n: meta.table.length })}
                   </span>
                 </h3>
                 <span className="text-[10px] uppercase tracking-[0.16em] text-[#757575]">
-                  실판매가 내림차순
+                  {t("modal.sortedByValue")}
                 </span>
               </div>
 
@@ -337,7 +337,7 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
             {/* 이미지 출처 — CC BY / BY-SA 자산은 표기 의무가 있다 */}
             {credits.length > 0 && (
               <footer className="border-t border-line px-5 py-4 md:px-9">
-                <div className="text-[9px] font-semibold uppercase tracking-[0.16em] text-faint">이미지 출처</div>
+                <div className="text-[9px] font-semibold uppercase tracking-[0.16em] text-faint">{t("modal.imageCredits")}</div>
                 <ul className="mt-1.5 space-y-0.5">
                   {credits.map((c) => (
                     <li key={c} className="truncate text-[10px] leading-relaxed text-faint">

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/format";
 import type { ProductBox } from "@/lib/products";
 import { BoxCard, type CardEdge } from "@/components/box/BoxCard";
@@ -58,6 +59,7 @@ export function NetflixRow({
   onInspect,
   className,
 }: NetflixRowProps) {
+  const t = useTranslations("rows");
   const slots = useSlots(variant);
   const [page, setPage] = useState(0);
   const [expandedCount, setExpandedCount] = useState(0);
@@ -121,7 +123,7 @@ export function NetflixRow({
         <button
           type="button"
           onClick={() => setPage((p) => Math.max(0, p - 1))}
-          aria-label="이전"
+          aria-label={t("prev")}
           className={cn(
             "absolute bottom-0 left-0 top-0 z-30 flex w-[4%] items-center justify-center bg-black/55 text-white opacity-0 transition duration-200 hover:bg-black/80 group-hover/row:opacity-100",
             !canPrev && "pointer-events-none !opacity-0",
@@ -132,7 +134,7 @@ export function NetflixRow({
         <button
           type="button"
           onClick={() => setPage((p) => p + 1)}
-          aria-label="다음"
+          aria-label={t("next")}
           className={cn(
             "absolute bottom-0 right-0 top-0 z-30 flex w-[4%] items-center justify-center bg-black/55 text-white opacity-0 transition duration-200 hover:bg-black/80 group-hover/row:opacity-100",
             !canNext && "pointer-events-none !opacity-0",
