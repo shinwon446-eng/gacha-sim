@@ -28,9 +28,10 @@ import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import { Link } from "@/i18n/navigation";
-import { Wallet, RefreshCw } from "lucide-react";
-import { useWalletStore, START_BALANCE_USDT } from "@/stores/walletStore";
+import { Wallet } from "lucide-react";
+import { useWalletStore } from "@/stores/walletStore";
 import { UnboxingRoulette, type UnboxResult } from "@/components/unboxing/UnboxingRoulette";
+import { DepositModal } from "@/components/wallet/DepositModal";
 import { glow as glowOf } from "@/lib/tiers";
 
 const PAGE_SIZE = 12;
@@ -50,11 +51,11 @@ export default function BoxesPage() {
   const [sort, setSort] = useState<SortKey>("featured");
   const [shown, setShown] = useState(PAGE_SIZE);
   const [unbox, setUnbox] = useState<{ box: ProductBox; count: number } | null>(null);
+  const [depositOpen, setDepositOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const balance = useWalletStore((s) => s.balance);
   const debit = useWalletStore((s) => s.debit);
   const credit = useWalletStore((s) => s.credit);
-  const topUp = useWalletStore((s) => s.topUp);
 
   const pushToast = useCallback((toast: Omit<Toast, "id">) => {
     const id = Date.now() + Math.floor(Math.random() * 1000);
@@ -131,15 +132,11 @@ export default function BoxesPage() {
           </div>
           <button
             type="button"
-            onClick={() => {
-              topUp();
-              pushToast({ title: t("unbox.toppedUp", { amount: fmt(START_BALANCE_USDT) }), tone: "#94A3B8" });
-            }}
-            title={t("unbox.topUp")}
-            aria-label={t("unbox.topUp")}
-            className="glass-dark flex h-9 w-9 items-center justify-center rounded-md text-muted hover:text-white"
+            onClick={() => setDepositOpen(true)}
+            className="flex h-9 items-center gap-1.5 rounded-md bg-crimson px-3 text-xs font-bold text-white shadow-[0_0_18px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600"
           >
-            <RefreshCw className="h-3.5 w-3.5" strokeWidth={2} />
+            <Wallet className="h-3.5 w-3.5" strokeWidth={2.2} />
+            {t("header.deposit")}
           </button>
           <LanguageSelector />
           <CurrencySelector />
@@ -251,6 +248,12 @@ export default function BoxesPage() {
       </section>
 
       <DetailModal box={detail} onClose={() => setDetail(null)} onOpen={openBox} />
+
+      <DepositModal
+        open={depositOpen}
+        onClose={() => setDepositOpen(false)}
+        onCredited={(amount) => pushToast({ title: t("deposit.creditedToast", { amount: fmt(amount) }), tone: "#E6CA65" })}
+      />
 
       <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} />
 

@@ -73,6 +73,19 @@ UI = {
       "seedHash": "서버 시드 해시 (개봉 전 공개)", "serverSeed": "서버 시드", "clientSeed": "클라이언트 시드", "nonce": "Nonce", "roll": "롤",
       "fairNote": "이 결과는 아래 시드와 Nonce 로 결정됐습니다. [이 결과 검증]에서 그대로 재현할 수 있습니다."
     },
+    "deposit": {
+      "title": "충전하기", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 암호화폐 입금", "tabCard": "신용카드 결제",
+      "network": "네트워크 선택", "recommended": "추천 · 수수료 1 USDT 이하", "chain": "{chain}",
+      "address": "입금 지갑 주소", "copy": "원클릭 복사", "copied": "주소가 복사되었습니다", "qrHint": "지갑 앱으로 QR을 스캔하세요",
+      "demoWarning": "데모 주소 — 실제 송금 금지", "demoWarningBody": "이 주소는 체크섬이 맞지 않아 지갑이 송금을 거부합니다. 실서비스에서는 게이트웨이가 유저별 주소를 발급합니다.",
+      "guideTitle": "입금 안내", "guideMin": "최소 입금액 {min}", "guideConfirm": "블록체인 {n} 컨펌 후 자동 반영", "guideToken": "선택한 네트워크의 USDT 만 전송하세요. 다른 코인·네트워크 전송은 복구 불가",
+      "guideTime": "평균 {sec}초/블록 · 약 {min}분",
+      "status": "입금 상태", "waiting": "입금 대기 중", "confirming": "컨펌 {n} / {total}", "credited": "잔액 반영 완료",
+      "simulateTitle": "테스트용 모의 웹훅", "simulateBody": "개발 환경에서 입금 웹훅을 흉내 냅니다. 금액을 넣고 실행하면 컨펌 카운터가 돌고 잔액이 반영됩니다.",
+      "amount": "금액 (USDT)", "simulate": "입금 시뮬레이션", "simulating": "컨펌 대기 중…", "belowMin": "최소 입금액은 {min} 입니다",
+      "creditedToast": "+{amount} 잔액 반영 (모의 입금)",
+      "cardSoon": "신용카드 결제는 4-2 에서 연결됩니다.", "close": "닫기"
+    },
     "actions": {"sellBack": "즉시 판매", "claimShipping": "실물 배송 신청", "provablyFair": "공정성 검증"},
     "legal": {"disclaimer": "표기 금액은 실판매가 기준입니다. 받은 실물을 즉시 판매하면 실판매가의 {refund}를 돌려받으므로 회수액은 오픈 가격보다 낮습니다. 확률은 구성품 확인에서 전량 공개됩니다. 현재 화면은 프로토타입이며 상품 데이터는 모의값입니다."},
     "badges": {"dream": "드림 박스", "mobility": "모빌리티", "tech": "테크", "audio": "오디오", "watch": "워치", "luxury": "럭셔리", "lifestyle": "라이프스타일", "guaranteed": "가치 보장"},
@@ -136,6 +149,19 @@ UI = {
       "seedHash": "Server seed hash (published before open)", "serverSeed": "Server seed", "clientSeed": "Client seed", "nonce": "Nonce", "roll": "Roll",
       "fairNote": "This result was determined by the seeds and nonce below. Reproduce it exactly under [Verify this result]."
     },
+    "deposit": {
+      "title": "Deposit", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT Crypto Deposit", "tabCard": "Credit Card",
+      "network": "Select network", "recommended": "Recommended · fee under 1 USDT", "chain": "{chain}",
+      "address": "Deposit address", "copy": "Copy address", "copied": "Address copied", "qrHint": "Scan the QR with your wallet app",
+      "demoWarning": "Demo address — do not send funds", "demoWarningBody": "This address has an invalid checksum, so wallets will refuse to send to it. In production a gateway issues a per-user address.",
+      "guideTitle": "Deposit guide", "guideMin": "Minimum deposit {min}", "guideConfirm": "Credited automatically after {n} block confirmations", "guideToken": "Send only USDT on the selected network. Other coins or networks cannot be recovered",
+      "guideTime": "~{sec}s per block · about {min} min",
+      "status": "Deposit status", "waiting": "Waiting for deposit", "confirming": "Confirmation {n} / {total}", "credited": "Credited to balance",
+      "simulateTitle": "Mock webhook (test)", "simulateBody": "Simulates the deposit webhook in development. Enter an amount and run it to watch confirmations and get credited.",
+      "amount": "Amount (USDT)", "simulate": "Simulate deposit", "simulating": "Waiting for confirmations…", "belowMin": "Minimum deposit is {min}",
+      "creditedToast": "+{amount} credited (mock deposit)",
+      "cardSoon": "Credit card checkout is wired in 4-2.", "close": "Close"
+    },
     "actions": {"sellBack": "Instant Sell-Back", "claimShipping": "Claim Shipping", "provablyFair": "Provably Fair"},
     "legal": {"disclaimer": "Amounts shown are market value. Instant sell-back pays {refund} of market value, so cash recovery is below the open price. All odds are published under View Contents. This screen is a prototype and product data is mock."},
     "badges": {"dream": "Dream Box", "mobility": "Mobility", "tech": "Tech", "audio": "Audio", "watch": "Watches", "luxury": "Luxury", "lifestyle": "Lifestyle", "guaranteed": "Guaranteed"},
@@ -198,6 +224,19 @@ UI = {
       "mute": "关闭音效", "unmute": "开启音效",
       "seedHash": "服务器种子哈希（开启前公开）", "serverSeed": "服务器种子", "clientSeed": "客户端种子", "nonce": "Nonce", "roll": "Roll",
       "fairNote": "本次结果由以下种子与 Nonce 决定。可在[验证本次结果]中完整复现。"
+    },
+    "deposit": {
+      "title": "充值", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 加密货币充值", "tabCard": "信用卡支付",
+      "network": "选择网络", "recommended": "推荐 · 手续费低于 1 USDT", "chain": "{chain}",
+      "address": "充值钱包地址", "copy": "一键复制", "copied": "地址已复制", "qrHint": "请用钱包 App 扫描二维码",
+      "demoWarning": "演示地址 — 请勿实际转账", "demoWarningBody": "该地址校验和无效，钱包会拒绝转账。正式环境由网关为每位用户分配地址。",
+      "guideTitle": "充值说明", "guideMin": "最低充值 {min}", "guideConfirm": "区块链 {n} 次确认后自动到账", "guideToken": "仅发送所选网络的 USDT。其他币种或网络无法找回",
+      "guideTime": "约 {sec} 秒/区块 · 约 {min} 分钟",
+      "status": "充值状态", "waiting": "等待入账", "confirming": "确认 {n} / {total}", "credited": "已计入余额",
+      "simulateTitle": "测试用模拟 Webhook", "simulateBody": "在开发环境模拟充值 Webhook。输入金额并执行，确认计数器会运行并计入余额。",
+      "amount": "金额 (USDT)", "simulate": "模拟充值", "simulating": "等待确认…", "belowMin": "最低充值为 {min}",
+      "creditedToast": "+{amount} 已计入余额（模拟充值）",
+      "cardSoon": "信用卡支付将在 4-2 中接入。", "close": "关闭"
     },
     "actions": {"sellBack": "即时回收", "claimShipping": "申请发货", "provablyFair": "公平性验证"},
     "legal": {"disclaimer": "所示金额均为市场价。即时回收仅按市场价的 {refund} 支付，因此现金回收额低于开启价。全部概率在「查看内含」中公开。当前页面为原型，商品数据为模拟数据。"},
