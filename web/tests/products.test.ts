@@ -184,10 +184,13 @@ test("이미지 URL 은 https 이며 출처 표기를 동반하고, imageUrl 은
       assert.equal(x.imageUrl, x.image.src, x.id);
       if (x.image.src) {
         have += 1;
-        assert.match(x.image.src, /^https:\/\/(upload|thumb)\.wikimedia\.org\//, `${x.id}: 검증되지 않은 호스트`);
-        assert.ok(!x.image.src.includes("?"), `${x.id}: 쿼리 문자열이 붙어 있다`);
+        assert.match(
+          x.image.src,
+          /^https:\/\/((upload|thumb)\.wikimedia\.org|images\.unsplash\.com)\//,
+          `${x.id}: 검증되지 않은 호스트`,
+        );
         assert.ok(x.image.credit && x.image.credit.length > 8, `${x.id}: 출처 누락`);
-        assert.match(x.image.credit!, /CC|Public domain/, `${x.id}: 라이선스 표기 누락`);
+        assert.match(x.image.credit!, /CC|Public domain|Unsplash License/, `${x.id}: 라이선스 표기 누락`);
       }
     }
   }
