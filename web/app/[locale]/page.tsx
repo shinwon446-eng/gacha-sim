@@ -26,6 +26,7 @@ import { CurrencySelector } from "@/components/layout/CurrencySelector";
 import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
+import { Link } from "@/i18n/navigation";
 import { Wallet } from "lucide-react";
 
 const PAGE_SIZE = 12;
@@ -59,7 +60,9 @@ export default function BoxesPage() {
           <span className="font-semibold text-white">{t("nav.boxes")}</span>
           <span className="cursor-default opacity-60">{t("nav.battles")}</span>
           <span className="cursor-default opacity-60">{t("nav.inventory")}</span>
-          <span className="cursor-default opacity-60">{t("nav.fairness")}</span>
+          <Link href="/fairness" className="transition-colors hover:text-white">
+            {t("nav.fairness")}
+          </Link>
         </nav>
         <div className="ml-auto flex items-center gap-2">
           {/* 잔액 — 데모 고정값. 선택 통화로만 표기된다. */}
