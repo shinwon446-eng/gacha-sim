@@ -5,7 +5,7 @@
  *  - imageSrc 는 반드시 `/assets/items/${id}.svg`. public/assets/items/ 의 더미 에셋과 확장자·id 가 1:1 이다.
  *    (tests/gachaItems.test.ts 가 파일 존재까지 검증한다.)
  *  - 등급은 usdtValue 와 단조: S > A > B > C 구간이 겹치지 않는다.
- *  - glowColor 는 등급마다 하나. S 버건디-레드 / A 골드 / B 사이언 / C 실버.
+ *  - glowColor 는 등급마다 하나. S 샴페인 골드 / A 플래티넘 / B 로열 퍼플 / C 티타늄 그레이.
  *  - 이름에 이모지·'&' 를 쓰지 않는다 (SVG 텍스트로 그대로 들어간다).
  */
 
@@ -19,11 +19,12 @@ export interface GachaItem {
   glowColor: string;
 }
 
+/** S/A/B/C → ROYAL / PRESTIGE / EXECUTIVE / CURATED 액센트 (CLAUDE.md §3) */
 export const TIER_GLOW: Record<GachaItem["tier"], string> = {
-  S: "#FF4655",
-  A: "#FFD700",
-  B: "#00D2FF",
-  C: "#A0AEC0",
+  S: "#E6CA65",
+  A: "#93C5FD",
+  B: "#C084FC",
+  C: "#94A3B8",
 };
 
 const img = (id: string): string => `/assets/items/${id}.svg`;

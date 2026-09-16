@@ -24,14 +24,14 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #141414;
+  background: #0b0b0b;
 }
 ::-webkit-scrollbar-thumb {
-  background: #262626;
+  background: #2a2a2a;
   border-radius: 0;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #404040;
+  background: #a27b1e;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -40,6 +40,129 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ── 럭셔리 유틸리티 (CLAUDE.md §2-B) ───────────────── */
+
+:root {
+  --bg-obsidian: #0b0b0b;
+  --bg-canvas: #141414;
+  --bg-surface: #181818;
+  --bg-surface-elevated: #222222;
+  --gold-champagne: #e6ca65;
+  --gold-metallic: #d4af37;
+  --gold-dark: #a27b1e;
+  --crimson-netflix: #e50914;
+  --platinum-ice: #e5e4e2;
+  --bronze-executive: #c5a059;
+  --text-primary: #ffffff;
+  --text-secondary: #e5e5e5;
+  --text-muted: #9ca3af;
+  --text-faint: #6b7280;
+}
+
+/* 극미세 화이트 헤어라인 + 상단 1px 하이라이트. 평범한 회색 보더를 대체한다. */
+.border-metallic-subtle {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* 샴페인 골드 헤어라인 — ROYAL 카드·강조 패널 전용. 확산 글로우는 최소로. */
+.border-metallic-gold {
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(230, 202, 101, 0.35),
+    0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+/* 그라데이션 보더가 필요한 곳 — border-image 는 radius 와 안 맞으므로 이중 배경 기법 */
+.border-gold-gradient {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--bg-surface), var(--bg-surface)) padding-box,
+    linear-gradient(135deg, rgba(230, 202, 101, 0.7) 0%, rgba(162, 123, 30, 0.35) 50%, rgba(230, 202, 101, 0.7) 100%) border-box;
+}
+
+/* 페데스탈 림라이트 — 고가 실물 뒤에 깔리는 스튜디오 조명. 부모는 relative, 이 요소는 absolute inset-0 로 쓴다. */
+.pedestal-glow {
+  background: radial-gradient(circle at 50% 60%, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+}
+.pedestal-glow-strong {
+  background: radial-gradient(circle at 50% 60%, rgba(212, 175, 55, 0.28) 0%, rgba(212, 175, 55, 0.08) 40%, transparent 72%);
+}
+
+/* 샴페인 골드 메탈릭 텍스트 */
+.text-gold-gradient {
+  background: linear-gradient(180deg, #f3e3a1 0%, #e6ca65 38%, #d4af37 62%, #a27b1e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 프로스티드 글래스 — 반투명 버튼·패널 */
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.glass-dark {
+  background: rgba(11, 11, 11, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* 홀로그램 샤인 — 호버 시 사선으로 한 번 스쳐 지나간다 (1-2 에서 카드에 적용) */
+.sheen {
+  position: relative;
+  overflow: hidden;
+}
+.sheen::before {
+  content: "";
+  position: absolute;
+  inset: -40% -60%;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.06) 47%,
+    rgba(230, 202, 101, 0.18) 50%,
+    rgba(255, 255, 255, 0.06) 53%,
+    transparent 60%
+  );
+  transform: translateX(-60%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+.sheen:hover::before {
+  opacity: 1;
+  animation: sheen-sweep 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes sheen-sweep {
+  from { transform: translateX(-60%); }
+  to   { transform: translateX(60%); }
+}
+
+/* 초정밀 캡션 — 0.2em 트래킹 대문자 */
+.caption-luxury {
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* 넷플릭스 오버사이즈 순위 숫자 — 메탈릭 스트로크 (CLAUDE.md §2-B-4) */
+.rank-numeral {
+  font-size: 8.5rem;
+  line-height: 0.72;
+  color: transparent;
+  -webkit-text-stroke: 2px #333333;
+  user-select: none;
+  pointer-events: none;
 }
 
 /* ── 표면 ───────────────────────────────────────────── */
@@ -94,10 +217,11 @@ body {
 /* ── 타이포그래피 ───────────────────────────────────── */
 
 .display {
-  font-family: var(--font-display), Oswald, Impact, sans-serif;
+  font-family: var(--font-display), Cinzel, Pretendard, serif;
   text-transform: uppercase;
-  letter-spacing: -0.05em;
-  line-height: 0.9;
+  letter-spacing: -0.01em;
+  line-height: 0.95;
+  font-weight: 700;
 }
 
 .label-caps {
@@ -105,7 +229,7 @@ body {
   line-height: 1.2;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  color: #737373;
+  color: #9ca3af;
   font-weight: 600;
 }
 

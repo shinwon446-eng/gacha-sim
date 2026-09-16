@@ -19,7 +19,7 @@ import {
 
 test("등급은 4단계이며 배수 내림차순, 최하위가 0 에서 닫힌다", () => {
   assert.equal(TIERS.length, 4);
-  assert.deepEqual(TIERS.map((t) => t.key), ["dream", "highend", "pro", "standard"]);
+  assert.deepEqual(TIERS.map((t) => t.key), ["royal", "prestige", "executive", "curated"]);
   for (let i = 1; i < TIERS.length; i++) {
     assert.ok(TIERS[i].minMultiple < TIERS[i - 1].minMultiple, `${TIERS[i].key}`);
   }
@@ -28,10 +28,10 @@ test("등급은 4단계이며 배수 내림차순, 최하위가 0 에서 닫힌�
 });
 
 test("승인된 등급 색이 그대로 쓰인다", () => {
-  assert.equal(TIER_BY_KEY.dream.accent, "#FF4655");
-  assert.equal(TIER_BY_KEY.highend.accent, "#FFD700");
-  assert.equal(TIER_BY_KEY.pro.accent, "#00D2FF");
-  assert.equal(TIER_BY_KEY.standard.accent, "#A0AEC0");
+  assert.equal(TIER_BY_KEY.royal.accent, "#E6CA65");
+  assert.equal(TIER_BY_KEY.prestige.accent, "#93C5FD");
+  assert.equal(TIER_BY_KEY.executive.accent, "#C084FC");
+  assert.equal(TIER_BY_KEY.curated.accent, "#94A3B8");
   for (const t of TIERS) {
     assert.match(t.accent, /^#[0-9A-F]{6}$/i, `${t.key} accent`);
     assert.match(t.deep, /^#[0-9A-F]{6}$/i, `${t.key} deep`);
@@ -45,20 +45,20 @@ test("glow 는 hex 를 rgba 로 정확히 변환한다", () => {
 
 test("tierOf 는 경계값에서 상위 등급을 택한다", () => {
   const price = 100000;
-  assert.equal(tierOf(2000000, price).key, "dream"); // 20배
-  assert.equal(tierOf(1999999, price).key, "highend");
-  assert.equal(tierOf(600000, price).key, "highend"); // 6배
-  assert.equal(tierOf(200000, price).key, "pro"); // 2배
-  assert.equal(tierOf(199999, price).key, "standard");
-  assert.equal(tierOf(0, price).key, "standard");
+  assert.equal(tierOf(2000000, price).key, "royal"); // 20배
+  assert.equal(tierOf(1999999, price).key, "prestige");
+  assert.equal(tierOf(600000, price).key, "prestige"); // 6배
+  assert.equal(tierOf(200000, price).key, "executive"); // 2배
+  assert.equal(tierOf(199999, price).key, "curated");
+  assert.equal(tierOf(0, price).key, "curated");
   // 가격이 0 이어도 미분류로 떨어지지 않는다
-  assert.equal(tierOf(1000000, 0).key, "standard");
+  assert.equal(tierOf(1000000, 0).key, "curated");
 });
 
 test("tierIndex 는 상위 등급이 더 작다", () => {
-  assert.ok(tierIndex("dream") < tierIndex("highend"));
-  assert.ok(tierIndex("highend") < tierIndex("pro"));
-  assert.ok(tierIndex("pro") < tierIndex("standard"));
+  assert.ok(tierIndex("royal") < tierIndex("prestige"));
+  assert.ok(tierIndex("prestige") < tierIndex("executive"));
+  assert.ok(tierIndex("executive") < tierIndex("curated"));
 });
 
 test("박스마다 등급 분포 합계는 정확히 100, 빈 구간 없음", () => {
@@ -94,22 +94,22 @@ test("boxTopTier / boxFloorTier 가 실제 최고·최저 항목과 일치한다
   }
 });
 
-test("보장 박스는 최저 등급이 STANDARD 이상이고, 일반 박스는 STANDARD 다", () => {
+test("보장 박스는 최저 등급이 CURATED 이상이고, 일반 박스는 CURATED 다", () => {
   for (const b of BOXES) {
     const floor = boxFloorTier(b);
     if (isValueGuaranteed(b)) {
-      // 최저가가 오픈가 이상이므로 배수 1 이상 — STANDARD 구간 안쪽이지만 0 배는 아니다
+      // 최저가가 오픈가 이상이므로 배수 1 이상 — CURATED 구간 안쪽이지만 0 배는 아니다
       assert.ok(b.guaranteedMin / b.price >= 1, `${b.slug}: 배수 ${b.guaranteedMin / b.price}`);
     } else {
-      assert.equal(floor.key, "standard", `${b.slug}: 최저 등급 ${floor.label}`);
+      assert.equal(floor.key, "curated", `${b.slug}: 최저 등급 ${floor.label}`);
     }
   }
 });
 
-test("모든 박스에 PRO 이상 등급이 존재한다 — 상위 구성이 없는 박스는 없다", () => {
+test("모든 박스에 EXECUTIVE 이상 등급이 존재한다 — 상위 구성이 없는 박스는 없다", () => {
   for (const b of BOXES) {
     assert.ok(
-      tierIndex(boxTopTier(b).key) <= tierIndex("pro"),
+      tierIndex(boxTopTier(b).key) <= tierIndex("executive"),
       `${b.slug}: 최고 등급 ${boxTopTier(b).label} (${topMultiple(b).toFixed(1)}배)`,
     );
   }

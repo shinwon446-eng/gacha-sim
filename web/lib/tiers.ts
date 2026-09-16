@@ -1,17 +1,18 @@
 /**
- * 등급 체계 — 가치(Value) 축 단일화.
+ * 프레스티지 등급 체계 (CLAUDE.md §3) — 가치(Value) 축 단일화.
+ *   ROYAL 샴페인 골드 20x+ / PRESTIGE 플래티넘 6~20x / EXECUTIVE 로열 퍼플 2~6x / CURATED 티타늄 기본 보장
  *
  * 설계 규칙
  *  1. 등급은 저장하지 않고 "실판매가 ÷ 오픈 가격" 배수에서 파생한다.
  *     데이터에 손으로 박아두면 가격이 바뀌는 순간 조용히 거짓말이 된다.
- *  2. 색은 카테고리를 뜻하지 않는다. 골드가 "명품"이 아니라 "지불액의 6~20배"다.
+ *  2. 색은 카테고리를 뜻하지 않는다. 골드가 "명품"이 아니라 "지불액의 20배 이상"이다.
  *     카테고리는 행 제목과 필터가 이미 말하고 있으므로 색까지 쓰지 않는다.
  *  3. accent / deep 두 색만 원천으로 두고 글로우는 알파 변형으로 파생한다.
  */
 
 import type { ProductBox, ProductItem } from "./products";
 
-export type TierKey = "dream" | "highend" | "pro" | "standard";
+export type TierKey = "royal" | "prestige" | "executive" | "curated";
 
 export interface Tier {
   key: TierKey;
@@ -28,10 +29,10 @@ export interface Tier {
 
 /** 배수 내림차순. tierOf 가 위에서부터 훑는다. */
 export const TIERS: Tier[] = [
-  { key: "dream", label: "DREAM", accent: "#FF4655", deep: "#A32734", minMultiple: 20, range: "20배 이상" },
-  { key: "highend", label: "HIGH-END", accent: "#FFD700", deep: "#8C7400", minMultiple: 6, range: "6~20배" },
-  { key: "pro", label: "PRO", accent: "#00D2FF", deep: "#00708A", minMultiple: 2, range: "2~6배" },
-  { key: "standard", label: "STANDARD", accent: "#A0AEC0", deep: "#5A6474", minMultiple: 0, range: "2배 미만" },
+  { key: "royal", label: "ROYAL", accent: "#E6CA65", deep: "#A27B1E", minMultiple: 20, range: "20배 이상" },
+  { key: "prestige", label: "PRESTIGE", accent: "#93C5FD", deep: "#3B82C4", minMultiple: 6, range: "6~20배" },
+  { key: "executive", label: "EXECUTIVE", accent: "#C084FC", deep: "#7E3FBF", minMultiple: 2, range: "2~6배" },
+  { key: "curated", label: "CURATED", accent: "#94A3B8", deep: "#4B5563", minMultiple: 0, range: "기본 보장" },
 ];
 
 export const TIER_BY_KEY: Record<TierKey, Tier> = Object.fromEntries(

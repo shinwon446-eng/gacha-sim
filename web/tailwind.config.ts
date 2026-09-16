@@ -1,47 +1,71 @@
 import type { Config } from "tailwindcss";
 
 /**
- * 시네마틱 다크 아키텍처 토큰.
- * 크림슨은 고임팩트 CTA 와 최상위 등급 트리거 전용. 그 외 모든 표면은 무채색.
+ * GACHAFLIX Ultra-Luxury 토큰 (CLAUDE.md §2).
+ * 옵시디언/캔버스 다크 + 샴페인 골드 메탈릭 + 넷플릭스 크림슨 CTA. 네온 금지.
  */
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        ink: "#080808",
-        /** 페이지 바탕 — 무광 딥 다크 그레이 */
+        // ── 배경 (CLAUDE.md §2-A) ──
+        /** 최심도 — 헤더·모달 오버레이 */
+        obsidian: "#0B0B0B",
+        /** 넷플릭스 캔버스 */
         canvas: "#141414",
-        /** 카드 / 패널 기본 표면 */
-        surface: "#1F1F1F",
-        /** 표면의 호버·부상 상태 */
-        elevation: "#282828",
-        /** 1px 구분선 */
-        line: "#2A2A2A",
-        /** 보조 텍스트 */
-        muted: "#AAAAAA",
-        /** 라벨·캡션 */
-        faint: "#757575",
-        /** 메인 CTA 전용. 등급 표기에 쓰지 않는다. */
+        /** 카드 표면 */
+        surface: "#181818",
+        /** 호버·활성 표면 */
+        elevation: "#222222",
+        /** @deprecated obsidian 사용 */
+        ink: "#0B0B0B",
+
+        // ── 메탈릭·럭셔리 액센트 ──
+        gold: {
+          champagne: "#E6CA65",
+          metallic: "#D4AF37",
+          dark: "#A27B1E",
+        },
+        /** 브랜드 CTA 전용 */
         crimson: "#E50914",
+        platinum: { ice: "#E5E4E2" },
+        bronze: { executive: "#C5A059" },
+
+        // ── 텍스트 ──
+        /** 본문 90% 화이트 */
+        secondary: "#E5E5E5",
+        /** 캡션 */
+        muted: "#9CA3AF",
+        /** 메타·법적 고지 */
+        faint: "#6B7280",
+        /** 1px 구분선 (헤어라인 유틸이 우선) */
+        line: "#2A2A2A",
         hairline: "rgba(255,255,255,0.08)",
+
         /**
-         * 가치(Value) 축 단일 등급 색.
-         * 카테고리가 아니라 "지불액 대비 몇 배인가"만을 뜻한다. lib/tiers.ts 가 유일한 원천.
+         * 프레스티지 등급 (CLAUDE.md §3). 배수 파생 — lib/tiers.ts 가 원천.
+         * ROYAL 20x+ / PRESTIGE 6~20x / EXECUTIVE 2~6x / CURATED 기본 보장
          */
         tier: {
-          dream: "#FF4655",
-          highend: "#FFD700",
-          pro: "#00D2FF",
-          standard: "#A0AEC0",
+          royal: "#E6CA65",
+          prestige: "#93C5FD",
+          executive: "#C084FC",
+          curated: "#94A3B8",
         },
+      },
+      letterSpacing: {
+        /** 초정밀 캡션 트래킹 */
+        luxury: "0.2em",
       },
       scale: {
         "130": "1.3",
       },
       fontFamily: {
-        display: ["var(--font-display)", "Oswald", "Impact", "sans-serif"],
-        sans: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
+        /** 메인 타이틀·대형 숫자 — Cinzel(세리프 럭셔리), 폴백 Pretendard Black */
+        display: ["var(--font-display)", "Cinzel", "Pretendard", "serif"],
+        /** 본문·라벨 — Pretendard → Inter */
+        sans: ["Pretendard", "var(--font-sans)", "Inter", "-apple-system", "system-ui", "sans-serif"],
       },
       transitionTimingFunction: {
         cine: "cubic-bezier(0.16, 1, 0.3, 1)",
