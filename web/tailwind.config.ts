@@ -5,7 +5,7 @@ import type { Config } from "tailwindcss";
  * 크림슨은 고임팩트 CTA 와 최상위 등급 트리거 전용. 그 외 모든 표면은 무채색.
  */
 const config: Config = {
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
