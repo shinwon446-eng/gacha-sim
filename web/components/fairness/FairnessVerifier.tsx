@@ -39,16 +39,23 @@ const inputCls =
  *   출력: 서버 시드 SHA-256(+공개 해시 일치 여부) · HMAC · 롤 · 당첨 항목과 구간
  * 계산은 lib/fairness.ts 그대로 — 화면은 재현만 한다.
  */
-export function FairnessVerifier({ initialBox, compact = false }: { initialBox?: ProductBox; compact?: boolean }) {
+export interface FairnessInitial {
+  serverSeed?: string;
+  serverSeedHash?: string;
+  clientSeed?: string;
+  nonce?: number;
+}
+
+export function FairnessVerifier({ initialBox, initial, compact = false }: { initialBox?: ProductBox; initial?: FairnessInitial; compact?: boolean }) {
   const t = useTranslations("fairness");
   const { fmt } = useCurrency();
   const { boxTitle, itemName } = useProductText();
 
   const [boxSlug, setBoxSlug] = useState((initialBox ?? BOXES[0]).slug);
-  const [serverSeed, setServerSeed] = useState("");
-  const [serverSeedHash, setServerSeedHash] = useState("");
-  const [clientSeed, setClientSeed] = useState(() => "");
-  const [nonce, setNonce] = useState("0");
+  const [serverSeed, setServerSeed] = useState(initial?.serverSeed ?? "");
+  const [serverSeedHash, setServerSeedHash] = useState(initial?.serverSeedHash ?? "");
+  const [clientSeed, setClientSeed] = useState(initial?.clientSeed ?? "");
+  const [nonce, setNonce] = useState(String(initial?.nonce ?? 0));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<VerifyOutput<ProductItem> | null>(null);

@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/format";
 import {
   BOXES,
@@ -27,20 +28,66 @@ import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import { Link } from "@/i18n/navigation";
-import { Wallet } from "lucide-react";
+import { Wallet, RefreshCw } from "lucide-react";
+import { useWalletStore, START_BALANCE_USDT } from "@/stores/walletStore";
+import { UnboxingRoulette, type UnboxResult } from "@/components/unboxing/UnboxingRoulette";
+import { glow as glowOf } from "@/lib/tiers";
 
 const PAGE_SIZE = 12;
-/** 데모 잔액 (USDT 기준). 결제·계정 없음. */
-const DEMO_BALANCE_USDT = 1000;
+
+interface Toast {
+  id: number;
+  title: string;
+  body?: string;
+  tone: string;
+}
 
 export default function BoxesPage() {
+  const t = useTranslations();
+  const { fmt } = useCurrency();
   const [detail, setDetail] = useState<ProductBox | null>(null);
   const [category, setCategory] = useState<BoxCategory | "all">("all");
   const [sort, setSort] = useState<SortKey>("featured");
   const [shown, setShown] = useState(PAGE_SIZE);
+  const [unbox, setUnbox] = useState<{ box: ProductBox; count: number } | null>(null);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const balance = useWalletStore((s) => s.balance);
+  const debit = useWalletStore((s) => s.debit);
+  const credit = useWalletStore((s) => s.credit);
+  const topUp = useWalletStore((s) => s.topUp);
 
-  const t = useTranslations();
-  const { fmt } = useCurrency();
+  const pushToast = useCallback((toast: Omit<Toast, "id">) => {
+    const id = Date.now() + Math.floor(Math.random() * 1000);
+    setToasts((ts) => [...ts, { ...toast, id }]);
+    setTimeout(() => setToasts((ts) => ts.filter((x) => x.id !== id)), 5200);
+  }, []);
+
+  // 오픈: 가격 × 횟수 차감 → 룰렛. 부족하면 토스트만.
+  const openBox = useCallback(
+    (box: ProductBox, count = 1) => {
+      const cost = box.price * count;
+      if (!debit(cost)) {
+        pushToast({ title: t("unbox.insufficient", { price: fmt(cost) }), body: t("unbox.topUp"), tone: "#E50914" });
+        return;
+      }
+      setDetail(null);
+      setUnbox({ box, count });
+    },
+    [debit, pushToast, t, fmt],
+  );
+
+  const onSellBack = useCallback(
+    (_results: UnboxResult[], amount: number) => {
+      credit(amount);
+      pushToast({ title: t("unbox.sold", { amount: fmt(amount) }), tone: "#E6CA65" });
+    },
+    [credit, pushToast, t, fmt],
+  );
+
+  const onShip = useCallback(() => {
+    pushToast({ title: t("unbox.shippingNotice"), body: t("unbox.shippingBody"), tone: "#93C5FD" });
+  }, [pushToast, t]);
+
   // 빌보드: 사이버트럭 / 롤렉스 / 하이엔드 테크 순환
   const billboard = useMemo(
     () => ["cybertruck-dream", "rolex-vault", "apex-workstation"].map((slug) => BOXES.find((b) => b.slug === slug) ?? heroBox()),
@@ -69,15 +116,38 @@ export default function BoxesPage() {
           <div className="glass-dark flex h-9 items-center gap-2 rounded-md px-3">
             <Wallet className="h-3.5 w-3.5 text-muted" strokeWidth={2} />
             <span className="caption-luxury hidden sm:inline">{t("header.balance")}</span>
-            <span className="font-display text-sm font-bold tabular-nums text-white">{fmt(DEMO_BALANCE_USDT)}</span>
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.span
+                key={balance}
+                className="font-display text-sm font-bold tabular-nums text-white"
+                initial={{ y: -6, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 6, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {fmt(balance)}
+              </motion.span>
+            </AnimatePresence>
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              topUp();
+              pushToast({ title: t("unbox.toppedUp", { amount: fmt(START_BALANCE_USDT) }), tone: "#94A3B8" });
+            }}
+            title={t("unbox.topUp")}
+            aria-label={t("unbox.topUp")}
+            className="glass-dark flex h-9 w-9 items-center justify-center rounded-md text-muted hover:text-white"
+          >
+            <RefreshCw className="h-3.5 w-3.5" strokeWidth={2} />
+          </button>
           <LanguageSelector />
           <CurrencySelector />
           <span className="caption-luxury hidden rounded-sm border border-hairline px-2 py-1 md:inline">{t("header.demo")}</span>
         </div>
       </header>
 
-      <BillboardHero boxes={billboard} onOpen={setDetail} onInspect={setDetail} />
+      <BillboardHero boxes={billboard} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
 
       {/* 등급 범례 — 배수 기준을 한 번만 설명한다 */}
       <section className="border-y border-line bg-surface px-[4%] py-2.5">
@@ -102,10 +172,10 @@ export default function BoxesPage() {
       </section>
 
       <div className="pt-10">
-        <NetflixRow title={t("rows.trending")} boxes={trending()} variant="top10" onOpen={setDetail} onInspect={setDetail} />
-        <NetflixRow title={t("rows.techMobility")} boxes={techAndMobility()} onOpen={setDetail} onInspect={setDetail} />
-        <NetflixRow title={t("rows.luxuryWatch")} boxes={luxuryAndWatch()} onOpen={setDetail} onInspect={setDetail} />
-        <NetflixRow title={t("rows.guaranteed")} boxes={guaranteedValue()} onOpen={setDetail} onInspect={setDetail} />
+        <NetflixRow title={t("rows.trending")} boxes={trending()} variant="top10" onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow title={t("rows.techMobility")} boxes={techAndMobility()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow title={t("rows.luxuryWatch")} boxes={luxuryAndWatch()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow title={t("rows.guaranteed")} boxes={guaranteedValue()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
       </div>
 
       {/* 전체 그리드 */}
@@ -162,7 +232,7 @@ export default function BoxesPage() {
               box={box}
               edge={i % 5 === 0 ? "first" : i % 5 === 4 ? "last" : "middle"}
               onInspect={setDetail}
-              onOpen={setDetail}
+              onOpen={(b) => openBox(b, 1)}
             />
           ))}
         </div>
@@ -180,7 +250,29 @@ export default function BoxesPage() {
         )}
       </section>
 
-      <DetailModal box={detail} onClose={() => setDetail(null)} onOpen={setDetail} />
+      <DetailModal box={detail} onClose={() => setDetail(null)} onOpen={openBox} />
+
+      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} />
+
+      {/* 토스트 */}
+      <div className="pointer-events-none fixed bottom-4 right-4 z-[120] flex w-80 max-w-full flex-col gap-2">
+        <AnimatePresence>
+          {toasts.map((x) => (
+            <motion.div
+              key={x.id}
+              className="border-metallic-subtle pointer-events-auto rounded-lg bg-obsidian p-3 text-xs"
+              style={{ boxShadow: `0 0 20px ${glowOf(x.tone, 0.2)}, 0 12px 30px rgba(0,0,0,0.6)` }}
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 24 }}
+              transition={{ duration: 0.25 }}
+            >
+              <div className="font-bold" style={{ color: x.tone }}>{x.title}</div>
+              {x.body && <div className="mt-1 leading-relaxed text-secondary">{x.body}</div>}
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
     </main>
   );
 }

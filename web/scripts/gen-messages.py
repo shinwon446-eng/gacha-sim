@@ -61,6 +61,18 @@ UI = {
       "invalidInput": "서버 시드와 클라이언트 시드를 입력하고 Nonce 는 0 이상의 정수여야 합니다.",
       "open": "공정성 검증 열기", "close": "닫기"
     },
+    "unbox": {
+      "open1": "1회 오픈", "open5": "5회 연속 오픈", "spinning": "개봉 중…", "landing": "결과 확정",
+      "result": "당첨", "results": "5회 결과", "total": "합계 가치", "paid": "지불 {price}",
+      "sellBack": "즉시 판매 · {amount}", "sellBackAll": "전체 즉시 판매 · {amount}", "sellBackNote": "실판매가의 {rate}가 잔액으로 즉시 반영됩니다",
+      "sold": "판매 완료 — {amount} 잔액 반영", "claimShipping": "실물 배송 신청",
+      "shippingNotice": "국제 배송비 및 세관 수수료 안내", "shippingBody": "수취국 관세·부가세와 국제 배송비(DHL/FedEx 실비)가 별도 청구됩니다. 데모에서는 접수되지 않습니다.",
+      "verify": "이 결과 검증", "close": "닫기", "keep": "보관함으로", "kept": "보관함에 저장됐습니다 (데모)",
+      "insufficient": "잔액 부족 — {price} 필요", "topUp": "데모 잔액 충전", "toppedUp": "+{amount} 데모 잔액",
+      "mute": "효과음 끄기", "unmute": "효과음 켜기",
+      "seedHash": "서버 시드 해시 (개봉 전 공개)", "serverSeed": "서버 시드", "clientSeed": "클라이언트 시드", "nonce": "Nonce", "roll": "롤",
+      "fairNote": "이 결과는 아래 시드와 Nonce 로 결정됐습니다. [이 결과 검증]에서 그대로 재현할 수 있습니다."
+    },
     "actions": {"sellBack": "즉시 판매", "claimShipping": "실물 배송 신청", "provablyFair": "공정성 검증"},
     "legal": {"disclaimer": "표기 금액은 실판매가 기준입니다. 받은 실물을 즉시 판매하면 실판매가의 {refund}를 돌려받으므로 회수액은 오픈 가격보다 낮습니다. 확률은 구성품 확인에서 전량 공개됩니다. 현재 화면은 프로토타입이며 상품 데이터는 모의값입니다."},
     "badges": {"dream": "드림 박스", "mobility": "모빌리티", "tech": "테크", "audio": "오디오", "watch": "워치", "luxury": "럭셔리", "lifestyle": "라이프스타일", "guaranteed": "가치 보장"},
@@ -112,6 +124,18 @@ UI = {
       "invalidInput": "Enter a server seed and a client seed; the nonce must be an integer ≥ 0.",
       "open": "Open Provably Fair", "close": "Close"
     },
+    "unbox": {
+      "open1": "Open ×1", "open5": "Open ×5", "spinning": "Opening…", "landing": "Result locked",
+      "result": "You won", "results": "5 results", "total": "Total value", "paid": "Paid {price}",
+      "sellBack": "Instant Sell-Back · {amount}", "sellBackAll": "Sell all back · {amount}", "sellBackNote": "{rate} of market value is credited to your balance instantly",
+      "sold": "Sold — {amount} credited", "claimShipping": "Claim Shipping",
+      "shippingNotice": "International shipping & customs notice", "shippingBody": "Destination duties/VAT and international shipping (DHL/FedEx at cost) are billed separately. Not accepted in the demo.",
+      "verify": "Verify this result", "close": "Close", "keep": "Keep in inventory", "kept": "Saved to inventory (demo)",
+      "insufficient": "Insufficient balance — {price} required", "topUp": "Top up demo balance", "toppedUp": "+{amount} demo balance",
+      "mute": "Mute sound", "unmute": "Unmute sound",
+      "seedHash": "Server seed hash (published before open)", "serverSeed": "Server seed", "clientSeed": "Client seed", "nonce": "Nonce", "roll": "Roll",
+      "fairNote": "This result was determined by the seeds and nonce below. Reproduce it exactly under [Verify this result]."
+    },
     "actions": {"sellBack": "Instant Sell-Back", "claimShipping": "Claim Shipping", "provablyFair": "Provably Fair"},
     "legal": {"disclaimer": "Amounts shown are market value. Instant sell-back pays {refund} of market value, so cash recovery is below the open price. All odds are published under View Contents. This screen is a prototype and product data is mock."},
     "badges": {"dream": "Dream Box", "mobility": "Mobility", "tech": "Tech", "audio": "Audio", "watch": "Watches", "luxury": "Luxury", "lifestyle": "Lifestyle", "guaranteed": "Guaranteed"},
@@ -162,6 +186,18 @@ UI = {
       "generate": "生成服务器种子", "reveal": "公开服务器种子", "hidden": "开启前 — 原文未公开", "useInVerifier": "填入验证器",
       "invalidInput": "请输入服务器种子与客户端种子，Nonce 须为 ≥ 0 的整数。",
       "open": "打开公平性验证", "close": "关闭"
+    },
+    "unbox": {
+      "open1": "开启 ×1", "open5": "连续开启 ×5", "spinning": "开启中…", "landing": "结果已锁定",
+      "result": "获得", "results": "5 次结果", "total": "总价值", "paid": "已支付 {price}",
+      "sellBack": "即时回收 · {amount}", "sellBackAll": "全部即时回收 · {amount}", "sellBackNote": "按市场价的 {rate} 即时计入余额",
+      "sold": "已回收 — 余额 +{amount}", "claimShipping": "申请发货",
+      "shippingNotice": "国际运费与关税说明", "shippingBody": "目的地关税/增值税及国际运费（DHL/FedEx 实付）另行收取。演示中不受理。",
+      "verify": "验证本次结果", "close": "关闭", "keep": "存入仓库", "kept": "已存入仓库（演示）",
+      "insufficient": "余额不足 — 需要 {price}", "topUp": "充值演示余额", "toppedUp": "+{amount} 演示余额",
+      "mute": "关闭音效", "unmute": "开启音效",
+      "seedHash": "服务器种子哈希（开启前公开）", "serverSeed": "服务器种子", "clientSeed": "客户端种子", "nonce": "Nonce", "roll": "Roll",
+      "fairNote": "本次结果由以下种子与 Nonce 决定。可在[验证本次结果]中完整复现。"
     },
     "actions": {"sellBack": "即时回收", "claimShipping": "申请发货", "provablyFair": "公平性验证"},
     "legal": {"disclaimer": "所示金额均为市场价。即时回收仅按市场价的 {refund} 支付，因此现金回收额低于开启价。全部概率在「查看内含」中公开。当前页面为原型，商品数据为模拟数据。"},

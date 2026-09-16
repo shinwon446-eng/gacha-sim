@@ -6,16 +6,17 @@ import { useTranslations } from "next-intl";
 import { X, ShieldCheck } from "lucide-react";
 import { ROLL_RANGE } from "@/lib/fairness";
 import type { ProductBox } from "@/lib/products";
-import { FairnessVerifier } from "@/components/fairness/FairnessVerifier";
+import { FairnessVerifier, type FairnessInitial } from "@/components/fairness/FairnessVerifier";
 
 export interface FairnessModalProps {
   open: boolean;
   onClose: () => void;
   box?: ProductBox;
+  initial?: FairnessInitial;
 }
 
 /** 검증기 모달 — 페이지(/fairness)와 같은 FairnessVerifier 를 쓴다. */
-export function FairnessModal({ open, onClose, box }: FairnessModalProps) {
+export function FairnessModal({ open, onClose, box, initial }: FairnessModalProps) {
   const t = useTranslations("fairness");
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -70,7 +71,7 @@ export function FairnessModal({ open, onClose, box }: FairnessModalProps) {
               </div>
             </div>
             <p className="mb-5 max-w-3xl text-xs leading-relaxed text-muted">{t("formula", { range: ROLL_RANGE.toLocaleString("en-US") })}</p>
-            <FairnessVerifier initialBox={box} />
+            <FairnessVerifier initialBox={box} initial={initial} />
           </motion.div>
         </motion.div>
       )}

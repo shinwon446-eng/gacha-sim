@@ -34,7 +34,7 @@ import { ProductArt } from "@/components/box/ProductArt";
 export interface DetailModalProps {
   box: ProductBox | null;
   onClose: () => void;
-  onOpen?: (box: ProductBox) => void;
+  onOpen?: (box: ProductBox, count?: number) => void;
 }
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -259,11 +259,18 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
                 <div className="mt-4 flex flex-wrap items-center gap-2.5">
                   <button
                     type="button"
-                    onClick={() => onOpen?.(box)}
-                    className="flex h-11 items-center gap-2 rounded-sm bg-[#E50914] px-5 text-[14px] font-bold text-white transition-colors duration-200 hover:bg-[#f6121d]"
+                    onClick={() => onOpen?.(box, 1)}
+                    className="flex h-11 items-center gap-2 rounded-sm bg-crimson px-5 text-[14px] font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors duration-200 hover:bg-red-600"
                   >
                     <Play className="h-4 w-4 fill-current" strokeWidth={0} />
-                    {t("modal.openNowPrice", { price: fmt(box.price) })}
+                    {t("unbox.open1")} · {fmt(box.price)}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onOpen?.(box, 5)}
+                    className="border-metallic-gold flex h-11 items-center gap-2 rounded-sm bg-obsidian/70 px-4 text-[13px] font-bold text-gold-champagne transition-colors duration-200 hover:bg-gold-champagne/10"
+                  >
+                    {t("unbox.open5")} · {fmt(box.price * 5)}
                   </button>
                   <a
                     href="#drop-table"
