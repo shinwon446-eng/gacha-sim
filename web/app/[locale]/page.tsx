@@ -89,7 +89,7 @@ export default function BoxesPage() {
   );
 
   const onShip = useCallback(() => {
-    pushToast({ title: t("unbox.shippingNotice"), body: t("unbox.shippingBody"), tone: "#93C5FD" });
+    pushToast({ title: t("inventory.shipRequestedToast"), body: t("unbox.shippingBody"), tone: "#93C5FD" });
   }, [pushToast, t]);
 
   // 빌보드: 사이버트럭 / 롤렉스 / 하이엔드 테크 순환
@@ -110,7 +110,9 @@ export default function BoxesPage() {
         <nav className="flex items-center gap-4 text-[12px] text-muted">
           <span className="font-semibold text-white">{t("nav.boxes")}</span>
           <span className="cursor-default opacity-60">{t("nav.battles")}</span>
-          <span className="cursor-default opacity-60">{t("nav.inventory")}</span>
+          <Link href="/inventory" className="transition-colors hover:text-white">
+            {t("nav.inventory")}
+          </Link>
           <Link href="/fairness" className="transition-colors hover:text-white">
             {t("nav.fairness")}
           </Link>

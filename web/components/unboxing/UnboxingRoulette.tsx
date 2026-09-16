@@ -16,8 +16,15 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { playTick, playWin, playTaDum } from "@/lib/audio";
 import { ProductArt } from "@/components/box/ProductArt";
 import { FairnessModal } from "@/components/fairness/FairnessModal";
+import { ShippingModal } from "@/components/inventory/ShippingModal";
+import { useInventoryStore, type OwnedItem } from "@/stores/inventoryStore";
+import { useWalletStore } from "@/stores/walletStore";
+import type { ShippingAddress } from "@/lib/shipping";
+import { Link } from "@/i18n/navigation";
 
 export interface UnboxResult {
+  /** 보관함 레코드 id — 결과 확정 시 부여 */
+  ownedId?: string;
   item: ProductItem;
   tier: Tier;
   roll: number;
@@ -35,6 +42,7 @@ export interface UnboxingRouletteProps {
   onClose: () => void;
   /** 즉시 판매 — 호출측이 잔액에 반영한다 */
   onSellBack: (results: UnboxResult[], amountUsdt: number) => void;
+  /** 배송 신청 완료 — 호출측이 토스트를 띄운다 (배송비 차감·상태 전환은 여기서) */
   onShip: (results: UnboxResult[]) => void;
 }
 
@@ -71,6 +79,13 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
   const [flash, setFlash] = useState<string | null>(null);
   const [verifyOpen, setVerifyOpen] = useState(false);
   const [sold, setSold] = useState(false);
+  const [shipOpen, setShipOpen] = useState(false);
+  const [shipped, setShipped] = useState(false);
+  const addOwned = useInventoryStore((s) => s.add);
+  const sellOwned = useInventoryStore((s) => s.sell);
+  const requestShipping = useInventoryStore((s) => s.requestShipping);
+  const balance = useWalletStore((s) => s.balance);
+  const debit = useWalletStore((s) => s.debit);
   const tickIndex = useRef(-1);
   const rafRef = useRef<number | null>(null);
   const cancelled = useRef(false);
@@ -121,6 +136,15 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
       const r = await calculateRollResult(serverSeed, clientSeed, nonce);
       const item = determineItem(r.roll, items);
       const res: UnboxResult = { item, tier: tierOf(item.value, box.price), roll: r.roll, hmac: r.hmac, nonce, serverSeed, serverSeedHash, clientSeed };
+      // 확정 즉시 보관함에 IN_STORAGE 로 넣는다 — 팝업을 닫아도 사라지지 않는다
+      const rec: Omit<OwnedItem, "id" | "status" | "acquiredAt"> = {
+        itemId: item.id,
+        boxSlug: box.slug,
+        valueUsdt: item.value,
+        tier: res.tier.key,
+        fair: { serverSeedHash, serverSeed, clientSeed, nonce, roll: r.roll },
+      };
+      res.ownedId = addOwned([rec])[0].id;
 
       // 2. 스트립
       setStrip(buildStrip(item, items, unitRandom));
@@ -144,7 +168,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
       setTimeout(() => setFlash(null), 600);
       return res;
     },
-    [box, items, fair, controls, startTicks],
+    [box, items, fair, controls, startTicks, addOwned],
   );
 
   // 오픈 시작 — box 가 들어오면 한 번. 리사이즈는 스핀을 취소하지 않는다.
@@ -183,6 +207,8 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
     setResults([]);
     setCurrent(null);
     setSold(false);
+    setShipped(false);
+    setShipOpen(false);
   }, [box]);
 
   useEffect(() => {
@@ -365,10 +391,12 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
                 <div className="relative mt-5 grid gap-2">
                   <button
                     type="button"
-                    disabled={sold}
+                    disabled={sold || shipped}
                     onClick={() => {
                       setSold(true);
-                      onSellBack(results, sellAmount);
+                      const ids = results.map((r) => r.ownedId).filter((x): x is string => !!x);
+                      const { totalUsdt } = sellOwned(ids, REFUND_RATE);
+                      onSellBack(results, totalUsdt || sellAmount);
                     }}
                     className="flex h-12 items-center justify-center gap-2 rounded-lg bg-gold-champagne text-sm font-bold text-obsidian transition-colors hover:bg-gold-metallic disabled:opacity-50"
                   >
@@ -377,7 +405,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
                   </button>
                   <p className="text-center text-[10px] text-faint">{t("sellBackNote", { rate: `${Math.round(REFUND_RATE * 100)}%` })}</p>
                   <div className="grid grid-cols-2 gap-2">
-                    <button type="button" onClick={() => onShip(results)} className="glass flex h-11 items-center justify-center gap-2 rounded-lg text-sm font-semibold text-white hover:bg-white/15">
+                    <button type="button" disabled={sold || shipped} onClick={() => setShipOpen(true)} className="glass flex h-11 items-center justify-center gap-2 rounded-lg text-sm font-semibold text-white hover:bg-white/15 disabled:opacity-50">
                       <Truck className="h-4 w-4" strokeWidth={2} />
                       {t("claimShipping")}
                     </button>
@@ -399,7 +427,13 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
                   </dl>
                 </details>
 
-                <button type="button" onClick={onClose} className="relative mt-3 h-10 w-full rounded-lg text-sm font-semibold text-muted transition-colors hover:text-white">
+                <p className="relative mt-3 text-center text-[10px] text-faint">
+                  {sold ? "" : shipped ? "" : t("kept")}{" "}
+                  <Link href="/inventory" className="text-gold-champagne underline-offset-2 hover:underline">
+                    {t("keep")}
+                  </Link>
+                </p>
+                <button type="button" onClick={onClose} className="relative mt-2 h-10 w-full rounded-lg text-sm font-semibold text-muted transition-colors hover:text-white">
                   {t("close")}
                 </button>
               </motion.div>
@@ -407,6 +441,20 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
           )}
         </AnimatePresence>
 
+        <ShippingModal
+          open={shipOpen}
+          itemCount={results.length}
+          balanceUsdt={balance}
+          onClose={() => setShipOpen(false)}
+          onSubmit={(address: ShippingAddress, fee: number) => {
+            if (!debit(fee)) return;
+            const ids = results.map((r) => r.ownedId).filter((x): x is string => !!x);
+            requestShipping(ids, address, fee);
+            setShipped(true);
+            setShipOpen(false);
+            onShip(results);
+          }}
+        />
         <FairnessModal
           open={verifyOpen}
           onClose={() => setVerifyOpen(false)}
