@@ -17,7 +17,7 @@ import {
   type ProductBox,
   type SortKey,
 } from "@/lib/products";
-import { HeroShowcase } from "@/components/home/HeroShowcase";
+import { BillboardHero } from "@/components/home/BillboardHero";
 import { NetflixRow } from "@/components/home/NetflixRow";
 import { BoxCard } from "@/components/box/BoxCard";
 import { DetailModal } from "@/components/box/DetailModal";
@@ -37,7 +37,11 @@ export default function BoxesPage() {
   const [shown, setShown] = useState(PAGE_SIZE);
 
   const { fmt } = useCurrency();
-  const hero = useMemo(() => heroBox(), []);
+  // 빌보드: 사이버트럭 / 롤렉스 / 하이엔드 테크 순환
+  const billboard = useMemo(
+    () => ["cybertruck-dream", "rolex-vault", "apex-workstation"].map((slug) => BOXES.find((b) => b.slug === slug) ?? heroBox()),
+    [],
+  );
   const grid = useMemo(() => sortBoxes(byCategory(category), sort), [category, sort]);
   const visible = grid.slice(0, shown);
 
@@ -65,7 +69,7 @@ export default function BoxesPage() {
         </div>
       </header>
 
-      <HeroShowcase box={hero} onOpen={setDetail} onInspect={setDetail} />
+      <BillboardHero boxes={billboard} onOpen={setDetail} onInspect={setDetail} />
 
       {/* 등급 범례 — 배수 기준을 한 번만 설명한다 */}
       <section className="border-y border-line bg-surface px-[4%] py-2.5">
