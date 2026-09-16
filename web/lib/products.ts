@@ -59,6 +59,8 @@ export interface ProductItem {
   /** 플레이스홀더 배경 */
   tone: string;
   image: ProductImage;
+  /** image.src 의 별칭. 미확보면 null. 경로 원천은 lib/productImages.ts 하나뿐이다. */
+  imageUrl: string | null;
 }
 
 export interface ProductBox {
@@ -75,6 +77,8 @@ export interface ProductBox {
   tone: string;
   badge: string;
   image: ProductImage;
+  /** image.src 의 별칭. 미확보면 null. 경로 원천은 lib/productImages.ts 하나뿐이다. */
+  imageUrl: string | null;
   /** 히어로 카피 한 줄. 과장 없이 구성만 설명한다. */
   tagline: string;
   /** TRENDING 행 순위(1-N). 해당 없으면 undefined */
@@ -149,7 +153,8 @@ function buildBox(spec: BoxSpec): ProductBox {
 
   const items: ProductItem[] = spec.items.map(([id, name, nameEn, value, dropRate, code, tone]) => {
     if (!Number.isInteger(value)) throw new Error(`${id}: value 는 정수 원이어야 한다 (${value})`);
-    return { id, name, nameEn, value, dropRate: dropRate === REST ? rest : dropRate, code, tone, image: imageFor(id) };
+    const image = imageFor(id);
+    return { id, name, nameEn, value, dropRate: dropRate === REST ? rest : dropRate, code, tone, image, imageUrl: image.src };
   });
 
   const ev = items.reduce((s, i) => s + (i.value * i.dropRate) / 100, 0);
@@ -189,6 +194,7 @@ function buildBox(spec: BoxSpec): ProductBox {
     tone: spec.tone,
     badge: spec.badge,
     image: imageFor(spec.slug),
+    imageUrl: imageFor(spec.slug).src,
     tagline: spec.tagline,
     trendingRank: spec.trendingRank,
     releasedAt: spec.releasedAt,

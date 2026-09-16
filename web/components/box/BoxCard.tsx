@@ -4,8 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Play, Info } from "lucide-react";
 import { cn, formatPrice } from "@/lib/format";
 import { dropTable, isValueGuaranteed, type ProductBox, type ProductItem } from "@/lib/products";
-import { boxFloorTier, glow, tierBreakdown, tierOf } from "@/lib/tiers";
+import { boxFloorTier, boxTopTier, glow, tierBreakdown, tierOf } from "@/lib/tiers";
 import { TierStrip } from "@/components/box/TierStrip";
+import { ProductArt } from "@/components/box/ProductArt";
 
 /** 행 가장자리 — 확장 시 화면 밖 클리핑을 막기 위해 transform-origin 을 보정한다. */
 export type CardEdge = "first" | "last" | "middle";
@@ -39,58 +40,10 @@ function useTouchOnly(): boolean {
 
 /**
  * 실물 비주얼 영역. 상단 70%.
- * 이미지가 있으면 무광 다크 배경 위에 누끼를 얹고, 없으면 코드 플레이트로 폴백한다.
- * 어느 쪽이든 텍스트를 합성하지 않는다 — 가격·이름은 전부 하단 메타 영역에만 존재한다.
+ * 이미지·백글로우·폴백은 ProductArt 가 책임진다. 여기서는 텍스트를 절대 얹지 않는다.
  */
-function ProductVisual({ box, compact = false }: { box: ProductBox; compact?: boolean }) {
-  const img = box.image;
-  return (
-    <div className="relative h-full w-full overflow-hidden bg-surface">
-      {/* 무광 다크 배경 — 중앙이 아주 살짝 밝다. 누끼의 그림자가 앉을 자리 */}
-      <span
-        aria-hidden
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(70% 60% at 50% 55%, #262626 0%, #1F1F1F 55%, #171717 100%)",
-        }}
-      />
-      {img.src ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={img.src}
-          alt={box.title}
-          draggable={false}
-          loading="lazy"
-          className={cn(
-            "absolute inset-0 h-full w-full",
-            img.cutout ? "object-contain p-[9%] drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)]" : "object-cover",
-          )}
-        />
-      ) : (
-        <>
-          <span aria-hidden className="absolute inset-0 opacity-60" style={{ background: box.tone }} />
-          <span
-            className={cn(
-              "absolute inset-0 flex items-center justify-center font-display font-bold uppercase leading-none tracking-tighter text-white/80",
-              compact ? "text-[22px]" : "text-[40px]",
-            )}
-          >
-            {box.code}
-          </span>
-        </>
-      )}
-      {/* 비네트 — 가장자리를 눌러 피사체를 띄운다 */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(110% 95% at 50% 45%, transparent 55%, rgba(0,0,0,0.45) 100%)",
-        }}
-      />
-    </div>
-  );
+function ProductVisual({ box, accent }: { box: ProductBox; accent: string }) {
+  return <ProductArt image={box.image} alt={box.title} accent={accent} glowStrength={0.26} fallbackSize="md" />;
 }
 
 /** 슬라이드인 패널 안의 드랍 썸네일. 등급 색 1px 보더 + 코드 플레이트. */
@@ -103,22 +56,7 @@ function DropThumb({ item, box }: { item: ProductItem; box: ProductBox }) {
       title={`${item.name} · ${formatPrice(item.value)}`}
     >
       <div className="relative aspect-[4/3] w-full">
-        {item.image.src ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={item.image.src}
-            alt={item.name}
-            draggable={false}
-            className={cn("absolute inset-0 h-full w-full", item.image.cutout ? "object-contain p-1.5" : "object-cover")}
-          />
-        ) : (
-          <>
-            <span aria-hidden className="absolute inset-0 opacity-70" style={{ background: item.tone }} />
-            <span className="absolute inset-0 flex items-center justify-center font-display text-[13px] font-bold uppercase leading-none tracking-tighter text-white/85">
-              {item.code}
-            </span>
-          </>
-        )}
+        <ProductArt image={item.image} alt={item.name} accent={t.accent} glowStrength={0.3} fallbackSize="sm" />
         <span
           aria-hidden
           className="absolute inset-x-0 top-0 h-[2px]"
@@ -166,6 +104,7 @@ export function BoxCard({
     () => ({
       guaranteed: isValueGuaranteed(box),
       floorTier: boxFloorTier(box),
+      topTier: boxTopTier(box),
       slices: tierBreakdown(box),
       drops: dropTable(box).slice(0, 3),
     }),
@@ -222,11 +161,15 @@ export function BoxCard({
           "relative overflow-hidden rounded-[3px] border bg-surface",
           "transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
           typeof rank === "number" && "ml-[3.75rem]",
-          expanded
-            ? "z-40 scale-[1.08] border-white/35 shadow-[0_18px_40px_rgba(0,0,0,0.75)]"
-            : "z-10 scale-100 border-line shadow-none",
+          expanded ? "z-40 scale-[1.08] border-white/30" : "z-10 scale-100 border-line",
         )}
-        style={{ transformOrigin: origin }}
+        style={{
+          transformOrigin: origin,
+          // 기본: 1px 하이라이트 엠보싱. 확장: 등급색 네온 글로우 + 딥 섀도로 카드가 떠오른다.
+          boxShadow: expanded
+            ? `0 18px 40px rgba(0,0,0,0.75), 0 0 0 1px ${glow(meta.topTier.accent, 0.35)}, 0 0 28px ${glow(meta.topTier.accent, 0.22)}`
+            : "inset 0 1px 0 rgba(255,255,255,0.05), 0 6px 18px rgba(0,0,0,0.45)",
+        }}
         onClick={onCardClick}
         role="button"
         tabIndex={0}
@@ -241,7 +184,7 @@ export function BoxCard({
         {/* 4:5 프레임. 위 70% 비주얼, 아래 30% 메타 */}
         <div className="flex aspect-[4/5] w-full flex-col">
           <div className="relative h-[70%] flex-none">
-            <ProductVisual box={box} />
+            <ProductVisual box={box} accent={meta.topTier.accent} />
 
             {/* 최소 보장 뱃지 — 유일한 오버레이. 정보가 아니라 약속이라 비주얼 위에 둔다. */}
             <span

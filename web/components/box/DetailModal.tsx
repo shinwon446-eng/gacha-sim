@@ -27,6 +27,7 @@ import {
   type Tier,
 } from "@/lib/tiers";
 import { TierBadge, TierLegend, TierStrip } from "@/components/box/TierStrip";
+import { ProductArt } from "@/components/box/ProductArt";
 
 export interface DetailModalProps {
   box: ProductBox | null;
@@ -53,24 +54,10 @@ function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
         }}
       />
 
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#0A0A0A]">
-        <span aria-hidden className="absolute inset-0" style={{ background: item.tone }} />
-        <span aria-hidden className="absolute inset-0 bg-[rgba(8,8,8,0.66)]" />
-        <span
-          aria-hidden
-          className="absolute inset-0"
-          style={{
-            background: `radial-gradient(90% 80% at 50% 40%, ${glow(tier.accent, 0.10)} 0%, transparent 70%)`,
-          }}
-        />
-        <span className="absolute inset-0 flex items-center justify-center font-display text-[24px] font-bold uppercase leading-none tracking-tighter text-white/90">
-          {item.code}
-        </span>
+      <div className="relative aspect-[16/10] w-full overflow-hidden">
+        <ProductArt image={item.image} alt={item.name} accent={tier.accent} glowStrength={0.28} fallbackSize="sm" />
         <span className="absolute left-1.5 top-1.5">
           <TierBadge tier={tier} size="xs" />
-        </span>
-        <span className="absolute inset-x-1.5 bottom-1.5 truncate text-right text-[8px] font-semibold uppercase tracking-[0.1em] text-white/45">
-          {item.nameEn}
         </span>
       </div>
 
@@ -163,6 +150,14 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
     };
   }, [box]);
 
+  const credits = useMemo(() => {
+    if (!box) return [];
+    const all = [box.image, ...box.items.map((i) => i.image)]
+      .map((img) => (img.src ? img.credit : undefined))
+      .filter((c): c is string => !!c);
+    return Array.from(new Set(all));
+  }, [box]);
+
   return (
     <AnimatePresence>
       {box && meta && (
@@ -190,18 +185,15 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
           >
             {/* ── 와이드 히어로 ── */}
             <header className="relative aspect-[16/9] max-h-[52vh] w-full overflow-hidden bg-[#0A0A0A] md:aspect-[21/9]">
-              <span aria-hidden className="absolute inset-0" style={{ background: box.tone }} />
-              <span aria-hidden className="absolute inset-0 bg-[rgba(8,8,8,0.42)]" />
-              <span
-                aria-hidden
+              <ProductArt
+                image={box.image}
+                alt={box.title}
+                accent={meta.top.accent}
+                glowStrength={0.2}
+                fallbackSize="lg"
+                priority
                 className="absolute inset-0"
-                style={{
-                  background: `radial-gradient(70% 90% at 72% 30%, ${glow(meta.top.accent, 0.13)} 0%, transparent 68%)`,
-                }}
               />
-              <span className="absolute inset-0 flex items-center justify-center font-display text-[72px] font-bold uppercase leading-none tracking-tighter text-white/12 md:text-[120px]">
-                {box.code}
-              </span>
 
               {/* 비네트 + 하단 완전 융합 페이드 */}
               <span
@@ -339,6 +331,20 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
                 ))}
               </ul>
             </section>
+
+            {/* 이미지 출처 — CC BY / BY-SA 자산은 표기 의무가 있다 */}
+            {credits.length > 0 && (
+              <footer className="border-t border-line px-5 py-4 md:px-9">
+                <div className="text-[9px] font-semibold uppercase tracking-[0.16em] text-faint">이미지 출처</div>
+                <ul className="mt-1.5 space-y-0.5">
+                  {credits.map((c) => (
+                    <li key={c} className="truncate text-[10px] leading-relaxed text-faint">
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              </footer>
+            )}
           </motion.div>
         </motion.div>
       )}

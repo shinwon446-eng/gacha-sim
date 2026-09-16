@@ -175,3 +175,24 @@ test("카피와 데이터에 이모지가 없다", () => {
   for (const f of CATEGORY_FILTERS) strings.push(f.label);
   for (const s of strings) assert.ok(!emoji.test(s), `이모지 포함: ${s}`);
 });
+
+test("이미지 URL 은 https 이며 출처 표기를 동반하고, imageUrl 은 image.src 의 별칭이다", () => {
+  let have = 0;
+  for (const b of BOXES) {
+    assert.equal(b.imageUrl, b.image.src, b.slug);
+    for (const x of [b, ...b.items]) {
+      assert.equal(x.imageUrl, x.image.src, x.id);
+      if (x.image.src) {
+        have += 1;
+        assert.match(x.image.src, /^https:\/\/(upload|thumb)\.wikimedia\.org\//, `${x.id}: 검증되지 않은 호스트`);
+        assert.ok(!x.image.src.includes("?"), `${x.id}: 쿼리 문자열이 붙어 있다`);
+        assert.ok(x.image.credit && x.image.credit.length > 8, `${x.id}: 출처 누락`);
+        assert.match(x.image.credit!, /CC|Public domain/, `${x.id}: 라이선스 표기 누락`);
+      }
+    }
+  }
+  assert.ok(have >= 40, `확보 이미지 ${have}장`);
+  // 히어로와 TRENDING 상위는 반드시 이미지가 있어야 한다
+  assert.ok(heroBox().image.src, "히어로 이미지 누락");
+  for (const b of trending(5)) assert.ok(b.image.src, `${b.slug}: TRENDING 이미지 누락`);
+});

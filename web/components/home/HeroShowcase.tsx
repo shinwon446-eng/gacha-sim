@@ -11,6 +11,7 @@ import {
 } from "@/lib/products";
 import { boxTopTier, formatMultiple, glow, tierOf, topMultiple } from "@/lib/tiers";
 import { TierBadge } from "@/components/box/TierStrip";
+import { ProductArt } from "@/components/box/ProductArt";
 
 export interface HeroShowcaseProps {
   box: ProductBox;
@@ -48,33 +49,14 @@ export function HeroShowcase({ box, onOpen, onInspect, className }: HeroShowcase
     >
       {/* ── 배경 비주얼 — 우측에만 존재한다 ── */}
       <div className="absolute inset-y-0 right-0 w-full md:w-[68%]">
-        {box.image.src ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={box.image.src}
-            alt={box.title}
-            draggable={false}
-            className={cn(
-              "h-full w-full",
-              box.image.cutout ? "object-contain object-center p-8" : "object-cover object-center",
-            )}
-          />
-        ) : (
-          <div className="relative h-full w-full">
-            <span aria-hidden className="absolute inset-0" style={{ background: box.tone }} />
-            <span aria-hidden className="absolute inset-0 bg-[rgba(8,8,8,0.35)]" />
-            <span
-              aria-hidden
-              className="absolute inset-0"
-              style={{
-                background: `radial-gradient(60% 70% at 55% 45%, ${glow(top.accent, 0.14)} 0%, transparent 70%)`,
-              }}
-            />
-            <span className="absolute inset-0 flex items-center justify-center font-display text-[96px] font-bold uppercase leading-none tracking-tighter text-white/10 md:text-[190px]">
-              {box.code}
-            </span>
-          </div>
-        )}
+        <ProductArt
+          image={box.image}
+          alt={box.title}
+          accent={top.accent}
+          glowStrength={0.18}
+          fallbackSize="lg"
+          priority
+        />
       </div>
 
       {/* 비네트 + 좌/하단 페이드. 텍스트 영역은 캔버스 색으로 완전히 덮인다. */}
