@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import { Wallet, Truck, ShieldCheck, CheckSquare, Square, ArrowUpRight, ChevronDown, Coins } from "lucide-react";
@@ -11,6 +11,7 @@ import { useProductText } from "@/lib/useProductText";
 import { BOX_BY_SLUG, REFUND_RATE, type ProductBox, type ProductItem } from "@/lib/products";
 import { TIERS, TIER_BY_KEY, glow, type TierKey } from "@/lib/tiers";
 import type { ShippingAddress } from "@/lib/shipping";
+import { DEMO_LABEL_DELAY_MS, mockTrackingNumber, pickCarrier } from "@/lib/carriers";
 import { useInventoryStore, summarize, type OwnedItem, type OwnedStatus } from "@/stores/inventoryStore";
 import { useWalletStore } from "@/stores/walletStore";
 import { useSettingsStore } from "@/stores/settingsStore";
@@ -53,6 +54,7 @@ export default function InventoryPage() {
   const items = useInventoryStore((s) => s.items);
   const sell = useInventoryStore((s) => s.sell);
   const requestShipping = useInventoryStore((s) => s.requestShipping);
+  const markShipping = useInventoryStore((s) => s.markShipping);
   const balance = useWalletStore((s) => s.balance);
   const credit = useWalletStore((s) => s.credit);
   const debit = useWalletStore((s) => s.debit);
@@ -84,6 +86,22 @@ export default function InventoryPage() {
   const selectedValue = +selectedItems.reduce((s, o) => s + o.valueUsdt, 0).toFixed(2);
   const storedIds = useMemo(() => items.filter((o) => o.status === "IN_STORAGE").map((o) => o.id), [items]);
   const rateLabel = `${Math.round(REFUND_RATE * 100)}%`;
+
+  // 데모 창고 웹훅: 배송 신청 후 DEMO_LABEL_DELAY_MS 가 지난 항목에 택배사·운송장을 발급한다 (실서비스는 물류사 웹훅)
+  useEffect(() => {
+    const tick = () => {
+      const now = Date.now();
+      for (const o of useInventoryStore.getState().items) {
+        if (o.status !== "SHIPPING_REQUESTED" || !o.shipping) continue;
+        if (now - new Date(o.shipping.requestedAt).getTime() < DEMO_LABEL_DELAY_MS) continue;
+        const carrier = pickCarrier(o.shipping.address.country);
+        markShipping(o.id, carrier, mockTrackingNumber(carrier, now + o.id.length));
+      }
+    };
+    tick();
+    const id = setInterval(tick, 2000);
+    return () => clearInterval(id);
+  }, [markShipping]);
 
   const say = useCallback((text: string, tone: string) => {
     const id = Date.now();
@@ -333,7 +351,8 @@ export default function InventoryPage() {
                     )}
                     {shipping && (
                       <div className="mt-1 truncate text-[11px] text-muted">
-                        {t("inventory.tracking")}: <span className="font-mono text-secondary">{o.shipping?.trackingNumber ?? t("inventory.trackingPending")}</span>
+                        {o.shipping?.carrier ? `${t(`inventory.carriers.${o.shipping.carrier}`)} · ` : `${t("inventory.tracking")}: `}
+                        <span className="font-mono text-secondary">{o.shipping?.trackingNumber ?? t("inventory.trackingPending")}</span>
                       </div>
                     )}
                     <div className="mt-3 grid grid-cols-[1fr_auto] gap-1.5">

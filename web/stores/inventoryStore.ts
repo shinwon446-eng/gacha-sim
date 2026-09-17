@@ -10,6 +10,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { TierKey } from "@/lib/tiers";
 import type { ShippingAddress } from "@/lib/shipping";
+import type { CarrierKey } from "@/lib/carriers";
 
 export type OwnedStatus = "IN_STORAGE" | "SHIPPING_REQUESTED" | "SHIPPING" | "SOLD";
 
@@ -26,7 +27,7 @@ export interface OwnedItem {
   /** SOLD 시 실제 환급액 */
   soldForUsdt?: number;
   soldAt?: string;
-  shipping?: { address: ShippingAddress; feeUsdt: number; requestedAt: string; trackingNumber?: string };
+  shipping?: { address: ShippingAddress; feeUsdt: number; requestedAt: string; carrier?: CarrierKey; trackingNumber?: string; shippedAt?: string };
 }
 
 interface InventoryState {
@@ -36,7 +37,7 @@ interface InventoryState {
   sell: (ids: string[], refundRate: number) => { ids: string[]; totalUsdt: number };
   requestShipping: (ids: string[], address: ShippingAddress, feeUsdt: number) => void;
   /** 데모/관리자: 운송장 발급 */
-  markShipping: (id: string, trackingNumber: string) => void;
+  markShipping: (id: string, carrier: CarrierKey, trackingNumber: string) => void;
 }
 
 const uid = () => `own_${Date.now().toString(36)}_${Math.floor(Math.random() * 1e6).toString(36)}`;
@@ -77,10 +78,12 @@ export const useInventoryStore = create<InventoryState>()(
           ),
         }));
       },
-      markShipping: (id, trackingNumber) =>
+      markShipping: (id, carrier, trackingNumber) =>
         set((s) => ({
           items: s.items.map((it) =>
-            it.id === id && it.status === "SHIPPING_REQUESTED" && it.shipping ? { ...it, status: "SHIPPING", shipping: { ...it.shipping, trackingNumber } } : it,
+            it.id === id && it.status === "SHIPPING_REQUESTED" && it.shipping
+              ? { ...it, status: "SHIPPING", shipping: { ...it.shipping, carrier, trackingNumber, shippedAt: new Date().toISOString() } }
+              : it,
           ),
         })),
     }),

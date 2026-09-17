@@ -40,9 +40,10 @@ test("requestShipping → SHIPPING_REQUESTED, markShipping → SHIPPING + 운송
   assert.equal(s.items.find((i) => i.id === a.id)!.status, "SHIPPING_REQUESTED");
   assert.equal(s.items.find((i) => i.id === b.id)!.status, "SOLD");
   assert.equal(s.items.find((i) => i.id === a.id)!.shipping?.feeUsdt, 15);
-  useInventoryStore.getState().markShipping(a.id, "DHL1234567890");
+  useInventoryStore.getState().markShipping(a.id, "DHL", "1234567890");
   assert.equal(useInventoryStore.getState().items.find((i) => i.id === a.id)!.status, "SHIPPING");
-  assert.equal(useInventoryStore.getState().items.find((i) => i.id === a.id)!.shipping?.trackingNumber, "DHL1234567890");
+  assert.equal(useInventoryStore.getState().items.find((i) => i.id === a.id)!.shipping?.trackingNumber, "1234567890");
+  assert.equal(useInventoryStore.getState().items.find((i) => i.id === a.id)!.shipping?.carrier, "DHL");
   const sum = summarize(useInventoryStore.getState().items);
   assert.deepEqual(sum, { total: 2, stored: 0, storedValueUsdt: 0, shipping: 1, sold: 1 });
 });
@@ -73,7 +74,7 @@ test("배송비: 모든 국가에 정액이 있고 KR 이 가장 싸다", () => 
   assert.equal(shippingFee("KR"), Math.min(...COUNTRIES.map((c) => SHIPPING_FEE_USDT[c])));
 });
 
-test("지갑: 출금 거래는 status 를 갖고 PENDING → PROCESSING 으로 갱신된다", async () => {
+test("지갑: 출금 거래는 status 를 갖고 PENDING → BROADCASTING(TxID) → COMPLETED 로 갱신된다", async () => {
   const { useWalletStore } = await import("../stores/walletStore");
   const w = useWalletStore.getState();
   useWalletStore.setState({ balance: 100, transactions: [] });
@@ -81,8 +82,11 @@ test("지갑: 출금 거래는 status 를 갖고 PENDING → PROCESSING 으로 �
   const tx = w.addTransaction({ type: "withdraw", amountUsdt: -50, ref: "TRC20:Txxx", status: "PENDING" });
   assert.equal(useWalletStore.getState().balance, 50);
   assert.equal(useWalletStore.getState().transactions[0].status, "PENDING");
-  w.setTransactionStatus(tx.id, "PROCESSING");
-  assert.equal(useWalletStore.getState().transactions[0].status, "PROCESSING");
+  w.setTransactionStatus(tx.id, "BROADCASTING", { txHash: "ab".repeat(32) });
+  assert.equal(useWalletStore.getState().transactions[0].status, "BROADCASTING");
+  assert.equal(useWalletStore.getState().transactions[0].txHash, "ab".repeat(32));
+  w.setTransactionStatus(tx.id, "COMPLETED");
+  assert.equal(useWalletStore.getState().transactions[0].status, "COMPLETED");
   assert.ok(!w.debit(50.01), "잔액 초과 출금은 거부");
 });
 

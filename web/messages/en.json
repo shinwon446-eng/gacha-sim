@@ -296,14 +296,21 @@
     "track": "Track",
     "trackingTitle": "Shipment status",
     "copyTracking": "Copy tracking number",
+    "trackOnCarrier": "Live tracking on {carrier}",
+    "carriers": {
+      "CJ": "CJ Logistics",
+      "EPOST": "Korea Post",
+      "DHL": "DHL",
+      "FEDEX": "FedEx"
+    },
     "steps": {
       "requested": "Shipping requested",
       "label": "Label issued",
-      "transit": "In international transit",
+      "transit": "In transit",
       "delivered": "Delivered"
     },
     "stepCurrent": "Current step",
-    "trackingDemoNote": "This demo has no carrier integration, so nothing advances past label issuance. In production a carrier webhook updates the status.",
+    "trackingDemoNote": "In this demo a mock label is issued about 20 seconds after the request, and the tracking link points to a number that does not exist. In production a carrier webhook updates the status.",
     "sellTitle": "Instant Sell-Back",
     "sellBody": "Sell this item? {rate} of market value — {amount} — is credited to your balance instantly.",
     "sellBodyMulti": "Sell {n} items? {rate} of market value — {amount} — is credited to your balance instantly.",
@@ -389,9 +396,14 @@
     "history": "Recent withdrawals",
     "status": {
       "PENDING": "Pending",
-      "PROCESSING": "Processing",
+      "BROADCASTING": "Broadcasting",
       "COMPLETED": "Completed"
     },
+    "txHash": "On-chain TxID",
+    "txHashPending": "A TxID is issued once broadcasting starts",
+    "copyHash": "Copy TxID",
+    "viewOnExplorer": "View on {explorer}",
+    "demoHashNote": "The TxID shown is a format-only mock and will not resolve on the explorer.",
     "errors": {
       "TRC20": "A TRC-20 address is 34 characters starting with T",
       "BEP20": "A BEP-20 address is 42 characters starting with 0x",

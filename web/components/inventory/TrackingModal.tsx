@@ -3,12 +3,13 @@
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
-import { Truck, X, Check, Circle, Copy } from "lucide-react";
+import { Truck, X, Check, Circle, Copy, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useProductText } from "@/lib/useProductText";
 import { BOX_BY_SLUG } from "@/lib/products";
 import type { OwnedItem } from "@/stores/inventoryStore";
 import { Money } from "@/components/ui/Money";
+import { trackingUrl } from "@/lib/carriers";
 
 export interface TrackingModalProps {
   item: OwnedItem | null;
@@ -49,6 +50,7 @@ export function TrackingModal({ item, onClose }: TrackingModalProps) {
   const product = item ? BOX_BY_SLUG[item.boxSlug]?.items.find((i) => i.id === item.itemId) : undefined;
   const done = item ? doneCount(item) : 0;
   const tracking = item?.shipping?.trackingNumber;
+  const carrier = item?.shipping?.carrier;
   const addr = item?.shipping?.address;
 
   return (
@@ -85,6 +87,7 @@ export function TrackingModal({ item, onClose }: TrackingModalProps) {
                 <span className="caption-luxury">{t("tracking")}</span>
                 <span className="rounded-full bg-gold-champagne/15 px-2.5 py-1 text-[11px] font-bold text-gold-champagne">{t(`status.${item.status}`)}</span>
               </div>
+              {carrier && <div className="mt-1.5 text-xs font-semibold text-white">{t(`carriers.${carrier}`)}</div>}
               <div className="mt-2 flex items-center gap-2">
                 <code className={cn("min-w-0 flex-1 break-all font-mono text-sm", tracking ? "text-white" : "text-faint")}>{tracking ?? t("trackingPending")}</code>
                 {tracking && (
@@ -93,6 +96,12 @@ export function TrackingModal({ item, onClose }: TrackingModalProps) {
                   </button>
                 )}
               </div>
+              {tracking && carrier && (
+                <a href={trackingUrl(carrier, tracking)} target="_blank" rel="noopener noreferrer" className="border-gold-gradient mt-2 flex h-9 items-center justify-center gap-1.5 rounded-md text-xs font-bold text-gold-champagne hover:bg-gold-champagne/10">
+                  {t("trackOnCarrier", { carrier: t(`carriers.${carrier}`) })}
+                  <ExternalLink className="h-3.5 w-3.5" strokeWidth={2.4} />
+                </a>
+              )}
             </div>
 
             {/* 타임라인 */}
@@ -111,6 +120,7 @@ export function TrackingModal({ item, onClose }: TrackingModalProps) {
                     <div className="pb-4">
                       <div className={cn("text-sm font-semibold", isDone ? "text-white" : "text-faint")}>{t(`steps.${s}`)}</div>
                       {s === "requested" && item.shipping?.requestedAt && <div className="text-[11px] text-faint">{new Date(item.shipping.requestedAt).toLocaleString(locale)}</div>}
+                      {s === "label" && item.shipping?.shippedAt && <div className="text-[11px] text-faint">{new Date(item.shipping.shippedAt).toLocaleString(locale)}</div>}
                       {isCurrent && <div className="text-[11px] text-gold-champagne">{t("stepCurrent")}</div>}
                     </div>
                   </li>

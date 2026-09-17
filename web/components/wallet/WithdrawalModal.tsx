@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowUpRight, X, Check, Clock, Loader2 } from "lucide-react";
+import { ArrowUpRight, X, Check, Clock, Loader2, Copy, ExternalLink, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useCurrencyStore } from "@/stores/currencyStore";
@@ -11,7 +11,7 @@ import { useWalletStore, type Transaction, type TxStatus } from "@/stores/wallet
 import { useSettingsStore } from "@/stores/settingsStore";
 import { playChime } from "@/lib/audio";
 import type { Network } from "@/lib/depositAddress";
-import { MIN_WITHDRAW_USDT, WITHDRAW_NETWORKS, WITHDRAW_NETWORK_BY_KEY, maxWithdrawable, netReceive, validateWithdrawal, type WithdrawError } from "@/lib/withdrawal";
+import { DEMO_BROADCAST_DELAY_MS, DEMO_COMPLETE_DELAY_MS, EXPLORERS, MIN_WITHDRAW_USDT, WITHDRAW_NETWORKS, WITHDRAW_NETWORK_BY_KEY, explorerTxUrl, maxWithdrawable, mockTxHash, netReceive, validateWithdrawal, type WithdrawError } from "@/lib/withdrawal";
 import { Money } from "@/components/ui/Money";
 
 export interface WithdrawalModalProps {
@@ -25,8 +25,40 @@ type Stage = { kind: "form" } | { kind: "submitting" } | { kind: "done"; tx: Tra
 
 const inputCls = "mt-1.5 w-full rounded-md border border-hairline bg-obsidian px-3 py-2.5 font-mono text-sm text-white outline-none transition-colors placeholder:text-faint focus:border-gold-champagne";
 
-/** 데모: 신청 직후 PENDING, 1.6초 뒤 PROCESSING 으로 넘어간다. 실서비스는 핫월렛 서명·브로드캐스트 뒤 웹훅이 갱신한다. */
-const DEMO_PROCESSING_DELAY_MS = 1600;
+/** 네트워크 키 → 거래 ref("TRC20:주소") 파싱 */
+const parseRef = (ref?: string): { network: Network; address: string } => {
+  const [n, a] = (ref ?? "").split(":");
+  return { network: n === "BEP20" ? "BEP20" : "TRC20", address: a ?? "" };
+};
+
+type TFn = ReturnType<typeof useTranslations<"withdraw">>;
+
+function StatusPill({ status, t }: { status: TxStatus; t: TFn }) {
+  return (
+    <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold", status === "PENDING" ? "bg-white/10 text-secondary" : status === "BROADCASTING" ? "bg-gold-champagne/15 text-gold-champagne" : "bg-emerald-500/15 text-emerald-300")}>
+      {status === "PENDING" ? <Clock className="h-3 w-3" strokeWidth={2.4} /> : status === "BROADCASTING" ? <Loader2 className="h-3 w-3 animate-spin" strokeWidth={2.4} /> : <CheckCircle2 className="h-3 w-3" strokeWidth={2.4} />}
+      {t(`status.${status}`)}
+    </span>
+  );
+}
+
+/** TxID + 복사 + 익스플로러 링크 (CLAUDE.md §6-B) */
+function TxLink({ network, hash, compact, t, copied, onCopy }: { network: Network; hash: string; compact?: boolean; t: TFn; copied: string | null; onCopy: (h: string) => void }) {
+  return (
+    <div className={cn("flex items-center gap-1.5", compact ? "text-[10px]" : "text-xs")}>
+      <code className={cn("min-w-0 truncate font-mono text-secondary", compact ? "max-w-[9rem]" : "flex-1")} title={hash}>
+        {compact ? `${hash.slice(0, 10)}…${hash.slice(-6)}` : hash}
+      </code>
+      <button type="button" onClick={() => onCopy(hash)} aria-label={t("copyHash")} className="glass-dark flex h-7 w-7 flex-none items-center justify-center rounded-md text-gold-champagne hover:border-gold-champagne">
+        {copied === hash ? <Check className="h-3 w-3" strokeWidth={2.6} /> : <Copy className="h-3 w-3" strokeWidth={2.2} />}
+      </button>
+      <a href={explorerTxUrl(network, hash)} target="_blank" rel="noopener noreferrer" className="border-gold-gradient flex h-7 flex-none items-center gap-1 whitespace-nowrap rounded-md px-2 text-[10px] font-bold text-gold-champagne hover:bg-gold-champagne/10">
+        {t("viewOnExplorer", { explorer: EXPLORERS[network].name })}
+        <ExternalLink className="h-3 w-3" strokeWidth={2.4} />
+      </a>
+    </div>
+  );
+}
 
 /**
  * USDT 출금 모달. 네트워크(TRC-20 / BEP-20) → 개인 지갑 주소 → 수량(최소 20 USDT, MAX) → 실수령액 계산기 → 신청.
@@ -43,7 +75,8 @@ export function WithdrawalModal({ open, onClose, onRequested }: WithdrawalModalP
   const setTransactionStatus = useWalletStore((s) => s.setTransactionStatus);
   const transactions = useWalletStore((s) => s.transactions);
   const panelRef = useRef<HTMLDivElement>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const [copied, setCopied] = useState<string | null>(null);
 
   const [network, setNetwork] = useState<Network>("TRC20");
   const [address, setAddress] = useState("");
@@ -68,10 +101,20 @@ export function WithdrawalModal({ open, onClose, onRequested }: WithdrawalModalP
 
   useEffect(
     () => () => {
-      if (timer.current) clearTimeout(timer.current);
+      timers.current.forEach(clearTimeout);
     },
     [],
   );
+
+  const copy = useCallback(async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(text);
+      setTimeout(() => setCopied((c) => (c === text ? null : c)), 1600);
+    } catch {
+      /* 클립보드 권한 없음 */
+    }
+  }, []);
 
   const meta = WITHDRAW_NETWORK_BY_KEY[network];
   const decimals = currency === "KRW" ? 0 : 2;
@@ -101,7 +144,9 @@ export function WithdrawalModal({ open, onClose, onRequested }: WithdrawalModalP
     if (!useSettingsStore.getState().muted) playChime();
     onRequested?.(amountUsdt, network);
     setStage({ kind: "done", tx, amountUsdt, network, address: addr });
-    timer.current = setTimeout(() => setTransactionStatus(tx.id, "PROCESSING"), DEMO_PROCESSING_DELAY_MS);
+    // 데모 상태 전이: PENDING → BROADCASTING(TxID 발급) → COMPLETED. 실서비스는 핫월렛 서명·브로드캐스트 뒤 웹훅이 갱신한다.
+    timers.current.push(setTimeout(() => setTransactionStatus(tx.id, "BROADCASTING", { txHash: mockTxHash(network) }), DEMO_BROADCAST_DELAY_MS));
+    timers.current.push(setTimeout(() => setTransactionStatus(tx.id, "COMPLETED"), DEMO_COMPLETE_DELAY_MS));
   }, [errors, stage.kind, debit, amountUsdt, address, addTransaction, network, onRequested, setTransactionStatus]);
 
   const reset = () => {
@@ -111,8 +156,10 @@ export function WithdrawalModal({ open, onClose, onRequested }: WithdrawalModalP
     setTouched(false);
   };
 
-  const liveStatus: TxStatus | undefined = stage.kind === "done" ? transactions.find((x) => x.id === stage.tx.id)?.status ?? stage.tx.status : undefined;
-  const recent = transactions.filter((x) => x.type === "withdraw").slice(0, 3);
+  const liveTx = stage.kind === "done" ? transactions.find((x) => x.id === stage.tx.id) ?? stage.tx : undefined;
+  const liveStatus: TxStatus | undefined = liveTx?.status;
+  const recent = transactions.filter((x) => x.type === "withdraw").slice(0, 4);
+
 
   return (
     <AnimatePresence>
@@ -146,10 +193,24 @@ export function WithdrawalModal({ open, onClose, onRequested }: WithdrawalModalP
               <div className="border-metallic-subtle mt-4 rounded-lg bg-obsidian p-4">
                 <div className="flex items-center justify-between">
                   <span className="caption-luxury">{t("requested")}</span>
-                  <span className={cn("flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold", liveStatus === "PENDING" ? "bg-white/10 text-secondary" : "bg-gold-champagne/15 text-gold-champagne")}>
-                    {liveStatus === "PENDING" ? <Clock className="h-3 w-3" strokeWidth={2.4} /> : <Loader2 className="h-3 w-3 animate-spin" strokeWidth={2.4} />}
-                    {t(`status.${liveStatus ?? "PENDING"}`)}
-                  </span>
+                  <StatusPill status={liveStatus ?? "PENDING"} t={t} />
+                </div>
+                {/* 상태 타임라인 */}
+                <ol className="mt-3 flex items-center gap-1.5">
+                  {(["PENDING", "BROADCASTING", "COMPLETED"] as TxStatus[]).map((s, i) => {
+                    const order = ["PENDING", "BROADCASTING", "COMPLETED"];
+                    const done = order.indexOf(liveStatus ?? "PENDING") >= i;
+                    return (
+                      <li key={s} className="flex flex-1 items-center gap-1.5">
+                        <span className={cn("h-1 flex-1 rounded-full transition-colors duration-500", done ? "bg-gold-champagne" : "bg-white/10")} />
+                      </li>
+                    );
+                  })}
+                </ol>
+                <div className="mt-1 flex justify-between text-[9px] uppercase tracking-wider text-faint">
+                  <span>{t("status.PENDING")}</span>
+                  <span>{t("status.BROADCASTING")}</span>
+                  <span>{t("status.COMPLETED")}</span>
                 </div>
                 <div className="mt-3">
                   <Money value={netReceive(stage.amountUsdt, stage.network)} size="lg" numberClassName="text-gold-gradient" />
@@ -170,7 +231,14 @@ export function WithdrawalModal({ open, onClose, onRequested }: WithdrawalModalP
                     </div>
                   ))}
                 </dl>
-                <p className="mt-3 text-[10px] leading-relaxed text-faint">{t("demoNote")}</p>
+                {/* 온체인 TxID — BROADCASTING 이후 */}
+                <div className="border-metallic-subtle mt-3 rounded-md bg-canvas p-2.5">
+                  <div className="caption-luxury">{t("txHash")}</div>
+                  <div className="mt-1.5">
+                    {liveTx?.txHash ? <TxLink network={stage.network} hash={liveTx.txHash} t={t} copied={copied} onCopy={copy} /> : <span className="text-xs text-faint">{t("txHashPending")}</span>}
+                  </div>
+                </div>
+                <p className="mt-3 text-[10px] leading-relaxed text-faint">{t("demoNote")} {t("demoHashNote")}</p>
                 <div className="mt-4 grid grid-cols-2 gap-2">
                   <button type="button" onClick={reset} className="glass-dark h-11 rounded-md text-sm font-semibold text-secondary hover:text-white">
                     {t("another")}
@@ -262,16 +330,23 @@ export function WithdrawalModal({ open, onClose, onRequested }: WithdrawalModalP
                     <div className="caption-luxury">{t("history")}</div>
                     <ul className="mt-2 space-y-1.5 text-[11px]">
                       {recent.map((x) => {
-                        const [net, addr] = (x.ref ?? "").split(":");
+                        const { network: net, address: addr } = parseRef(x.ref);
                         return (
-                          <li key={x.id} className="flex items-center justify-between gap-2">
-                            <span className="truncate font-mono text-faint">
-                              {net} · {addr?.slice(0, 10)}
-                            </span>
-                            <span className="flex items-center gap-2">
-                              <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-semibold text-secondary">{t(`status.${x.status ?? "PENDING"}`)}</span>
-                              <Money value={Math.abs(x.amountUsdt)} size="xs" numberClassName="text-secondary" />
-                            </span>
+                          <li key={x.id} className="border-metallic-subtle rounded-md bg-obsidian p-2">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="truncate font-mono text-faint">
+                                {WITHDRAW_NETWORK_BY_KEY[net].token} · {addr.slice(0, 10)}…
+                              </span>
+                              <span className="flex items-center gap-2">
+                                <StatusPill status={x.status ?? "PENDING"} t={t} />
+                                <Money value={Math.abs(x.amountUsdt)} size="xs" numberClassName="text-secondary" />
+                              </span>
+                            </div>
+                            {x.txHash && (
+                              <div className="mt-1.5">
+                                <TxLink network={net} hash={x.txHash} compact t={t} copied={copied} onCopy={copy} />
+                              </div>
+                            )}
                           </li>
                         );
                       })}

@@ -296,14 +296,21 @@
     "track": "查看物流",
     "trackingTitle": "物流状态",
     "copyTracking": "复制运单号",
+    "trackOnCarrier": "在 {carrier} 实时查询",
+    "carriers": {
+      "CJ": "CJ大韩通运",
+      "EPOST": "韩国邮政",
+      "DHL": "DHL",
+      "FEDEX": "FedEx"
+    },
     "steps": {
       "requested": "已受理发货申请",
       "label": "已出运单",
-      "transit": "国际运输中",
+      "transit": "运输中",
       "delivered": "已签收"
     },
     "stepCurrent": "当前环节",
-    "trackingDemoNote": "演示环境未接入物流公司，出单之后的环节不会推进。正式服务由物流公司回调更新状态。",
+    "trackingDemoNote": "演示环境会在申请约 20 秒后生成模拟运单，查询链接指向并不存在的单号。正式服务由物流公司回调更新状态。",
     "sellTitle": "即时回收",
     "sellBody": "确定回收该商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
     "sellBodyMulti": "确定回收 {n} 件商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
@@ -388,10 +395,15 @@
     "done": "确定",
     "history": "最近提现",
     "status": {
-      "PENDING": "待处理",
-      "PROCESSING": "处理中",
+      "PENDING": "审核中",
+      "BROADCASTING": "广播中",
       "COMPLETED": "已完成"
     },
+    "txHash": "链上 TxID",
+    "txHashPending": "开始广播后生成 TxID",
+    "copyHash": "复制 TxID",
+    "viewOnExplorer": "在 {explorer} 查看",
+    "demoHashNote": "所示 TxID 仅为格式正确的模拟值，无法在浏览器中查询。",
     "errors": {
       "TRC20": "TRC-20 地址为以 T 开头的 34 位字符",
       "BEP20": "BEP-20 地址为以 0x 开头的 42 位字符",
