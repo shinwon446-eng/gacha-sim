@@ -13,7 +13,8 @@
     "demo": "Demo",
     "language": "Language",
     "currency": "Currency",
-    "deposit": "Deposit"
+    "deposit": "Deposit",
+    "withdraw": "Withdraw"
   },
   "hero": {
     "royalSelection": "Royal Selection",
@@ -266,7 +267,31 @@
     "selected": "{n} selected",
     "selectAll": "Select all",
     "clearSelection": "Clear",
-    "sellSelected": "Sell selected · {amount}",
+    "sellSelected": "Sell selected ({rate} cashback)",
+    "selectedValue": "Total value:",
+    "soldForLabel": "Refunded",
+    "totalValue": "Total vault value",
+    "sellAll": "Sell all",
+    "sort": "Sort",
+    "sorts": {
+      "newest": "Newest",
+      "valueDesc": "Highest value",
+      "valueAsc": "Lowest value"
+    },
+    "emptyFiltered": "No items match these filters.",
+    "hotTitle": "Hottest boxes right now — TOP 3",
+    "hotTop": "top multiplier",
+    "track": "Track",
+    "trackingTitle": "Shipment status",
+    "copyTracking": "Copy tracking number",
+    "steps": {
+      "requested": "Shipping requested",
+      "label": "Label issued",
+      "transit": "In international transit",
+      "delivered": "Delivered"
+    },
+    "stepCurrent": "Current step",
+    "trackingDemoNote": "This demo has no carrier integration, so nothing advances past label issuance. In production a carrier webhook updates the status.",
     "sellTitle": "Instant Sell-Back",
     "sellBody": "Sell this item? {rate} of market value — {amount} — is credited to your balance instantly.",
     "sellBodyMulti": "Sell {n} items? {rate} of market value — {amount} — is credited to your balance instantly.",
@@ -312,6 +337,42 @@
       "CA": "Canada",
       "AE": "United Arab Emirates"
     }
+  },
+  "withdraw": {
+    "title": "Withdraw USDT",
+    "close": "Close",
+    "available": "Available balance",
+    "network": "Withdrawal network",
+    "address": "Destination wallet address",
+    "addressHint": "Address starting with {hint}",
+    "amount": "Amount",
+    "min": "Min {min}",
+    "max": "MAX",
+    "fee": "Network fee",
+    "feeShort": "Fee",
+    "net": "You receive",
+    "netLabel": "Net amount you receive",
+    "submit": "Submit withdrawal",
+    "requested": "Withdrawal submitted",
+    "txId": "Transaction ID",
+    "at": "Submitted at",
+    "another": "New withdrawal",
+    "done": "Done",
+    "history": "Recent withdrawals",
+    "status": {
+      "PENDING": "Pending",
+      "PROCESSING": "Processing",
+      "COMPLETED": "Completed"
+    },
+    "errors": {
+      "TRC20": "A TRC-20 address is 34 characters starting with T",
+      "BEP20": "A BEP-20 address is 42 characters starting with 0x",
+      "min": "Minimum withdrawal is {min}",
+      "insufficient": "Insufficient balance",
+      "nan": "Enter an amount"
+    },
+    "demoNote": "This demo has no hot wallet, so no on-chain transfer happens. In production the transfer is signed and broadcast, then a webhook marks it completed.",
+    "requestedToast": "Withdrawal submitted — {amount} deducted"
   },
   "actions": {
     "sellBack": "Instant Sell-Back",

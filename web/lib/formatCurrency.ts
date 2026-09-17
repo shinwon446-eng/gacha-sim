@@ -58,3 +58,28 @@ export function formatCurrencyCompact(
   if (!short) return formatCurrency(baseUsdtAmount, selectedCurrency, rates);
   return selectedCurrency === "USD" ? `$${short}` : `${short} USDT`;
 }
+
+/** 숫자와 통화 단위를 분리한 표기 — 타이포 위계(숫자 크게·단위 작게)를 컴포넌트가 잡을 수 있게 한다. */
+export interface MoneyParts {
+  /** 숫자 앞 기호 — "$", "₩". 없으면 "" */
+  prefix: string;
+  /** 자릿수 구분된 숫자 문자열 */
+  number: string;
+  /** 숫자 뒤 단위 — "USDT". 없으면 "" */
+  suffix: string;
+}
+
+const PARTS: Record<Currency, { prefix: string; suffix: string }> = {
+  USDT: { prefix: "", suffix: "USDT" },
+  USD: { prefix: "$", suffix: "" },
+  KRW: { prefix: "₩", suffix: "" },
+};
+
+export function splitNative(amountInCurrency: number, currency: Currency): MoneyParts {
+  const { decimals } = SPEC[currency];
+  return { ...PARTS[currency], number: amountInCurrency.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) };
+}
+
+export function splitCurrency(baseUsdtAmount: number, selectedCurrency: Currency, rates: Record<Currency, number> = DEFAULT_RATES): MoneyParts {
+  return splitNative(convertFromUsdt(baseUsdtAmount, selectedCurrency, rates), selectedCurrency);
+}

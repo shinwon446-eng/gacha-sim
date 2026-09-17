@@ -13,7 +13,8 @@
     "demo": "演示",
     "language": "语言",
     "currency": "货币",
-    "deposit": "充值"
+    "deposit": "充值",
+    "withdraw": "提现"
   },
   "hero": {
     "royalSelection": "皇家精选",
@@ -266,7 +267,31 @@
     "selected": "已选 {n} 件",
     "selectAll": "全选",
     "clearSelection": "取消选择",
-    "sellSelected": "回收所选 · {amount}",
+    "sellSelected": "批量回收所选 ({rate} 返现)",
+    "selectedValue": "总价值：",
+    "soldForLabel": "已退回",
+    "totalValue": "仓库总资产",
+    "sellAll": "全部回收",
+    "sort": "排序",
+    "sorts": {
+      "newest": "最新",
+      "valueDesc": "价值从高到低",
+      "valueAsc": "价值从低到高"
+    },
+    "emptyFiltered": "没有符合条件的商品。",
+    "hotTitle": "当前最热盲盒 TOP 3",
+    "hotTop": "最高倍数",
+    "track": "查看物流",
+    "trackingTitle": "物流状态",
+    "copyTracking": "复制运单号",
+    "steps": {
+      "requested": "已受理发货申请",
+      "label": "已出运单",
+      "transit": "国际运输中",
+      "delivered": "已签收"
+    },
+    "stepCurrent": "当前环节",
+    "trackingDemoNote": "演示环境未接入物流公司，出单之后的环节不会推进。正式服务由物流公司回调更新状态。",
     "sellTitle": "即时回收",
     "sellBody": "确定回收该商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
     "sellBodyMulti": "确定回收 {n} 件商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
@@ -312,6 +337,42 @@
       "CA": "加拿大",
       "AE": "阿联酋"
     }
+  },
+  "withdraw": {
+    "title": "USDT 提现",
+    "close": "关闭",
+    "available": "可提现余额",
+    "network": "提现网络",
+    "address": "收款钱包地址",
+    "addressHint": "以 {hint} 开头的地址",
+    "amount": "提现数量",
+    "min": "最低 {min}",
+    "max": "全部",
+    "fee": "网络手续费",
+    "feeShort": "手续费",
+    "net": "实际到账",
+    "netLabel": "实际到账金额",
+    "submit": "提交提现申请",
+    "requested": "提现申请已受理",
+    "txId": "交易 ID",
+    "at": "申请时间",
+    "another": "再次提现",
+    "done": "确定",
+    "history": "最近提现",
+    "status": {
+      "PENDING": "待处理",
+      "PROCESSING": "处理中",
+      "COMPLETED": "已完成"
+    },
+    "errors": {
+      "TRC20": "TRC-20 地址为以 T 开头的 34 位字符",
+      "BEP20": "BEP-20 地址为以 0x 开头的 42 位字符",
+      "min": "最低提现数量为 {min}",
+      "insufficient": "余额不足",
+      "nan": "请输入提现数量"
+    },
+    "demoNote": "演示环境没有热钱包，不会发生链上转账。正式服务会签名并广播交易，随后由回调将状态更新为已完成。",
+    "requestedToast": "提现申请已提交 — 已扣除 {amount}"
   },
   "actions": {
     "sellBack": "即时回收",

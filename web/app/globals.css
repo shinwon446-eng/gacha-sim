@@ -165,6 +165,17 @@ body {
   pointer-events: none;
 }
 
+/* 미니 카드용 축소판 — 같은 메탈릭 스트로크, 작은 크기 */
+.rank-numeral-sm {
+  font-family: var(--font-display), Cinzel, serif;
+  font-size: 4.25rem;
+  line-height: 0.72;
+  color: transparent;
+  -webkit-text-stroke: 1.5px #3a3a3a;
+  user-select: none;
+  pointer-events: none;
+}
+
 /* ── 표면 ───────────────────────────────────────────── */
 
 .vignette-bg {

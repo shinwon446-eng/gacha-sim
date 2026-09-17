@@ -16,7 +16,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 UI = {
   "ko": {
     "nav": {"boxes": "박스", "battles": "배틀", "inventory": "보관함", "fairness": "공정성 검증", "highRoller": "하이롤러", "tech": "테크", "luxury": "럭셔리"},
-    "header": {"balance": "잔액", "demo": "데모", "language": "언어", "currency": "통화", "deposit": "충전하기"},
+    "header": {"balance": "잔액", "demo": "데모", "language": "언어", "currency": "통화", "deposit": "충전하기", "withdraw": "출금"},
     "hero": {
       "royalSelection": "로열 셀렉션", "top": "TOP {n}", "pricePerOpen": "1회 오픈", "topPull": "최고 구성",
       "noBlank": "100% 실물 지급 · 꽝 없음", "guaranteedMinLabel": "최소 보장 금액",
@@ -103,7 +103,12 @@ UI = {
       "status": {"IN_STORAGE": "보관 중", "SHIPPING_REQUESTED": "배송 준비 중", "SHIPPING": "배송 중", "SOLD": "환전 완료"},
       "acquired": "획득 {date}", "from": "{box}", "soldFor": "환급 {amount}", "tracking": "운송장", "trackingPending": "운송장 발급 대기",
       "sell": "즉시 판매", "ship": "실물 배송 신청", "verify": "검증", "select": "선택", "selected": "{n}개 선택", "selectAll": "전체 선택", "clearSelection": "선택 해제",
-      "sellSelected": "선택 항목 즉시 판매 · {amount}",
+      "sellSelected": "선택 항목 일괄 판매 ({rate} 캐시백)", "selectedValue": "총 가치:", "soldForLabel": "환급",
+      "totalValue": "총 보관 자산", "sellAll": "전체 일괄 판매", "sort": "정렬", "sorts": {"newest": "최신순", "valueDesc": "높은 가치순", "valueAsc": "낮은 가치순"},
+      "emptyFiltered": "조건에 맞는 아이템이 없습니다.", "hotTitle": "지금 가장 핫한 박스 TOP 3", "hotTop": "최고 배수",
+      "track": "배송 조회", "trackingTitle": "배송 현황", "copyTracking": "운송장 복사",
+      "steps": {"requested": "배송 신청 접수", "label": "운송장 발급", "transit": "국제 운송 중", "delivered": "배송 완료"}, "stepCurrent": "현재 단계",
+      "trackingDemoNote": "데모 환경에는 물류사 연동이 없어 운송장 발급 이후 단계는 진행되지 않습니다. 실서비스에서는 물류사 웹훅이 상태를 갱신합니다.",
       "sellTitle": "즉시 판매", "sellBody": "이 아이템을 판매하시겠습니까? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
       "sellBodyMulti": "{n}개 아이템을 판매하시겠습니까? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
       "confirm": "확인", "cancel": "취소", "soldToast": "판매 완료 — {amount} 잔액 반영",
@@ -115,13 +120,22 @@ UI = {
       "errors": {"recipient": "수령인 이름을 입력하세요", "phone": "연락처 형식을 확인하세요", "postalCode": "우편번호를 입력하세요", "address": "상세 주소를 입력하세요", "customsId": "통관 식별자 형식이 올바르지 않습니다"},
       "countries": {"KR": "대한민국", "US": "미국", "CN": "중국", "JP": "일본", "SG": "싱가포르", "HK": "홍콩", "TW": "대만", "GB": "영국", "DE": "독일", "FR": "프랑스", "AU": "호주", "CA": "캐나다", "AE": "아랍에미리트"}
     },
+    "withdraw": {
+      "title": "USDT 출금", "close": "닫기", "available": "출금 가능 잔액", "network": "출금 네트워크", "address": "받는 지갑 주소", "addressHint": "{hint} 로 시작하는 주소",
+      "amount": "출금 수량", "min": "최소 {min}", "max": "전액", "fee": "네트워크 수수료", "feeShort": "수수료", "net": "최종 실 수령액", "netLabel": "최종 실 수령액",
+      "submit": "출금 신청 완료", "requested": "출금 신청 접수", "txId": "거래 ID", "at": "신청 시각", "another": "추가 출금", "done": "확인", "history": "최근 출금",
+      "status": {"PENDING": "대기 중", "PROCESSING": "처리 중", "COMPLETED": "완료"},
+      "errors": {"TRC20": "TRC-20 주소는 T 로 시작하는 34자입니다", "BEP20": "BEP-20 주소는 0x 로 시작하는 42자입니다", "min": "최소 출금 수량은 {min}입니다", "insufficient": "잔액이 부족합니다", "nan": "출금 수량을 입력하세요"},
+      "demoNote": "데모 환경에는 핫월렛이 없어 실제 송금은 발생하지 않습니다. 실서비스에서는 서명·브로드캐스트 후 웹훅이 상태를 완료로 갱신합니다.",
+      "requestedToast": "출금 신청 완료 — {amount} 차감"
+    },
     "actions": {"sellBack": "즉시 판매", "claimShipping": "실물 배송 신청", "provablyFair": "공정성 검증"},
     "legal": {"disclaimer": "표기 금액은 실판매가 기준입니다. 받은 실물을 즉시 판매하면 실판매가의 {refund}를 돌려받으므로 회수액은 오픈 가격보다 낮습니다. 확률은 구성품 확인에서 전량 공개됩니다. 현재 화면은 프로토타입이며 상품 데이터는 모의값입니다."},
     "badges": {"dream": "드림 박스", "mobility": "모빌리티", "tech": "테크", "audio": "오디오", "watch": "워치", "luxury": "럭셔리", "lifestyle": "라이프스타일", "guaranteed": "가치 보장"},
   },
   "en": {
     "nav": {"boxes": "Boxes", "battles": "Battles", "inventory": "Inventory", "fairness": "Provably Fair", "highRoller": "High-Roller", "tech": "Tech", "luxury": "Luxury"},
-    "header": {"balance": "Balance", "demo": "Demo", "language": "Language", "currency": "Currency", "deposit": "Deposit"},
+    "header": {"balance": "Balance", "demo": "Demo", "language": "Language", "currency": "Currency", "deposit": "Deposit", "withdraw": "Withdraw"},
     "hero": {
       "royalSelection": "Royal Selection", "top": "TOP {n}", "pricePerOpen": "Per Open", "topPull": "Top Pull",
       "noBlank": "100% physical payout · No blanks", "guaranteedMinLabel": "Guaranteed Minimum",
@@ -208,7 +222,12 @@ UI = {
       "status": {"IN_STORAGE": "In Vault", "SHIPPING_REQUESTED": "Preparing shipment", "SHIPPING": "Shipping", "SOLD": "Sold"},
       "acquired": "Acquired {date}", "from": "{box}", "soldFor": "Refunded {amount}", "tracking": "Tracking", "trackingPending": "Awaiting tracking number",
       "sell": "Instant Sell-Back", "ship": "Claim Shipping", "verify": "Verify", "select": "Select", "selected": "{n} selected", "selectAll": "Select all", "clearSelection": "Clear",
-      "sellSelected": "Sell selected · {amount}",
+      "sellSelected": "Sell selected ({rate} cashback)", "selectedValue": "Total value:", "soldForLabel": "Refunded",
+      "totalValue": "Total vault value", "sellAll": "Sell all", "sort": "Sort", "sorts": {"newest": "Newest", "valueDesc": "Highest value", "valueAsc": "Lowest value"},
+      "emptyFiltered": "No items match these filters.", "hotTitle": "Hottest boxes right now — TOP 3", "hotTop": "top multiplier",
+      "track": "Track", "trackingTitle": "Shipment status", "copyTracking": "Copy tracking number",
+      "steps": {"requested": "Shipping requested", "label": "Label issued", "transit": "In international transit", "delivered": "Delivered"}, "stepCurrent": "Current step",
+      "trackingDemoNote": "This demo has no carrier integration, so nothing advances past label issuance. In production a carrier webhook updates the status.",
       "sellTitle": "Instant Sell-Back", "sellBody": "Sell this item? {rate} of market value — {amount} — is credited to your balance instantly.",
       "sellBodyMulti": "Sell {n} items? {rate} of market value — {amount} — is credited to your balance instantly.",
       "confirm": "Confirm", "cancel": "Cancel", "soldToast": "Sold — {amount} credited",
@@ -220,13 +239,22 @@ UI = {
       "errors": {"recipient": "Enter the recipient name", "phone": "Check the phone number format", "postalCode": "Enter a postal code", "address": "Enter the street address", "customsId": "Invalid customs identifier format"},
       "countries": {"KR": "South Korea", "US": "United States", "CN": "China", "JP": "Japan", "SG": "Singapore", "HK": "Hong Kong", "TW": "Taiwan", "GB": "United Kingdom", "DE": "Germany", "FR": "France", "AU": "Australia", "CA": "Canada", "AE": "United Arab Emirates"}
     },
+    "withdraw": {
+      "title": "Withdraw USDT", "close": "Close", "available": "Available balance", "network": "Withdrawal network", "address": "Destination wallet address", "addressHint": "Address starting with {hint}",
+      "amount": "Amount", "min": "Min {min}", "max": "MAX", "fee": "Network fee", "feeShort": "Fee", "net": "You receive", "netLabel": "Net amount you receive",
+      "submit": "Submit withdrawal", "requested": "Withdrawal submitted", "txId": "Transaction ID", "at": "Submitted at", "another": "New withdrawal", "done": "Done", "history": "Recent withdrawals",
+      "status": {"PENDING": "Pending", "PROCESSING": "Processing", "COMPLETED": "Completed"},
+      "errors": {"TRC20": "A TRC-20 address is 34 characters starting with T", "BEP20": "A BEP-20 address is 42 characters starting with 0x", "min": "Minimum withdrawal is {min}", "insufficient": "Insufficient balance", "nan": "Enter an amount"},
+      "demoNote": "This demo has no hot wallet, so no on-chain transfer happens. In production the transfer is signed and broadcast, then a webhook marks it completed.",
+      "requestedToast": "Withdrawal submitted — {amount} deducted"
+    },
     "actions": {"sellBack": "Instant Sell-Back", "claimShipping": "Claim Shipping", "provablyFair": "Provably Fair"},
     "legal": {"disclaimer": "Amounts shown are market value. Instant sell-back pays {refund} of market value, so cash recovery is below the open price. All odds are published under View Contents. This screen is a prototype and product data is mock."},
     "badges": {"dream": "Dream Box", "mobility": "Mobility", "tech": "Tech", "audio": "Audio", "watch": "Watches", "luxury": "Luxury", "lifestyle": "Lifestyle", "guaranteed": "Guaranteed"},
   },
   "zh": {
     "nav": {"boxes": "盲盒", "battles": "对战", "inventory": "仓库", "fairness": "公平性验证", "highRoller": "高额玩家", "tech": "科技", "luxury": "奢侈品"},
-    "header": {"balance": "余额", "demo": "演示", "language": "语言", "currency": "货币", "deposit": "充值"},
+    "header": {"balance": "余额", "demo": "演示", "language": "语言", "currency": "货币", "deposit": "充值", "withdraw": "提现"},
     "hero": {
       "royalSelection": "皇家精选", "top": "TOP {n}", "pricePerOpen": "单次开启", "topPull": "最高奖品",
       "noBlank": "100% 实物发放 · 无空奖", "guaranteedMinLabel": "保底价值",
@@ -313,7 +341,12 @@ UI = {
       "status": {"IN_STORAGE": "保管中", "SHIPPING_REQUESTED": "备货中", "SHIPPING": "运输中", "SOLD": "已回收"},
       "acquired": "获得于 {date}", "from": "{box}", "soldFor": "已退回 {amount}", "tracking": "运单号", "trackingPending": "等待运单号",
       "sell": "即时回收", "ship": "申请发货", "verify": "验证", "select": "选择", "selected": "已选 {n} 件", "selectAll": "全选", "clearSelection": "取消选择",
-      "sellSelected": "回收所选 · {amount}",
+      "sellSelected": "批量回收所选 ({rate} 返现)", "selectedValue": "总价值：", "soldForLabel": "已退回",
+      "totalValue": "仓库总资产", "sellAll": "全部回收", "sort": "排序", "sorts": {"newest": "最新", "valueDesc": "价值从高到低", "valueAsc": "价值从低到高"},
+      "emptyFiltered": "没有符合条件的商品。", "hotTitle": "当前最热盲盒 TOP 3", "hotTop": "最高倍数",
+      "track": "查看物流", "trackingTitle": "物流状态", "copyTracking": "复制运单号",
+      "steps": {"requested": "已受理发货申请", "label": "已出运单", "transit": "国际运输中", "delivered": "已签收"}, "stepCurrent": "当前环节",
+      "trackingDemoNote": "演示环境未接入物流公司，出单之后的环节不会推进。正式服务由物流公司回调更新状态。",
       "sellTitle": "即时回收", "sellBody": "确定回收该商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
       "sellBodyMulti": "确定回收 {n} 件商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
       "confirm": "确认", "cancel": "取消", "soldToast": "已回收 — 余额 +{amount}",
@@ -324,6 +357,15 @@ UI = {
       "shipRequestedToast": "已申请发货 — 出单后将显示运单号",
       "errors": {"recipient": "请输入收件人姓名", "phone": "请检查电话格式", "postalCode": "请输入邮政编码", "address": "请输入详细地址", "customsId": "通关标识格式不正确"},
       "countries": {"KR": "韩国", "US": "美国", "CN": "中国", "JP": "日本", "SG": "新加坡", "HK": "中国香港", "TW": "中国台湾", "GB": "英国", "DE": "德国", "FR": "法国", "AU": "澳大利亚", "CA": "加拿大", "AE": "阿联酋"}
+    },
+    "withdraw": {
+      "title": "USDT 提现", "close": "关闭", "available": "可提现余额", "network": "提现网络", "address": "收款钱包地址", "addressHint": "以 {hint} 开头的地址",
+      "amount": "提现数量", "min": "最低 {min}", "max": "全部", "fee": "网络手续费", "feeShort": "手续费", "net": "实际到账", "netLabel": "实际到账金额",
+      "submit": "提交提现申请", "requested": "提现申请已受理", "txId": "交易 ID", "at": "申请时间", "another": "再次提现", "done": "确定", "history": "最近提现",
+      "status": {"PENDING": "待处理", "PROCESSING": "处理中", "COMPLETED": "已完成"},
+      "errors": {"TRC20": "TRC-20 地址为以 T 开头的 34 位字符", "BEP20": "BEP-20 地址为以 0x 开头的 42 位字符", "min": "最低提现数量为 {min}", "insufficient": "余额不足", "nan": "请输入提现数量"},
+      "demoNote": "演示环境没有热钱包，不会发生链上转账。正式服务会签名并广播交易，随后由回调将状态更新为已完成。",
+      "requestedToast": "提现申请已提交 — 已扣除 {amount}"
     },
     "actions": {"sellBack": "即时回收", "claimShipping": "申请发货", "provablyFair": "公平性验证"},
     "legal": {"disclaimer": "所示金额均为市场价。即时回收仅按市场价的 {refund} 支付，因此现金回收额低于开启价。全部概率在「查看内含」中公开。当前页面为原型，商品数据为模拟数据。"},

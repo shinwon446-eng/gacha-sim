@@ -2,7 +2,7 @@
 //   npm test
 import test from "node:test";
 import assert from "node:assert/strict";
-import { formatCurrency, formatCurrencyCompact, convertFromUsdt, formatNative } from "../lib/formatCurrency";
+import { formatCurrency, formatCurrencyCompact, convertFromUsdt, formatNative, splitCurrency, splitNative } from "../lib/formatCurrency";
 import { DEFAULT_RATES, CURRENCIES } from "../stores/currencyStore";
 
 test("스펙 예시 그대로: 80 USDT → 80.00 USDT / $80.00 / ₩110,400", () => {
@@ -59,4 +59,18 @@ test("formatNative 는 환산 없이 원금액을 그대로 찍는다 — 프리
   assert.equal(formatNative(20, "USDT"), "20.00 USDT");
   // 왕복 환산이면 오차가 생긴다는 걸 기록해 둔다
   assert.notEqual(formatCurrency(+(70000 / 1380).toFixed(2), "KRW"), "₩70,000");
+});
+
+test("splitCurrency — 숫자·단위 분리가 formatCurrency 와 같은 문자열을 재구성한다", () => {
+  for (const c of CURRENCIES) {
+    for (const v of [0, 1, 43, 80, 1234.5, 987654.32]) {
+      const p = splitCurrency(v, c);
+      const joined = `${p.prefix}${p.number}${p.suffix ? ` ${p.suffix}` : ""}`;
+      assert.equal(joined, formatCurrency(v, c), `${c} ${v}`);
+    }
+  }
+  assert.deepEqual(splitCurrency(80, "USDT"), { prefix: "", number: "80.00", suffix: "USDT" });
+  assert.deepEqual(splitCurrency(80, "USD"), { prefix: "$", number: "80.00", suffix: "" });
+  assert.deepEqual(splitCurrency(80, "KRW"), { prefix: "₩", number: "110,400", suffix: "" });
+  assert.deepEqual(splitNative(70000, "KRW"), { prefix: "₩", number: "70,000", suffix: "" });
 });

@@ -72,3 +72,16 @@ test("배송비: 모든 국가에 정액이 있고 KR 이 가장 싸다", () => 
   for (const c of COUNTRIES) assert.ok(SHIPPING_FEE_USDT[c] > 0, c);
   assert.equal(shippingFee("KR"), Math.min(...COUNTRIES.map((c) => SHIPPING_FEE_USDT[c])));
 });
+
+test("지갑: 출금 거래는 status 를 갖고 PENDING → PROCESSING 으로 갱신된다", async () => {
+  const { useWalletStore } = await import("../stores/walletStore");
+  const w = useWalletStore.getState();
+  useWalletStore.setState({ balance: 100, transactions: [] });
+  assert.ok(w.debit(50));
+  const tx = w.addTransaction({ type: "withdraw", amountUsdt: -50, ref: "TRC20:Txxx", status: "PENDING" });
+  assert.equal(useWalletStore.getState().balance, 50);
+  assert.equal(useWalletStore.getState().transactions[0].status, "PENDING");
+  w.setTransactionStatus(tx.id, "PROCESSING");
+  assert.equal(useWalletStore.getState().transactions[0].status, "PROCESSING");
+  assert.ok(!w.debit(50.01), "잔액 초과 출금은 거부");
+});

@@ -28,10 +28,12 @@ import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import { Link } from "@/i18n/navigation";
-import { Wallet } from "lucide-react";
+import { Wallet, ArrowUpRight } from "lucide-react";
 import { useWalletStore } from "@/stores/walletStore";
 import { UnboxingRoulette, type UnboxResult } from "@/components/unboxing/UnboxingRoulette";
 import { DepositModal } from "@/components/wallet/DepositModal";
+import { WithdrawalModal } from "@/components/wallet/WithdrawalModal";
+import { Money } from "@/components/ui/Money";
 import { glow as glowOf } from "@/lib/tiers";
 
 const PAGE_SIZE = 12;
@@ -52,6 +54,7 @@ export default function BoxesPage() {
   const [shown, setShown] = useState(PAGE_SIZE);
   const [unbox, setUnbox] = useState<{ box: ProductBox; count: number } | null>(null);
   const [depositOpen, setDepositOpen] = useState(false);
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const balance = useWalletStore((s) => s.balance);
   const debit = useWalletStore((s) => s.debit);
@@ -107,7 +110,7 @@ export default function BoxesPage() {
         <span className="font-display text-[22px] font-bold uppercase leading-none tracking-tight text-crimson">
           Gachaflix
         </span>
-        <nav className="flex items-center gap-4 text-[12px] text-muted">
+        <nav className="flex items-center gap-4 whitespace-nowrap text-[12px] text-muted">
           <span className="font-semibold text-white">{t("nav.boxes")}</span>
           <span className="cursor-default opacity-60">{t("nav.battles")}</span>
           <Link href="/inventory" className="transition-colors hover:text-white">
@@ -123,15 +126,8 @@ export default function BoxesPage() {
             <Wallet className="h-3.5 w-3.5 text-muted" strokeWidth={2} />
             <span className="caption-luxury hidden sm:inline">{t("header.balance")}</span>
             <AnimatePresence mode="popLayout" initial={false}>
-              <motion.span
-                key={balance}
-                className="font-display text-sm font-bold tabular-nums text-white"
-                initial={{ y: -6, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 6, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                {fmt(balance)}
+              <motion.span key={balance} className="inline-flex" initial={{ y: -6, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 6, opacity: 0 }} transition={{ duration: 0.2 }}>
+                <Money value={balance} size="sm" />
               </motion.span>
             </AnimatePresence>
           </div>
@@ -142,6 +138,14 @@ export default function BoxesPage() {
           >
             <Wallet className="h-3.5 w-3.5" strokeWidth={2.2} />
             {t("header.deposit")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setWithdrawOpen(true)}
+            className="border-gold-gradient hidden h-9 items-center gap-1.5 whitespace-nowrap rounded-md px-3 text-xs font-bold text-gold-champagne transition-colors hover:bg-gold-champagne/10 lg:flex"
+          >
+            <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2.4} />
+            {t("header.withdraw")}
           </button>
           <LanguageSelector />
           <CurrencySelector />
@@ -261,6 +265,8 @@ export default function BoxesPage() {
           pushToast({ title: t(source === "card" ? "cardPay.creditedToast" : "deposit.creditedToast", { amount: fmt(amount) }), tone: "#E6CA65" })
         }
       />
+
+      <WithdrawalModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onRequested={(amount) => pushToast({ title: t("withdraw.requestedToast", { amount: fmt(amount) }), tone: "#E6CA65" })} />
 
       <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} />
 

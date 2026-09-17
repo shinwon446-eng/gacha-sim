@@ -15,6 +15,7 @@ import { useFairStore } from "@/stores/fairStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { playTick, playWin, playTaDum } from "@/lib/audio";
 import { ProductArt } from "@/components/box/ProductArt";
+import { Money } from "@/components/ui/Money";
 import { FairnessModal } from "@/components/fairness/FairnessModal";
 import { ShippingModal } from "@/components/inventory/ShippingModal";
 import { useInventoryStore, type OwnedItem } from "@/stores/inventoryStore";
@@ -357,7 +358,9 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
                       <ProductArt image={last.item.image} alt={itemName(last.item)} accent={last.tier.accent} glowStrength={0.4} fallbackSize="md" priority />
                     </div>
                     <h2 className="mt-4 text-2xl font-bold text-white">{itemName(last.item)}</h2>
-                    <div className="text-gold-gradient mt-1 font-display text-4xl font-bold tabular-nums">{fmt(last.item.value)}</div>
+                    <div className="mt-1">
+                      <Money value={last.item.value} size="lg" numberClassName="text-gold-gradient" />
+                    </div>
                     <div className="mt-1 text-xs text-faint">{t("paid", { price: fmt(box.price) })}</div>
                   </div>
                 ) : (
@@ -381,7 +384,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
                     </ul>
                     <div className="mt-3 flex items-baseline justify-between border-t border-hairline pt-3">
                       <span className="caption-luxury">{t("total")}</span>
-                      <span className="text-gold-gradient font-display text-2xl font-bold tabular-nums">{fmt(totalValue)}</span>
+                      <Money value={totalValue} size="md" numberClassName="text-gold-gradient" />
                     </div>
                     <div className="text-right text-xs text-faint">{t("paid", { price: fmt(box.price * results.length) })}</div>
                   </div>
