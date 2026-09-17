@@ -60,7 +60,19 @@ UI = {
       "demoTitle": "시드 커밋 데모", "demoBody": "새 서버 시드를 만들면 해시만 먼저 보입니다. 공개(Reveal) 를 누르면 원문이 드러나고, 그걸 검증기에 넣어 재현할 수 있습니다.",
       "generate": "새 서버 시드 생성", "reveal": "서버 시드 공개", "hidden": "개봉 전 — 원문 비공개", "useInVerifier": "검증기에 넣기",
       "invalidInput": "서버 시드와 클라이언트 시드를 입력하고 Nonce 는 0 이상의 정수여야 합니다.",
-      "open": "공정성 검증 열기", "close": "닫기"
+      "open": "공정성 검증 열기", "close": "닫기",
+      "visual": {
+        "eyebrow": "1-Click 비주얼 검증", "title": "3초 공정성 검증", "body": "수학 공식 없이 확인합니다. 최근 언박싱을 고르고 [검증하기]를 누르면 3단계가 순서대로 검증됩니다. 128자리 hex 입력은 전문가 모드에 있습니다.",
+        "expert": "전문가 모드", "expertTitle": "직접 입력 검증기 (서버 시드 · 클라이언트 시드 · Nonce)",
+        "pick": "최근 언박싱 선택", "noRecent": "아직 검증할 언박싱이 없습니다.", "goOpen": "박스 열러 가기", "verify": "검증하기", "verifying": "검증 중…",
+        "s1Title": "🔒 사전 암호화 봉인", "s1Body": "박스를 열기 전에 이미 SHA-256 해시값으로 결과가 봉인되어 있어, 서버 관리자도 중간에 결과를 바꿀 수 없었습니다.",
+        "s1Pass": "봉인 일치 — 개봉 전 공개 해시와 서버 시드가 같습니다", "s1Fail": "봉인 불일치 — 공개 해시와 서버 시드가 다릅니다",
+        "s2Title": "🎲 내 브라우저 난수 결합", "s2Body": "유저님의 기기(클라이언트 시드)와 결합하여 무작위 롤 넘버가 도출되었습니다.", "rollLabel": "롤 넘버",
+        "s3Title": "🎯 구간 매칭", "s3Body": "해당 박스의 당첨 구간 게이지 바 위에 롤 넘버가 정확히 매칭되어 정당하게 당첨되었음을 검증합니다.",
+        "s3Pass": "구간 일치 —", "s3Fail": "구간 불일치 —", "bracket": "구간 {from} ~ {to} ({pct}%)", "gaugeHint": "당첨 구간 게이지 · 흰 선이 내 롤",
+        "verdictPass": "검증 완료 · 조작 없음", "verdictPassBody": "세 단계 모두 통과했습니다. 이 결과는 누구나 같은 값으로 재현할 수 있습니다.",
+        "verdictFail": "검증 실패", "verdictFailBody": "재현 값이 기록과 다릅니다. 전문가 모드에서 입력값을 확인하세요."
+      }
     },
     "unbox": {
       "open1": "1회 오픈", "open5": "5회 연속 오픈", "demoLabel": "무료 체험 · 가상 개봉", "demoCongrats": "축하합니다! {item}({n})에 가상 당첨되셨습니다.", "demoBody": "웰컴 보너스 {bonus}로 실제 박스를 열어보세요!", "demoCta": "보너스 받고 실제 열기", "demoCtaClaimed": "실제 박스 열기", "demoNote": "가상 체험 결과입니다 — 잔액·보관함에 반영되지 않으며 공정성 시드도 소모하지 않습니다.", "spinning": "개봉 중…", "landing": "결과 확정",
@@ -129,6 +141,14 @@ UI = {
       "step3Title": "집으로 배송 or 95% 환전", "step3Desc": "마음에 들면 무료 배송, 필요 없으면 95% USDT로 즉시 현금 회수합니다."
     },
     "counters": {"shipments": "오늘 출고된 실물 명품", "shipmentsUnit": "건", "cashouts": "오늘 즉시 환전된 자산", "verification": "공정성 검증 완료율", "demoNote": "데모 지표 — 실서비스에서는 실시간 집계값이 표시됩니다"},
+    "proof": {
+      "title": "실지급 & 실배송 라이브 인증", "live": "LIVE", "tab": {"payouts": "USDT 실지급 인증", "shipments": "실물 배송 출고 현황"},
+      "kind": {"withdraw": "출금", "sellback": "즉시 환전"}, "viewOnExplorer": "{explorer} 조회", "track": "운송장 추적",
+      "carriers": {"CJ": "CJ대한통운", "EPOST": "우체국택배", "DHL": "DHL", "FEDEX": "FedEx"},
+      "reserveEyebrow": "Proof of Reserves · 지급 준비금", "reserveBody": "GACHAFLIX는 유저 자산 보호 및 즉시 출금을 위해 {min} USDT 이상의 유동성 지급 준비금을 온체인 상에 상시 보유합니다.",
+      "reserveWallet": "리저브 지갑", "reserveBalance": "현재 보유", "copyAddress": "주소 복사",
+      "demoNote": "데모 데이터 — 유저·금액·TxID·운송장은 모의값이며 익스플로러·택배사에서 조회되지 않습니다. 실서비스에서는 실제 집계로 대체됩니다."
+    },
     "withdraw": {
       "title": "USDT 출금", "close": "닫기", "available": "출금 가능 잔액", "network": "출금 네트워크", "address": "받는 지갑 주소", "addressHint": "{hint} 로 시작하는 주소",
       "amount": "출금 수량", "min": "최소 {min}", "max": "전액", "fee": "네트워크 수수료", "feeShort": "수수료", "net": "최종 실 수령액", "netLabel": "최종 실 수령액",
@@ -189,7 +209,19 @@ UI = {
       "demoTitle": "Seed commitment demo", "demoBody": "Generate a server seed and only its hash is shown. Reveal it, then paste it into the verifier to reproduce a roll.",
       "generate": "Generate server seed", "reveal": "Reveal server seed", "hidden": "Before opening — seed hidden", "useInVerifier": "Use in verifier",
       "invalidInput": "Enter a server seed and a client seed; the nonce must be an integer ≥ 0.",
-      "open": "Open Provably Fair", "close": "Close"
+      "open": "Open Provably Fair", "close": "Close",
+      "visual": {
+        "eyebrow": "1-Click Visual Verifier", "title": "3-Second Fairness Check", "body": "No math required. Pick a recent unboxing and press Verify — three steps run in order. The 128-char hex inputs live under Expert mode.",
+        "expert": "Expert mode", "expertTitle": "Manual verifier (server seed · client seed · nonce)",
+        "pick": "Recent unboxing", "noRecent": "Nothing to verify yet.", "goOpen": "Open a box", "verify": "Verify", "verifying": "Verifying…",
+        "s1Title": "🔒 Pre-committed seal", "s1Body": "The outcome was sealed with a SHA-256 hash before the box opened, so not even the server operator could change it mid-way.",
+        "s1Pass": "Seal intact — the server seed matches the hash published before opening", "s1Fail": "Seal broken — the server seed does not match the published hash",
+        "s2Title": "🎲 Your browser's entropy", "s2Body": "Combined with your device's client seed to derive a deterministic roll number.", "rollLabel": "Roll number",
+        "s3Title": "🎯 Bracket match", "s3Body": "The roll lands precisely inside the winning bracket on this box's gauge, proving the drop was legitimate.",
+        "s3Pass": "Bracket match —", "s3Fail": "Bracket mismatch —", "bracket": "Bracket {from} – {to} ({pct}%)", "gaugeHint": "Winning brackets · white line is your roll",
+        "verdictPass": "Verified · Untampered", "verdictPassBody": "All three steps passed. Anyone can reproduce this exact result.",
+        "verdictFail": "Verification failed", "verdictFailBody": "The reproduced values differ from the record. Check the inputs in Expert mode."
+      }
     },
     "unbox": {
       "open1": "Open ×1", "open5": "Open ×5", "demoLabel": "Free Demo · Simulated", "demoCongrats": "Congratulations! You simulated {item} ({n}).", "demoBody": "Open real boxes with your {bonus} welcome bonus!", "demoCta": "Claim & Open Real Box", "demoCtaClaimed": "Open Real Box", "demoNote": "This is a simulated result — nothing is credited to your balance or vault, and no fairness seed is consumed.", "spinning": "Opening…", "landing": "Result locked",
@@ -258,6 +290,14 @@ UI = {
       "step3Title": "Ship home or cash out 95%", "step3Desc": "Love it? Free shipping. Don't need it? Liquidate instantly for 95% USDT."
     },
     "counters": {"shipments": "Physical items shipped today", "shipmentsUnit": "items", "cashouts": "Settled cashouts today", "verification": "Provably fair verification rate", "demoNote": "Demo metrics — production shows live aggregates"},
+    "proof": {
+      "title": "Live Proof of Payout & Delivery", "live": "LIVE", "tab": {"payouts": "USDT Payout Proof", "shipments": "Shipping Proof"},
+      "kind": {"withdraw": "Withdrawal", "sellback": "Instant sell-back"}, "viewOnExplorer": "View on {explorer}", "track": "Track parcel",
+      "carriers": {"CJ": "CJ Logistics", "EPOST": "Korea Post", "DHL": "DHL", "FEDEX": "FedEx"},
+      "reserveEyebrow": "Proof of Reserves", "reserveBody": "GACHAFLIX keeps over {min} USDT in liquid payout reserves on-chain at all times to protect user assets and guarantee instant withdrawals.",
+      "reserveWallet": "Reserve wallet", "reserveBalance": "Current balance", "copyAddress": "Copy address",
+      "demoNote": "Demo data — users, amounts, TxIDs and tracking numbers are mock values and will not resolve on explorers or carrier sites. Production replaces this with live aggregates."
+    },
     "withdraw": {
       "title": "Withdraw USDT", "close": "Close", "available": "Available balance", "network": "Withdrawal network", "address": "Destination wallet address", "addressHint": "Address starting with {hint}",
       "amount": "Amount", "min": "Min {min}", "max": "MAX", "fee": "Network fee", "feeShort": "Fee", "net": "You receive", "netLabel": "Net amount you receive",
@@ -318,7 +358,19 @@ UI = {
       "demoTitle": "种子承诺演示", "demoBody": "生成新的服务器种子后仅显示哈希。点击公开后显示原文，可填入验证器复现结果。",
       "generate": "生成服务器种子", "reveal": "公开服务器种子", "hidden": "开启前 — 原文未公开", "useInVerifier": "填入验证器",
       "invalidInput": "请输入服务器种子与客户端种子，Nonce 须为 ≥ 0 的整数。",
-      "open": "打开公平性验证", "close": "关闭"
+      "open": "打开公平性验证", "close": "关闭",
+      "visual": {
+        "eyebrow": "一键可视化验证", "title": "3 秒公平性验证", "body": "无需数学公式。选择最近一次开箱并点击「验证」，三个步骤依次完成。128 位十六进制输入位于专家模式。",
+        "expert": "专家模式", "expertTitle": "手动验证器（服务器种子 · 客户端种子 · Nonce）",
+        "pick": "选择最近开箱", "noRecent": "暂无可验证的开箱记录。", "goOpen": "去开盲盒", "verify": "验证", "verifying": "验证中…",
+        "s1Title": "🔒 事前加密封存", "s1Body": "开箱之前结果已由 SHA-256 哈希封存，即使服务器管理员也无法中途更改。",
+        "s1Pass": "封存一致 — 服务器种子与开箱前公布的哈希相符", "s1Fail": "封存不一致 — 服务器种子与公布的哈希不符",
+        "s2Title": "🎲 结合我的浏览器随机数", "s2Body": "与您设备的客户端种子结合，推导出确定性的掷点数字。", "rollLabel": "掷点数字",
+        "s3Title": "🎯 区间匹配", "s3Body": "掷点精确落在该盲盒中奖区间的仪表条内，证明中奖合法。",
+        "s3Pass": "区间匹配 —", "s3Fail": "区间不匹配 —", "bracket": "区间 {from} ~ {to}（{pct}%）", "gaugeHint": "中奖区间仪表 · 白线为您的掷点",
+        "verdictPass": "验证完成 · 未被篡改", "verdictPassBody": "三个步骤全部通过。任何人都能复现同样的结果。",
+        "verdictFail": "验证失败", "verdictFailBody": "复现值与记录不符。请在专家模式检查输入值。"
+      }
     },
     "unbox": {
       "open1": "开启 ×1", "open5": "连续开启 ×5", "demoLabel": "免费体验 · 模拟开箱", "demoCongrats": "恭喜！您在模拟中抽中了 {item}（{n}）。", "demoBody": "用 {bonus} 新人奖励开启真实盲盒吧！", "demoCta": "领取奖励并开启真实盲盒", "demoCtaClaimed": "开启真实盲盒", "demoNote": "这是模拟结果 — 不计入余额与仓库，也不消耗公平性种子。", "spinning": "开启中…", "landing": "结果已锁定",
@@ -387,6 +439,14 @@ UI = {
       "step3Title": "发货到家或 95% 折现", "step3Desc": "满意即免费发货，不需要则按 95% USDT 即时折现。"
     },
     "counters": {"shipments": "今日已出库实物", "shipmentsUnit": "件", "cashouts": "今日已结算折现", "verification": "公平性验证完成率", "demoNote": "演示指标 — 正式服务显示实时统计"},
+    "proof": {
+      "title": "实付与实发实时证明", "live": "LIVE", "tab": {"payouts": "USDT 实付证明", "shipments": "实物发货动态"},
+      "kind": {"withdraw": "提现", "sellback": "即时回收"}, "viewOnExplorer": "在 {explorer} 查看", "track": "运单追踪",
+      "carriers": {"CJ": "CJ大韩通运", "EPOST": "韩国邮政", "DHL": "DHL", "FEDEX": "FedEx"},
+      "reserveEyebrow": "Proof of Reserves · 储备金", "reserveBody": "为保护用户资产并保证即时提现，GACHAFLIX 始终在链上持有 {min} USDT 以上的流动性储备金。",
+      "reserveWallet": "储备钱包", "reserveBalance": "当前持有", "copyAddress": "复制地址",
+      "demoNote": "演示数据 — 用户、金额、TxID 与运单均为模拟值，无法在浏览器或物流网站查询。正式服务将替换为真实统计。"
+    },
     "withdraw": {
       "title": "USDT 提现", "close": "关闭", "available": "可提现余额", "network": "提现网络", "address": "收款钱包地址", "addressHint": "以 {hint} 开头的地址",
       "amount": "提现数量", "min": "最低 {min}", "max": "全部", "fee": "网络手续费", "feeShort": "手续费", "net": "实际到账", "netLabel": "实际到账金额",

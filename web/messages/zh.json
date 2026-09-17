@@ -144,7 +144,36 @@
     "useInVerifier": "填入验证器",
     "invalidInput": "请输入服务器种子与客户端种子，Nonce 须为 ≥ 0 的整数。",
     "open": "打开公平性验证",
-    "close": "关闭"
+    "close": "关闭",
+    "visual": {
+      "eyebrow": "一键可视化验证",
+      "title": "3 秒公平性验证",
+      "body": "无需数学公式。选择最近一次开箱并点击「验证」，三个步骤依次完成。128 位十六进制输入位于专家模式。",
+      "expert": "专家模式",
+      "expertTitle": "手动验证器（服务器种子 · 客户端种子 · Nonce）",
+      "pick": "选择最近开箱",
+      "noRecent": "暂无可验证的开箱记录。",
+      "goOpen": "去开盲盒",
+      "verify": "验证",
+      "verifying": "验证中…",
+      "s1Title": "🔒 事前加密封存",
+      "s1Body": "开箱之前结果已由 SHA-256 哈希封存，即使服务器管理员也无法中途更改。",
+      "s1Pass": "封存一致 — 服务器种子与开箱前公布的哈希相符",
+      "s1Fail": "封存不一致 — 服务器种子与公布的哈希不符",
+      "s2Title": "🎲 结合我的浏览器随机数",
+      "s2Body": "与您设备的客户端种子结合，推导出确定性的掷点数字。",
+      "rollLabel": "掷点数字",
+      "s3Title": "🎯 区间匹配",
+      "s3Body": "掷点精确落在该盲盒中奖区间的仪表条内，证明中奖合法。",
+      "s3Pass": "区间匹配 —",
+      "s3Fail": "区间不匹配 —",
+      "bracket": "区间 {from} ~ {to}（{pct}%）",
+      "gaugeHint": "中奖区间仪表 · 白线为您的掷点",
+      "verdictPass": "验证完成 · 未被篡改",
+      "verdictPassBody": "三个步骤全部通过。任何人都能复现同样的结果。",
+      "verdictFail": "验证失败",
+      "verdictFailBody": "复现值与记录不符。请在专家模式检查输入值。"
+    }
   },
   "unbox": {
     "open1": "开启 ×1",
@@ -372,6 +401,32 @@
     "cashouts": "今日已结算折现",
     "verification": "公平性验证完成率",
     "demoNote": "演示指标 — 正式服务显示实时统计"
+  },
+  "proof": {
+    "title": "实付与实发实时证明",
+    "live": "LIVE",
+    "tab": {
+      "payouts": "USDT 实付证明",
+      "shipments": "实物发货动态"
+    },
+    "kind": {
+      "withdraw": "提现",
+      "sellback": "即时回收"
+    },
+    "viewOnExplorer": "在 {explorer} 查看",
+    "track": "运单追踪",
+    "carriers": {
+      "CJ": "CJ大韩通运",
+      "EPOST": "韩国邮政",
+      "DHL": "DHL",
+      "FEDEX": "FedEx"
+    },
+    "reserveEyebrow": "Proof of Reserves · 储备金",
+    "reserveBody": "为保护用户资产并保证即时提现，GACHAFLIX 始终在链上持有 {min} USDT 以上的流动性储备金。",
+    "reserveWallet": "储备钱包",
+    "reserveBalance": "当前持有",
+    "copyAddress": "复制地址",
+    "demoNote": "演示数据 — 用户、金额、TxID 与运单均为模拟值，无法在浏览器或物流网站查询。正式服务将替换为真实统计。"
   },
   "withdraw": {
     "title": "USDT 提现",

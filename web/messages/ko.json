@@ -144,7 +144,36 @@
     "useInVerifier": "검증기에 넣기",
     "invalidInput": "서버 시드와 클라이언트 시드를 입력하고 Nonce 는 0 이상의 정수여야 합니다.",
     "open": "공정성 검증 열기",
-    "close": "닫기"
+    "close": "닫기",
+    "visual": {
+      "eyebrow": "1-Click 비주얼 검증",
+      "title": "3초 공정성 검증",
+      "body": "수학 공식 없이 확인합니다. 최근 언박싱을 고르고 [검증하기]를 누르면 3단계가 순서대로 검증됩니다. 128자리 hex 입력은 전문가 모드에 있습니다.",
+      "expert": "전문가 모드",
+      "expertTitle": "직접 입력 검증기 (서버 시드 · 클라이언트 시드 · Nonce)",
+      "pick": "최근 언박싱 선택",
+      "noRecent": "아직 검증할 언박싱이 없습니다.",
+      "goOpen": "박스 열러 가기",
+      "verify": "검증하기",
+      "verifying": "검증 중…",
+      "s1Title": "🔒 사전 암호화 봉인",
+      "s1Body": "박스를 열기 전에 이미 SHA-256 해시값으로 결과가 봉인되어 있어, 서버 관리자도 중간에 결과를 바꿀 수 없었습니다.",
+      "s1Pass": "봉인 일치 — 개봉 전 공개 해시와 서버 시드가 같습니다",
+      "s1Fail": "봉인 불일치 — 공개 해시와 서버 시드가 다릅니다",
+      "s2Title": "🎲 내 브라우저 난수 결합",
+      "s2Body": "유저님의 기기(클라이언트 시드)와 결합하여 무작위 롤 넘버가 도출되었습니다.",
+      "rollLabel": "롤 넘버",
+      "s3Title": "🎯 구간 매칭",
+      "s3Body": "해당 박스의 당첨 구간 게이지 바 위에 롤 넘버가 정확히 매칭되어 정당하게 당첨되었음을 검증합니다.",
+      "s3Pass": "구간 일치 —",
+      "s3Fail": "구간 불일치 —",
+      "bracket": "구간 {from} ~ {to} ({pct}%)",
+      "gaugeHint": "당첨 구간 게이지 · 흰 선이 내 롤",
+      "verdictPass": "검증 완료 · 조작 없음",
+      "verdictPassBody": "세 단계 모두 통과했습니다. 이 결과는 누구나 같은 값으로 재현할 수 있습니다.",
+      "verdictFail": "검증 실패",
+      "verdictFailBody": "재현 값이 기록과 다릅니다. 전문가 모드에서 입력값을 확인하세요."
+    }
   },
   "unbox": {
     "open1": "1회 오픈",
@@ -372,6 +401,32 @@
     "cashouts": "오늘 즉시 환전된 자산",
     "verification": "공정성 검증 완료율",
     "demoNote": "데모 지표 — 실서비스에서는 실시간 집계값이 표시됩니다"
+  },
+  "proof": {
+    "title": "실지급 & 실배송 라이브 인증",
+    "live": "LIVE",
+    "tab": {
+      "payouts": "USDT 실지급 인증",
+      "shipments": "실물 배송 출고 현황"
+    },
+    "kind": {
+      "withdraw": "출금",
+      "sellback": "즉시 환전"
+    },
+    "viewOnExplorer": "{explorer} 조회",
+    "track": "운송장 추적",
+    "carriers": {
+      "CJ": "CJ대한통운",
+      "EPOST": "우체국택배",
+      "DHL": "DHL",
+      "FEDEX": "FedEx"
+    },
+    "reserveEyebrow": "Proof of Reserves · 지급 준비금",
+    "reserveBody": "GACHAFLIX는 유저 자산 보호 및 즉시 출금을 위해 {min} USDT 이상의 유동성 지급 준비금을 온체인 상에 상시 보유합니다.",
+    "reserveWallet": "리저브 지갑",
+    "reserveBalance": "현재 보유",
+    "copyAddress": "주소 복사",
+    "demoNote": "데모 데이터 — 유저·금액·TxID·운송장은 모의값이며 익스플로러·택배사에서 조회되지 않습니다. 실서비스에서는 실제 집계로 대체됩니다."
   },
   "withdraw": {
     "title": "USDT 출금",

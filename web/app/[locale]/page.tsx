@@ -21,6 +21,7 @@ import {
 import { BillboardHero } from "@/components/home/BillboardHero";
 import { OnboardingStrip } from "@/components/home/OnboardingStrip";
 import { LiveCounters } from "@/components/home/LiveCounters";
+import { ProofFeed } from "@/components/fairness/ProofFeed";
 import { NetflixRow } from "@/components/home/NetflixRow";
 import { BoxCard } from "@/components/box/BoxCard";
 import { DetailModal } from "@/components/box/DetailModal";
@@ -278,6 +279,17 @@ export default function BoxesPage() {
             </button>
           </div>
         )}
+      </section>
+
+      {/* 실지급/실배송 라이브 피드 — 요약 4행, 전체는 /fairness */}
+      <section className="px-[4%] pt-12">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="text-[17px] font-bold text-white">{t("proof.title")}</h2>
+          <Link href="/fairness" className="text-xs font-semibold text-gold-champagne hover:underline">
+            {t("nav.fairness")} →
+          </Link>
+        </div>
+        <ProofFeed limit={4} showReserve={false} />
       </section>
 
       <DetailModal box={detail} onClose={() => setDetail(null)} onOpen={openBox} />

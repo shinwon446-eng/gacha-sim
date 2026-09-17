@@ -144,7 +144,36 @@
     "useInVerifier": "Use in verifier",
     "invalidInput": "Enter a server seed and a client seed; the nonce must be an integer ≥ 0.",
     "open": "Open Provably Fair",
-    "close": "Close"
+    "close": "Close",
+    "visual": {
+      "eyebrow": "1-Click Visual Verifier",
+      "title": "3-Second Fairness Check",
+      "body": "No math required. Pick a recent unboxing and press Verify — three steps run in order. The 128-char hex inputs live under Expert mode.",
+      "expert": "Expert mode",
+      "expertTitle": "Manual verifier (server seed · client seed · nonce)",
+      "pick": "Recent unboxing",
+      "noRecent": "Nothing to verify yet.",
+      "goOpen": "Open a box",
+      "verify": "Verify",
+      "verifying": "Verifying…",
+      "s1Title": "🔒 Pre-committed seal",
+      "s1Body": "The outcome was sealed with a SHA-256 hash before the box opened, so not even the server operator could change it mid-way.",
+      "s1Pass": "Seal intact — the server seed matches the hash published before opening",
+      "s1Fail": "Seal broken — the server seed does not match the published hash",
+      "s2Title": "🎲 Your browser's entropy",
+      "s2Body": "Combined with your device's client seed to derive a deterministic roll number.",
+      "rollLabel": "Roll number",
+      "s3Title": "🎯 Bracket match",
+      "s3Body": "The roll lands precisely inside the winning bracket on this box's gauge, proving the drop was legitimate.",
+      "s3Pass": "Bracket match —",
+      "s3Fail": "Bracket mismatch —",
+      "bracket": "Bracket {from} – {to} ({pct}%)",
+      "gaugeHint": "Winning brackets · white line is your roll",
+      "verdictPass": "Verified · Untampered",
+      "verdictPassBody": "All three steps passed. Anyone can reproduce this exact result.",
+      "verdictFail": "Verification failed",
+      "verdictFailBody": "The reproduced values differ from the record. Check the inputs in Expert mode."
+    }
   },
   "unbox": {
     "open1": "Open ×1",
@@ -372,6 +401,32 @@
     "cashouts": "Settled cashouts today",
     "verification": "Provably fair verification rate",
     "demoNote": "Demo metrics — production shows live aggregates"
+  },
+  "proof": {
+    "title": "Live Proof of Payout & Delivery",
+    "live": "LIVE",
+    "tab": {
+      "payouts": "USDT Payout Proof",
+      "shipments": "Shipping Proof"
+    },
+    "kind": {
+      "withdraw": "Withdrawal",
+      "sellback": "Instant sell-back"
+    },
+    "viewOnExplorer": "View on {explorer}",
+    "track": "Track parcel",
+    "carriers": {
+      "CJ": "CJ Logistics",
+      "EPOST": "Korea Post",
+      "DHL": "DHL",
+      "FEDEX": "FedEx"
+    },
+    "reserveEyebrow": "Proof of Reserves",
+    "reserveBody": "GACHAFLIX keeps over {min} USDT in liquid payout reserves on-chain at all times to protect user assets and guarantee instant withdrawals.",
+    "reserveWallet": "Reserve wallet",
+    "reserveBalance": "Current balance",
+    "copyAddress": "Copy address",
+    "demoNote": "Demo data — users, amounts, TxIDs and tracking numbers are mock values and will not resolve on explorers or carrier sites. Production replaces this with live aggregates."
   },
   "withdraw": {
     "title": "Withdraw USDT",
