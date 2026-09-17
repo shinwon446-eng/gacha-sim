@@ -165,6 +165,22 @@ body {
   pointer-events: none;
 }
 
+/* 라이브 드랍 티커 — 목록을 두 번 렌더하고 절반만큼 이동시켜 이음새 없는 무한 루프 */
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.ticker-track {
+  animation: ticker-scroll 48s linear infinite;
+  will-change: transform;
+}
+.ticker-viewport:hover .ticker-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation-duration: 120s; }
+}
+
 /* 페데스탈 그림자 — 부유하는 피사체 아래 타원 (벨벳 쇼케이스) */
 .pedestal-shadow {
   background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.25) 45%, transparent 72%);

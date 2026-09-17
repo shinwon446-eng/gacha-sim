@@ -22,10 +22,10 @@ UI = {
       "noBlank": "100% 실물 지급 · 꽝 없음", "guaranteedMinLabel": "최소 보장 금액",
       "guaranteedMin": "최소 보장 금액 {value}", "aboveOpenPrice": "오픈가 이상",
       "openNow": "지금 오픈하기", "viewContents": "구성품 확인", "billboardPicker": "빌보드 선택", "billboardOf": "{title} 빌보드",
-      "headline": "영화처럼 열고, 롤렉스를 받다.", "sub": "100% 정품 실물 보장. 마음에 들면 집으로 무료 배송, 마음에 안 들면 95% USDT로 즉시 현금 환전.", "freeDemo": "무료 체험해보기", "nowShowing": "지금 상영 중"
+      "headline": "영화처럼 열고, 롤렉스를 받다.", "sub": "100% 정품 실물 보장. 마음에 들면 집으로 무료 배송, 마음에 안 들면 95% USDT로 즉시 현금 환전.", "freeDemo": "무료 체험해보기", "nowShowing": "지금 상영 중", "topMultipleShort": "최고 {n}"
     },
     "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "guaranteed": "보장", "openNow": "지금 오픈", "contents": "구성품", "details": "{title} 상세 정보", "expand": "확대"},
-    "rows": {"trending": "지금 가장 많이 열리는 박스", "techMobility": "테크 & 모빌리티", "luxuryWatch": "럭셔리 & 워치", "guaranteed": "최소 가치 보장", "prev": "이전", "next": "다음"},
+    "rows": {"trending": "🔥 지금 가장 많이 열리는 박스 TOP 10", "techMobility": "⚡ 애플 & 차세대 게이밍 기어", "luxuryWatch": "💎 럭셔리 워치 & 하이엔드", "guaranteed": "🎯 초보자 가성비 보장 박스", "prev": "이전", "next": "다음"},
     "grid": {"title": "전체 박스", "sort": "정렬", "loadMore": "더 보기 ({n}개)"},
     "categories": {"all": "전체", "mobility": "모빌리티", "tech": "테크", "watch": "워치", "luxury": "럭셔리", "lifestyle": "라이프스타일"},
     "sorts": {"featured": "추천순", "price-asc": "가격 낮은순", "price-desc": "가격 높은순", "popularity": "인기순"},
@@ -134,6 +134,7 @@ UI = {
       "errors": {"recipient": "수령인 이름을 입력하세요", "phone": "연락처 형식을 확인하세요", "postalCode": "우편번호를 입력하세요", "address": "상세 주소를 입력하세요", "customsId": "통관 식별자 형식이 올바르지 않습니다"},
       "countries": {"KR": "대한민국", "US": "미국", "CN": "중국", "JP": "일본", "SG": "싱가포르", "HK": "홍콩", "TW": "대만", "GB": "영국", "DE": "독일", "FR": "프랑스", "AU": "호주", "CA": "캐나다", "AE": "아랍에미리트"}
     },
+    "ticker": {"label": "실시간 라이브 드랍", "live": "LIVE", "win": "님이 {item} 획득", "cashout": "님이 {amount} 즉시 환전", "ship": "님이 {item} 출고 신청", "ago": "({s}초 전)"},
     "onboarding": {
       "title": "3초 안심 가이드",
       "step1Title": "명품 박스 선택", "step1Desc": "롤렉스, 테슬라, 애플 등 원하는 명품 박스를 선택합니다.",
@@ -171,10 +172,10 @@ UI = {
       "noBlank": "100% physical payout · No blanks", "guaranteedMinLabel": "Guaranteed Minimum",
       "guaranteedMin": "Guaranteed Minimum {value}", "aboveOpenPrice": "Above open price",
       "openNow": "Open Now", "viewContents": "View Contents", "billboardPicker": "Billboard picker", "billboardOf": "{title} billboard",
-      "headline": "Cinematic Thrills. Authentic Luxury.", "sub": "100% Authentic Drops. Ship directly to your door, or liquidate instantly for 95% USDT.", "freeDemo": "Free Demo", "nowShowing": "Now Showing"
+      "headline": "Cinematic Thrills. Authentic Luxury.", "sub": "100% Authentic Drops. Ship directly to your door, or liquidate instantly for 95% USDT.", "freeDemo": "Free Demo", "nowShowing": "Now Showing", "topMultipleShort": "up to {n}"
     },
     "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "guaranteed": "guaranteed", "openNow": "Open Now", "contents": "Contents", "details": "{title} details", "expand": "Expand"},
-    "rows": {"trending": "Trending Mystery Boxes", "techMobility": "Tech & Mobility", "luxuryWatch": "Luxury & Watches", "guaranteed": "Guaranteed Minimum", "prev": "Previous", "next": "Next"},
+    "rows": {"trending": "🔥 Most Opened Boxes TOP 10", "techMobility": "⚡ Apple & Next-Gen Gaming Gear", "luxuryWatch": "💎 Luxury Watches & High-End", "guaranteed": "🎯 Beginner Value-Guaranteed Boxes", "prev": "Previous", "next": "Next"},
     "grid": {"title": "All Boxes", "sort": "Sort", "loadMore": "Load more ({n})"},
     "categories": {"all": "All", "mobility": "Mobility", "tech": "Tech", "watch": "Watches", "luxury": "Luxury", "lifestyle": "Lifestyle"},
     "sorts": {"featured": "Featured", "price-asc": "Price: Low to High", "price-desc": "Price: High to Low", "popularity": "Popularity"},
@@ -283,6 +284,7 @@ UI = {
       "errors": {"recipient": "Enter the recipient name", "phone": "Check the phone number format", "postalCode": "Enter a postal code", "address": "Enter the street address", "customsId": "Invalid customs identifier format"},
       "countries": {"KR": "South Korea", "US": "United States", "CN": "China", "JP": "Japan", "SG": "Singapore", "HK": "Hong Kong", "TW": "Taiwan", "GB": "United Kingdom", "DE": "Germany", "FR": "France", "AU": "Australia", "CA": "Canada", "AE": "United Arab Emirates"}
     },
+    "ticker": {"label": "Live drops", "live": "LIVE", "win": "unboxed {item}", "cashout": "cashed out {amount}", "ship": "requested shipping for {item}", "ago": "({s}s ago)"},
     "onboarding": {
       "title": "How it works in 3 steps",
       "step1Title": "Pick a luxury box", "step1Desc": "Choose the box you want — Rolex, Tesla, Apple and more.",
@@ -320,10 +322,10 @@ UI = {
       "noBlank": "100% 实物发放 · 无空奖", "guaranteedMinLabel": "保底价值",
       "guaranteedMin": "保底价值 {value}", "aboveOpenPrice": "不低于开启价",
       "openNow": "立即开启", "viewContents": "查看内含", "billboardPicker": "选择展示", "billboardOf": "{title} 展示",
-      "headline": "如看大片般开箱，劳力士真实发货。", "sub": "100%正品实物保障。满意即申请包邮发货到家，不满意支持95% USDT即时极速折现。", "freeDemo": "免费体验", "nowShowing": "正在上映"
+      "headline": "如看大片般开箱，劳力士真实发货。", "sub": "100%正品实物保障。满意即申请包邮发货到家，不满意支持95% USDT即时极速折现。", "freeDemo": "免费体验", "nowShowing": "正在上映", "topMultipleShort": "最高 {n}"
     },
     "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "guaranteed": "保底", "openNow": "立即开启", "contents": "内含", "details": "{title} 详情", "expand": "展开"},
-    "rows": {"trending": "当前最热盲盒", "techMobility": "科技与出行", "luxuryWatch": "奢侈品与腕表", "guaranteed": "保底价值", "prev": "上一页", "next": "下一页"},
+    "rows": {"trending": "🔥 开启最多的盲盒 TOP 10", "techMobility": "⚡ 苹果与次世代游戏装备", "luxuryWatch": "💎 奢华腕表与高端精品", "guaranteed": "🎯 新手高性价比保底盲盒", "prev": "上一页", "next": "下一页"},
     "grid": {"title": "全部盲盒", "sort": "排序", "loadMore": "加载更多（{n}）"},
     "categories": {"all": "全部", "mobility": "出行", "tech": "科技", "watch": "腕表", "luxury": "奢侈品", "lifestyle": "生活方式"},
     "sorts": {"featured": "推荐", "price-asc": "价格从低到高", "price-desc": "价格从高到低", "popularity": "人气"},
@@ -432,6 +434,7 @@ UI = {
       "errors": {"recipient": "请输入收件人姓名", "phone": "请检查电话格式", "postalCode": "请输入邮政编码", "address": "请输入详细地址", "customsId": "通关标识格式不正确"},
       "countries": {"KR": "韩国", "US": "美国", "CN": "中国", "JP": "日本", "SG": "新加坡", "HK": "中国香港", "TW": "中国台湾", "GB": "英国", "DE": "德国", "FR": "法国", "AU": "澳大利亚", "CA": "加拿大", "AE": "阿联酋"}
     },
+    "ticker": {"label": "实时开箱动态", "live": "LIVE", "win": "开出了 {item}", "cashout": "已折现 {amount}", "ship": "申请发货 {item}", "ago": "（{s} 秒前）"},
     "onboarding": {
       "title": "3 秒看懂流程",
       "step1Title": "选择奢品盲盒", "step1Desc": "劳力士、特斯拉、苹果等，任选心仪的盲盒。",

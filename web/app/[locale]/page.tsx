@@ -21,6 +21,7 @@ import {
 import { BillboardHero } from "@/components/home/BillboardHero";
 import { OnboardingStrip } from "@/components/home/OnboardingStrip";
 import { LiveCounters } from "@/components/home/LiveCounters";
+import { LiveTicker } from "@/components/home/LiveTicker";
 import { ProofFeed } from "@/components/fairness/ProofFeed";
 import { NetflixRow } from "@/components/home/NetflixRow";
 import { BoxCard } from "@/components/box/BoxCard";
@@ -128,7 +129,7 @@ export default function BoxesPage() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-canvas pb-24">
       {/* 상단 바 */}
-      <header className="absolute inset-x-0 top-0 z-[60] flex items-center gap-5 px-[4%] py-4">
+      <header className="sticky top-0 z-[60] flex items-center gap-5 border-b border-hairline bg-obsidian/90 px-[4%] py-3 backdrop-blur-md">
         <span className="font-display text-[22px] font-bold uppercase leading-none tracking-tight text-crimson">
           Gachaflix
         </span>
@@ -175,13 +176,30 @@ export default function BoxesPage() {
         </div>
       </header>
 
+      {/* 1. 라이브 드랍 티커 */}
+      <LiveTicker />
+
+      {/* 2. 히어로 — 다이어트판 */}
       <BillboardHero boxes={billboard} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} onDemo={openDemo} />
 
-      <OnboardingStrip className="pt-6" />
+      {/* 3. 상품 우선 — TOP 10 을 히어로 바로 아래에 */}
+      <div className="pt-6">
+        <NetflixRow title={t("rows.trending")} boxes={trending()} variant="top10" onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+      </div>
+
+      {/* 4. 안심 가이드 + 신뢰 지표 — 첫 캐러셀 아래 */}
+      <OnboardingStrip className="pt-2" />
       <LiveCounters className="pt-4" />
 
+      {/* 5. 보조 큐레이션 캐러셀 */}
+      <div className="pt-10">
+        <NetflixRow title={t("rows.luxuryWatch")} boxes={luxuryAndWatch()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow title={t("rows.techMobility")} boxes={techAndMobility()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow title={t("rows.guaranteed")} boxes={guaranteedValue()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+      </div>
+
       {/* 등급 범례 — 배수 기준을 한 번만 설명한다 */}
-      <section className="border-y border-line bg-surface px-[4%] py-2.5">
+      <section className="mt-6 border-y border-line bg-surface px-[4%] py-2.5">
         <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
           <li className="text-[10px] font-semibold uppercase tracking-[0.16em] text-faint">
             {t("tiers.legendTitle")}
@@ -201,13 +219,6 @@ export default function BoxesPage() {
           ))}
         </ul>
       </section>
-
-      <div className="pt-10">
-        <NetflixRow title={t("rows.trending")} boxes={trending()} variant="top10" onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
-        <NetflixRow title={t("rows.techMobility")} boxes={techAndMobility()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
-        <NetflixRow title={t("rows.luxuryWatch")} boxes={luxuryAndWatch()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
-        <NetflixRow title={t("rows.guaranteed")} boxes={guaranteedValue()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
-      </div>
 
       {/* 전체 그리드 */}
       <section className="px-[4%] pt-6">

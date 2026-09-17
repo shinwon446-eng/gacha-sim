@@ -33,7 +33,8 @@
     "headline": "Cinematic Thrills. Authentic Luxury.",
     "sub": "100% Authentic Drops. Ship directly to your door, or liquidate instantly for 95% USDT.",
     "freeDemo": "Free Demo",
-    "nowShowing": "Now Showing"
+    "nowShowing": "Now Showing",
+    "topMultipleShort": "up to {n}"
   },
   "card": {
     "perOpen": "Open",
@@ -47,10 +48,10 @@
     "expand": "Expand"
   },
   "rows": {
-    "trending": "Trending Mystery Boxes",
-    "techMobility": "Tech & Mobility",
-    "luxuryWatch": "Luxury & Watches",
-    "guaranteed": "Guaranteed Minimum",
+    "trending": "🔥 Most Opened Boxes TOP 10",
+    "techMobility": "⚡ Apple & Next-Gen Gaming Gear",
+    "luxuryWatch": "💎 Luxury Watches & High-End",
+    "guaranteed": "🎯 Beginner Value-Guaranteed Boxes",
     "prev": "Previous",
     "next": "Next"
   },
@@ -385,6 +386,14 @@
       "CA": "Canada",
       "AE": "United Arab Emirates"
     }
+  },
+  "ticker": {
+    "label": "Live drops",
+    "live": "LIVE",
+    "win": "unboxed {item}",
+    "cashout": "cashed out {amount}",
+    "ship": "requested shipping for {item}",
+    "ago": "({s}s ago)"
   },
   "onboarding": {
     "title": "How it works in 3 steps",

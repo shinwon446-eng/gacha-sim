@@ -28,8 +28,8 @@ export interface BoxCardProps {
   className?: string;
 }
 
-/** 스펙: 1.12x 확대, ±5° 틸트 */
-const HOVER_SCALE = 1.12;
+/** 스펙(CLAUDE.md §3): 1.15x 확대, ±5° 틸트 */
+const HOVER_SCALE = 1.15;
 const TILT_DEG = 5;
 const SPRING = { stiffness: 220, damping: 22, mass: 0.6 };
 
@@ -54,10 +54,11 @@ function GrailThumb({ item, box }: { item: ProductItem; box: ProductBox }) {
 /**
  * 럭셔리 박스 카드 (PROMPTS 1-2-2).
  *
- *   비주얼 h-48 → 메타(박스명 · 1회 가격 · 최고 배수) → 대표 명품 3종 썸네일 + 정밀 가격 (항상 노출)
+ *   기본(콤팩트): 16:9 비주얼 → 박스명 · 1회 가격 · 최고 배수 · [100% 꽝 없음] 미니 뱃지. 서브 항목은 숨긴다.
+ *   호버(확장): 대표 명품 3종 썸네일 + 정밀 가격이 아래로 펼쳐진다 (AnimatePresence height).
  *
  * 호버(Framer Motion)
- *   · 1.12x 확대 + 마우스 좌표 추적 ±5° 3D 틸트 (스프링) + z 부상
+ *   · 1.15x 확대 + 마우스 좌표 추적 ±5° 3D 틸트 (스프링) + z 부상
  *   · 홀로그램 메탈릭 샤인이 사선으로 한 번 스쳐 지나간다
  *   · 비주얼 하단에서 3px 등급 확률 바가 올라오고, 퀵 액션(오픈 / 구성품)이 나타난다
  *   · 프레임이 최고 등급 색 헤어라인으로 점화된다 (ROYAL 이면 샴페인 골드)
@@ -174,7 +175,7 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
         </AnimatePresence>
 
         {/* ── 비주얼 ── */}
-        <div className="relative h-48 w-full overflow-hidden bg-obsidian">
+        <div className="relative aspect-video w-full overflow-hidden bg-obsidian">
           {showImg ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -257,12 +258,23 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
           </div>
         </div>
 
-        {/* ── 대표 명품 3종 — 항상 노출 ── */}
-        <ul className="flex gap-2 border-t border-hairline px-3 pb-3 pt-2.5">
-          {meta.grails.map((it) => (
-            <GrailThumb key={it.id} item={it} box={box} />
-          ))}
-        </ul>
+        {/* ── 대표 명품 3종 — 호버 시에만 펼쳐진다 (CLAUDE.md §3) ── */}
+        <AnimatePresence initial={false}>
+          {hovered && (
+            <motion.ul
+              key="grails"
+              className="flex gap-2 overflow-hidden border-t border-hairline px-3"
+              initial={{ height: 0, opacity: 0, paddingTop: 0, paddingBottom: 0 }}
+              animate={{ height: "auto", opacity: 1, paddingTop: 10, paddingBottom: 12 }}
+              exit={{ height: 0, opacity: 0, paddingTop: 0, paddingBottom: 0 }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {meta.grails.map((it) => (
+                <GrailThumb key={it.id} item={it} box={box} />
+              ))}
+            </motion.ul>
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   );

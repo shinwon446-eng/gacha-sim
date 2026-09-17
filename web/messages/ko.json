@@ -33,7 +33,8 @@
     "headline": "영화처럼 열고, 롤렉스를 받다.",
     "sub": "100% 정품 실물 보장. 마음에 들면 집으로 무료 배송, 마음에 안 들면 95% USDT로 즉시 현금 환전.",
     "freeDemo": "무료 체험해보기",
-    "nowShowing": "지금 상영 중"
+    "nowShowing": "지금 상영 중",
+    "topMultipleShort": "최고 {n}"
   },
   "card": {
     "perOpen": "1회",
@@ -47,10 +48,10 @@
     "expand": "확대"
   },
   "rows": {
-    "trending": "지금 가장 많이 열리는 박스",
-    "techMobility": "테크 & 모빌리티",
-    "luxuryWatch": "럭셔리 & 워치",
-    "guaranteed": "최소 가치 보장",
+    "trending": "🔥 지금 가장 많이 열리는 박스 TOP 10",
+    "techMobility": "⚡ 애플 & 차세대 게이밍 기어",
+    "luxuryWatch": "💎 럭셔리 워치 & 하이엔드",
+    "guaranteed": "🎯 초보자 가성비 보장 박스",
     "prev": "이전",
     "next": "다음"
   },
@@ -385,6 +386,14 @@
       "CA": "캐나다",
       "AE": "아랍에미리트"
     }
+  },
+  "ticker": {
+    "label": "실시간 라이브 드랍",
+    "live": "LIVE",
+    "win": "님이 {item} 획득",
+    "cashout": "님이 {amount} 즉시 환전",
+    "ship": "님이 {item} 출고 신청",
+    "ago": "({s}초 전)"
   },
   "onboarding": {
     "title": "3초 안심 가이드",
