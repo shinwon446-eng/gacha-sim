@@ -48,7 +48,7 @@ export default function Home() {
         <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-300">고지</div>
         <p>
           모든 릴의 확률은 에피소드 정보의 확률 공시표에 전량 공개됩니다. 라인업은 실판매가 기준으로 자동 분류되며 운영
-          측의 임의 조정은 없습니다. 획득한 실물 상품은 배송 또는 시세의 80% USDT 환급 중 하나를 선택합니다.
+          측의 임의 조정은 없습니다. 획득한 실물 상품은 배송 또는 시세의 95% USDT 환급 중 하나를 선택합니다.
         </p>
         <p className="mt-2 border-l-2 border-crimson pl-3 text-[12px] font-semibold leading-relaxed text-neutral-200">
           비회원 모의 체험은 화면 연출이며 상품이 지급되지 않습니다. 본 화면은 프로토타입이고 잔액과 결제는 모의

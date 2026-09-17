@@ -54,7 +54,7 @@ export const CATALOG: CatalogBox[] = [
     id: "black-label-apex-tech",
     name_en: "BLACK LABEL: Apex Tech",
     name_zh: "黑标系列：顶峰数码",
-    price_usd: 60,
+    price_usd: 69,
     guaranteed_min_value: 69,
     image_placeholder: "BL-APX",
     probability_table: [

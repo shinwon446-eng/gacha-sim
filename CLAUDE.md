@@ -127,7 +127,7 @@ Replace generic gaming terms with sophisticated luxury tiers:
 | 호버 | 1.12x + 마우스 3D 틸트 + 홀로그램 샤인 | 1.08x(BoxCard) / 1.32x(구), 틸트·샤인 없음 | `web/components/box/BoxCard.tsx` |
 | 통화 | 단일 통화 표시(USDT 기본 / USD / KRW), zustand persist | 박스 데이터 KRW 정수 고정, `formatPrice` 원화 전용. `gachaItems.ts` 는 USDT | `web/lib/products.ts`, `web/lib/format.ts` |
 | i18n | `next-intl`, ko/en/zh-CN 완전 분리 | zustand 기반 `lib/i18n.ts`, 라우팅 없음, 화면에 한/영 혼재 | `web/lib/i18n.ts`, 각 컴포넌트 카피 |
-| 환급률 | 95% (박스별 80% 허용) | 80% (`REFUND_RATE`) — **규범의 "박스별 80%" 허용 범위 안** | `web/lib/types.ts` |
+| 환급률 | 95% (박스별 80% 허용) | 95% (`REFUND_RATE`) — 정가 환원율 상한 1/0.95≈1.0526, 보장 박스는 최저가≈가격 | `web/lib/types.ts`, `web/lib/products.ts` |
 | Provably Fair | HMAC-SHA256(Server, Client:Nonce) → [0, 99999] | 미구현. `server/rng.ts` CSPRNG 만 | `web/server/rng.ts` |
 | 결제·DB | USDT TRC-20/BEP-20 + Stripe/PortOne, Supabase | 없음 (정적 데모) | — |
 | 프레임워크 | Next.js 15 | Next.js 14.2 | `web/package.json` |

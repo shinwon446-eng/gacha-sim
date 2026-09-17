@@ -6,7 +6,7 @@
  *     표기는 오직 lib/formatCurrency.ts 를 통과하며, 선택 통화(USDT/USD/KRW) 하나로만 렌더된다.
  *   · guaranteedMin = 박스 내 최저 실판매가. 어떤 결과든 이 값 이상의 실물을 받는다.
  *   · 무위험 차익 금지의 기준은 "정가"가 아니라 "현금 회수액"이다.
- *     실물을 즉시 환급하면 REFUND_RATE(80%)만 돌려받으므로,
+ *     실물을 즉시 환급하면 REFUND_RATE(95%)만 돌려받으므로,
  *     EV × 0.8 < price 가 성립해야 한다. 이건 빌더가 직접 던진다.
  *   · 따라서 정가 기준 기대값(EV)은 price 를 넘을 수 있다.
  *     이를 "환원율 115%" 같은 문구로 표기하면 거짓말이 되므로,
@@ -121,7 +121,7 @@ interface BoxSpec {
   /**
    * 정가 기준 목표 환원율. price 는 여기서 역산된다 — price = prettyCeil(EV / retailRtp).
    * 손으로 가격을 정하면 드롭테이블을 고칠 때마다 조용히 차익 구조가 생긴다.
-   * 1 을 넘길 수 있으나 1/REFUND_RATE(1.25) 미만이어야 현금 차익이 막힌다.
+   * 1 을 넘길 수 있으나 1/REFUND_RATE(≈1.0526) 미만이어야 현금 차익이 막힌다.
    */
   retailRtp: number;
   /** 최소 가치 보장 박스. guaranteedMin >= price 를 빌더가 강제한다. */
@@ -163,7 +163,7 @@ function buildBox(spec: BoxSpec): ProductBox {
 
   // 정가 기준 환원율 밴드. 상한 1.25 를 지키면 현금 차익(EV × 0.8 < price)이 자동으로 성립한다.
   if (spec.retailRtp < 0.7 || spec.retailRtp >= 1 / REFUND_RATE) {
-    violations.push(`${spec.slug}: retailRtp ${spec.retailRtp} 이 밴드[0.70, 1.25) 밖`);
+    violations.push(`${spec.slug}: retailRtp ${spec.retailRtp} 이 밴드[0.70, ${(1 / REFUND_RATE).toFixed(4)}) 밖`);
   }
   // 반올림이 상한을 넘기지 않았는지 실측으로 다시 확인한다 — 파생값을 믿지 않는다.
   if (ev * REFUND_RATE >= price) {
@@ -262,7 +262,7 @@ const SPECS: BoxSpec[] = [
     tone: T.slate,
     badge: "테크",
     tagline: "맥북 프로 M4 맥스를 최상단에 둔 작업 장비 구성. 주변기기까지 실물 발송됩니다.",
-    retailRtp: 1.08,
+    retailRtp: 1.05,
     trendingRank: 2,
     releasedAt: "2026-08-28",
     popularity: 87600,
@@ -386,7 +386,7 @@ const SPECS: BoxSpec[] = [
     tone: T.steel,
     badge: "워치",
     tagline: "정품 보증서를 동봉한 시계 구성. 상단은 롤렉스 데이토나 116500LN 입니다.",
-    retailRtp: 1.06,
+    retailRtp: 1.05,
     trendingRank: 4,
     releasedAt: "2026-09-04",
     popularity: 79800,
@@ -462,7 +462,7 @@ const SPECS: BoxSpec[] = [
     tone: T.graphite,
     badge: "럭셔리",
     tagline: "하이엔드 핸드백만으로 구성한 상위 박스. 최저 구성도 명품 정품입니다.",
-    retailRtp: 1.1,
+    retailRtp: 1.05,
     releasedAt: "2026-07-02",
     popularity: 44600,
     items: [
@@ -510,21 +510,22 @@ const SPECS: BoxSpec[] = [
     tone: T.slate,
     badge: "가치 보장",
     tagline: "모든 구성이 오픈 가격 이상의 실판매가를 가집니다. 최저 구성도 정품 정가 제품입니다.",
-    retailRtp: 1.2,
+    retailRtp: 1.05,
     guarantee: true,
     releasedAt: "2026-09-10",
     popularity: 52100,
-    // 보장 박스는 구성 편차를 좁게 유지한다. 최저가 대비 기대값이 1.25배를 넘으면
-    // "최저 실판매가 >= 오픈 가격"이 수학적으로 성립하지 않는다.
+    // 보장 박스는 구성 편차를 좁게 유지한다. 95% 환급에서는 "최저 실판매가 >= 오픈 가격"과
+    // "최저 실판매가 × 0.95 < 오픈 가격"이 동시에 성립해야 하므로 기대값은 최저가의 1/REFUND_RATE(≈1.0526)배 이하,
+    // 즉 상위 구성의 초과 가치 합이 최저가의 약 5% 안에 들어야 한다.
     items: [
       ["gtc-mbp", "맥북 프로 14 M4 프로", "MacBook Pro 14 M4 Pro", 2380, 0.15, "MBP14", T.steel],
-      ["gtc-ipadpro", "아이패드 프로 11 M5", "iPad Pro 11 M5", 1300, 0.5, "IPP11", T.graphite],
-      ["gtc-mba", "맥북 에어 13 M4", "MacBook Air 13 M4", 1220, 0.6, "MBA13", T.graphite],
-      ["gtc-iphone", "아이폰 17 256GB", "iPhone 17 256GB", 980, 0.9, "IP17S", T.graphite],
-      ["gtc-watch", "애플워치 시리즈 11 GPS", "Apple Watch Series 11", 435, 6, "AW11", T.slate],
-      ["gtc-xm6", "소니 WH-1000XM6", "Sony WH-1000XM6", 435, 8, "XM6G", T.slate],
-      ["gtc-buds", "갤럭시 버즈4 프로 + 워치8", "Galaxy Buds4 Pro + Watch8", 400, 14, "GB4W", T.coal],
-      ["gtc-mx", "로지텍 MX 마스터 4 세트", "Logitech MX Master 4 Set", 340, 22, "MXS", T.coal],
+      ["gtc-ipadpro", "아이패드 프로 11 M5", "iPad Pro 11 M5", 1300, 0.2, "IPP11", T.graphite],
+      ["gtc-mba", "맥북 에어 13 M4", "MacBook Air 13 M4", 1220, 0.2, "MBA13", T.graphite],
+      ["gtc-iphone", "아이폰 17 256GB", "iPhone 17 256GB", 980, 0.4, "IP17S", T.graphite],
+      ["gtc-watch", "애플워치 시리즈 11 GPS", "Apple Watch Series 11", 435, 1, "AW11", T.slate],
+      ["gtc-xm6", "소니 WH-1000XM6", "Sony WH-1000XM6", 435, 1.5, "XM6G", T.slate],
+      ["gtc-buds", "갤럭시 버즈4 프로 + 워치8", "Galaxy Buds4 Pro + Watch8", 400, 1.5, "GB4W", T.coal],
+      ["gtc-mx", "로지텍 MX 마스터 4 세트", "Logitech MX Master 4 Set", 340, 10, "MXS", T.coal],
       ["gtc-anker", "앤커 727 파워스테이션", "Anker 727 PowerHouse", 320, REST, "A727", T.coal],
     ],
   },
@@ -537,20 +538,20 @@ const SPECS: BoxSpec[] = [
     tone: T.steel,
     badge: "가치 보장",
     tagline: "모든 구성이 오픈 가격 이상의 실판매가를 가집니다. 정품 인보이스가 동봉됩니다.",
-    retailRtp: 1.15,
+    retailRtp: 1.05,
     guarantee: true,
     releasedAt: "2026-09-06",
     popularity: 47800,
     items: [
       ["glx-lv", "루이비통 알마 BB", "LV Alma BB", 2380, 0.08, "ALMB", T.steel],
-      ["glx-btv", "보테가 베네타 카세트 미니", "Bottega Cassette Mini", 2090, 0.12, "CSST", T.graphite],
-      ["glx-gucci", "구찌 마몽 미니 숄더", "Gucci Marmont Mini", 1730, 0.18, "MRMT", T.graphite],
-      ["glx-polene", "폴렌 넘버원 미니", "Polène Numéro Un Mini", 645, 1.2, "PLN1", T.slate],
-      ["glx-wallet", "생로랑 모노그램 지갑", "Saint Laurent Wallet", 500, 3, "YSLW", T.slate],
-      ["glx-belt", "몽블랑 리버서블 벨트", "Montblanc Belt", 335, 9, "MBBT", T.coal],
-      ["glx-scarf", "에르메스 트윌리 스카프", "Hermès Twilly Scarf", 305, 20, "TWLY", T.coal],
-      ["glx-card", "프라다 사피아노 카드홀더", "Prada Saffiano Cardholder", 280, 9, "PRDC", T.coal],
-      ["glx-key", "델보 레더 키홀더", "Delvaux Leather Key Holder", 285, REST, "DLVX", T.coal],
+      ["glx-btv", "보테가 베네타 카세트 미니", "Bottega Cassette Mini", 2090, 0.1, "CSST", T.graphite],
+      ["glx-gucci", "구찌 마몽 미니 숄더", "Gucci Marmont Mini", 1730, 0.15, "MRMT", T.graphite],
+      ["glx-polene", "폴렌 넘버원 미니", "Polène Numéro Un Mini", 645, 0.5, "PLN1", T.slate],
+      ["glx-wallet", "생로랑 모노그램 지갑", "Saint Laurent Wallet", 500, 1, "YSLW", T.slate],
+      ["glx-belt", "몽블랑 리버서블 벨트", "Montblanc Belt", 335, 3, "MBBT", T.coal],
+      ["glx-scarf", "에르메스 트윌리 스카프", "Hermès Twilly Scarf", 305, 5, "TWLY", T.coal],
+      ["glx-key", "델보 레더 키홀더", "Delvaux Leather Key Holder", 285, 8, "DLVX", T.coal],
+      ["glx-card", "프라다 사피아노 카드홀더", "Prada Saffiano Cardholder", 280, REST, "PRDC", T.coal],
     ],
   },
   {
@@ -562,19 +563,19 @@ const SPECS: BoxSpec[] = [
     tone: T.coal,
     badge: "가치 보장",
     tagline: "모든 구성이 오픈 가격 이상의 실판매가를 가집니다. 생활 밀착형 구성입니다.",
-    retailRtp: 1.2,
+    retailRtp: 1.05,
     guarantee: true,
     releasedAt: "2026-09-12",
     popularity: 66900,
     items: [
-      ["gdy-breville", "브레빌 바리스타 익스프레스", "Breville Barista Express", 650, 0.3, "BRVL", T.graphite],
-      ["gdy-lamp", "루이스폴센 PH 5 미니", "Louis Poulsen PH 5 Mini", 645, 0.3, "PH5", T.slate],
-      ["gdy-dyson", "다이슨 슈퍼소닉 뉴럴", "Dyson Supersonic Nural", 505, 0.6, "DYSN", T.steel],
-      ["gdy-balmuda", "발뮤다 더 토스터 프로", "BALMUDA The Toaster Pro", 360, 1.2, "BLMD", T.graphite],
-      ["gdy-airpods", "에어팟 4 ANC", "AirPods 4 ANC", 180, 4, "APD4", T.slate],
-      ["gdy-kettle", "발뮤다 더 팟", "BALMUDA The Pot", 115, 7, "BPOT", T.coal],
-      ["gdy-towel", "이케우치 오가닉 타월 세트", "Ikeuchi Organic Towel Set", 110, 16, "IKUC", T.coal],
-      ["gdy-candle", "딥티크 배스 캔들 300g", "Diptyque Baies 300g", 100, 10, "DPTQ", T.coal],
+      ["gdy-breville", "브레빌 바리스타 익스프레스", "Breville Barista Express", 650, 0.15, "BRVL", T.graphite],
+      ["gdy-lamp", "루이스폴센 PH 5 미니", "Louis Poulsen PH 5 Mini", 645, 0.15, "PH5", T.slate],
+      ["gdy-dyson", "다이슨 슈퍼소닉 뉴럴", "Dyson Supersonic Nural", 505, 0.2, "DYSN", T.steel],
+      ["gdy-balmuda", "발뮤다 더 토스터 프로", "BALMUDA The Toaster Pro", 360, 0.3, "BLMD", T.graphite],
+      ["gdy-airpods", "에어팟 4 ANC", "AirPods 4 ANC", 180, 0.8, "APD4", T.slate],
+      ["gdy-kettle", "발뮤다 더 팟", "BALMUDA The Pot", 115, 2, "BPOT", T.coal],
+      ["gdy-towel", "이케우치 오가닉 타월 세트", "Ikeuchi Organic Towel Set", 110, 2, "IKUC", T.coal],
+      ["gdy-candle", "딥티크 배스 캔들 300g", "Diptyque Baies 300g", 100, 5, "DPTQ", T.coal],
       ["gdy-mug", "키토 세라믹 머그 4p + 트레이", "Kinto Ceramic Mug x4 + Tray", 98, REST, "KNTO", T.coal],
     ],
   },
@@ -592,7 +593,7 @@ export const getBoxBySlug = (slug: string): ProductBox | undefined => BOX_BY_SLU
 
 // ── 파생 계산 ──────────────────────────────────────────────
 
-/** 정가 기준 기대값(USDT). price 를 넘을 수 있다 — 현금 환급은 80% 이므로 차익은 생기지 않는다. */
+/** 정가 기준 기대값(USDT). price 를 넘을 수 있다 — 현금 환급은 95% 이므로 차익은 생기지 않는다. */
 export const expectedValue = (box: ProductBox): number =>
   box.items.reduce((s, i) => s + (i.value * i.dropRate) / 100, 0);
 

@@ -120,7 +120,7 @@ export function DepositModal() {
                 <p className="mt-2 text-xs text-neutral-400">
                   잔액 <span className="font-mono text-white">{usdt(balance)}</span>
                   <span className="mx-1.5 text-neutral-700">/</span>
-                  보유 상품은 시세의 80% USDT 로 환급 가능
+                  보유 상품은 시세의 95% USDT 로 환급 가능
                 </p>
               </div>
               <button

@@ -79,7 +79,7 @@ function ReelCell({ item, hot }: { item: Item; hot: boolean }) {
 
 /**
  * 환급 / 실물 배송 액션.
- * 환급률(80%)과 금액 표기는 어떤 경우에도 변경하지 않는다.
+ * 환급률(95%)과 금액 표기는 어떤 경우에도 변경하지 않는다.
  */
 function ResultActions({ r, dense }: { r: OwnedItem; dense: boolean }) {
   const refundItem = useGachaStore((s) => s.refundItem);
@@ -122,7 +122,7 @@ function ResultActions({ r, dense }: { r: OwnedItem; dense: boolean }) {
             : "border border-white/20 text-neutral-100 hover:border-white hover:bg-white/[0.06]",
         )}
       >
-        {tc("reclaimValue")} · 80% {compactUsd(refund)} USDT
+        {tc("reclaimValue")} · 95% {compactUsd(refund)} USDT
       </button>
       <button
         onClick={() => shipItem(r.uid)}

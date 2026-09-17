@@ -125,7 +125,7 @@ export function BoxDetailModal() {
                   실물 배송
                 </span>
                 <span className="border border-white/[0.08] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-400">
-                  80% 즉시 환급
+                  95% 즉시 환급
                 </span>
                 <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
                   <Link2 className="h-3 w-3 flex-none" />

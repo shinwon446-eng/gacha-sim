@@ -129,5 +129,5 @@ export const CATEGORY_META: Record<Category, { label: string; label_en: string; 
   sound: { label: "STUDIO ZERO", label_en: "STUDIO ZERO: Sound Stage", label_zh: "零号影音：声学工坊", anchor: "row-sound" },
 };
 
-export const REFUND_RATE = 0.8;
+export const REFUND_RATE = 0.95;
 export const MULTI_DISCOUNT = 0.9;
