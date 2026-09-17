@@ -11,6 +11,7 @@ import { dropTable, isValueGuaranteed, type ProductBox, type ProductItem } from 
 import { boxFloorTier, boxTopTier, formatMultiple, glow, tierBreakdown, tierOf, topMultiple } from "@/lib/tiers";
 import { TierStrip } from "@/components/box/TierStrip";
 import { ProductArt } from "@/components/box/ProductArt";
+import { Money } from "@/components/ui/Money";
 
 /** 행 가장자리 — 확대 시 transform-origin 보정용. */
 export type CardEdge = "first" | "last" | "middle";
@@ -193,15 +194,15 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
           <span aria-hidden className="pedestal-glow pointer-events-none absolute inset-0" />
           <span aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
 
-          {/* 최소 보장 뱃지 */}
+          {/* 100% 꽝 없음 · 최소 보장 뱃지 — 고대비 (CLAUDE.md §4-C) */}
           <span
             className={cn(
-              "absolute left-2 top-2 z-10 rounded-sm px-1.5 py-1 text-[10px] font-bold leading-none",
-              meta.guaranteed ? "border-metallic-gold bg-obsidian/80 text-gold-champagne" : "border-metallic-subtle bg-obsidian/70 text-secondary",
+              "absolute left-2 right-2 top-2 z-10 truncate rounded-sm px-2 py-1 text-[10px] font-bold leading-none tracking-tight",
+              meta.guaranteed ? "border-metallic-gold bg-obsidian/90 text-gold-champagne" : "border-metallic-subtle bg-obsidian/90 text-white",
             )}
           >
-            {tr("card.guaranteedMinShort", { value: fmt(box.guaranteedMin) })}
-            {meta.guaranteed ? ` · ${tr("card.guaranteed")}` : ""}
+            {tr("card.noBlankBadge", { value: fmt(box.guaranteedMin) })}
+            {meta.guaranteed ? ` · ${tr("hero.aboveOpenPrice")}` : ""}
           </span>
 
           {/* 호버: 퀵 액션 + 3px 등급 확률 바 */}
@@ -245,7 +246,7 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
           <div className="mt-1.5 flex items-end justify-between gap-2">
             <div>
               <div className="caption-luxury">{tr("card.perOpen")}</div>
-              <div className="font-display text-xl font-bold leading-none tracking-tight text-white">{fmt(box.price)}</div>
+              <Money value={box.price} size="md" />
             </div>
             <div className="text-right">
               <div className="caption-luxury">{tr("card.top")}</div>

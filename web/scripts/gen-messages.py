@@ -16,14 +16,15 @@ sys.stdout.reconfigure(encoding="utf-8")
 UI = {
   "ko": {
     "nav": {"boxes": "박스", "battles": "배틀", "inventory": "보관함", "fairness": "공정성 검증", "highRoller": "하이롤러", "tech": "테크", "luxury": "럭셔리"},
-    "header": {"balance": "잔액", "demo": "데모", "language": "언어", "currency": "통화", "deposit": "충전하기", "withdraw": "출금"},
+    "header": {"balance": "잔액", "demo": "데모", "language": "언어", "currency": "통화", "deposit": "충전하기", "withdraw": "출금", "welcomeToast": "웰컴 보너스 {amount} 지급 완료 — 실제 박스를 열어보세요"},
     "hero": {
       "royalSelection": "로열 셀렉션", "top": "TOP {n}", "pricePerOpen": "1회 오픈", "topPull": "최고 구성",
       "noBlank": "100% 실물 지급 · 꽝 없음", "guaranteedMinLabel": "최소 보장 금액",
       "guaranteedMin": "최소 보장 금액 {value}", "aboveOpenPrice": "오픈가 이상",
-      "openNow": "지금 오픈하기", "viewContents": "구성품 확인", "billboardPicker": "빌보드 선택", "billboardOf": "{title} 빌보드"
+      "openNow": "지금 오픈하기", "viewContents": "구성품 확인", "billboardPicker": "빌보드 선택", "billboardOf": "{title} 빌보드",
+      "headline": "영화처럼 열고, 롤렉스를 받다.", "sub": "100% 정품 실물 보장. 마음에 들면 집으로 무료 배송, 마음에 안 들면 95% USDT로 즉시 현금 환전.", "freeDemo": "무료 체험해보기", "nowShowing": "지금 상영 중"
     },
-    "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "guaranteed": "보장", "openNow": "지금 오픈", "contents": "구성품", "details": "{title} 상세 정보", "expand": "확대"},
+    "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "guaranteed": "보장", "openNow": "지금 오픈", "contents": "구성품", "details": "{title} 상세 정보", "expand": "확대"},
     "rows": {"trending": "지금 가장 많이 열리는 박스", "techMobility": "테크 & 모빌리티", "luxuryWatch": "럭셔리 & 워치", "guaranteed": "최소 가치 보장", "prev": "이전", "next": "다음"},
     "grid": {"title": "전체 박스", "sort": "정렬", "loadMore": "더 보기 ({n}개)"},
     "categories": {"all": "전체", "mobility": "모빌리티", "tech": "테크", "watch": "워치", "luxury": "럭셔리", "lifestyle": "라이프스타일"},
@@ -62,7 +63,7 @@ UI = {
       "open": "공정성 검증 열기", "close": "닫기"
     },
     "unbox": {
-      "open1": "1회 오픈", "open5": "5회 연속 오픈", "spinning": "개봉 중…", "landing": "결과 확정",
+      "open1": "1회 오픈", "open5": "5회 연속 오픈", "demoLabel": "무료 체험 · 가상 개봉", "demoCongrats": "축하합니다! {item}({n})에 가상 당첨되셨습니다.", "demoBody": "웰컴 보너스 {bonus}로 실제 박스를 열어보세요!", "demoCta": "보너스 받고 실제 열기", "demoCtaClaimed": "실제 박스 열기", "demoNote": "가상 체험 결과입니다 — 잔액·보관함에 반영되지 않으며 공정성 시드도 소모하지 않습니다.", "spinning": "개봉 중…", "landing": "결과 확정",
       "result": "당첨", "results": "5회 결과", "total": "합계 가치", "paid": "지불 {price}",
       "sellBack": "즉시 판매 · {amount}", "sellBackAll": "전체 즉시 판매 · {amount}", "sellBackNote": "실판매가의 {rate}가 잔액으로 즉시 반영됩니다",
       "sold": "판매 완료 — {amount} 잔액 반영", "claimShipping": "실물 배송 신청",
@@ -120,6 +121,13 @@ UI = {
       "errors": {"recipient": "수령인 이름을 입력하세요", "phone": "연락처 형식을 확인하세요", "postalCode": "우편번호를 입력하세요", "address": "상세 주소를 입력하세요", "customsId": "통관 식별자 형식이 올바르지 않습니다"},
       "countries": {"KR": "대한민국", "US": "미국", "CN": "중국", "JP": "일본", "SG": "싱가포르", "HK": "홍콩", "TW": "대만", "GB": "영국", "DE": "독일", "FR": "프랑스", "AU": "호주", "CA": "캐나다", "AE": "아랍에미리트"}
     },
+    "onboarding": {
+      "title": "3초 안심 가이드",
+      "step1Title": "명품 박스 선택", "step1Desc": "롤렉스, 테슬라, 애플 등 원하는 명품 박스를 선택합니다.",
+      "step2Title": "100% 공정 언박싱", "step2Desc": "조작 불가능한 SHA-256 알고리즘으로 즉시 개봉합니다.",
+      "step3Title": "집으로 배송 or 95% 환전", "step3Desc": "마음에 들면 무료 배송, 필요 없으면 95% USDT로 즉시 현금 회수합니다."
+    },
+    "counters": {"shipments": "오늘 출고된 실물 명품", "shipmentsUnit": "건", "cashouts": "오늘 즉시 환전된 자산", "verification": "공정성 검증 완료율", "demoNote": "데모 지표 — 실서비스에서는 실시간 집계값이 표시됩니다"},
     "withdraw": {
       "title": "USDT 출금", "close": "닫기", "available": "출금 가능 잔액", "network": "출금 네트워크", "address": "받는 지갑 주소", "addressHint": "{hint} 로 시작하는 주소",
       "amount": "출금 수량", "min": "최소 {min}", "max": "전액", "fee": "네트워크 수수료", "feeShort": "수수료", "net": "최종 실 수령액", "netLabel": "최종 실 수령액",
@@ -135,14 +143,15 @@ UI = {
   },
   "en": {
     "nav": {"boxes": "Boxes", "battles": "Battles", "inventory": "Inventory", "fairness": "Provably Fair", "highRoller": "High-Roller", "tech": "Tech", "luxury": "Luxury"},
-    "header": {"balance": "Balance", "demo": "Demo", "language": "Language", "currency": "Currency", "deposit": "Deposit", "withdraw": "Withdraw"},
+    "header": {"balance": "Balance", "demo": "Demo", "language": "Language", "currency": "Currency", "deposit": "Deposit", "withdraw": "Withdraw", "welcomeToast": "Welcome bonus {amount} credited — open a real box"},
     "hero": {
       "royalSelection": "Royal Selection", "top": "TOP {n}", "pricePerOpen": "Per Open", "topPull": "Top Pull",
       "noBlank": "100% physical payout · No blanks", "guaranteedMinLabel": "Guaranteed Minimum",
       "guaranteedMin": "Guaranteed Minimum {value}", "aboveOpenPrice": "Above open price",
-      "openNow": "Open Now", "viewContents": "View Contents", "billboardPicker": "Billboard picker", "billboardOf": "{title} billboard"
+      "openNow": "Open Now", "viewContents": "View Contents", "billboardPicker": "Billboard picker", "billboardOf": "{title} billboard",
+      "headline": "Cinematic Thrills. Authentic Luxury.", "sub": "100% Authentic Drops. Ship directly to your door, or liquidate instantly for 95% USDT.", "freeDemo": "Free Demo", "nowShowing": "Now Showing"
     },
-    "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "guaranteed": "guaranteed", "openNow": "Open Now", "contents": "Contents", "details": "{title} details", "expand": "Expand"},
+    "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "guaranteed": "guaranteed", "openNow": "Open Now", "contents": "Contents", "details": "{title} details", "expand": "Expand"},
     "rows": {"trending": "Trending Mystery Boxes", "techMobility": "Tech & Mobility", "luxuryWatch": "Luxury & Watches", "guaranteed": "Guaranteed Minimum", "prev": "Previous", "next": "Next"},
     "grid": {"title": "All Boxes", "sort": "Sort", "loadMore": "Load more ({n})"},
     "categories": {"all": "All", "mobility": "Mobility", "tech": "Tech", "watch": "Watches", "luxury": "Luxury", "lifestyle": "Lifestyle"},
@@ -181,7 +190,7 @@ UI = {
       "open": "Open Provably Fair", "close": "Close"
     },
     "unbox": {
-      "open1": "Open ×1", "open5": "Open ×5", "spinning": "Opening…", "landing": "Result locked",
+      "open1": "Open ×1", "open5": "Open ×5", "demoLabel": "Free Demo · Simulated", "demoCongrats": "Congratulations! You simulated {item} ({n}).", "demoBody": "Open real boxes with your {bonus} welcome bonus!", "demoCta": "Claim & Open Real Box", "demoCtaClaimed": "Open Real Box", "demoNote": "This is a simulated result — nothing is credited to your balance or vault, and no fairness seed is consumed.", "spinning": "Opening…", "landing": "Result locked",
       "result": "You won", "results": "5 results", "total": "Total value", "paid": "Paid {price}",
       "sellBack": "Instant Sell-Back · {amount}", "sellBackAll": "Sell all back · {amount}", "sellBackNote": "{rate} of market value is credited to your balance instantly",
       "sold": "Sold — {amount} credited", "claimShipping": "Claim Shipping",
@@ -239,6 +248,13 @@ UI = {
       "errors": {"recipient": "Enter the recipient name", "phone": "Check the phone number format", "postalCode": "Enter a postal code", "address": "Enter the street address", "customsId": "Invalid customs identifier format"},
       "countries": {"KR": "South Korea", "US": "United States", "CN": "China", "JP": "Japan", "SG": "Singapore", "HK": "Hong Kong", "TW": "Taiwan", "GB": "United Kingdom", "DE": "Germany", "FR": "France", "AU": "Australia", "CA": "Canada", "AE": "United Arab Emirates"}
     },
+    "onboarding": {
+      "title": "How it works in 3 steps",
+      "step1Title": "Pick a luxury box", "step1Desc": "Choose the box you want — Rolex, Tesla, Apple and more.",
+      "step2Title": "100% provably fair unboxing", "step2Desc": "Opened instantly with a tamper-proof SHA-256 algorithm.",
+      "step3Title": "Ship home or cash out 95%", "step3Desc": "Love it? Free shipping. Don't need it? Liquidate instantly for 95% USDT."
+    },
+    "counters": {"shipments": "Physical items shipped today", "shipmentsUnit": "items", "cashouts": "Settled cashouts today", "verification": "Provably fair verification rate", "demoNote": "Demo metrics — production shows live aggregates"},
     "withdraw": {
       "title": "Withdraw USDT", "close": "Close", "available": "Available balance", "network": "Withdrawal network", "address": "Destination wallet address", "addressHint": "Address starting with {hint}",
       "amount": "Amount", "min": "Min {min}", "max": "MAX", "fee": "Network fee", "feeShort": "Fee", "net": "You receive", "netLabel": "Net amount you receive",
@@ -254,14 +270,15 @@ UI = {
   },
   "zh": {
     "nav": {"boxes": "盲盒", "battles": "对战", "inventory": "仓库", "fairness": "公平性验证", "highRoller": "高额玩家", "tech": "科技", "luxury": "奢侈品"},
-    "header": {"balance": "余额", "demo": "演示", "language": "语言", "currency": "货币", "deposit": "充值", "withdraw": "提现"},
+    "header": {"balance": "余额", "demo": "演示", "language": "语言", "currency": "货币", "deposit": "充值", "withdraw": "提现", "welcomeToast": "新人奖励 {amount} 已到账 — 开启真实盲盒吧"},
     "hero": {
       "royalSelection": "皇家精选", "top": "TOP {n}", "pricePerOpen": "单次开启", "topPull": "最高奖品",
       "noBlank": "100% 实物发放 · 无空奖", "guaranteedMinLabel": "保底价值",
       "guaranteedMin": "保底价值 {value}", "aboveOpenPrice": "不低于开启价",
-      "openNow": "立即开启", "viewContents": "查看内含", "billboardPicker": "选择展示", "billboardOf": "{title} 展示"
+      "openNow": "立即开启", "viewContents": "查看内含", "billboardPicker": "选择展示", "billboardOf": "{title} 展示",
+      "headline": "如看大片般开箱，劳力士真实发货。", "sub": "100%正品实物保障。满意即申请包邮发货到家，不满意支持95% USDT即时极速折现。", "freeDemo": "免费体验", "nowShowing": "正在上映"
     },
-    "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "guaranteed": "保底", "openNow": "立即开启", "contents": "内含", "details": "{title} 详情", "expand": "展开"},
+    "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "guaranteed": "保底", "openNow": "立即开启", "contents": "内含", "details": "{title} 详情", "expand": "展开"},
     "rows": {"trending": "当前最热盲盒", "techMobility": "科技与出行", "luxuryWatch": "奢侈品与腕表", "guaranteed": "保底价值", "prev": "上一页", "next": "下一页"},
     "grid": {"title": "全部盲盒", "sort": "排序", "loadMore": "加载更多（{n}）"},
     "categories": {"all": "全部", "mobility": "出行", "tech": "科技", "watch": "腕表", "luxury": "奢侈品", "lifestyle": "生活方式"},
@@ -300,7 +317,7 @@ UI = {
       "open": "打开公平性验证", "close": "关闭"
     },
     "unbox": {
-      "open1": "开启 ×1", "open5": "连续开启 ×5", "spinning": "开启中…", "landing": "结果已锁定",
+      "open1": "开启 ×1", "open5": "连续开启 ×5", "demoLabel": "免费体验 · 模拟开箱", "demoCongrats": "恭喜！您在模拟中抽中了 {item}（{n}）。", "demoBody": "用 {bonus} 新人奖励开启真实盲盒吧！", "demoCta": "领取奖励并开启真实盲盒", "demoCtaClaimed": "开启真实盲盒", "demoNote": "这是模拟结果 — 不计入余额与仓库，也不消耗公平性种子。", "spinning": "开启中…", "landing": "结果已锁定",
       "result": "获得", "results": "5 次结果", "total": "总价值", "paid": "已支付 {price}",
       "sellBack": "即时回收 · {amount}", "sellBackAll": "全部即时回收 · {amount}", "sellBackNote": "按市场价的 {rate} 即时计入余额",
       "sold": "已回收 — 余额 +{amount}", "claimShipping": "申请发货",
@@ -358,6 +375,13 @@ UI = {
       "errors": {"recipient": "请输入收件人姓名", "phone": "请检查电话格式", "postalCode": "请输入邮政编码", "address": "请输入详细地址", "customsId": "通关标识格式不正确"},
       "countries": {"KR": "韩国", "US": "美国", "CN": "中国", "JP": "日本", "SG": "新加坡", "HK": "中国香港", "TW": "中国台湾", "GB": "英国", "DE": "德国", "FR": "法国", "AU": "澳大利亚", "CA": "加拿大", "AE": "阿联酋"}
     },
+    "onboarding": {
+      "title": "3 秒看懂流程",
+      "step1Title": "选择奢品盲盒", "step1Desc": "劳力士、特斯拉、苹果等，任选心仪的盲盒。",
+      "step2Title": "100% 公平开箱", "step2Desc": "以无法篡改的 SHA-256 算法即时开启。",
+      "step3Title": "发货到家或 95% 折现", "step3Desc": "满意即免费发货，不需要则按 95% USDT 即时折现。"
+    },
+    "counters": {"shipments": "今日已出库实物", "shipmentsUnit": "件", "cashouts": "今日已结算折现", "verification": "公平性验证完成率", "demoNote": "演示指标 — 正式服务显示实时统计"},
     "withdraw": {
       "title": "USDT 提现", "close": "关闭", "available": "可提现余额", "network": "提现网络", "address": "收款钱包地址", "addressHint": "以 {hint} 开头的地址",
       "amount": "提现数量", "min": "最低 {min}", "max": "全部", "fee": "网络手续费", "feeShort": "手续费", "net": "实际到账", "netLabel": "实际到账金额",

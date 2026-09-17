@@ -14,7 +14,8 @@
     "language": "语言",
     "currency": "货币",
     "deposit": "充值",
-    "withdraw": "提现"
+    "withdraw": "提现",
+    "welcomeToast": "新人奖励 {amount} 已到账 — 开启真实盲盒吧"
   },
   "hero": {
     "royalSelection": "皇家精选",
@@ -28,12 +29,17 @@
     "openNow": "立即开启",
     "viewContents": "查看内含",
     "billboardPicker": "选择展示",
-    "billboardOf": "{title} 展示"
+    "billboardOf": "{title} 展示",
+    "headline": "如看大片般开箱，劳力士真实发货。",
+    "sub": "100%正品实物保障。满意即申请包邮发货到家，不满意支持95% USDT即时极速折现。",
+    "freeDemo": "免费体验",
+    "nowShowing": "正在上映"
   },
   "card": {
     "perOpen": "单次",
     "top": "最高",
     "guaranteedMinShort": "保底 {value}",
+    "noBlankBadge": "100% 不落空 · 最低 {value} 保底",
     "guaranteed": "保底",
     "openNow": "立即开启",
     "contents": "内含",
@@ -143,6 +149,12 @@
   "unbox": {
     "open1": "开启 ×1",
     "open5": "连续开启 ×5",
+    "demoLabel": "免费体验 · 模拟开箱",
+    "demoCongrats": "恭喜！您在模拟中抽中了 {item}（{n}）。",
+    "demoBody": "用 {bonus} 新人奖励开启真实盲盒吧！",
+    "demoCta": "领取奖励并开启真实盲盒",
+    "demoCtaClaimed": "开启真实盲盒",
+    "demoNote": "这是模拟结果 — 不计入余额与仓库，也不消耗公平性种子。",
     "spinning": "开启中…",
     "landing": "结果已锁定",
     "result": "获得",
@@ -337,6 +349,22 @@
       "CA": "加拿大",
       "AE": "阿联酋"
     }
+  },
+  "onboarding": {
+    "title": "3 秒看懂流程",
+    "step1Title": "选择奢品盲盒",
+    "step1Desc": "劳力士、特斯拉、苹果等，任选心仪的盲盒。",
+    "step2Title": "100% 公平开箱",
+    "step2Desc": "以无法篡改的 SHA-256 算法即时开启。",
+    "step3Title": "发货到家或 95% 折现",
+    "step3Desc": "满意即免费发货，不需要则按 95% USDT 即时折现。"
+  },
+  "counters": {
+    "shipments": "今日已出库实物",
+    "shipmentsUnit": "件",
+    "cashouts": "今日已结算折现",
+    "verification": "公平性验证完成率",
+    "demoNote": "演示指标 — 正式服务显示实时统计"
   },
   "withdraw": {
     "title": "USDT 提现",
@@ -599,8 +627,8 @@
       "glx-wallet": "圣罗兰 Monogram 钱包",
       "glx-belt": "万宝龙双面腰带",
       "glx-scarf": "爱马仕 Twilly 丝巾",
-      "glx-card": "普拉达 Saffiano 卡包",
       "glx-key": "Delvaux 皮革钥匙包",
+      "glx-card": "普拉达 Saffiano 卡包",
       "gdy-breville": "铂富 Barista Express",
       "gdy-lamp": "Louis Poulsen PH 5 迷你",
       "gdy-dyson": "戴森 Supersonic Nural",

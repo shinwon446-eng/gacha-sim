@@ -19,6 +19,8 @@ import {
   type SortKey,
 } from "@/lib/products";
 import { BillboardHero } from "@/components/home/BillboardHero";
+import { OnboardingStrip } from "@/components/home/OnboardingStrip";
+import { LiveCounters } from "@/components/home/LiveCounters";
 import { NetflixRow } from "@/components/home/NetflixRow";
 import { BoxCard } from "@/components/box/BoxCard";
 import { DetailModal } from "@/components/box/DetailModal";
@@ -29,7 +31,7 @@ import { useCurrency } from "@/lib/useCurrency";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import { Link } from "@/i18n/navigation";
 import { Wallet, ArrowUpRight } from "lucide-react";
-import { useWalletStore } from "@/stores/walletStore";
+import { useWalletStore, WELCOME_BONUS_USDT } from "@/stores/walletStore";
 import { UnboxingRoulette, type UnboxResult } from "@/components/unboxing/UnboxingRoulette";
 import { DepositModal } from "@/components/wallet/DepositModal";
 import { WithdrawalModal } from "@/components/wallet/WithdrawalModal";
@@ -52,7 +54,7 @@ export default function BoxesPage() {
   const [category, setCategory] = useState<BoxCategory | "all">("all");
   const [sort, setSort] = useState<SortKey>("featured");
   const [shown, setShown] = useState(PAGE_SIZE);
-  const [unbox, setUnbox] = useState<{ box: ProductBox; count: number } | null>(null);
+  const [unbox, setUnbox] = useState<{ box: ProductBox; count: number; demo?: { itemId: string } } | null>(null);
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -60,6 +62,8 @@ export default function BoxesPage() {
   const debit = useWalletStore((s) => s.debit);
   const credit = useWalletStore((s) => s.credit);
   const addTransaction = useWalletStore((s) => s.addTransaction);
+  const claimWelcome = useWalletStore((s) => s.claimWelcome);
+  const welcomeClaimed = useWalletStore((s) => s.welcomeClaimed);
 
   const pushToast = useCallback((toast: Omit<Toast, "id">) => {
     const id = Date.now() + Math.floor(Math.random() * 1000);
@@ -89,6 +93,23 @@ export default function BoxesPage() {
       pushToast({ title: t("unbox.sold", { amount: fmt(amount) }), tone: "#E6CA65" });
     },
     [credit, addTransaction, pushToast, t, fmt],
+  );
+
+  // 무료 체험: 롤렉스 볼트를 잔액 없이 가상으로 돌린다. 결과는 서브마리너로 고정 — 잔액·보관함·nonce 무변화.
+  const openDemo = useCallback((box: ProductBox) => {
+    const rolex = BOXES.find((b) => b.slug === "rolex-vault") ?? box;
+    const hero = rolex.items.find((i) => i.id === "rlx-sub") ?? rolex.items[0];
+    setDetail(null);
+    setUnbox({ box: rolex, count: 1, demo: { itemId: hero.id } });
+  }, []);
+  // 데모 → 실제 전환: 웰컴 보너스 1회 지급 후 해당 박스 상세로
+  const convertDemo = useCallback(
+    (box: ProductBox) => {
+      if (claimWelcome()) pushToast({ title: t("header.welcomeToast", { amount: fmt(WELCOME_BONUS_USDT) }), tone: "#E6CA65" });
+      setUnbox(null);
+      setDetail(box);
+    },
+    [claimWelcome, pushToast, t, fmt],
   );
 
   const onShip = useCallback(() => {
@@ -122,7 +143,7 @@ export default function BoxesPage() {
         </nav>
         <div className="ml-auto flex items-center gap-2">
           {/* 잔액 — 데모 고정값. 선택 통화로만 표기된다. */}
-          <div className="glass-dark flex h-9 items-center gap-2 rounded-md px-3">
+          <div className="glass-dark flex h-9 flex-none items-center gap-2 whitespace-nowrap rounded-md px-3">
             <Wallet className="h-3.5 w-3.5 text-muted" strokeWidth={2} />
             <span className="caption-luxury hidden sm:inline">{t("header.balance")}</span>
             <AnimatePresence mode="popLayout" initial={false}>
@@ -134,7 +155,7 @@ export default function BoxesPage() {
           <button
             type="button"
             onClick={() => setDepositOpen(true)}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-crimson px-3 text-xs font-bold text-white shadow-[0_0_18px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600"
+            className="flex h-9 flex-none items-center gap-1.5 whitespace-nowrap rounded-md bg-crimson px-3 text-xs font-bold text-white shadow-[0_0_18px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600"
           >
             <Wallet className="h-3.5 w-3.5" strokeWidth={2.2} />
             {t("header.deposit")}
@@ -149,11 +170,14 @@ export default function BoxesPage() {
           </button>
           <LanguageSelector />
           <CurrencySelector />
-          <span className="caption-luxury hidden rounded-sm border border-hairline px-2 py-1 md:inline">{t("header.demo")}</span>
+          <span className="caption-luxury hidden whitespace-nowrap rounded-sm border border-hairline px-2 py-1 lg:inline">{t("header.demo")}</span>
         </div>
       </header>
 
-      <BillboardHero boxes={billboard} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+      <BillboardHero boxes={billboard} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} onDemo={openDemo} />
+
+      <OnboardingStrip className="pt-6" />
+      <LiveCounters className="pt-4" />
 
       {/* 등급 범례 — 배수 기준을 한 번만 설명한다 */}
       <section className="border-y border-line bg-surface px-[4%] py-2.5">
@@ -268,7 +292,7 @@ export default function BoxesPage() {
 
       <WithdrawalModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onRequested={(amount) => pushToast({ title: t("withdraw.requestedToast", { amount: fmt(amount) }), tone: "#E6CA65" })} />
 
-      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} />
+      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} demo={unbox?.demo} onDemoConvert={convertDemo} welcomeClaimed={welcomeClaimed} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} />
 
       {/* 토스트 */}
       <div className="pointer-events-none fixed bottom-4 right-4 z-[120] flex w-80 max-w-full flex-col gap-2">

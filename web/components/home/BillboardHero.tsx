@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Play, Info, Crown } from "lucide-react";
+import { Play, Info, Crown, Sparkles } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
@@ -10,12 +10,15 @@ import { useProductText } from "@/lib/useProductText";
 import { dropTable, isValueGuaranteed, type ProductBox } from "@/lib/products";
 import { boxTopTier, formatMultiple, glow, tierOf, topMultiple } from "@/lib/tiers";
 import { ProductArt } from "@/components/box/ProductArt";
+import { Money } from "@/components/ui/Money";
 
 export interface BillboardHeroProps {
   /** 순환할 박스들. 첫 장이 기본 노출. */
   boxes: ProductBox[];
   onOpen?: (box: ProductBox) => void;
   onInspect?: (box: ProductBox) => void;
+  /** 무료 체험 (CLAUDE.md §4-A) — 잔액 없이 가상 룰렛 */
+  onDemo?: (box: ProductBox) => void;
   /** 자동 순환 간격(ms). 0 이면 순환하지 않는다. */
   intervalMs?: number;
   className?: string;
@@ -29,15 +32,17 @@ const EASE = [0.16, 1, 0.3, 1] as const;
  *   · 65vh. 사이버트럭 / 롤렉스 / 하이엔드 테크 비주얼을 크로스페이드로 순환한다.
  *   · 비주얼 뒤에 딥 골드 림라이트(pedestal-glow-strong) + 좌측·하단 넷플릭스 페이드.
  *   · 뱃지: [ROYAL SELECTION] [TOP N] — 골드 헤어라인. 게임식 등급 뱃지는 쓰지 않는다.
- *   · CTA: [지금 오픈하기] 크림슨 + [구성품 확인] 프로스티드 글래스.
+ *   · CTA: [지금 오픈하기] 크림슨 + [무료 체험해보기] 골드 아웃라인 + [구성품 확인] 프로스티드 글래스.
+ *   · 헤드라인은 3개 국어 후킹 카피(hero.headline/sub, CLAUDE.md §3-A). 박스명은 "지금 상영 중" 줄로 내려간다.
+ *   · 비주얼은 페데스탈 위에서 완만히 부유한다(6s 루프) — 벨벳 쇼케이스 연출.
  *
  * 텍스트는 비주얼 위에 얹지 않는다. 좌측 26% 는 캔버스 색으로 완전히 덮여 어떤 사진이 와도 읽힌다.
  * 보장 문구는 데이터가 참일 때만 나간다 (isValueGuaranteed).
  */
-export function BillboardHero({ boxes, onOpen, onInspect, intervalMs = 9000, className }: BillboardHeroProps) {
+export function BillboardHero({ boxes, onOpen, onInspect, onDemo, intervalMs = 9000, className }: BillboardHeroProps) {
   const t = useTranslations();
   const { fmt } = useCurrency();
-  const { boxTitle, boxTagline, boxBadge, itemName } = useProductText();
+  const { boxTitle, boxBadge, itemName } = useProductText();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const box = boxes[Math.min(index, boxes.length - 1)];
@@ -74,11 +79,15 @@ export function BillboardHero({ boxes, onOpen, onInspect, intervalMs = 9000, cla
             exit={{ opacity: 0 }}
             transition={{ duration: 1.1, ease: EASE }}
           >
-            <ProductArt image={box.image} alt={boxTitle(box)} accent={top.accent} glowStrength={0.12} fallbackSize="lg" priority />
+            {/* 플로팅 — 페데스탈 위 부유 */}
+            <motion.div className="absolute inset-0" animate={{ y: [0, -10, 0] }} transition={{ duration: 6, ease: "easeInOut", repeat: Infinity }}>
+              <ProductArt image={box.image} alt={boxTitle(box)} accent={top.accent} glowStrength={0.12} fallbackSize="lg" priority />
+            </motion.div>
           </motion.div>
         </AnimatePresence>
-        {/* 딥 골드 림라이트 — 피사체 아래에서 올라오는 스튜디오 조명 */}
+        {/* 딥 골드 림라이트 — 피사체 아래에서 올라오는 스튜디오 조명 + 페데스탈 그림자 */}
         <span aria-hidden className="pedestal-glow-strong pointer-events-none absolute inset-0" />
+        <span aria-hidden className="pedestal-shadow pointer-events-none absolute inset-x-[18%] bottom-[8%] h-10" />
       </div>
 
       {/* 넷플릭스 페이드 — 좌측(캔버스로 완전 융합) + 하단 */}
@@ -111,21 +120,25 @@ export function BillboardHero({ boxes, onOpen, onInspect, intervalMs = 9000, cla
               <span className="border-metallic-subtle caption-luxury rounded-sm bg-obsidian/60 px-2.5 py-1">{boxBadge(box)}</span>
             </div>
 
-            <h1 className="mt-3 font-display text-4xl font-bold uppercase leading-none tracking-tight text-white sm:text-5xl lg:text-6xl">
-              {boxTitle(box)}
+            <h1 className="mt-3 font-display text-3xl font-bold leading-[1.08] tracking-tight text-white sm:text-4xl lg:text-5xl">
+              {t("hero.headline")}
             </h1>
 
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-secondary/90 md:text-base">{boxTagline(box)}</p>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-secondary/90 md:text-base">{t("hero.sub")}</p>
 
-            {/* 가격 · 최고 배수 */}
-            <div className="mt-5 flex flex-wrap items-end gap-x-8 gap-y-3">
+            {/* 지금 상영 중 — 박스명 · 가격 · 최고 배수 */}
+            <div className="border-metallic-subtle mt-5 inline-flex max-w-full flex-wrap items-end gap-x-6 gap-y-3 rounded-lg bg-obsidian/60 px-4 py-3 backdrop-blur-sm">
+              <div className="min-w-0">
+                <div className="caption-luxury !text-gold-champagne">{t("hero.nowShowing")}</div>
+                <div className="mt-1 truncate font-display text-xl font-bold uppercase leading-none tracking-tight text-white md:text-2xl">{boxTitle(box)}</div>
+              </div>
               <div>
                 <div className="caption-luxury">{t("hero.pricePerOpen")}</div>
-                <div className="mt-1 font-display text-3xl font-bold leading-none tracking-tight text-white md:text-4xl">{fmt(box.price)}</div>
+                <Money value={box.price} size="md" className="mt-1" />
               </div>
               <div>
                 <div className="caption-luxury">{t("hero.topPull")}</div>
-                <div className="text-gold-gradient mt-1 font-display text-3xl font-bold leading-none tracking-tight md:text-4xl">
+                <div className="text-gold-gradient mt-1 font-display text-lg font-bold leading-none tracking-tight md:text-xl">
                   {t("tiers.multiple", { n: formatMultiple(topMultiple(box)) })}
                 </div>
               </div>
@@ -157,10 +170,18 @@ export function BillboardHero({ boxes, onOpen, onInspect, intervalMs = 9000, cla
               </button>
               <button
                 type="button"
-                onClick={() => onInspect?.(box)}
-                className="glass flex h-12 items-center gap-2 rounded-sm px-6 text-base font-semibold text-white backdrop-blur-md transition-colors duration-200 hover:border-gold-champagne/60 hover:bg-white/15"
+                onClick={() => onDemo?.(box)}
+                className="border-gold-gradient flex h-12 items-center gap-2 rounded-sm bg-obsidian/60 px-6 text-base font-bold text-gold-champagne backdrop-blur-md transition-all duration-200 hover:scale-[1.03] hover:bg-gold-champagne/10"
               >
-                <Info className="h-5 w-5" strokeWidth={2} />
+                <Sparkles className="h-5 w-5" strokeWidth={2} />
+                {t("hero.freeDemo")}
+              </button>
+              <button
+                type="button"
+                onClick={() => onInspect?.(box)}
+                className="glass flex h-12 items-center gap-2 rounded-sm px-5 text-sm font-semibold text-white backdrop-blur-md transition-colors duration-200 hover:border-gold-champagne/60 hover:bg-white/15"
+              >
+                <Info className="h-4 w-4" strokeWidth={2} />
                 {t("hero.viewContents")}
               </button>
             </div>

@@ -3,12 +3,12 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { Wallet, Truck, ShieldCheck, X, Volume2, VolumeX } from "lucide-react";
+import { Wallet, Truck, ShieldCheck, X, Volume2, VolumeX, Play } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
 import { dropTable, REFUND_RATE, type ProductBox, type ProductItem } from "@/lib/products";
-import { glow, tierOf, type Tier } from "@/lib/tiers";
+import { formatMultiple, glow, tierOf, type Tier } from "@/lib/tiers";
 import { calculateRollResult, determineItem } from "@/lib/fairness";
 import { REEL_DURATION_MULTI_S, REEL_DURATION_S, REEL_EASE, REEL_TARGET_INDEX, buildStrip, offsetForTarget, unitRandom } from "@/lib/reel";
 import { useFairStore } from "@/stores/fairStore";
@@ -19,7 +19,7 @@ import { Money } from "@/components/ui/Money";
 import { FairnessModal } from "@/components/fairness/FairnessModal";
 import { ShippingModal } from "@/components/inventory/ShippingModal";
 import { useInventoryStore, type OwnedItem } from "@/stores/inventoryStore";
-import { useWalletStore } from "@/stores/walletStore";
+import { useWalletStore, WELCOME_BONUS_USDT } from "@/stores/walletStore";
 import type { ShippingAddress } from "@/lib/shipping";
 import { Link } from "@/i18n/navigation";
 
@@ -45,6 +45,15 @@ export interface UnboxingRouletteProps {
   onSellBack: (results: UnboxResult[], amountUsdt: number) => void;
   /** 배송 신청 완료 — 호출측이 토스트를 띄운다 (배송비 차감·상태 전환은 여기서) */
   onShip: (results: UnboxResult[]) => void;
+  /**
+   * 무료 체험 모드 (CLAUDE.md §4-A). 지정 항목으로 결과를 고정하고 잔액·보관함·공정성 nonce 를 건드리지 않는다.
+   * 결과 팝업은 전환 CTA(웰컴 보너스) 하나만 보여준다.
+   */
+  demo?: { itemId: string };
+  /** 데모 팝업의 전환 CTA — 호출측이 보너스 지급·실제 박스 열기를 처리한다 */
+  onDemoConvert?: (box: ProductBox) => void;
+  /** 웰컴 보너스 수령 여부 — CTA 문구 분기 */
+  welcomeClaimed?: boolean;
 }
 
 type Phase = "idle" | "spinning" | "landed" | "results";
@@ -62,8 +71,9 @@ const GAP = 10;
  *   4. 정지: 등급색 플래시 + 승리 징글 → 결과 팝업(사진·등급·가치·시드·nonce)
  * 연출(3)은 결과(1)를 바꿀 수 없다. 5연속은 1~3 을 짧게 반복하고 마지막에 목록으로 보여준다.
  */
-export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: UnboxingRouletteProps) {
+export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo, onDemoConvert, welcomeClaimed }: UnboxingRouletteProps) {
   const t = useTranslations("unbox");
+  const tr = useTranslations();
   const { fmt } = useCurrency();
   const { boxTitle, itemName } = useProductText();
   const fair = useFairStore();
@@ -131,21 +141,29 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
   const spinOnce = useCallback(
     async (duration: number): Promise<UnboxResult> => {
       if (!box) throw new Error("box 없음");
-      // 1. 결과 확정 — 연출 전에
-      const nonce = fair.takeNonce();
-      const { serverSeed, serverSeedHash, clientSeed } = useFairStore.getState();
-      const r = await calculateRollResult(serverSeed, clientSeed, nonce);
-      const item = determineItem(r.roll, items);
-      const res: UnboxResult = { item, tier: tierOf(item.value, box.price), roll: r.roll, hmac: r.hmac, nonce, serverSeed, serverSeedHash, clientSeed };
-      // 확정 즉시 보관함에 IN_STORAGE 로 넣는다 — 팝업을 닫아도 사라지지 않는다
-      const rec: Omit<OwnedItem, "id" | "status" | "acquiredAt"> = {
-        itemId: item.id,
-        boxSlug: box.slug,
-        valueUsdt: item.value,
-        tier: res.tier.key,
-        fair: { serverSeedHash, serverSeed, clientSeed, nonce, roll: r.roll },
-      };
-      res.ownedId = addOwned([rec])[0].id;
+      let res: UnboxResult;
+      let item: ProductItem;
+      if (demo) {
+        // 무료 체험: 결과 고정, 시드·nonce·보관함 모두 건드리지 않는다
+        item = items.find((i) => i.id === demo.itemId) ?? items[0];
+        res = { item, tier: tierOf(item.value, box.price), roll: 0, hmac: "", nonce: 0, serverSeed: "", serverSeedHash: "", clientSeed: "" };
+      } else {
+        // 1. 결과 확정 — 연출 전에
+        const nonce = fair.takeNonce();
+        const { serverSeed, serverSeedHash, clientSeed } = useFairStore.getState();
+        const r = await calculateRollResult(serverSeed, clientSeed, nonce);
+        item = determineItem(r.roll, items);
+        res = { item, tier: tierOf(item.value, box.price), roll: r.roll, hmac: r.hmac, nonce, serverSeed, serverSeedHash, clientSeed };
+        // 확정 즉시 보관함에 IN_STORAGE 로 넣는다 — 팝업을 닫아도 사라지지 않는다
+        const rec: Omit<OwnedItem, "id" | "status" | "acquiredAt"> = {
+          itemId: item.id,
+          boxSlug: box.slug,
+          valueUsdt: item.value,
+          tier: res.tier.key,
+          fair: { serverSeedHash, serverSeed, clientSeed, nonce, roll: r.roll },
+        };
+        res.ownedId = addOwned([rec])[0].id;
+      }
 
       // 2. 스트립
       setStrip(buildStrip(item, items, unitRandom));
@@ -169,7 +187,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
       setTimeout(() => setFlash(null), 600);
       return res;
     },
-    [box, items, fair, controls, startTicks, addOwned],
+    [box, items, fair, controls, startTicks, addOwned, demo],
   );
 
   // 오픈 시작 — box 가 들어오면 한 번. 리사이즈는 스핀을 취소하지 않는다.
@@ -245,11 +263,11 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
         {/* 상단 바 */}
         <header className="flex items-center gap-3 px-4 py-3 md:px-8">
           <div className="min-w-0">
-            <div className="caption-luxury">{count > 1 ? t("open5") : t("open1")}</div>
+            <div className={cn("caption-luxury", demo && "!text-gold-champagne")}>{demo ? t("demoLabel") : count > 1 ? t("open5") : t("open1")}</div>
             <div className="truncate font-display text-lg font-bold uppercase tracking-tight text-white md:text-2xl">{boxTitle(box)}</div>
           </div>
           <div className="ml-auto flex items-center gap-2">
-            <span className="hidden max-w-xs truncate font-mono text-[10px] text-faint md:inline" title={fair.serverSeedHash}>
+            <span className={cn("hidden max-w-xs truncate font-mono text-[10px] text-faint md:inline", demo && "md:hidden")} title={fair.serverSeedHash}>
               {t("seedHash")}: {fair.serverSeedHash.slice(0, 16)}…
             </span>
             <button type="button" onClick={toggleMuted} aria-label={muted ? t("unmute") : t("mute")} className="glass-dark flex h-9 w-9 items-center justify-center rounded-md text-muted hover:text-white">
@@ -361,7 +379,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
                     <div className="mt-1">
                       <Money value={last.item.value} size="lg" numberClassName="text-gold-gradient" />
                     </div>
-                    <div className="mt-1 text-xs text-faint">{t("paid", { price: fmt(box.price) })}</div>
+                    {!demo && <div className="mt-1 text-xs text-faint">{t("paid", { price: fmt(box.price) })}</div>}
                   </div>
                 ) : (
                   <div className="relative">
@@ -390,6 +408,22 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
                   </div>
                 )}
 
+                {/* 데모: 전환 CTA 하나만 */}
+                {demo ? (
+                  <div className="relative mt-5 grid gap-2">
+                    <p className="text-center text-sm font-semibold text-white">{t("demoCongrats", { item: itemName(last.item), n: tr("tiers.multiple", { n: formatMultiple(last.item.value / box.price) }) })}</p>
+                    <p className="text-center text-xs text-secondary">{t("demoBody", { bonus: fmt(WELCOME_BONUS_USDT) })}</p>
+                    <button type="button" onClick={() => onDemoConvert?.(box)} className="mt-2 flex h-12 items-center justify-center gap-2 rounded-lg bg-crimson text-sm font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600">
+                      <Play className="h-4 w-4 fill-current" strokeWidth={0} />
+                      {welcomeClaimed ? t("demoCtaClaimed") : t("demoCta")}
+                    </button>
+                    <p className="text-center text-[10px] text-faint">{t("demoNote")}</p>
+                    <button type="button" onClick={onClose} className="relative mt-1 h-10 w-full rounded-lg text-sm font-semibold text-muted transition-colors hover:text-white">
+                      {t("close")}
+                    </button>
+                  </div>
+                ) : (
+                <>
                 {/* 액션 */}
                 <div className="relative mt-5 grid gap-2">
                   <button
@@ -439,6 +473,8 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip }: Un
                 <button type="button" onClick={onClose} className="relative mt-2 h-10 w-full rounded-lg text-sm font-semibold text-muted transition-colors hover:text-white">
                   {t("close")}
                 </button>
+                </>
+                )}
               </motion.div>
             </motion.div>
           )}

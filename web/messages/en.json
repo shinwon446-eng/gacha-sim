@@ -14,7 +14,8 @@
     "language": "Language",
     "currency": "Currency",
     "deposit": "Deposit",
-    "withdraw": "Withdraw"
+    "withdraw": "Withdraw",
+    "welcomeToast": "Welcome bonus {amount} credited — open a real box"
   },
   "hero": {
     "royalSelection": "Royal Selection",
@@ -28,12 +29,17 @@
     "openNow": "Open Now",
     "viewContents": "View Contents",
     "billboardPicker": "Billboard picker",
-    "billboardOf": "{title} billboard"
+    "billboardOf": "{title} billboard",
+    "headline": "Cinematic Thrills. Authentic Luxury.",
+    "sub": "100% Authentic Drops. Ship directly to your door, or liquidate instantly for 95% USDT.",
+    "freeDemo": "Free Demo",
+    "nowShowing": "Now Showing"
   },
   "card": {
     "perOpen": "Open",
     "top": "Top",
     "guaranteedMinShort": "Min {value}",
+    "noBlankBadge": "100% No Blanks · Min {value} guaranteed",
     "guaranteed": "guaranteed",
     "openNow": "Open Now",
     "contents": "Contents",
@@ -143,6 +149,12 @@
   "unbox": {
     "open1": "Open ×1",
     "open5": "Open ×5",
+    "demoLabel": "Free Demo · Simulated",
+    "demoCongrats": "Congratulations! You simulated {item} ({n}).",
+    "demoBody": "Open real boxes with your {bonus} welcome bonus!",
+    "demoCta": "Claim & Open Real Box",
+    "demoCtaClaimed": "Open Real Box",
+    "demoNote": "This is a simulated result — nothing is credited to your balance or vault, and no fairness seed is consumed.",
     "spinning": "Opening…",
     "landing": "Result locked",
     "result": "You won",
@@ -337,6 +349,22 @@
       "CA": "Canada",
       "AE": "United Arab Emirates"
     }
+  },
+  "onboarding": {
+    "title": "How it works in 3 steps",
+    "step1Title": "Pick a luxury box",
+    "step1Desc": "Choose the box you want — Rolex, Tesla, Apple and more.",
+    "step2Title": "100% provably fair unboxing",
+    "step2Desc": "Opened instantly with a tamper-proof SHA-256 algorithm.",
+    "step3Title": "Ship home or cash out 95%",
+    "step3Desc": "Love it? Free shipping. Don't need it? Liquidate instantly for 95% USDT."
+  },
+  "counters": {
+    "shipments": "Physical items shipped today",
+    "shipmentsUnit": "items",
+    "cashouts": "Settled cashouts today",
+    "verification": "Provably fair verification rate",
+    "demoNote": "Demo metrics — production shows live aggregates"
   },
   "withdraw": {
     "title": "Withdraw USDT",
@@ -599,8 +627,8 @@
       "glx-wallet": "Saint Laurent Wallet",
       "glx-belt": "Montblanc Belt",
       "glx-scarf": "Hermès Twilly Scarf",
-      "glx-card": "Prada Saffiano Cardholder",
       "glx-key": "Delvaux Leather Key Holder",
+      "glx-card": "Prada Saffiano Cardholder",
       "gdy-breville": "Breville Barista Express",
       "gdy-lamp": "Louis Poulsen PH 5 Mini",
       "gdy-dyson": "Dyson Supersonic Nural",

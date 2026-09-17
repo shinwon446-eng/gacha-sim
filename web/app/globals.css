@@ -165,6 +165,12 @@ body {
   pointer-events: none;
 }
 
+/* 페데스탈 그림자 — 부유하는 피사체 아래 타원 (벨벳 쇼케이스) */
+.pedestal-shadow {
+  background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.25) 45%, transparent 72%);
+  filter: blur(6px);
+}
+
 /* 미니 카드용 축소판 — 같은 메탈릭 스트로크, 작은 크기 */
 .rank-numeral-sm {
   font-family: var(--font-display), Cinzel, serif;

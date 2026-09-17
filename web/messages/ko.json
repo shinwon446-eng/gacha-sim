@@ -14,7 +14,8 @@
     "language": "언어",
     "currency": "통화",
     "deposit": "충전하기",
-    "withdraw": "출금"
+    "withdraw": "출금",
+    "welcomeToast": "웰컴 보너스 {amount} 지급 완료 — 실제 박스를 열어보세요"
   },
   "hero": {
     "royalSelection": "로열 셀렉션",
@@ -28,12 +29,17 @@
     "openNow": "지금 오픈하기",
     "viewContents": "구성품 확인",
     "billboardPicker": "빌보드 선택",
-    "billboardOf": "{title} 빌보드"
+    "billboardOf": "{title} 빌보드",
+    "headline": "영화처럼 열고, 롤렉스를 받다.",
+    "sub": "100% 정품 실물 보장. 마음에 들면 집으로 무료 배송, 마음에 안 들면 95% USDT로 즉시 현금 환전.",
+    "freeDemo": "무료 체험해보기",
+    "nowShowing": "지금 상영 중"
   },
   "card": {
     "perOpen": "1회",
     "top": "최고",
     "guaranteedMinShort": "최소 {value}",
+    "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장",
     "guaranteed": "보장",
     "openNow": "지금 오픈",
     "contents": "구성품",
@@ -143,6 +149,12 @@
   "unbox": {
     "open1": "1회 오픈",
     "open5": "5회 연속 오픈",
+    "demoLabel": "무료 체험 · 가상 개봉",
+    "demoCongrats": "축하합니다! {item}({n})에 가상 당첨되셨습니다.",
+    "demoBody": "웰컴 보너스 {bonus}로 실제 박스를 열어보세요!",
+    "demoCta": "보너스 받고 실제 열기",
+    "demoCtaClaimed": "실제 박스 열기",
+    "demoNote": "가상 체험 결과입니다 — 잔액·보관함에 반영되지 않으며 공정성 시드도 소모하지 않습니다.",
     "spinning": "개봉 중…",
     "landing": "결과 확정",
     "result": "당첨",
@@ -337,6 +349,22 @@
       "CA": "캐나다",
       "AE": "아랍에미리트"
     }
+  },
+  "onboarding": {
+    "title": "3초 안심 가이드",
+    "step1Title": "명품 박스 선택",
+    "step1Desc": "롤렉스, 테슬라, 애플 등 원하는 명품 박스를 선택합니다.",
+    "step2Title": "100% 공정 언박싱",
+    "step2Desc": "조작 불가능한 SHA-256 알고리즘으로 즉시 개봉합니다.",
+    "step3Title": "집으로 배송 or 95% 환전",
+    "step3Desc": "마음에 들면 무료 배송, 필요 없으면 95% USDT로 즉시 현금 회수합니다."
+  },
+  "counters": {
+    "shipments": "오늘 출고된 실물 명품",
+    "shipmentsUnit": "건",
+    "cashouts": "오늘 즉시 환전된 자산",
+    "verification": "공정성 검증 완료율",
+    "demoNote": "데모 지표 — 실서비스에서는 실시간 집계값이 표시됩니다"
   },
   "withdraw": {
     "title": "USDT 출금",
@@ -599,8 +627,8 @@
       "glx-wallet": "생로랑 모노그램 지갑",
       "glx-belt": "몽블랑 리버서블 벨트",
       "glx-scarf": "에르메스 트윌리 스카프",
-      "glx-card": "프라다 사피아노 카드홀더",
       "glx-key": "델보 레더 키홀더",
+      "glx-card": "프라다 사피아노 카드홀더",
       "gdy-breville": "브레빌 바리스타 익스프레스",
       "gdy-lamp": "루이스폴센 PH 5 미니",
       "gdy-dyson": "다이슨 슈퍼소닉 뉴럴",

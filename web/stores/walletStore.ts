@@ -8,8 +8,10 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 export const START_BALANCE_USDT = 1000;
+/** 무료 체험 후 1회 지급되는 웰컴 보너스 (CLAUDE.md §4-A) */
+export const WELCOME_BONUS_USDT = 5;
 
-export type TxType = "deposit_usdt" | "deposit_card" | "open" | "sellback" | "withdraw";
+export type TxType = "deposit_usdt" | "deposit_card" | "open" | "sellback" | "withdraw" | "bonus";
 
 export type TxStatus = "PENDING" | "PROCESSING" | "COMPLETED";
 
@@ -28,6 +30,8 @@ export interface Transaction {
 interface WalletState {
   balance: number;
   transactions: Transaction[];
+  /** 웰컴 보너스 수령 여부 — 브라우저당 1회 */
+  welcomeClaimed: boolean;
   hydrated: boolean;
   addTransaction: (tx: Omit<Transaction, "id" | "at">) => Transaction;
   setTransactionStatus: (id: string, status: TxStatus) => void;
@@ -35,6 +39,8 @@ interface WalletState {
   debit: (usdt: number) => boolean;
   credit: (usdt: number) => void;
   topUp: () => void;
+  /** 웰컴 보너스 지급. 이미 받았으면 false. */
+  claimWelcome: () => boolean;
 }
 
 export const useWalletStore = create<WalletState>()(
@@ -42,6 +48,7 @@ export const useWalletStore = create<WalletState>()(
     (set, get) => ({
       balance: START_BALANCE_USDT,
       transactions: [],
+      welcomeClaimed: false,
       hydrated: false,
       addTransaction: (tx) => {
         const rec: Transaction = { ...tx, id: `tx_${Date.now().toString(36)}_${Math.floor(Math.random() * 1e6).toString(36)}`, at: new Date().toISOString() };
@@ -56,11 +63,17 @@ export const useWalletStore = create<WalletState>()(
       },
       credit: (usdt) => set((s) => ({ balance: +(s.balance + usdt).toFixed(2) })),
       topUp: () => set((s) => ({ balance: +(s.balance + START_BALANCE_USDT).toFixed(2) })),
+      claimWelcome: () => {
+        if (get().welcomeClaimed) return false;
+        set((s) => ({ balance: +(s.balance + WELCOME_BONUS_USDT).toFixed(2), welcomeClaimed: true }));
+        get().addTransaction({ type: "bonus", amountUsdt: WELCOME_BONUS_USDT, ref: "welcome" });
+        return true;
+      },
     }),
     {
       name: "gachaflix.wallet",
       storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ balance: s.balance, transactions: s.transactions }),
+      partialize: (s) => ({ balance: s.balance, transactions: s.transactions, welcomeClaimed: s.welcomeClaimed }),
       skipHydration: true,
       onRehydrateStorage: () => () => useWalletStore.setState({ hydrated: true }),
     },

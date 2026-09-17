@@ -85,3 +85,15 @@ test("지갑: 출금 거래는 status 를 갖고 PENDING → PROCESSING 으로 �
   assert.equal(useWalletStore.getState().transactions[0].status, "PROCESSING");
   assert.ok(!w.debit(50.01), "잔액 초과 출금은 거부");
 });
+
+test("지갑: 웰컴 보너스는 브라우저당 1회만 지급된다", async () => {
+  const { useWalletStore, WELCOME_BONUS_USDT } = await import("../stores/walletStore");
+  useWalletStore.setState({ balance: 0, transactions: [], welcomeClaimed: false });
+  const w = useWalletStore.getState();
+  assert.equal(WELCOME_BONUS_USDT, 5);
+  assert.ok(w.claimWelcome());
+  assert.equal(useWalletStore.getState().balance, 5);
+  assert.equal(useWalletStore.getState().transactions[0].type, "bonus");
+  assert.ok(!w.claimWelcome(), "두 번째 수령 거부");
+  assert.equal(useWalletStore.getState().balance, 5);
+});
