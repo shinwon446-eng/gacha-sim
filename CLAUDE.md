@@ -1,13 +1,13 @@
 # CLAUDE.md - Ultra-Luxury GACHAFLIX (Global Mystery Box Platform)
 
-This document is the absolute single source of truth and constitution for Claude Code. All generated code, UI components, typography, and business architecture must strictly conform to these standards.
+This document is the absolute single source of truth and constitution for Claude Code. All generated code, UI components, typography, layout hierarchy, and business architecture must strictly conform to these standards.
 
 ---
 
 ## 1. Project Identity & Core Philosophy
 
 - **Project Name**: GACHAFLIX (Luxury Edition)
-- **Concept**: A high-end luxury mystery box platform merging the **cinematic depth and immersive engagement of Netflix** with the **prestige and elegance of Sotheby's and luxury boutiques (Rolex, Hermes, High-End Tech)**.
+- **Concept**: A high-end luxury mystery box platform merging the **cinematic depth of Netflix** with the **prestige and elegance of Sotheby's and luxury boutiques (Rolex, Hermes, High-End Tech)**.
 - **Core Value**: Zero-tackiness (짜침 0%), frictionless onboarding, guaranteed floor value, provably fair transparency, instant liquidity (95% sell-back), and cross-border UX.
 - **Visual Tone**: Deep Obsidian Dark (`#0B0B0B`, `#141414`), Brushed Champagne Gold (`#D4AF37`, `#E6CA65`), Netflix Crimson Red (`#E50914`), Platinum Diamond, Frosted Glassmorphism, and Hairline Metallic Borders.
 - **Design Stability Principle (CRITICAL)**:
@@ -16,7 +16,50 @@ This document is the absolute single source of truth and constitution for Claude
 
 ---
 
-## 2. Typography Golden Ratio & Readability Rules (CRITICAL FIX)
+## 2. Main Page Layout Hierarchy & Conversion Architecture (CRITICAL UPDATE)
+
+To prevent cognitive overload and maximize conversion rates, the main homepage must follow the **"Product-First & Social Proof"** layout hierarchy:
+
+```
+[ 1. Top Bar: Live Drops & Payout Ticker ]
+  └─ Real-time animated stream: "user***21 unboxed Rolex Submariner (3s ago)" | "crypto*** withdrew 150 USDT (8s ago)"
+
+[ 2. Hero Billboard (Streamlined & Visually Striking) ]
+  ├─ Left: Single prestige badge, H1, 1-line sub-copy, compact price pill, and 2 CTA buttons:
+  │        [지금 오픈하기 (Red)]  [무료 체험해보기 (Gold Outline)]
+  └─ Right: Floating 3D Luxury Pedestal with brilliant studio rim-lighting (NOT buried in murky dark shadows).
+
+[ 3. Primary Mystery Box Carousels (IMMEDIATE PRODUCT EXPOSURE) ]
+  ├─ "🔥 지금 가장 많이 열리는 박스 TOP 10" (Netflix 1, 2, 3 outlined numerals)
+  └─ Compact cards by default; sub-items and odds bar unfold smoothly ONLY on Hover.
+
+[ 4. Reassurance & Social Proof Section (Positioned AFTER the first box row) ]
+  ├─ 3-Step Interactive Visual Guide: [1. 박스 선택 ➔ 2. 공정 오픈 ➔ 3. 무료 배송 or 95% 환전]
+  └─ Live Credibility Counters: Today's Shipments (142) | Settled USDT ($328,450) | Fairness Rate (100%)
+
+[ 5. Secondary Curated Carousels ]
+  └─ "💎 럭셔리 워치 & 하이엔드", "⚡ 애플 & 차세대 게이밍 기어", "🎯 초보자 가성비 보장 박스"
+```
+
+---
+
+## 3. Card Anatomy: True Netflix Hover Expansion
+
+- **Default State (Compact & Clean)**:
+  - 16:9 or 4:5 luxury box artwork.
+  - Box Title (single line, truncate).
+  - Price in golden ratio (`58.00 USDT`) + Max Multiplier tag (`1650배`).
+  - Subtle `100% 꽝 없음` micro-badge.
+  - **DO NOT display long sub-item lists by default**, which makes cards vertically bloated.
+- **Hover State (Framer Motion Expansion)**:
+  - Smooth 1.15x scale elevation + 3D tilt tracking cursor.
+  - Reveals the 3px tier probability progress bar.
+  - Unfolds the 3 featured luxury item thumbnails with individual prices.
+  - Shows quick action buttons: `[바로 열기]` and `[상세 정보]`.
+
+---
+
+## 4. Typography Golden Ratio & Readability Rules
 
 ### Number vs. Currency Ticker Separation Rule
 **NEVER combine the number and currency ticker in one monolithic giant string** (e.g., `text-5xl: 0.00 USDT` is strictly prohibited).
@@ -39,51 +82,7 @@ Large amounts in KRW (e.g., `₩1,350,000`) or decimals in USDT must never break
 
 ---
 
-## 3. High-Converting Hero Hooking Copy & Visual Standards
-
-### A. 3-Language Cinematic Headline Copy
-- **Korean (KO)**:
-  - Main: **"영화처럼 열고, 롤렉스를 받다."** (*Cinematic Thrill, Real Luxury.*)
-  - Sub: "100% 정품 실물 보장. 마음에 들면 집으로 무료 배송, 마음에 안 들면 95% USDT로 즉시 현금 환전."
-- **English (EN)**:
-  - Main: **"Cinematic Thrills. Authentic Luxury."**
-  - Sub: "100% Authentic Drops. Ship directly to your door, or liquidate instantly for 95% USDT."
-- **Chinese (ZH)**:
-  - Main: **"如看大片般开箱，劳力士真实发货。"**
-  - Sub: "100%正品实物保障。满意即申请包邮发货到家，不满意支持95% USDT即时极速折现。"
-
-### B. Visual Presentation Rules
-1. **Floating Hero Pedestal (벨벳 쇼케이스 3D 연출)**:
-   - High-value featured items (Rolex, Tesla Cybertruck, RTX 5090) sit on a dark pedestal with a soft radial studio rim-light (`radial-gradient(circle at 50% 60%, rgba(230, 202, 101, 0.15) 0%, transparent 70%)`).
-2. **Live Credibility Counters (실시간 누적 지표 카운터)**:
-   - Live metrics displayed below the hero banner:
-     - 📦 Today's Physical Shipments: `142 items`
-     - 💎 Today's Settled USDT Cashouts: `328,450 USDT`
-     - 🛡️ Provably Fair Verification Rate: `100.00%`
-
----
-
-## 4. Frictionless Onboarding & Anti-Drop Flows (3대 진입장벽 파괴)
-
-### A. 1-Second Free Demo Mode (노가입 가상 체험 모드)
-- On the billboard banner, place `[무료 체험해보기 (Free Demo)]` alongside `[지금 오픈하기]`.
-- Allows skeptical new visitors to experience the thrilling unboxing roulette without logging in or spending money.
-- Win popup: "Congratulations! You simulated Rolex Submariner (1,200x). Open real boxes with your 5 USDT welcome bonus! [Claim & Open Real Box]".
-
-### B. 3-Step Interactive Visual Guide Strip (3초 이해 가이드)
-- Fixed right below the hero billboard:
-  ```
-  [Step 1. 명품 박스 선택] ➔ [Step 2. 100% 공정 언박싱] ➔ [Step 3. 집으로 배송 or 95% 즉시 환전]
-  ```
-- Instant clarity on how the platform operates in under 5 seconds.
-
-### C. Guaranteed Floor Value Badge (100% 꽝 없음 보장)
-- Every box card prominently shows: `[100% 꽝 없음 · 최소 ₩39,000 상당 보장]`.
-- Eliminates loss aversion anxiety.
-
----
-
-## 5. Trust & Verification Architecture (직관적 신뢰 시스템)
+## 5. Trust, Payout & Verification Architecture
 
 ### A. 3-Step 1-Click Visual Verifier (수학 없는 1초 비주얼 검증기)
 - Located on every unboxing result and inventory card: `[🛡️ 공정성 1초 검증]`.
@@ -140,36 +139,35 @@ Featured on `/fairness` and the Homepage:
 
 ---
 
-## 부록 A. 이전 판에서 계승되는 규범 (v2 → v3)
+## 부록 A. 이전 판에서 계승되는 규범 (v2/v3 → v4)
 
-v3 본문이 다루지 않는 항목은 v2 규범을 그대로 유지한다. 코드가 이미 이 값으로 구현되어 있다.
+v4 본문이 다루지 않는 항목은 이전 규범을 그대로 유지한다. 코드가 이미 이 값으로 구현되어 있다.
 
 - **색·표면 토큰**: obsidian `#0B0B0B` / canvas `#141414` / surface `#181818` / elevated `#222222`, champagne `#E6CA65` / metallic `#D4AF37` / dark gold `#A27B1E`, crimson `#E50914`.
 - **등급**: ROYAL `#E6CA65`(20x+) / PRESTIGE `#93C5FD`(6~20x) / EXECUTIVE `#C084FC`(2~6x) / CURATED `#94A3B8`(기본 보장). 배수 = 실판매가 ÷ 오픈 가격 (`web/lib/tiers.ts`).
-- **헤어라인 메탈릭 보더·페데스탈 림라이트·1.12x 틸트 호버·오버사이즈 순위 숫자**: `globals.css` 유틸(`.border-metallic-*`, `.pedestal-glow`, `.rank-numeral`)과 `BoxCard`.
+- **v3 §3-A 3개 국어 히어로 카피·§3-B 림라이트/신뢰 카운터·§4 온보딩(무료 체험·3-Step·꽝 없음 뱃지)**: v4 §2 계층에 그대로 들어간다 — 위치만 바뀐다.
+- **헤어라인 메탈릭 보더·페데스탈 림라이트·오버사이즈 순위 숫자**: `globals.css` 유틸(`.border-metallic-*`, `.pedestal-glow(-strong)`, `.pedestal-shadow`, `.rank-numeral`).
 - **Provably Fair**: `HMAC-SHA256(serverSeed, "clientSeed:nonce")` 앞 8 hex → `mod 1,000,000`. (규범 [0, 99999]보다 해상도를 높인 이유: 0.0004% 구간이 0칸이 되는 것을 막기 위함.)
 - **경제 불변식** (`web/lib/products.ts`, 모듈 로드 시 위반하면 throw): 가격 = `prettyCeil(EV / retailRtp)`, `EV × REFUND_RATE < price`, `retailRtp < 1/REFUND_RATE`, 보장 박스는 `guaranteedMin ≥ price` 이자 `guaranteedMin × REFUND_RATE < price`. `REFUND_RATE = 0.95`.
-- **i18n / 통화**: `next-intl` 정적 라우팅 `app/[locale]/` (ko/en/zh), 메시지는 `scripts/gen-messages.py`가 생성하며 테스트가 3개 국어 키 집합·혼용 0건을 강제. 단일 통화 표기는 `formatCurrency` / `<Money>` 만 사용.
-- **배포**: GitHub Pages 정적 export(basePath `/gacha-sim`, 브랜치 `feat/netflix-gacha-web`). 미들웨어·API 라우트 없음. 로그인·DB·PG·핫월렛은 없으며 클라이언트 모의(mock)로 흐름만 재현하고 화면에 "데모"임을 명시한다.
+- **i18n / 통화**: `next-intl` 정적 라우팅 `app/[locale]/` (ko/en/zh), 메시지는 `scripts/gen-messages.py`가 생성(`npx tsx scripts/dump-products.ts` 선행)하며 테스트가 3개 국어 키 집합·혼용 0건을 강제. 단일 통화 표기는 `formatCurrency` / `<Money>` 만 사용.
+- **배포**: GitHub Pages 정적 export(basePath `/gacha-sim`, 브랜치 `feat/netflix-gacha-web`). 미들웨어·API 라우트 없음. 로그인·DB·PG·핫월렛·물류 웹훅은 없으며 클라이언트 모의(mock)로 흐름만 재현하고 화면에 "데모"임을 명시한다. 모의 TxID·운송장·리저브 주소는 형식만 맞고 실제 조회되지 않는다.
 
-## 부록 B. v3 규범 대비 현재 코드베이스 격차 (2026-09-17)
+## 부록 B. v4 규범 대비 현재 코드베이스 격차 (2026-09-17)
 
-| v3 항목 | 상태 | 위치 / 비고 |
+| v4 항목 | 상태 | 위치 / 비고 |
 |---|---|---|
-| §2 숫자·통화 단위 분리 타이포 | ✅ 완료 | `components/ui/Money.tsx`, `splitCurrency` — 보관함·헤더·룰렛 팝업 적용. 홈 히어로/카드 가격은 아직 `fmt()` 단일 문자열 |
-| §3-A 3개 국어 히어로 헤드라인·서브 카피 | ❌ | `BillboardHero` — 현재 박스 tagline 노출 |
-| §3-B-1 플로팅 페데스탈 림라이트 | ✅ 부분 | `.pedestal-glow` 적용, "공중 부양 3D" 연출은 없음 |
-| §3-B-2 실시간 신뢰 지표 카운터 | ❌ | 홈 |
-| §4-A 노가입 무료 체험 데모 | ❌ | 룰렛 엔진(`UnboxingRoulette`) 재사용 가능. 잔액 차감 없는 데모 모드 + 전환 팝업 필요 |
-| §4-B 3-Step 안심 가이드 스트립 | ❌ | 홈 |
-| §4-C "100% 꽝 없음 · 최소 ₩N 보장" 뱃지 | ✅ 부분 | `BoxCard` 에 "Min ₩…" 표기 있음. 문구·고대비 스타일 미반영 |
-| §5-A 3-Step 1-Click 비주얼 검증기 | ❌ | `/fairness` 는 hex 입력형 검증기. 타임라인 UI 신설 + 전문가 토글로 이동 |
-| §5-B 실지급/실배송 라이브 피드, §5-B-3 지급 준비금 | ❌ | 백엔드 없음 → **모의 피드**. 익스플로러 링크는 실제 존재하지 않는 txHash 를 가리키게 되므로 "데모 데이터" 라벨 필수 |
-| §6-A USDT 입금 | ✅ 완료 | `UsdtDepositTab` (TRC-20/BEP-20, QR, 복사, 컨펌 인디케이터, 모의 웹훅) |
-| §6-B 출금 + 온체인 링크 | ✅ 부분 | `WithdrawalModal` (수수료·주소 검증·MAX·계산기·PENDING→PROCESSING). **BROADCASTING 상태명·TxID·TronScan/BscScan 링크 없음** |
-| §7-A 데일리 무료 상자 | ❌ | 로그인 없음 → 브라우저 단위 24h 타이머로 대체 |
-| §7-B 커뮤니티 후기 월 | ❌ | `/community` 신설, 업로드 백엔드 없음 → 모의 갤러리 |
-| §8 보관함 표준 | ✅ 완료 | 압축 배너·출금/일괄판매 CTA·전체선택·플로팅 바·정렬·빈 화면 TOP 3·배송 추적 모달 |
-| 95% 즉시 환전 | ✅ 완료 | `REFUND_RATE = 0.95`, 박스 데이터 재조정 완료 |
+| §2-1 최상단 라이브 드랍 티커 | ❌ | 홈 헤더 직하 — 모의 이벤트 무한 루프 스트립 신설 |
+| §2-2 히어로 다이어트(뱃지 1개 · H1 · 서브 1줄 · 가격 칩 · CTA 2개), 비주얼 마스킹 제거 | ❌ | `BillboardHero` — 현재 뱃지 3개, "지금 상영 중" 칩, CTA 3개, 상위 구성 3종, 좌측 26% + 하단 페이드 |
+| §2-3 히어로 직하 TOP 10 캐러셀 | ❌ | 현재 순서: 히어로 → 3-Step → 카운터 → 등급 범례 → TOP 10 |
+| §2-4 3-Step·카운터를 첫 캐러셀 아래로 | ❌ | 순서 재배치 |
+| §2-5 보조 캐러셀 명칭(럭셔리 워치 & 하이엔드 / 애플 & 게이밍 기어 / 초보자 가성비 보장) | ❌ | `rows.*` 메시지 + 셀렉터 |
+| §3 카드: 기본 콤팩트(서브 3종 숨김), 호버 1.15x 확장 시 확률 바·썸네일 3개·퀵 버튼 | ❌ | `BoxCard` — 현재 1.12x, 썸네일 3개 상시 노출 |
+| §4 숫자·통화 분리 타이포 | ✅ | `components/ui/Money.tsx` — 보관함·헤더·히어로·카드·룰렛·피드 |
+| §5-A 3-Step 비주얼 검증기 | ✅ | `VisualVerifier` (`/fairness`, 전문가 모드 토글). "모든 언박싱 결과·보관함 카드"의 버튼은 기존 hex 모달(`FairnessModal`) — 비주얼 타임라인으로 교체 여지 |
+| §5-B 실지급/실배송 피드 + 준비금 | ✅ (모의) | `ProofFeed`, `lib/proofFeed.ts` — `/fairness` 전체, 홈 요약 4행 |
+| §6-A 입금 / §6-B 출금(BROADCASTING · TxID · TronScan/BscScan) | ✅ (모의) | `UsdtDepositTab`, `WithdrawalModal` |
+| §7-A 데일리 무료 상자 | ❌ | 로그인 없음 → 브라우저 단위 24h 타이머 |
+| §7-B `/community` 후기 월 | ❌ | 업로드 백엔드 없음 → 모의 갤러리 |
+| §8 보관함 표준 | ✅ | 배너·출금/일괄판매·전체선택·플로팅 바·정렬·빈 화면 TOP 3·배송 추적(택배사 링크) |
 
-**PROMPTS.md 진행 순서**: [프롬프트 2]는 온체인 링크·BROADCASTING 상태·택배사 추적 링크만 남았다. [프롬프트 1] → [2 잔여] → [3] → [4] 순으로 진행한다.
+**PROMPTS.md 진행 순서**: [프롬프트 1(v4)] → [4]. [2]·[3]은 완료.
