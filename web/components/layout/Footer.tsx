@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { ShieldCheck, Lock, CreditCard, Coins } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { SUPPORT, isPreview } from "@/lib/runtime";
+import { SUPPORT } from "@/lib/runtime";
 
 const BADGES = [
   { key: "trc20", Icon: Coins, label: "USDT TRC-20" },
@@ -16,7 +16,6 @@ const BADGES = [
 /**
  * 넷플릭스 럭셔리 푸터 (CLAUDE.md §5).
  *   1열 브랜드 + 슬로건 + 지원/보안 뱃지 · 2열 3단 링크(서비스 / 이용 안내 / 고객지원) · 3열 면책 + 카피라이트.
- * preview 모드(백엔드 미연결)에서는 마지막 줄에 그 사실을 한 줄로 알린다.
  */
 export function Footer() {
   const t = useTranslations("footer");
@@ -67,10 +66,7 @@ export function Footer() {
       </div>
       <div className="mx-auto mt-8 max-w-7xl border-t border-hairline pt-5">
         <p className="max-w-4xl text-[11px] leading-relaxed text-faint">{t("disclaimer")}</p>
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px] text-faint">
-          <span>© {year} GACHAFLIX. All rights reserved.</span>
-          {isPreview() && <span className="text-[10px] text-faint">{t("preview")}</span>}
-        </div>
+        <div className="mt-3 text-[11px] text-faint">© {year} GACHAFLIX. All rights reserved.</div>
       </div>
     </footer>
   );

@@ -30,8 +30,8 @@
     "viewContents": "看看里面",
     "billboardPicker": "选择展示",
     "billboardOf": "{title} 展示",
-    "headline": "1 美元，博一块劳力士。",
-    "sub": "中了归你，没中退 95%。",
+    "headline": "1 美元，博劳力士和 iPhone。",
+    "sub": "中了 100% 归你，没中也立即折现 95%。",
     "freeDemo": "免费试玩",
     "openFor": "🔥 {price} 开一发",
     "badge": "1 美元起的奢品头奖",
@@ -441,6 +441,7 @@
   "ticker": {
     "label": "实时开箱动态",
     "live": "LIVE",
+    "lineup": "{box} · {item} {mult} · 概率 {rate}",
     "win": "在 {price} 盲盒中开出 {item}",
     "cashout": "已折现 {amount}",
     "ship": "申请发货 {item}",
@@ -564,8 +565,7 @@
       "discord": "官方 Discord",
       "notice": "公告频道"
     },
-    "disclaimer": "GACHAFLIX 是面向全球用户的电商盲盒平台。所有开箱结果均通过不可篡改的 SHA-256 算法透明公开，中奖商品保证 100% 实物发货或即时折现为 USDT。",
-    "preview": "预览环境 — 支付、提现与发货将在接入后端后启用。"
+    "disclaimer": "GACHAFLIX 是面向全球用户的电商盲盒平台。所有开箱结果均通过不可篡改的 SHA-256 算法透明公开，中奖商品保证 100% 实物发货或即时折现为 USDT。"
   },
   "legalDocs": {
     "eyebrow": "使用指南",

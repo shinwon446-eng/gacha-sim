@@ -314,8 +314,7 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
                 })}{" "}
                 {meta.guaranteed
                   ? t("modal.guaranteedYes", { min: fmt(box.guaranteedMin) })
-                  : t("modal.guaranteedNo", { min: fmt(box.guaranteedMin) })}{" "}
-                {t("modal.prototype")}
+                  : t("modal.guaranteedNo", { min: fmt(box.guaranteedMin) })}
               </p>
             </section>
 

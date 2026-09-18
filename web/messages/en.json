@@ -30,8 +30,8 @@
     "viewContents": "What's inside",
     "billboardPicker": "Billboard picker",
     "billboardOf": "{title} billboard",
-    "headline": "$1. One shot at a Rolex.",
-    "sub": "Hit, it's yours. Miss, 95% back.",
+    "headline": "$1. A shot at a Rolex & an iPhone.",
+    "sub": "Hit, it's 100% yours. Miss, 95% cashed out instantly.",
     "freeDemo": "Try free",
     "openFor": "🔥 Spin for {price}",
     "badge": "Luxury jackpots from $1",
@@ -441,6 +441,7 @@
   "ticker": {
     "label": "Live drops",
     "live": "LIVE",
+    "lineup": "{box} · {item} {mult} · odds {rate}",
     "win": "pulled {item} from a {price} box",
     "cashout": "cashed out {amount}",
     "ship": "requested shipping for {item}",
@@ -564,8 +565,7 @@
       "discord": "Official Discord",
       "notice": "Announcements"
     },
-    "disclaimer": "GACHAFLIX is a global e-commerce mystery box platform. Every opening result is published transparently through a tamper-proof SHA-256 algorithm, and every winning item is guaranteed to ship as a physical product or to cash out instantly to USDT.",
-    "preview": "Preview environment — payments, withdrawals and shipping activate once the backend is connected."
+    "disclaimer": "GACHAFLIX is a global e-commerce mystery box platform. Every opening result is published transparently through a tamper-proof SHA-256 algorithm, and every winning item is guaranteed to ship as a physical product or to cash out instantly to USDT."
   },
   "legalDocs": {
     "eyebrow": "Help & Policies",

@@ -2,13 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Crown, Gem, Truck } from "lucide-react";
+import { Crown, Gem, Truck, Flame } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
-import { BOX_BY_SLUG } from "@/lib/products";
-import { tierOf } from "@/lib/tiers";
-import { buildLocalDrops, localHandle, type LiveDrop } from "@/lib/liveDrops";
+import { BOX_BY_SLUG, formatRate } from "@/lib/products";
+import { formatMultiple, tierOf } from "@/lib/tiers";
+import { buildLineupDrops, buildLocalDrops, localHandle, type LiveDrop } from "@/lib/liveDrops";
 import { isLive } from "@/lib/runtime";
 import { api } from "@/lib/api";
 import { useInventoryStore } from "@/stores/inventoryStore";
@@ -29,14 +29,15 @@ function useRelative(locale: string) {
 
 /**
  * 최상단 라이브 드랍 & 지급 티커 (CLAUDE.md §4-1).
- * live 모드: API 스트림(30초 폴링). preview 모드: 이 기기의 실제 당첨·환전·출고 기록. 기록이 없으면 렌더하지 않는다.
+ * live 모드: API 스트림(30초 폴링). preview 모드: 이 기기의 실제 당첨·환전·출고 기록. 기록이 없으면 공개 잭팟 라인업(사실)을 흘린다 — 타인 활동을 지어내지 않는다.
  * 목록을 두 번 렌더해 좌로 무한 루프(.ticker-track), 호버하면 멈춘다. 시각은 마운트 후에만 렌더한다.
  */
 export function LiveTicker({ className }: { className?: string }) {
   const t = useTranslations("ticker");
+  const tr = useTranslations();
+  const { boxTitle, itemName } = useProductText();
   const locale = useLocale();
   const { fmt } = useCurrency();
-  const { itemName } = useProductText();
   const rel = useRelative(locale);
   const items = useInventoryStore((s) => s.items);
   const transactions = useWalletStore((s) => s.transactions);
@@ -62,29 +63,33 @@ export function LiveTicker({ className }: { className?: string }) {
     };
   }, []);
 
-  const drops = useMemo(() => remote ?? buildLocalDrops(items, transactions, localHandle(clientSeed)), [remote, items, transactions, clientSeed]);
-  if (now === null || drops.length === 0) return null;
+  const drops = useMemo(() => {
+    const local = remote ?? buildLocalDrops(items, transactions, localHandle(clientSeed));
+    return local.length > 0 ? local : buildLineupDrops();
+  }, [remote, items, transactions, clientSeed]);
+  if (now === null) return null;
 
   const render = (d: LiveDrop, dup: boolean) => {
     const box = d.boxSlug ? BOX_BY_SLUG[d.boxSlug] : undefined;
     const item = box?.items.find((i) => i.id === d.itemId);
     const tier = box && item ? tierOf(item.value, box.price) : undefined;
-    const Icon = d.kind === "win" ? Crown : d.kind === "cashout" ? Gem : Truck;
+    const Icon = d.kind === "win" ? Crown : d.kind === "cashout" ? Gem : d.kind === "lineup" ? Flame : Truck;
     return (
       <li key={`${d.id}${dup ? "-b" : ""}`} aria-hidden={dup || undefined} className="flex flex-none items-center gap-2 whitespace-nowrap px-4 text-[11px] leading-none">
         <Icon className={cn("h-3 w-3 flex-none", d.kind === "win" ? "text-gold-champagne" : d.kind === "cashout" ? "text-tier-prestige" : "text-secondary")} strokeWidth={2.4} />
-        <span className="font-mono text-secondary">[{d.user}]</span>
+        {d.user && <span className="font-mono text-secondary">[{d.user}]</span>}
         <span className="text-muted">
+          {d.kind === "lineup" && item && box && t("lineup", { box: boxTitle(box), item: itemName(item), mult: tr("tiers.multiple", { n: formatMultiple(item.value / box.price) }), rate: formatRate(item.dropRate) })}
           {d.kind === "win" && item && box && t("win", { item: itemName(item), price: fmt(box.price) })}
           {d.kind === "cashout" && t("cashout", { amount: fmt(d.amountUsdt ?? 0) })}
           {d.kind === "ship" && item && t("ship", { item: itemName(item) })}
         </span>
-        {tier && d.kind === "win" && (
+        {tier && (d.kind === "win" || d.kind === "lineup") && (
           <span className="rounded-sm px-1 py-0.5 text-[9px] font-bold uppercase tracking-wider" style={{ color: tier.accent, background: `${tier.accent}1f` }}>
             {tier.label}
           </span>
         )}
-        <span className="text-faint">({rel(d.at, now)})</span>
+        {d.kind !== "lineup" && <span className="text-faint">({rel(d.at, now)})</span>}
         <span aria-hidden className="ml-2 h-3 w-px bg-hairline" />
       </li>
     );

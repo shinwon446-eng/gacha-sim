@@ -4,8 +4,9 @@
  */
 import type { OwnedItem } from "@/stores/inventoryStore";
 import type { Transaction } from "@/stores/walletStore";
+import { BOXES, dropTable } from "@/lib/products";
 
-export type LiveDropKind = "win" | "cashout" | "ship";
+export type LiveDropKind = "win" | "cashout" | "ship" | "lineup";
 
 export interface LiveDrop {
   id: string;
@@ -22,6 +23,14 @@ export interface LiveDrop {
 /** 클라이언트 시드 → 이 기기의 마스킹 핸들 ("u_3f9c***") */
 export function localHandle(clientSeed: string): string {
   return `u_${(clientSeed || "anon").slice(0, 4)}***`;
+}
+
+/** 활동 기록이 없을 때 — 지어낸 당첨 대신 공개된 잭팟 라인업(박스 · 최고 상품 · 배수 · 확률)을 흘린다 */
+export function buildLineupDrops(): LiveDrop[] {
+  return BOXES.map((b) => {
+    const top = dropTable(b)[0];
+    return { id: `lineup_${b.slug}`, kind: "lineup" as const, user: "", boxSlug: b.slug, itemId: top.id, at: b.releasedAt };
+  });
 }
 
 /** 이 기기의 실제 활동 → 티커 이벤트 (최신순, 최대 limit) */

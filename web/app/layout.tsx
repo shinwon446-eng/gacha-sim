@@ -28,7 +28,7 @@ const PRETENDARD_CSS =
 export const metadata: Metadata = {
   title: "GACHAFLIX — Luxury Mystery Box",
   description:
-    "롤렉스, 에르메스, 하이엔드 테크. 확률은 전량 공개되며 결과는 실물 발송 또는 즉시 환전으로 정산됩니다. 현재 프로토타입이며 잔액과 결제는 모의 데이터입니다.",
+    "1달러로 롤렉스, 아이폰, 골드바까지. 확률 전량 공개, 결과는 SHA-256으로 검증. 당첨은 실물 배송 또는 95% USDT 즉시 환전.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

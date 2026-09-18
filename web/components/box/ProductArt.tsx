@@ -119,8 +119,7 @@ export function ProductArt({
           onLoad={() => setLoadedSrc(image.src)}
           onError={() => setFailedSrc(image.src)}
           className={cn(
-            "absolute inset-0 h-full w-full transition-opacity duration-500",
-            loaded ? "opacity-100" : "opacity-0",
+            "absolute inset-0 h-full w-full",
             mode === "contain"
               ? "object-contain p-[8%] drop-shadow-[0_22px_30px_rgba(0,0,0,0.65)]"
               : "object-cover",
@@ -128,6 +127,10 @@ export function ProductArt({
         />
       ) : (
         <BoxSilhouette accent={accent} size={fallbackSize} />
+      )}
+      {/* 로딩 매트 — 이미지 위에 덮였다가 로드되면 걷힌다. 어떤 상태에서도 이미지가 opacity 0 에 갇히지 않는다 */}
+      {showImage && (
+        <span aria-hidden className={cn("pointer-events-none absolute inset-0 bg-surface transition-opacity duration-500", loaded ? "opacity-0" : "opacity-100")} />
       )}
 
       {/* 사진(cover)은 배경이 밝을 수 있어 다크 톤으로 눌러준다 */}
