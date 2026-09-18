@@ -27,13 +27,13 @@
     "guaranteedMin": "Guaranteed Minimum {value}",
     "aboveOpenPrice": "Above open price",
     "openNow": "Open Now",
-    "viewContents": "See what's inside",
+    "viewContents": "What's inside",
     "billboardPicker": "Billboard picker",
     "billboardOf": "{title} billboard",
-    "headline": "One dollar. One shot at a Rolex. Miss? 95% comes straight back.",
-    "sub": "Ship it home for free or cash out to USDT in a second. If it hits, it's 100% yours.",
-    "freeDemo": "Try it free, no money down",
-    "openFor": "🔥 Spin now for {price}",
+    "headline": "$1. One shot at a Rolex.",
+    "sub": "Hit, it's yours. Miss, 95% back.",
+    "freeDemo": "Try free",
+    "openFor": "🔥 Spin for {price}",
     "badge": "Luxury jackpots from $1",
     "nowShowing": "Now Showing",
     "topMultipleShort": "up to {n}"
@@ -194,11 +194,11 @@
     "results": "5 results",
     "total": "Total value",
     "paid": "Paid {price}",
-    "sellBack": "Cash out 95% now · {amount}",
-    "sellBackAll": "Cash out all at 95% · {amount}",
+    "sellBack": "Cash out 95% · {amount}",
+    "sellBackAll": "Cash out all · {amount}",
     "sellBackNote": "{rate} of market value is credited to your balance instantly",
     "sold": "Cashed out — {amount} credited",
-    "claimShipping": "Ship it to my door",
+    "claimShipping": "Ship to me",
     "shippingNotice": "International shipping & customs notice",
     "shippingBody": "Destination duties/VAT and international shipping (DHL/FedEx at cost) are billed separately.",
     "verify": "1-second fairness check",
@@ -306,18 +306,18 @@
     "soldFor": "Refunded {amount}",
     "tracking": "Tracking",
     "trackingPending": "Awaiting tracking number",
-    "sell": "Cash out 95% now",
-    "ship": "Ship it to my door",
+    "sell": "Cash out 95%",
+    "ship": "Ship to me",
     "verify": "1-second fairness check",
     "select": "Select",
     "selected": "{n} selected",
     "selectAll": "Select all",
     "clearSelection": "Clear",
-    "sellSelected": "Cash out selected at {rate}",
+    "sellSelected": "Cash out selected · {rate}",
     "selectedValue": "Total value:",
     "soldForLabel": "Refunded",
     "totalValue": "Total vault value",
-    "sellAll": "Cash out all at 95%",
+    "sellAll": "Cash out all",
     "sort": "Sort",
     "sorts": {
       "newest": "Newest",
@@ -448,12 +448,12 @@
   },
   "onboarding": {
     "title": "How it works in 3 steps",
-    "step1Title": "Pick a luxury box",
-    "step1Desc": "Choose the box you want — Rolex, Tesla, Apple and more.",
-    "step2Title": "100% provably fair unboxing",
-    "step2Desc": "Opened instantly with a tamper-proof SHA-256 algorithm.",
-    "step3Title": "Ship home or cash out 95%",
-    "step3Desc": "Love it? Free shipping. Don't need it? Liquidate instantly for 95% USDT."
+    "step1Title": "Pick a box",
+    "step1Desc": "From $1. Rolex, Tesla, Apple.",
+    "step2Title": "Open it fair",
+    "step2Desc": "Sealed by SHA-256. No tampering.",
+    "step3Title": "Ship or cash out 95%",
+    "step3Desc": "Free shipping, or USDT in a second."
   },
   "counters": {
     "label": "Trust metrics",
@@ -687,62 +687,62 @@
     "boxes": {
       "dollar-apple": {
         "title": "One Dollar Apple Jackpot",
-        "tagline": "One coffee's worth for a shot at the iPhone 16 Pro. Miss, and 0.85 USDT comes straight back.",
+        "tagline": "$1 for an iPhone 16 Pro. Miss, 0.85 USDT back.",
         "badge": "$1"
       },
       "dollar-galaxy": {
         "title": "One Dollar Galaxy Jackpot",
-        "tagline": "$1 for a shot at the Galaxy Z Fold8 1TB. Miss, and 0.85 USDT is back instantly.",
+        "tagline": "$1 for a Galaxy Z Fold8. Miss, 0.85 USDT back.",
         "badge": "$1"
       },
       "dollar-gaming": {
         "title": "One Dollar Gaming Jackpot",
-        "tagline": "$1 for RTX 5090 down to Switch 2. Steam gift cards drop often.",
+        "tagline": "$1 for RTX 5090 or Switch 2. Miss, 0.85 USDT back.",
         "badge": "$1"
       },
       "starter-ps5": {
         "title": "Coffee Ps5 Starter",
-        "tagline": "$3 for a shot at the PS5 Pro. Miss, and 2.5 USDT comes back.",
+        "tagline": "$3 for a PS5 Pro. Miss, 2.5 USDT back.",
         "badge": "Tech"
       },
       "starter-macbook": {
         "title": "Coffee & Burger Macbook Jackpot",
-        "tagline": "$5 for the MacBook Pro M4 Max (1,100x). Miss, and 4.2 USDT is back instantly.",
+        "tagline": "$5 for a MacBook Pro M4 Max. Miss, 4.2 USDT back.",
         "badge": "Tech"
       },
       "starter-phone": {
         "title": "Five Dollar Iphone 17 Jackpot",
-        "tagline": "$5 for the iPhone 17 Pro Max 1TB — Apple Watch Ultra 3 is in there too.",
+        "tagline": "$5 for an iPhone 17 Pro Max. Miss, 4.2 USDT back.",
         "badge": "Tech"
       },
       "vault-submariner": {
         "title": "Rolex Submariner Vault",
-        "tagline": "$20 for the Rolex Submariner (780x). Miss, and 17.5 USDT comes straight back.",
+        "tagline": "$20 for a Rolex Submariner. Miss, 17.5 USDT back.",
         "badge": "Watches"
       },
       "vault-omega": {
         "title": "Swiss Watch Vault",
-        "tagline": "$25 from Omega Aqua Terra down to Tissot PRX. The floor is a walnut watch box.",
+        "tagline": "$25 for Omega, Tudor, Tissot. Miss, 21.8 USDT back.",
         "badge": "Watches"
       },
       "vault-handbag": {
         "title": "Luxury Handbag Vault",
-        "tagline": "$30 for the Hermès Birkin 25 Croc (2,000x). Miss, and 26 USDT is back.",
+        "tagline": "$30 for a Hermès Birkin. Miss, 26 USDT back.",
         "badge": "Luxury"
       },
       "vault-gold": {
         "title": "Gold Bar Vault",
-        "tagline": "$50 for a 1kg gold bar (2,000x). Silver bars and gold coins hold the floor.",
+        "tagline": "$50 for a 1kg gold bar. Miss, 43.7 USDT back.",
         "badge": "Gold"
       },
       "jackpot-cybertruck": {
         "title": "Cybertruck Jackpot",
-        "tagline": "$100 for the Cybertruck Cyberbeast (1,300x). Miss, and 95 USDT comes back.",
+        "tagline": "$100 for a Cybertruck. Miss, 95 USDT back.",
         "badge": "Dream Box"
       },
       "jackpot-supercar": {
         "title": "Supercar Jackpot",
-        "tagline": "$100 for the Porsche 911 Carrera (1,300x). Ducati and VanMoof are in there too.",
+        "tagline": "$100 for a Porsche 911. Miss, 95 USDT back.",
         "badge": "Dream Box"
       }
     },

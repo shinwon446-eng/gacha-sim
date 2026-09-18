@@ -7,7 +7,7 @@ import { cn } from "@/lib/format";
 import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
-import { dropTable, isValueGuaranteed, type ProductBox, type ProductItem } from "@/lib/products";
+import { dropTable, type ProductBox, type ProductItem } from "@/lib/products";
 import { boxFloorTier, boxTopTier, formatMultiple, glow, tierBreakdown, tierOf, topMultiple } from "@/lib/tiers";
 import { TierStrip } from "@/components/box/TierStrip";
 import { ProductArt } from "@/components/box/ProductArt";
@@ -98,7 +98,7 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
 
   const meta = useMemo(
     () => ({
-      guaranteed: isValueGuaranteed(box),
+      guaranteed: box.guaranteedMin >= box.price, // "오픈가 이상" 문구는 바닥이 가격 이상일 때만 (잭팟 박스)
       floorTier: boxFloorTier(box),
       topTier: boxTopTier(box),
       mult: topMultiple(box),

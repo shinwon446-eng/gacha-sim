@@ -28,11 +28,12 @@ test("ko / en / zh 키 집합이 완전히 같다", () => {
 
 test("지정 문구가 정확히 들어 있다 (CLAUDE.md §2 구어체 카피)", () => {
   const spec: Record<string, [string, string, string]> = {
-    "hero.headline": ["커피값 1달러로 롤렉스 긁어봅니다. 안 뜨면? 95% 바로 돌려받으세요.", "One dollar. One shot at a Rolex. Miss? 95% comes straight back.", "一杯咖啡的钱，博一块劳力士。没中？95% 立刻退。"],
-    "hero.viewContents": ["뭐 들어있는지 보기", "See what's inside", "看看里面有什么"],
-    "hero.freeDemo": ["돈 안 내고 손맛 보기 (무료)", "Try it free, no money down", "不花钱先过把瘾（免费）"],
-    "inventory.sell": ["95% 현금으로 즉시 회수", "Cash out 95% now", "95% 立即折现"],
-    "inventory.ship": ["우리 집으로 배송받기", "Ship it to my door", "寄到我家"],
+    "hero.headline": ["1달러로 롤렉스, 긁어보세요.", "$1. One shot at a Rolex.", "1 美元，博一块劳力士。"],
+    "hero.sub": ["터지면 내 것. 안 뜨면 95% 돌려드립니다.", "Hit, it's yours. Miss, 95% back.", "中了归你，没中退 95%。"],
+    "hero.viewContents": ["뭐 들었나 보기", "What's inside", "看看里面"],
+    "hero.freeDemo": ["손맛 보기 (무료)", "Try free", "免费试玩"],
+    "inventory.sell": ["95% 즉시 회수", "Cash out 95%", "95% 立即折现"],
+    "inventory.ship": ["집으로 배송", "Ship to me", "寄到家"],
     "hero.guaranteedMinLabel": ["최소 보장 금액", "Guaranteed Minimum", "保底价值"],
     "actions.sellBack": ["즉시 판매", "Instant Sell-Back", "即时回收"],
     "actions.claimShipping": ["실물 배송 신청", "Claim Shipping", "申请发货"],

@@ -2,7 +2,8 @@
  * 단일 통화 표시 엔진 (CLAUDE.md §4 Zero Clutter)
  *
  * 입력은 항상 USDT 기준 금액이고, 출력은 선택 통화 "하나"의 표기다.
- *   USDT → "80.00 USDT"   USD → "$80.00"   KRW → "₩110,400"
+ *   USDT → "80 USDT"   USD → "$80"   KRW → "₩110,400"
+ * 정수는 소수점 없이, 소수는 필요한 자리만(최대 2자리): 0.9 → "0.9 USDT", 26.6 → "26.6 USDT", 2.65 → "2.65 USDT".
  * 다른 통화 기호·단위가 섞여 나오는 경로는 존재하지 않는다 — 이 함수 말고는 금액을 문자열로 만들지 않는다.
  */
 
@@ -13,6 +14,9 @@ const SPEC: Record<Currency, { decimals: number; render: (n: string) => string }
   USD: { decimals: 2, render: (n) => `$${n}` },
   KRW: { decimals: 0, render: (n) => `₩${n}` },
 };
+
+/** 자릿수 표기 — 최소 0, 최대 decimals. "32.00" 같은 꼬리 0 은 붙이지 않는다. */
+const digitsOf = (amount: number, decimals: number): string => amount.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: decimals });
 
 export function convertFromUsdt(usdt: number, currency: Currency, rates: Record<Currency, number> = DEFAULT_RATES): number {
   return usdt * rates[currency];
@@ -25,8 +29,7 @@ export function formatCurrency(
 ): string {
   const { decimals, render } = SPEC[selectedCurrency];
   const amount = convertFromUsdt(baseUsdtAmount, selectedCurrency, rates);
-  const digits = amount.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-  return render(digits);
+  return render(digitsOf(amount, decimals));
 }
 
 /**
@@ -35,7 +38,7 @@ export function formatCurrency(
  */
 export function formatNative(amountInCurrency: number, currency: Currency): string {
   const { decimals, render } = SPEC[currency];
-  return render(amountInCurrency.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }));
+  return render(digitsOf(amountInCurrency, decimals));
 }
 
 /**
@@ -77,7 +80,7 @@ const PARTS: Record<Currency, { prefix: string; suffix: string }> = {
 
 export function splitNative(amountInCurrency: number, currency: Currency): MoneyParts {
   const { decimals } = SPEC[currency];
-  return { ...PARTS[currency], number: amountInCurrency.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) };
+  return { ...PARTS[currency], number: digitsOf(amountInCurrency, decimals) };
 }
 
 export function splitCurrency(baseUsdtAmount: number, selectedCurrency: Currency, rates: Record<Currency, number> = DEFAULT_RATES): MoneyParts {

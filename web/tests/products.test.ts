@@ -178,8 +178,8 @@ test("dropTable 은 실판매가 내림차순이며 원본을 변형하지 않�
 
 test("박스 가격은 세 통화 어느 쪽으로도 혼용 없이 렌더된다", () => {
   for (const b of BOXES) {
-    assert.match(formatCurrency(b.price, "USDT"), /^[\d,]+\.\d{2} USDT$/, b.slug);
-    assert.match(formatCurrency(b.price, "USD"), /^\$[\d,]+\.\d{2}$/, b.slug);
+    assert.match(formatCurrency(b.price, "USDT"), /^[\d,]+ USDT$/, b.slug);
+    assert.match(formatCurrency(b.price, "USD"), /^\$[\d,]+$/, b.slug);
     assert.match(formatCurrency(b.price, "KRW"), /^₩[\d,]+$/, b.slug);
   }
 });

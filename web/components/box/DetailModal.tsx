@@ -12,7 +12,6 @@ import {
   expectedValue,
   retailReturn,
   cashReturn,
-  isValueGuaranteed,
   REFUND_RATE,
   type ProductBox,
   type ProductItem,
@@ -154,7 +153,7 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
       ev: expectedValue(box),
       retail: retailReturn(box),
       cash: cashReturn(box),
-      guaranteed: isValueGuaranteed(box),
+      guaranteed: box.guaranteedMin >= box.price, // "오픈가 이상" 문구는 바닥이 가격 이상일 때만 (잭팟 박스)
     };
   }, [box]);
 

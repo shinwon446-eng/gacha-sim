@@ -27,13 +27,13 @@
     "guaranteedMin": "保底价值 {value}",
     "aboveOpenPrice": "不低于开启价",
     "openNow": "立即开启",
-    "viewContents": "看看里面有什么",
+    "viewContents": "看看里面",
     "billboardPicker": "选择展示",
     "billboardOf": "{title} 展示",
-    "headline": "一杯咖啡的钱，博一块劳力士。没中？95% 立刻退。",
-    "sub": "包邮寄到家，或 1 秒折现成 USDT。中了就 100% 是你的。",
-    "freeDemo": "不花钱先过把瘾（免费）",
-    "openFor": "🔥 {price} 立即开一发",
+    "headline": "1 美元，博一块劳力士。",
+    "sub": "中了归你，没中退 95%。",
+    "freeDemo": "免费试玩",
+    "openFor": "🔥 {price} 开一发",
     "badge": "1 美元起的奢品头奖",
     "nowShowing": "正在上映",
     "topMultipleShort": "最高 {n}"
@@ -198,7 +198,7 @@
     "sellBackAll": "全部 95% 立即折现 · {amount}",
     "sellBackNote": "按市场价的 {rate} 即时计入余额",
     "sold": "已折现 — 余额 +{amount}",
-    "claimShipping": "寄到我家",
+    "claimShipping": "寄到家",
     "shippingNotice": "国际运费与关税说明",
     "shippingBody": "目的地关税/增值税及国际运费（DHL/FedEx 实付）另行收取。",
     "verify": "1 秒公平性验证",
@@ -307,7 +307,7 @@
     "tracking": "运单号",
     "trackingPending": "等待运单号",
     "sell": "95% 立即折现",
-    "ship": "寄到我家",
+    "ship": "寄到家",
     "verify": "1 秒公平性验证",
     "select": "选择",
     "selected": "已选 {n} 件",
@@ -448,12 +448,12 @@
   },
   "onboarding": {
     "title": "3 秒看懂流程",
-    "step1Title": "选择奢品盲盒",
-    "step1Desc": "劳力士、特斯拉、苹果等，任选心仪的盲盒。",
-    "step2Title": "100% 公平开箱",
-    "step2Desc": "以无法篡改的 SHA-256 算法即时开启。",
-    "step3Title": "发货到家或 95% 折现",
-    "step3Desc": "满意即免费发货，不需要则按 95% USDT 即时折现。"
+    "step1Title": "选盲盒",
+    "step1Desc": "1 美元起。劳力士、特斯拉、苹果。",
+    "step2Title": "公平开箱",
+    "step2Desc": "SHA-256 封存，无法篡改。",
+    "step3Title": "发货或 95% 折现",
+    "step3Desc": "免费寄到家，或 1 秒折现 USDT。"
   },
   "counters": {
     "label": "信任指标",
@@ -687,62 +687,62 @@
     "boxes": {
       "dollar-apple": {
         "title": "1 美元苹果大奖",
-        "tagline": "一杯咖啡的钱博 iPhone 16 Pro。落空也立即返还 0.85 USDT。",
+        "tagline": "1 美元博 iPhone 16 Pro。没中退 0.85 USDT。",
         "badge": "1 美元"
       },
       "dollar-galaxy": {
         "title": "1 美元 Galaxy 大奖",
-        "tagline": "1 美元博 Galaxy Z Fold8 1TB。落空立即返还 0.85 USDT。",
+        "tagline": "1 美元博 Galaxy Z Fold8。没中退 0.85 USDT。",
         "badge": "1 美元"
       },
       "dollar-gaming": {
         "title": "1 美元游戏大奖",
-        "tagline": "1 美元博 RTX 5090 到 Switch 2。Steam 礼品卡经常出现。",
+        "tagline": "1 美元博 RTX 5090、Switch 2。没中退 0.85 USDT。",
         "badge": "1 美元"
       },
       "starter-ps5": {
         "title": "咖啡价 PS5 入门",
-        "tagline": "3 美元博 PS5 Pro。落空也返还 2.5 USDT。",
+        "tagline": "3 美元博 PS5 Pro。没中退 2.5 USDT。",
         "badge": "科技"
       },
       "starter-macbook": {
         "title": "咖啡汉堡 MacBook 大奖",
-        "tagline": "5 美元博 MacBook Pro M4 Max（1,100 倍）。落空也立即返还 4.2 USDT。",
+        "tagline": "5 美元博 MacBook Pro M4 Max。没中退 4.2 USDT。",
         "badge": "科技"
       },
       "starter-phone": {
         "title": "5 美元 iPhone 17 大奖",
-        "tagline": "5 美元博 iPhone 17 Pro Max 1TB，还有 Apple Watch Ultra 3。",
+        "tagline": "5 美元博 iPhone 17 Pro Max。没中退 4.2 USDT。",
         "badge": "科技"
       },
       "vault-submariner": {
         "title": "劳力士潜航者金库",
-        "tagline": "20 美元博劳力士潜航者（780 倍）。落空也立即返还 17.5 USDT。",
+        "tagline": "20 美元博劳力士潜航者。没中退 17.5 USDT。",
         "badge": "腕表"
       },
       "vault-omega": {
         "title": "瑞士腕表金库",
-        "tagline": "25 美元从欧米茄海马到天梭 PRX。保底为胡桃木表盒。",
+        "tagline": "25 美元博欧米茄、帝舵、天梭。没中退 21.8 USDT。",
         "badge": "腕表"
       },
       "vault-handbag": {
         "title": "奢侈手袋金库",
-        "tagline": "30 美元博爱马仕 Birkin 25 鳄鱼皮（2,000 倍）。落空返还 26 USDT。",
+        "tagline": "30 美元博爱马仕 Birkin。没中退 26 USDT。",
         "badge": "奢侈品"
       },
       "vault-gold": {
         "title": "金条金库",
-        "tagline": "50 美元博 1kg 金条（2,000 倍）。银条与金币托底。",
+        "tagline": "50 美元博 1kg 金条。没中退 43.7 USDT。",
         "badge": "黄金"
       },
       "jackpot-cybertruck": {
         "title": "Cybertruck 头奖",
-        "tagline": "100 美元博 Cybertruck Cyberbeast（1,300 倍）。落空也返还 95 USDT。",
+        "tagline": "100 美元博 Cybertruck。没中退 95 USDT。",
         "badge": "梦想盲盒"
       },
       "jackpot-supercar": {
         "title": "超跑头奖",
-        "tagline": "100 美元博保时捷 911 Carrera（1,300 倍）。还有杜卡迪与 VanMoof。",
+        "tagline": "100 美元博保时捷 911。没中退 95 USDT。",
         "badge": "梦想盲盒"
       }
     },
