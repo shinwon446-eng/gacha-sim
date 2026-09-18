@@ -1,0 +1,282 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: #141414;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+body {
+  background-image: radial-gradient(circle at center, #1f1f1f 0%, #141414 100%);
+  background-attachment: fixed;
+}
+
+/* 얇은 스크롤바 — 무채색 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0b0b;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a27b1e;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ── 럭셔리 유틸리티 (CLAUDE.md §2-B) ───────────────── */
+
+:root {
+  --bg-obsidian: #0b0b0b;
+  --bg-canvas: #141414;
+  --bg-surface: #181818;
+  --bg-surface-elevated: #222222;
+  --gold-champagne: #e6ca65;
+  --gold-metallic: #d4af37;
+  --gold-dark: #a27b1e;
+  --crimson-netflix: #e50914;
+  --platinum-ice: #e5e4e2;
+  --bronze-executive: #c5a059;
+  --text-primary: #ffffff;
+  --text-secondary: #e5e5e5;
+  --text-muted: #9ca3af;
+  --text-faint: #6b7280;
+}
+
+/* 극미세 화이트 헤어라인 + 상단 1px 하이라이트. 평범한 회색 보더를 대체한다. */
+.border-metallic-subtle {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* 샴페인 골드 헤어라인 — ROYAL 카드·강조 패널 전용. 확산 글로우는 최소로. */
+.border-metallic-gold {
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(230, 202, 101, 0.35),
+    0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+/* 그라데이션 보더가 필요한 곳 — border-image 는 radius 와 안 맞으므로 이중 배경 기법 */
+.border-gold-gradient {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--bg-surface), var(--bg-surface)) padding-box,
+    linear-gradient(135deg, rgba(230, 202, 101, 0.7) 0%, rgba(162, 123, 30, 0.35) 50%, rgba(230, 202, 101, 0.7) 100%) border-box;
+}
+
+/* 페데스탈 림라이트 — 고가 실물 뒤에 깔리는 스튜디오 조명. 부모는 relative, 이 요소는 absolute inset-0 로 쓴다. */
+.pedestal-glow {
+  background: radial-gradient(circle at 50% 60%, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+}
+.pedestal-glow-strong {
+  background: radial-gradient(circle at 50% 60%, rgba(212, 175, 55, 0.28) 0%, rgba(212, 175, 55, 0.08) 40%, transparent 72%);
+}
+
+/* 샴페인 골드 메탈릭 텍스트 */
+.text-gold-gradient {
+  background: linear-gradient(180deg, #f3e3a1 0%, #e6ca65 38%, #d4af37 62%, #a27b1e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 프로스티드 글래스 — 반투명 버튼·패널 */
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.glass-dark {
+  background: rgba(11, 11, 11, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* 홀로그램 샤인 — 호버 시 사선으로 한 번 스쳐 지나간다 (1-2 에서 카드에 적용) */
+.sheen {
+  position: relative;
+  overflow: hidden;
+}
+.sheen::before {
+  content: "";
+  position: absolute;
+  inset: -40% -60%;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.06) 47%,
+    rgba(230, 202, 101, 0.18) 50%,
+    rgba(255, 255, 255, 0.06) 53%,
+    transparent 60%
+  );
+  transform: translateX(-60%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+.sheen:hover::before {
+  opacity: 1;
+  animation: sheen-sweep 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes sheen-sweep {
+  from { transform: translateX(-60%); }
+  to   { transform: translateX(60%); }
+}
+
+/* 초정밀 캡션 — 0.2em 트래킹 대문자 */
+.caption-luxury {
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* 넷플릭스 오버사이즈 순위 숫자 — 메탈릭 스트로크 (CLAUDE.md §2-B-4) */
+.rank-numeral {
+  font-size: 8.5rem;
+  line-height: 0.72;
+  color: transparent;
+  -webkit-text-stroke: 2px #333333;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* 라이브 드랍 티커 — 목록을 두 번 렌더하고 절반만큼 이동시켜 이음새 없는 무한 루프 */
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.ticker-track {
+  animation: ticker-scroll 48s linear infinite;
+  will-change: transform;
+}
+.ticker-viewport:hover .ticker-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation-duration: 120s; }
+}
+
+/* 페데스탈 그림자 — 부유하는 피사체 아래 타원 (벨벳 쇼케이스) */
+.pedestal-shadow {
+  background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.25) 45%, transparent 72%);
+  filter: blur(6px);
+}
+
+/* 미니 카드용 축소판 — 같은 메탈릭 스트로크, 작은 크기 */
+.rank-numeral-sm {
+  font-family: var(--font-display), Cinzel, serif;
+  font-size: 4.25rem;
+  line-height: 0.72;
+  color: transparent;
+  -webkit-text-stroke: 1.5px #3a3a3a;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ── 표면 ───────────────────────────────────────────── */
+
+.vignette-bg {
+  background: radial-gradient(circle at center, #1f1f1f 0%, #141414 100%);
+}
+
+/* 타일링 노이즈 오버레이 */
+.film-grain::after {
+  content: "";
+  position: absolute;
+  inset: -100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  opacity: 0.06;
+  pointer-events: none;
+  animation: grain 1.2s steps(6, end) infinite;
+}
+
+/* 1px 수평 스캔라인 */
+.scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.045) 0px,
+    rgba(255, 255, 255, 0.045) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+}
+
+.hairline {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── 호버 엣지 — 확산 없는 1px 아웃라인 ─────────────── */
+
+.edge-white {
+  outline: 1px solid #fff;
+  outline-offset: 0;
+}
+
+.edge-crimson {
+  outline: 1px solid #e50914;
+  outline-offset: 0;
+}
+
+/* ── 타이포그래피 ───────────────────────────────────── */
+
+.display {
+  font-family: var(--font-display), Cinzel, Pretendard, serif;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.95;
+  font-weight: 700;
+}
+
+.label-caps {
+  font-size: 10px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+/* ── 레거시 유지 ─────────────────────────────────────── */
+
+/* 빌보드 하단 페이드 */
+.billboard-fade {
+  background: linear-gradient(180deg, transparent 40%, rgba(20, 20, 20, 0.85) 75%, #141414 100%);
+}
+
+.vignette {
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.72) 100%);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.8), 0 0 2px rgba(0, 0, 0, 0.9);
+}

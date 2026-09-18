@@ -1,0 +1,836 @@
+{
+  "nav": {
+    "boxes": "盲盒",
+    "battles": "对战",
+    "inventory": "仓库",
+    "fairness": "公平性验证",
+    "community": "社区",
+    "highRoller": "高额玩家",
+    "tech": "科技",
+    "luxury": "奢侈品"
+  },
+  "header": {
+    "balance": "余额",
+    "language": "语言",
+    "currency": "货币",
+    "deposit": "充值",
+    "withdraw": "提现",
+    "welcomeToast": "新人奖励 {amount} 已到账 — 开启真实盲盒吧"
+  },
+  "hero": {
+    "royalSelection": "皇家精选",
+    "top": "TOP {n}",
+    "pricePerOpen": "单次开启",
+    "topPull": "最高奖品",
+    "noBlank": "100% 实物发放 · 无空奖",
+    "guaranteedMinLabel": "保底价值",
+    "guaranteedMin": "保底价值 {value}",
+    "aboveOpenPrice": "不低于开启价",
+    "openNow": "立即开启",
+    "viewContents": "看看里面",
+    "billboardPicker": "选择展示",
+    "billboardOf": "{title} 展示",
+    "headline": "1 美元，博劳力士和 iPhone。",
+    "sub": "中了 100% 归你，没中也立即折现 95%。",
+    "freeDemo": "免费试玩",
+    "openFor": "🔥 {price} 开一发",
+    "badge": "1 美元起的奢品头奖",
+    "nowShowing": "正在上映",
+    "topMultipleShort": "最高 {n}"
+  },
+  "card": {
+    "perOpen": "单次",
+    "top": "最高",
+    "guaranteedMinShort": "保底 {value}",
+    "noBlankBadge": "100% 不落空 · 最低 {value} 保底",
+    "guaranteed": "保底",
+    "openNow": "立即开",
+    "contents": "详情",
+    "details": "{title} 详情",
+    "expand": "展开"
+  },
+  "rows": {
+    "trending": "🔥 开启最多的盲盒 TOP 10",
+    "dollar": "🔥 1 美元盲盒",
+    "techMobility": "⚡ 苹果与科技",
+    "luxuryWatch": "👑 奢品与腕表",
+    "guaranteed": "🚗 超跑与金条",
+    "prev": "上一页",
+    "next": "下一页"
+  },
+  "grid": {
+    "title": "全部盲盒",
+    "sort": "排序",
+    "loadMore": "加载更多（{n}）"
+  },
+  "categories": {
+    "all": "全部",
+    "dollar": "🔥 1 美元盲盒",
+    "tech": "⚡ 苹果与科技",
+    "luxury": "👑 奢品与腕表",
+    "jackpot": "🚗 超跑与金条"
+  },
+  "sorts": {
+    "featured": "推荐",
+    "price-asc": "价格从低到高",
+    "price-desc": "价格从高到低",
+    "popularity": "人气"
+  },
+  "tiers": {
+    "legendTitle": "等级 = 市场价 ÷ 开启价",
+    "royal": "皇家",
+    "prestige": "尊享",
+    "executive": "行政",
+    "curated": "精选",
+    "range": {
+      "royal": "20倍以上",
+      "prestige": "6~20倍",
+      "executive": "2~6倍",
+      "curated": "基础保底"
+    },
+    "multiple": "{n}倍"
+  },
+  "modal": {
+    "details": "{title} 详情",
+    "close": "关闭",
+    "topRank": "TOP {n}",
+    "openNowPrice": "立即开启 · {price}",
+    "viewOdds": "查看全部概率",
+    "openPrice": "开启价",
+    "guaranteedMin": "保底价值",
+    "topPrize": "最高奖品",
+    "topMultiple": "最高倍数",
+    "tierOdds": "各等级中奖概率",
+    "breakEven": "不低于 {price} 的概率 {rate}",
+    "explain": "等级并非存储值，而是由市场价 ÷ 开启价的倍数推导。每次开启的期望市场价为 {ev}，相当于开启价的 {retail}。若即时回收，仅按市场价的 {refund} 支付，因此按现金计算的回收率为 {cash}，低于开启价。",
+    "guaranteedYes": "本盲盒最低档商品的市场价（{min}）不低于开启价。",
+    "guaranteedNo": "本盲盒最低档商品的市场价为 {min}，低于开启价。",
+    "allPrizes": "全部可得商品",
+    "count": "{n} 件",
+    "sortedByValue": "按市场价降序",
+    "marketValue": "市场价",
+    "odds": "概率",
+    "imageCredits": "图片来源"
+  },
+  "fairness": {
+    "title": "公平性验证",
+    "eyebrow": "Provably Fair · HMAC-SHA256",
+    "subtitle": "每次开启结果由服务器种子 + 客户端种子 + Nonce 决定。服务器种子的 SHA-256 哈希在开启前公开，开启后公开原文，任何人都可复现相同结果。",
+    "formula": "roll = HMAC-SHA256(服务器种子, 客户端种子:Nonce) 的前 8 位 hex → 整数 → mod {range}",
+    "step1": "开启前，公开服务器种子的 SHA-256 哈希。",
+    "step2": "用户可自行设定客户端种子或随机获取。Nonce 每次开启递增 1。",
+    "step3": "开启后公开服务器种子原文。填入下方验证器，即可完整复现哈希、roll 与中奖商品。",
+    "serverSeed": "服务器种子",
+    "serverSeedHash": "已公开的服务器种子哈希（可选）",
+    "clientSeed": "客户端种子",
+    "nonce": "Nonce",
+    "box": "盲盒",
+    "verify": "验证",
+    "verifying": "计算中…",
+    "clear": "清空",
+    "resultHash": "服务器种子 SHA-256",
+    "resultHmac": "HMAC-SHA256",
+    "resultRoll": "Roll 数值",
+    "resultItem": "中奖商品",
+    "resultRange": "中奖区间",
+    "hashMatch": "与公开哈希一致",
+    "hashMismatch": "与公开哈希不一致 — 服务器种子不同",
+    "hashSkipped": "未填写公开哈希",
+    "rangeNote": "Roll 范围 0 ~ {max}（{resolution}% 精度）",
+    "outOf": "{roll} / {max}",
+    "demoTitle": "亲手试试种子承诺",
+    "demoBody": "生成新的服务器种子后仅显示哈希。点击公开后显示原文，可填入验证器复现结果。",
+    "generate": "生成服务器种子",
+    "reveal": "公开服务器种子",
+    "hidden": "开启前 — 原文未公开",
+    "useInVerifier": "填入验证器",
+    "invalidInput": "请输入服务器种子与客户端种子，Nonce 须为 ≥ 0 的整数。",
+    "open": "打开公平性验证",
+    "close": "关闭",
+    "visual": {
+      "eyebrow": "一键可视化验证",
+      "title": "3 秒公平性验证",
+      "body": "无需数学公式。选择最近一次开箱并点击「验证」，三个步骤依次完成。128 位十六进制输入位于专家模式。",
+      "expert": "专家模式",
+      "expertTitle": "手动验证器（服务器种子 · 客户端种子 · Nonce）",
+      "pick": "选择最近开箱",
+      "noRecent": "暂无可验证的开箱记录。",
+      "goOpen": "去开盲盒",
+      "verify": "验证",
+      "reverify": "再次验证",
+      "verifying": "验证中…",
+      "close": "关闭",
+      "s1Title": "🔒 事前加密封存",
+      "s1Body": "开箱之前结果已由 SHA-256 哈希封存，即使服务器管理员也无法中途更改。",
+      "s1Pass": "封存一致 — 服务器种子与开箱前公布的哈希相符",
+      "s1Fail": "封存不一致 — 服务器种子与公布的哈希不符",
+      "s2Title": "🎲 结合我的浏览器随机数",
+      "s2Body": "与您设备的客户端种子结合，推导出确定性的掷点数字。",
+      "rollLabel": "掷点数字",
+      "s3Title": "🎯 区间匹配",
+      "s3Body": "掷点精确落在该盲盒中奖区间的仪表条内，证明中奖合法。",
+      "s3Pass": "区间匹配 —",
+      "s3Fail": "区间不匹配 —",
+      "bracket": "区间 {from} ~ {to}（{pct}%）",
+      "gaugeHint": "中奖区间仪表 · 白线为您的掷点",
+      "verdictPass": "验证完成 · 未被篡改",
+      "verdictPassBody": "三个步骤全部通过。任何人都能复现同样的结果。",
+      "verdictFail": "验证失败",
+      "verdictFailBody": "复现值与记录不符。请在专家模式检查输入值。"
+    }
+  },
+  "unbox": {
+    "open1": "开启 ×1",
+    "open5": "连续开启 ×5",
+    "demoLabel": "免费过把瘾 · 模拟开箱",
+    "demoCongrats": "恭喜！您在模拟中抽中了 {item}（{n}）。",
+    "demoBody": "用 {bonus} 新人奖励开启真实盲盒吧！",
+    "demoCta": "领取奖励并开启真实盲盒",
+    "demoCtaClaimed": "开启真实盲盒",
+    "demoNote": "这是模拟结果 — 不计入余额与仓库，也不消耗公平性种子。",
+    "spinning": "开启中…",
+    "landing": "结果已锁定",
+    "result": "获得",
+    "results": "5 次结果",
+    "total": "总价值",
+    "paid": "已支付 {price}",
+    "sellBack": "95% 立即折现 · {amount}",
+    "sellBackAll": "全部 95% 立即折现 · {amount}",
+    "sellBackNote": "按市场价的 {rate} 即时计入余额",
+    "sold": "已折现 — 余额 +{amount}",
+    "claimShipping": "寄到家",
+    "shippingNotice": "国际运费与关税说明",
+    "shippingBody": "目的地关税/增值税及国际运费（DHL/FedEx 实付）另行收取。",
+    "verify": "1 秒公平性验证",
+    "close": "关闭",
+    "keep": "存入仓库",
+    "kept": "已存入仓库 — 关闭后仍会保留",
+    "insufficient": "余额不足 — 需要 {price}",
+    "topUp": "充值",
+    "toppedUp": "+{amount} 已计入",
+    "mute": "关闭音效",
+    "unmute": "开启音效",
+    "seedHash": "服务器种子哈希（开启前公开）",
+    "serverSeed": "服务器种子",
+    "clientSeed": "客户端种子",
+    "nonce": "Nonce",
+    "roll": "Roll",
+    "fairNote": "本次结果由以下种子与 Nonce 决定。可在[验证本次结果]中完整复现。"
+  },
+  "deposit": {
+    "title": "充值",
+    "eyebrow": "Wallet · Deposit",
+    "tabUsdt": "USDT 加密货币充值",
+    "tabCard": "信用卡支付",
+    "network": "选择网络",
+    "recommended": "推荐 · 手续费低于 1 USDT",
+    "chain": "{chain}",
+    "address": "充值钱包地址",
+    "copy": "一键复制",
+    "copied": "地址已复制",
+    "qrHint": "请用钱包 App 扫描二维码",
+    "addressIssuing": "正在生成充值地址…",
+    "addressError": "地址生成失败，请稍后重试。",
+    "addressPreview": "充值地址在接入支付网关后生成。当前为预览环境，可用下方的余额充值体验流程。",
+    "guideTitle": "充值说明",
+    "guideMin": "最低充值 {min}",
+    "guideConfirm": "区块链 {n} 次确认后自动到账",
+    "guideToken": "仅发送所选网络的 USDT。其他币种或网络无法找回",
+    "guideTime": "约 {sec} 秒/区块 · 约 {min} 分钟",
+    "status": "充值状态",
+    "waiting": "等待入账",
+    "confirming": "确认 {n} / {total}",
+    "credited": "已计入余额",
+    "simulateTitle": "预览余额充值",
+    "simulateBody": "接入网关前的预览环境。输入金额并执行，确认计数器会运行并计入余额。",
+    "amount": "金额 (USDT)",
+    "simulate": "执行充值",
+    "simulating": "等待确认…",
+    "belowMin": "最低充值为 {min}",
+    "creditedToast": "+{amount} 已计入余额",
+    "close": "关闭"
+  },
+  "cardPay": {
+    "quick": "快捷充值",
+    "custom": "自定义金额",
+    "amount": "支付金额",
+    "credit": "计入余额",
+    "provider": "支付方式",
+    "providerStripe": "Stripe · 国际信用卡",
+    "providerPortone": "PortOne · 韩国信用卡",
+    "providerMock": "预览支付（不采集卡片信息）",
+    "mockNote": "支付网关（Stripe / PortOne）尚未接入，以预览支付进行。不会采集卡片信息。",
+    "pay": "支付 {amount}",
+    "processing": "支付处理中…",
+    "belowMin": "最低支付金额为 {min}",
+    "aboveMax": "最高支付金额为 {max}",
+    "invalid": "请检查金额",
+    "declined": "卡片被拒绝",
+    "declinedHint": "发卡行拒绝了此卡，请换一张卡重试。",
+    "receipt": "收据",
+    "receiptId": "交易编号",
+    "receiptAt": "批准时间",
+    "receiptCard": "卡片",
+    "receiptPaid": "支付金额",
+    "receiptCredited": "计入余额",
+    "receiptProvider": "支付方式",
+    "done": "完成",
+    "creditedToast": "+{amount} 已计入余额（信用卡）",
+    "history": "最近充值记录",
+    "noHistory": "暂无充值记录",
+    "txDepositCard": "信用卡充值",
+    "txDepositUsdt": "USDT 充值",
+    "txOpen": "开启盲盒",
+    "txSellback": "即时回收"
+  },
+  "inventory": {
+    "title": "仓库",
+    "eyebrow": "My Vault",
+    "empty": "仓库还是空的。开启盲盒来填满它吧。",
+    "goBoxes": "浏览盲盒",
+    "summary": "共 {n} 件 · 仓库总价值 {value}",
+    "storedCount": "保管中 {n}",
+    "shippingCount": "发货 {n}",
+    "soldCount": "已回收 {n}",
+    "filterStatus": "状态",
+    "filterTier": "等级",
+    "all": "全部",
+    "status": {
+      "IN_STORAGE": "保管中",
+      "SHIPPING_REQUESTED": "备货中",
+      "SHIPPING": "运输中",
+      "SOLD": "已回收"
+    },
+    "acquired": "获得于 {date}",
+    "from": "{box}",
+    "soldFor": "已退回 {amount}",
+    "tracking": "运单号",
+    "trackingPending": "等待运单号",
+    "sell": "95% 立即折现",
+    "ship": "寄到家",
+    "verify": "1 秒公平性验证",
+    "select": "选择",
+    "selected": "已选 {n} 件",
+    "selectAll": "全选",
+    "clearSelection": "取消选择",
+    "sellSelected": "所选按 {rate} 批量折现",
+    "selectedValue": "总价值：",
+    "soldForLabel": "已退回",
+    "totalValue": "仓库总资产",
+    "sellAll": "全部 95% 折现",
+    "sort": "排序",
+    "sorts": {
+      "newest": "最新",
+      "valueDesc": "价值从高到低",
+      "valueAsc": "价值从低到高"
+    },
+    "emptyFiltered": "没有符合条件的商品。",
+    "hotTitle": "当前最热盲盒 TOP 3",
+    "hotTop": "最高倍数",
+    "track": "查看物流",
+    "trackingTitle": "物流状态",
+    "copyTracking": "复制运单号",
+    "trackOnCarrier": "在 {carrier} 实时查询",
+    "carriers": {
+      "CJ": "CJ大韩通运",
+      "EPOST": "韩国邮政",
+      "DHL": "DHL",
+      "FEDEX": "FedEx"
+    },
+    "steps": {
+      "requested": "已受理发货申请",
+      "label": "已出运单",
+      "transit": "运输中",
+      "delivered": "已签收"
+    },
+    "stepCurrent": "当前环节",
+    "trackingDemoNote": "出库完成后，物流公司与运单号会显示在此，并开放实时查询链接。",
+    "sellTitle": "即时回收",
+    "sellBody": "确定回收该商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
+    "sellBodyMulti": "确定回收 {n} 件商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
+    "confirm": "确认",
+    "cancel": "取消",
+    "soldToast": "已回收 — 余额 +{amount}",
+    "shipTitle": "申请发货",
+    "shipBody": "国际运费从余额中扣除，目的地关税与增值税在签收时另行支付。",
+    "recipient": "收件人姓名",
+    "country": "国家/地区",
+    "phone": "联系电话",
+    "postalCode": "邮政编码",
+    "address": "详细地址",
+    "pccc": "个人通关固有编码 (PCCC)",
+    "pcccHint": "P + 12 位数字",
+    "residentId": "居民身份证号",
+    "residentIdHint": "18 位",
+    "fee": "运费",
+    "feeFree": "免运费活动",
+    "itemsToShip": "发货 {n} 件",
+    "submitShip": "申请发货 · {fee}",
+    "shipInsufficient": "余额不足以支付运费 {fee}",
+    "shipRequestedToast": "已申请发货 — 出单后将显示运单号",
+    "errors": {
+      "recipient": "请输入收件人姓名",
+      "phone": "请检查电话格式",
+      "postalCode": "请输入邮政编码",
+      "address": "请输入详细地址",
+      "customsId": "通关标识格式不正确"
+    },
+    "countries": {
+      "KR": "韩国",
+      "US": "美国",
+      "CN": "中国",
+      "JP": "日本",
+      "SG": "新加坡",
+      "HK": "中国香港",
+      "TW": "中国台湾",
+      "GB": "英国",
+      "DE": "德国",
+      "FR": "法国",
+      "AU": "澳大利亚",
+      "CA": "加拿大",
+      "AE": "阿联酋"
+    }
+  },
+  "daily": {
+    "title": "每日免费盲盒",
+    "pill": "免费盲盒",
+    "openFree": "免费开启",
+    "nextIn": "距下次开启 {time}",
+    "stripBody": "每 24 小时一次，无需支付，{min} ~ {max} 直接计入余额。",
+    "body": "每 24 小时一次。选一张卡，{min} ~ {max} 即时计入余额。无需充值或注册。",
+    "card": "卡片 {n}",
+    "pickOne": "请选择一张卡片",
+    "revealing": "结果确定中…",
+    "won": "已计入",
+    "credited": "{amount} 已计入您的余额",
+    "odds": "概率表",
+    "fairNote": "与付费盲盒相同的 Provably Fair 掷点 — 选卡仅为演出，不会改变结果",
+    "creditedToast": "每日免费盲盒 — 已计入 {amount}",
+    "close": "关闭",
+    "demoNote": "24 小时冷却按本设备计算。"
+  },
+  "community": {
+    "eyebrow": "Community Wall",
+    "title": "实物开箱晒单",
+    "you": "我",
+    "bonusBanner": "收到实物后发布照片晒单，立即获得",
+    "bonusBannerTail": "奖励返现",
+    "write": "发布晒单",
+    "badgeShipping": "运单已验证",
+    "badgeOnchain": "{explorer} 链上证明",
+    "writeTitle": "发布照片晒单",
+    "writeBonus": "提交即得奖励",
+    "noEligible": "需要有已发货的商品才能晒单。请先在仓库申请发货。",
+    "pickItem": "已收到的商品",
+    "photo": "开箱照片",
+    "photoHint": "选择照片（可选）",
+    "rating": "评分",
+    "text": "一句话评价",
+    "textHint": "一句真实感受即可（5 字以上）",
+    "submit": "提交并领取 {bonus}",
+    "bonusToast": "晒单已发布 — 奖励 {amount} 已计入",
+    "errors": {
+      "item": "请选择商品",
+      "text": "评价至少 5 个字",
+      "photo": "无法加载照片"
+    },
+    "writeDemoNote": "晒单和照片保存在本设备，奖励在提交时即刻计入余额。",
+    "empty": "还没有晒单。收到实物了？发第一条晒单领取 10 USDT 奖励。",
+    "emptyCta": "去开盲盒"
+  },
+  "ticker": {
+    "label": "实时开箱动态",
+    "live": "LIVE",
+    "lineup": "{box} · {item} {mult} · 概率 {rate}",
+    "win": "在 {price} 盲盒中开出 {item}",
+    "cashout": "已折现 {amount}",
+    "ship": "申请发货 {item}",
+    "ago": "（{s} 秒前）"
+  },
+  "onboarding": {
+    "title": "3 秒看懂流程",
+    "step1Title": "选盲盒",
+    "step1Desc": "1 美元起。劳力士、特斯拉、苹果。",
+    "step2Title": "公平开箱",
+    "step2Desc": "SHA-256 封存，无法篡改。",
+    "step3Title": "发货或 95% 折现",
+    "step3Desc": "免费寄到家，或 1 秒折现 USDT。"
+  },
+  "counters": {
+    "label": "信任指标",
+    "shipments": "今日已出库实物",
+    "shipmentsUnit": "件",
+    "cashouts": "今日已结算折现",
+    "verification": "公平性验证完成率",
+    "odds": "已公开概率项",
+    "oddsUnit": "项",
+    "sellback": "即时折现率",
+    "verifiedOf": "我的 {n} 次开箱已复核"
+  },
+  "proof": {
+    "title": "实付与实发实时证明",
+    "live": "LIVE",
+    "tab": {
+      "payouts": "USDT 实付证明",
+      "shipments": "实物发货动态"
+    },
+    "kind": {
+      "withdraw": "提现",
+      "sellback": "即时回收"
+    },
+    "viewOnExplorer": "在 {explorer} 查看",
+    "track": "运单追踪",
+    "carriers": {
+      "CJ": "CJ大韩通运",
+      "EPOST": "韩国邮政",
+      "DHL": "DHL",
+      "FEDEX": "FedEx"
+    },
+    "reserveEyebrow": "Proof of Reserves · 储备金",
+    "reserveBody": "为保护用户资产并保证即时提现，GACHAFLIX 在链上钱包持有流动性储备金，任何人都可通过下方地址查询余额。",
+    "reserveWallet": "储备钱包",
+    "reserveBalance": "当前持有",
+    "copyAddress": "复制地址",
+    "emptyPayouts": "暂无支付记录。",
+    "emptyShipments": "暂无发货记录。",
+    "emptyCta": "去开盲盒",
+    "pendingTx": "等待广播",
+    "settledInstant": "即时结算"
+  },
+  "withdraw": {
+    "title": "USDT 提现",
+    "close": "关闭",
+    "available": "可提现余额",
+    "network": "提现网络",
+    "address": "收款钱包地址",
+    "addressHint": "以 {hint} 开头的地址",
+    "amount": "提现数量",
+    "min": "最低 {min}",
+    "max": "全部",
+    "fee": "网络手续费",
+    "feeShort": "手续费",
+    "net": "实际到账",
+    "netLabel": "实际到账金额",
+    "submit": "提交提现申请",
+    "requested": "提现申请已受理",
+    "txId": "交易 ID",
+    "at": "申请时间",
+    "another": "再次提现",
+    "done": "确定",
+    "history": "最近提现",
+    "status": {
+      "PENDING": "审核中",
+      "BROADCASTING": "广播中",
+      "COMPLETED": "已完成"
+    },
+    "txHash": "链上 TxID",
+    "txHashPending": "广播后显示 TxID",
+    "copyHash": "复制 TxID",
+    "viewOnExplorer": "在 {explorer} 查看",
+    "errors": {
+      "TRC20": "TRC-20 地址为以 T 开头的 34 位字符",
+      "BEP20": "BEP-20 地址为以 0x 开头的 42 位字符",
+      "min": "最低提现数量为 {min}",
+      "insufficient": "余额不足",
+      "nan": "请输入提现数量"
+    },
+    "processingNote": "提现经安全审核后签名并广播，完成后 TxID 与浏览器链接会显示在此。",
+    "previewNote": "预览环境中提现停留在申请状态，不会广播。接入后端后将显示 TxID 与浏览器链接。",
+    "requestedToast": "提现申请已提交 — 已扣除 {amount}"
+  },
+  "vip": {
+    "title": "VIP 等级 {tier}",
+    "tiers": {
+      "member": "会员",
+      "silver": "白银",
+      "gold": "黄金",
+      "black": "黑金"
+    }
+  },
+  "footer": {
+    "slogan": "基于区块链、最透明的实物奢品盲盒平台",
+    "service": "服务",
+    "guide": "使用指南",
+    "support": "客户支持",
+    "links": {
+      "dollar": "1 美元盲盒",
+      "vault": "奢品金库",
+      "feed": "实时支付动态",
+      "verifier": "公平性验证器",
+      "terms": "服务条款",
+      "privacy": "隐私政策",
+      "policy": "发货与 95% 折现政策",
+      "faq": "常见问题",
+      "telegram": "Telegram 24/7 在线客服",
+      "discord": "官方 Discord",
+      "notice": "公告频道"
+    },
+    "disclaimer": "GACHAFLIX 是面向全球用户的电商盲盒平台。所有开箱结果均通过不可篡改的 SHA-256 算法透明公开，中奖商品保证 100% 实物发货或即时折现为 USDT。"
+  },
+  "legalDocs": {
+    "eyebrow": "使用指南",
+    "updated": "最近更新 2026 年 9 月 18 日",
+    "terms": {
+      "title": "服务条款",
+      "sections": [
+        {
+          "h": "1. 服务",
+          "p": "GACHAFLIX 销售概率完全公开的盲盒，中奖商品可实物发货，或按市场价 95% 即时折现为 USDT。"
+        },
+        {
+          "h": "2. 账户与余额",
+          "p": "余额以 USDT 计。充值、提现、开箱与折现均记录为交易，仅用于购买与提现。"
+        },
+        {
+          "h": "3. 概率与公平",
+          "p": "每个盲盒在开启前公开各商品概率。结果由事先公布的服务器种子哈希与用户客户端种子决定，任何人都可复现验证。"
+        },
+        {
+          "h": "4. 取消与退款",
+          "p": "开箱开始后不可取消。中奖商品可随时选择 95% 折现或实物发货。"
+        },
+        {
+          "h": "5. 责任",
+          "p": "用户须遵守所在地法律。服务故障时以交易记录为准恢复余额。"
+        }
+      ]
+    },
+    "privacy": {
+      "title": "隐私政策",
+      "sections": [
+        {
+          "h": "1. 收集项目",
+          "p": "发货所需的收件人姓名、电话、地址与通关标识；提现所需的钱包地址；支付处理所需的交易标识。卡片信息由支付机构处理，本公司不存储。"
+        },
+        {
+          "h": "2. 使用目的",
+          "p": "仅用于发货、提现、防止滥用及客服。"
+        },
+        {
+          "h": "3. 保存与销毁",
+          "p": "发货或提现完成后按法定期限保存，随后立即销毁。"
+        },
+        {
+          "h": "4. 第三方提供",
+          "p": "仅向物流公司（发货信息）与支付机构（支付信息）提供最少必要信息。"
+        },
+        {
+          "h": "5. 用户权利",
+          "p": "可随时通过客服申请查阅、更正或删除。"
+        }
+      ]
+    },
+    "policy": {
+      "title": "发货与 95% 折现政策",
+      "sections": [
+        {
+          "h": "1. 即时折现",
+          "p": "仓库中的中奖商品可随时按市场价 95% 即时折现为 USDT，即刻计入余额。"
+        },
+        {
+          "h": "2. 实物发货",
+          "p": "国际运费在申请时从余额扣除，目的地关税与增值税在签收时另付。韩国由 CJ 大韩通运发货，海外由 DHL/FedEx 发货，运单号生成后显示在仓库中。"
+        },
+        {
+          "h": "3. 提现",
+          "p": "USDT 提现支持 TRC-20（手续费 1.00 USDT）或 BEP-20（手续费 0.80 USDT），最低 20 USDT。广播后提供 TxID 与浏览器链接。"
+        },
+        {
+          "h": "4. 保底价值",
+          "p": "每个盲盒的最低商品都能以开启价 80% 以上的价值即时折现。"
+        }
+      ]
+    },
+    "faq": {
+      "title": "常见问题",
+      "sections": [
+        {
+          "h": "真的能从 1 USDT 开始吗？",
+          "p": "是的。1 美元盲盒以 1.00 USDT 开启，即使落空也立即返还 0.85 USDT。"
+        },
+        {
+          "h": "如何确认结果没有被操控？",
+          "p": "在结果弹窗或仓库卡片点击「1 秒公平性验证」，会分三步复现事前封存哈希、掷点数字与区间匹配。"
+        },
+        {
+          "h": "可以不要实物直接拿现金吗？",
+          "p": "随时可以 — 在仓库中按市场价 95% 折现为 USDT。"
+        },
+        {
+          "h": "提现需要多久？",
+          "p": "经安全审核后广播，完成后显示 TxID 与 TronScan/BscScan 链接。"
+        }
+      ]
+    }
+  },
+  "actions": {
+    "sellBack": "即时回收",
+    "claimShipping": "申请发货",
+    "provablyFair": "公平性验证"
+  },
+  "legal": {
+    "disclaimer": "所示金额均为市场价。即时折现按市场价的 {refund} 支付，因此现金回收额低于开启价。全部概率在「看看里面有什么」中完整公开。"
+  },
+  "badges": {
+    "dream": "梦想盲盒",
+    "mobility": "出行",
+    "tech": "科技",
+    "audio": "音频",
+    "watch": "腕表",
+    "luxury": "奢侈品",
+    "lifestyle": "生活方式",
+    "guaranteed": "保底",
+    "dollar": "1 美元",
+    "gold": "黄金"
+  },
+  "products": {
+    "boxes": {
+      "dollar-apple": {
+        "title": "1 美元苹果大奖",
+        "tagline": "1 美元博 iPhone 16 Pro。没中退 0.85 USDT。",
+        "badge": "1 美元"
+      },
+      "dollar-galaxy": {
+        "title": "1 美元 Galaxy 大奖",
+        "tagline": "1 美元博 Galaxy Z Fold8。没中退 0.85 USDT。",
+        "badge": "1 美元"
+      },
+      "dollar-gaming": {
+        "title": "1 美元游戏大奖",
+        "tagline": "1 美元博 RTX 5090、Switch 2。没中退 0.85 USDT。",
+        "badge": "1 美元"
+      },
+      "starter-ps5": {
+        "title": "咖啡价 PS5 入门",
+        "tagline": "3 美元博 PS5 Pro。没中退 2.5 USDT。",
+        "badge": "科技"
+      },
+      "starter-macbook": {
+        "title": "咖啡汉堡 MacBook 大奖",
+        "tagline": "5 美元博 MacBook Pro M4 Max。没中退 4.2 USDT。",
+        "badge": "科技"
+      },
+      "starter-phone": {
+        "title": "5 美元 iPhone 17 大奖",
+        "tagline": "5 美元博 iPhone 17 Pro Max。没中退 4.2 USDT。",
+        "badge": "科技"
+      },
+      "vault-submariner": {
+        "title": "劳力士潜航者金库",
+        "tagline": "20 美元博劳力士潜航者。没中退 17.5 USDT。",
+        "badge": "腕表"
+      },
+      "vault-omega": {
+        "title": "瑞士腕表金库",
+        "tagline": "25 美元博欧米茄、帝舵、天梭。没中退 21.8 USDT。",
+        "badge": "腕表"
+      },
+      "vault-handbag": {
+        "title": "奢侈手袋金库",
+        "tagline": "30 美元博爱马仕 Birkin。没中退 26 USDT。",
+        "badge": "奢侈品"
+      },
+      "vault-gold": {
+        "title": "金条金库",
+        "tagline": "50 美元博 1kg 金条。没中退 43.7 USDT。",
+        "badge": "黄金"
+      },
+      "jackpot-cybertruck": {
+        "title": "Cybertruck 头奖",
+        "tagline": "100 美元博 Cybertruck。没中退 95 USDT。",
+        "badge": "梦想盲盒"
+      },
+      "jackpot-supercar": {
+        "title": "超跑头奖",
+        "tagline": "100 美元博保时捷 911。没中退 95 USDT。",
+        "badge": "梦想盲盒"
+      }
+    },
+    "items": {
+      "da-iphone16": "iPhone 16 Pro 256GB",
+      "aud-airpods": "AirPods Max USB-C",
+      "da-watchse": "Apple Watch SE 3",
+      "da-airpods4": "AirPods 4 ANC",
+      "da-magsafe": "MagSafe 充电器 25W",
+      "da-cable": "Apple USB-C 充电线 1m",
+      "da-sticker": "Apple 贴纸包 + 理线带",
+      "flg-fold": "Galaxy Z Fold8 1TB",
+      "flg-flip": "Galaxy Z Flip8",
+      "da-buds": "Galaxy Buds4 Pro",
+      "da-charger": "三星 45W 超快充充电器",
+      "da-tag": "Galaxy SmartTag2",
+      "da-strap": "Galaxy Watch 运动表带",
+      "da-sticker2": "Galaxy 贴纸包 + 理线带",
+      "gpu-5090": "GeForce RTX 5090 Founders",
+      "dg-ps5": "PlayStation 5 Slim",
+      "dg-switch2": "任天堂 Switch 2",
+      "gpu-kb": "Wooting HE65 磁轴键盘",
+      "gpu-mouse": "雷蛇 Basilisk V4 Pro",
+      "dg-gift": "Steam 礼品卡 10 USDT",
+      "dg-keycap": "手工键帽 1 枚",
+      "sp-ps5pro": "PlayStation 5 Pro",
+      "sp-switch2": "任天堂 Switch 2",
+      "sp-headset": "索尼 INZONE H9 耳机",
+      "sp-dualsense": "DualSense Edge 手柄",
+      "sp-game": "最新游戏 1 款（数字版）",
+      "sp-gift": "PSN 礼品卡 10 USDT",
+      "sp-cable": "USB-C 游戏线 2m",
+      "apx-mbp": "MacBook Pro 16 M4 Max 128GB",
+      "gtc-ipadpro": "iPad Pro 11 M5",
+      "gtc-mba": "MacBook Air 13 M4",
+      "apx-mx": "罗技 MX Master 4 + MX 键盘",
+      "flg-buds": "AirPods Pro 3",
+      "sm-gift": "Apple 礼品卡 10 USDT",
+      "sm-stand": "铝合金笔记本支架",
+      "flg-iphone": "iPhone 17 Pro Max 1TB",
+      "flg-pixel": "Pixel 10 Pro XL",
+      "flg-watch": "Apple Watch Ultra 3",
+      "sp2-airpods": "AirPods 4",
+      "flg-charger": "Anker MagGo 三合一充电支架",
+      "sp2-gift": "Apple 礼品卡 10 USDT",
+      "flg-film": "钢化玻璃膜 2 片装",
+      "rlx-sub": "劳力士潜航者 126610LN",
+      "rlx-omega": "欧米茄超霸 Pro",
+      "rlx-tudor": "帝舵碧湾 58",
+      "rlx-seiko": "精工 Prospex Marinemaster",
+      "rlx-hamilton": "汉米尔顿卡其野战机械款",
+      "rlx-strap": "正品皮革表带 + 工具套装",
+      "vs-nato": "NATO 表带 2 条装",
+      "sws-omega": "欧米茄海马 Aqua Terra 150M",
+      "sws-tudor": "帝舵 Pelagos 39",
+      "sws-longines": "浪琴先行者 Zulu Time",
+      "sws-oris": "豪利时 Aquis Date",
+      "sws-tissot": "天梭 PRX Powermatic 80",
+      "sws-strap": "瑞士橡胶表带 2 条",
+      "sws-box": "胡桃木表盒 6 格",
+      "grl-birkin25": "爱马仕 Birkin 25 鳄鱼皮",
+      "lth-chanel": "香奈儿 Classic Flap 中号",
+      "grl-dior": "迪奥 Lady Dior 中号",
+      "grl-polene": "Polène Numéro Un Nano",
+      "glx-scarf": "爱马仕 Twilly 丝巾",
+      "glx-key": "Delvaux 皮革钥匙包",
+      "vh-pouch": "皮革手拿包 + 防尘袋",
+      "vg-gold1kg": "金条 1kg（99.99%）",
+      "rlx-daytona": "劳力士迪通拿 116500LN",
+      "vg-gold100g": "金条 100g",
+      "vg-gold10g": "金条 10g",
+      "vg-coin": "金币 1/10 盎司",
+      "vg-silver": "银条 100g",
+      "rlx-roll": "腕表卷收纳袋",
+      "ctd-cybertruck": "特斯拉 Cybertruck 创始版",
+      "ctd-model3": "特斯拉 Model 3 高性能版",
+      "ctd-visionpro": "Apple Vision Pro 1TB",
+      "ctd-segway": "九号 GT3 Pro 电动滑板车",
+      "ctd-dji": "DJI Air 3S 畅飞套装",
+      "ctd-helmet": "Schuberth C5 头盔",
+      "jc-diecast": "Cybertruck 1:18 合金模型 + 周边套装",
+      "js-porsche": "保时捷 911 Carrera",
+      "js-modely": "特斯拉 Model Y 长续航版",
+      "js-ducati": "杜卡迪 Panigale V2",
+      "urb-vanmoof": "VanMoof S5 电动自行车",
+      "ctd-brompton": "Brompton P Line Urban 折叠车",
+      "urb-garmin": "Garmin Edge 1050 码表",
+      "js-model": "保时捷 911 1:18 模型车 + 周边套装"
+    }
+  }
+}
