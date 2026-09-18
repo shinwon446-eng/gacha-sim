@@ -11,7 +11,8 @@ import { useProductText } from "@/lib/useProductText";
 import { BOX_BY_SLUG, REFUND_RATE, type ProductBox, type ProductItem } from "@/lib/products";
 import { TIERS, TIER_BY_KEY, glow, type TierKey } from "@/lib/tiers";
 import type { ShippingAddress } from "@/lib/shipping";
-import { DEMO_LABEL_DELAY_MS, mockTrackingNumber, pickCarrier } from "@/lib/carriers";
+import { isLive } from "@/lib/runtime";
+import { api } from "@/lib/api";
 import { useInventoryStore, summarize, type OwnedItem, type OwnedStatus } from "@/stores/inventoryStore";
 import { useWalletStore } from "@/stores/walletStore";
 import { useSettingsStore } from "@/stores/settingsStore";
@@ -87,19 +88,20 @@ export default function InventoryPage() {
   const storedIds = useMemo(() => items.filter((o) => o.status === "IN_STORAGE").map((o) => o.id), [items]);
   const rateLabel = `${Math.round(REFUND_RATE * 100)}%`;
 
-  // 데모 창고 웹훅: 배송 신청 후 DEMO_LABEL_DELAY_MS 가 지난 항목에 택배사·운송장을 발급한다 (실서비스는 물류사 웹훅)
+  // live: 출고 대기 항목의 운송장을 물류 API 에서 동기화한다 (60초). preview 는 발급 주체가 없으므로 대기 상태 그대로 둔다.
   useEffect(() => {
+    if (!isLive()) return;
     const tick = () => {
-      const now = Date.now();
       for (const o of useInventoryStore.getState().items) {
-        if (o.status !== "SHIPPING_REQUESTED" || !o.shipping) continue;
-        if (now - new Date(o.shipping.requestedAt).getTime() < DEMO_LABEL_DELAY_MS) continue;
-        const carrier = pickCarrier(o.shipping.address.country);
-        markShipping(o.id, carrier, mockTrackingNumber(carrier, now + o.id.length));
+        if (o.status !== "SHIPPING_REQUESTED") continue;
+        api
+          .shipping(o.id)
+          .then((r) => markShipping(o.id, r.carrier, r.trackingNumber))
+          .catch(() => {});
       }
     };
     tick();
-    const id = setInterval(tick, 2000);
+    const id = setInterval(tick, 60_000);
     return () => clearInterval(id);
   }, [markShipping]);
 

@@ -46,16 +46,16 @@ test("전액(MAX) 은 잔액 그대로 — 수수료는 신청액 안에서 차�
   assert.equal(netReceive(maxWithdrawable(986.12), "TRC20"), 985.12);
 });
 
-test("온체인 링크: TronScan / BscScan 형식, TxID 형식 검사, 모의 해시는 형식에 맞는다", async () => {
-  const { EXPLORERS, explorerTxUrl, isValidTxHash, mockTxHash } = await import("../lib/withdrawal");
-  const t = mockTxHash("TRC20", 42);
-  const b = mockTxHash("BEP20", 42);
-  assert.ok(isValidTxHash("TRC20", t), t);
-  assert.ok(isValidTxHash("BEP20", b), b);
+test("온체인 링크: TronScan / BscScan 형식, TxID 형식 검사", async () => {
+  const { EXPLORERS, explorerTxUrl, explorerAddressUrl, isValidTxHash } = await import("../lib/withdrawal");
+  const t = "ab".repeat(32);
+  const b = "0x" + "cd".repeat(32);
+  assert.ok(isValidTxHash("TRC20", t));
+  assert.ok(isValidTxHash("BEP20", b));
   assert.ok(!isValidTxHash("TRC20", b) && !isValidTxHash("BEP20", t));
   assert.equal(explorerTxUrl("TRC20", t), `https://tronscan.org/#/transaction/${t}`);
   assert.equal(explorerTxUrl("BEP20", b), `https://bscscan.com/tx/${b}`);
+  assert.equal(explorerAddressUrl("TRC20", "Tabc"), "https://tronscan.org/#/address/Tabc");
   assert.equal(EXPLORERS.TRC20.name, "TronScan");
   assert.equal(EXPLORERS.BEP20.name, "BscScan");
-  assert.equal(mockTxHash("TRC20", 42), t, "같은 시드 → 같은 해시");
 });

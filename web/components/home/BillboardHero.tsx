@@ -6,6 +6,7 @@ import { Play, Crown, Sparkles, Info } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useTranslations } from "next-intl";
 import { useProductText } from "@/lib/useProductText";
+import { useCurrency } from "@/lib/useCurrency";
 import type { ProductBox } from "@/lib/products";
 import { boxTopTier, formatMultiple, topMultiple } from "@/lib/tiers";
 import { ProductArt } from "@/components/box/ProductArt";
@@ -41,6 +42,7 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 export function BillboardHero({ boxes, onOpen, onInspect, onDemo, intervalMs = 9000, className }: BillboardHeroProps) {
   const t = useTranslations();
   const { boxTitle } = useProductText();
+  const { fmt } = useCurrency();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const box = boxes[Math.min(index, boxes.length - 1)];
@@ -105,10 +107,7 @@ export function BillboardHero({ boxes, onOpen, onInspect, onDemo, intervalMs = 9
             {/* 단 하나의 럭셔리 뱃지 — [👑 ROYAL SELECTION · TOP N] */}
             <span className="border-metallic-gold inline-flex items-center gap-1.5 rounded-sm bg-obsidian/70 px-2.5 py-1">
               <Crown className="h-3 w-3 text-gold-champagne" strokeWidth={2.2} />
-              <span className="caption-luxury !text-gold-champagne">
-                {t("hero.royalSelection")}
-                {typeof box.trendingRank === "number" ? ` · ${t("hero.top", { n: box.trendingRank })}` : ""}
-              </span>
+              <span className="caption-luxury !text-gold-champagne">{t("hero.badge")}</span>
             </span>
 
             <h1 className="mt-3 font-display text-3xl font-bold leading-[1.08] tracking-tight text-white sm:text-4xl lg:text-5xl">
@@ -138,7 +137,7 @@ export function BillboardHero({ boxes, onOpen, onInspect, onDemo, intervalMs = 9
                 className="flex h-12 items-center gap-2 rounded-sm bg-crimson px-7 text-base font-bold text-white shadow-[0_0_28px_rgba(229,9,20,0.35)] transition-all duration-200 hover:scale-[1.03] hover:bg-red-600"
               >
                 <Play className="h-5 w-5 fill-current" strokeWidth={0} />
-                {t("hero.openNow")}
+                {t("hero.openFor", { price: fmt(box.price) })}
               </button>
               <button
                 type="button"

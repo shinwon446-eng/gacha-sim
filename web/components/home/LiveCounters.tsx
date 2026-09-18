@@ -1,45 +1,71 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Package, Gem, ShieldCheck } from "lucide-react";
+import { Package, Gem, ShieldCheck, Percent } from "lucide-react";
 import { cn } from "@/lib/format";
+import { BOXES, REFUND_RATE } from "@/lib/products";
+import { hashServerSeed } from "@/lib/fairness";
+import { isLive } from "@/lib/runtime";
+import { api } from "@/lib/api";
+import { useInventoryStore } from "@/stores/inventoryStore";
 import { Money } from "@/components/ui/Money";
 
 /**
- * 실시간 신뢰 지표 카운터 (CLAUDE.md §3-B-2).
- * 정적 데모에는 집계 백엔드가 없다 — 규범의 기준값에서 시작해 완만히 롤링하는 모의 지표이며, 화면에 "데모 지표"를 명시한다.
+ * 실시간 신뢰 지표 (CLAUDE.md §4-5).
+ *   live   : API 집계 — 오늘 출고 건수 · 오늘 즉시 환전 합계 · 검증 완료율
+ *   preview: 지어낸 집계 대신 이 플랫폼의 사실 — 공개 확률 항목 수 · 즉시 환전율 95% · 내 개봉 기록의 검증 완료율(실제로 재검증)
  */
-const BASE = { shipments: 142, cashoutsUsdt: 328_450, verification: 100 };
-/** 롤링 주기(ms) — 눈에 띄되 산만하지 않게 */
-const TICK_MS = 4200;
-
-function useRolling() {
-  const [v, setV] = useState(BASE);
-  useEffect(() => {
-    const id = setInterval(() => {
-      setV((s) => ({
-        shipments: s.shipments + (Math.random() < 0.35 ? 1 : 0),
-        cashoutsUsdt: s.cashoutsUsdt + Math.round(20 + Math.random() * 240),
-        verification: 100,
-      }));
-    }, TICK_MS);
-    return () => clearInterval(id);
-  }, []);
-  return v;
-}
-
 export function LiveCounters({ className }: { className?: string }) {
   const t = useTranslations("counters");
-  const v = useRolling();
-  const tiles = [
-    { key: "shipments", Icon: Package, node: <Counter value={v.shipments} unit={t("shipmentsUnit")} /> },
-    { key: "cashouts", Icon: Gem, node: <Money value={v.cashoutsUsdt} size="lg" numberClassName="text-gold-gradient" /> },
-    { key: "verification", Icon: ShieldCheck, node: <Counter value={v.verification} unit="%" decimals={2} /> },
-  ] as const;
+  const items = useInventoryStore((s) => s.items);
+  const [remote, setRemote] = useState<{ shipmentsToday: number; cashoutsTodayUsdt: number; verificationRate: number } | null>(null);
+  const [verified, setVerified] = useState<{ ok: number; total: number } | null>(null);
+
+  useEffect(() => {
+    if (!isLive()) return;
+    let alive = true;
+    const pull = () => api.statsToday().then((d) => alive && setRemote(d)).catch(() => {});
+    pull();
+    const id = setInterval(pull, 60_000);
+    return () => {
+      alive = false;
+      clearInterval(id);
+    };
+  }, []);
+
+  // 내 기록을 실제로 재검증 — 서버 시드 해시가 개봉 전 공개 해시와 같은지
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      let ok = 0;
+      for (const o of items) {
+        if ((await hashServerSeed(o.fair.serverSeed)) === o.fair.serverSeedHash) ok++;
+      }
+      if (alive) setVerified({ ok, total: items.length });
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [items]);
+
+  const publishedOdds = useMemo(() => BOXES.reduce((s, b) => s + b.items.length, 0), []);
+  const rate = remote ? remote.verificationRate : verified && verified.total > 0 ? (verified.ok / verified.total) * 100 : 100;
+
+  const tiles = remote
+    ? [
+        { key: "shipments", Icon: Package, node: <Counter value={remote.shipmentsToday} unit={t("shipmentsUnit")} /> },
+        { key: "cashouts", Icon: Gem, node: <Money value={remote.cashoutsTodayUsdt} size="lg" numberClassName="text-gold-gradient" /> },
+        { key: "verification", Icon: ShieldCheck, node: <Counter value={rate} unit="%" decimals={2} /> },
+      ]
+    : [
+        { key: "odds", Icon: Package, node: <Counter value={publishedOdds} unit={t("oddsUnit")} /> },
+        { key: "sellback", Icon: Percent, node: <Counter value={REFUND_RATE * 100} unit="%" /> },
+        { key: "verification", Icon: ShieldCheck, node: <Counter value={rate} unit="%" decimals={2} sub={verified && verified.total > 0 ? t("verifiedOf", { n: verified.total }) : undefined} /> },
+      ];
 
   return (
-    <section className={cn("px-[4%]", className)} aria-label={t("shipments")}>
+    <section className={cn("px-[4%]", className)} aria-label={t("label")}>
       <div className="border-metallic-gold relative overflow-hidden rounded-xl bg-obsidian">
         <span aria-hidden className="pedestal-glow pointer-events-none absolute inset-0" />
         <ul className="relative grid divide-y divide-hairline md:grid-cols-3 md:divide-x md:divide-y-0">
@@ -55,17 +81,17 @@ export function LiveCounters({ className }: { className?: string }) {
             </li>
           ))}
         </ul>
-        <div className="relative border-t border-hairline px-4 py-1.5 text-[10px] text-faint md:px-6">{t("demoNote")}</div>
       </div>
     </section>
   );
 }
 
-function Counter({ value, unit, decimals = 0 }: { value: number; unit: string; decimals?: number }) {
+function Counter({ value, unit, decimals = 0, sub }: { value: number; unit: string; decimals?: number; sub?: string }) {
   return (
     <span className="inline-flex items-baseline gap-1.5 whitespace-nowrap">
       <span className="font-display text-2xl font-bold leading-none tabular-nums tracking-tight text-white md:text-3xl">{value.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}</span>
       <span className="text-xs font-semibold leading-none text-neutral-400 md:text-sm">{unit}</span>
+      {sub && <span className="text-[10px] text-faint">{sub}</span>}
     </span>
   );
 }

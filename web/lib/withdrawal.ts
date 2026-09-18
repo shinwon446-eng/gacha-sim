@@ -1,7 +1,7 @@
 /**
  * USDT 출금 (CLAUDE.md §5-A). 네트워크별 고정 수수료, 최소 출금액, 주소 형식 검사, 실수령액 계산.
  * 상태는 PENDING(검토) → BROADCASTING(전송, TxID 발급) → COMPLETED. TxID 는 TronScan / BscScan 링크로 이어진다.
- * 정적 데모에는 핫월렛이 없다 — 상태 전이는 타이머로 흉내 내고 TxID 는 형식만 맞는 모의값이다. 화면에 명시한다.
+ * live 모드는 API 가 서명·브로드캐스트 뒤 상태와 TxID 를 준다. preview 모드(백엔드 없음)는 PENDING 에 머문다 — TxID 를 지어내지 않는다.
  */
 import { looksLikeAddress, type Network } from "@/lib/depositAddress";
 
@@ -28,13 +28,16 @@ export const MIN_WITHDRAW_USDT = 20;
 export type WithdrawStatus = "PENDING" | "BROADCASTING" | "COMPLETED";
 
 /** 온체인 익스플로러 (CLAUDE.md §6-B) */
-export const EXPLORERS: Record<Network, { name: string; txUrl: (hash: string) => string }> = {
-  TRC20: { name: "TronScan", txUrl: (h) => `https://tronscan.org/#/transaction/${h}` },
-  BEP20: { name: "BscScan", txUrl: (h) => `https://bscscan.com/tx/${h}` },
+export const EXPLORERS: Record<Network, { name: string; txUrl: (hash: string) => string; addressUrl: (address: string) => string }> = {
+  TRC20: { name: "TronScan", txUrl: (h) => `https://tronscan.org/#/transaction/${h}`, addressUrl: (a) => `https://tronscan.org/#/address/${a}` },
+  BEP20: { name: "BscScan", txUrl: (h) => `https://bscscan.com/tx/${h}`, addressUrl: (a) => `https://bscscan.com/address/${a}` },
 };
 
 export function explorerTxUrl(network: Network, txHash: string): string {
   return EXPLORERS[network].txUrl(txHash);
+}
+export function explorerAddressUrl(network: Network, address: string): string {
+  return EXPLORERS[network].addressUrl(address);
 }
 
 /** TxID 형식 — Tron 은 64 hex, BSC 는 0x + 64 hex */
@@ -42,21 +45,6 @@ export function isValidTxHash(network: Network, hash: string): boolean {
   return network === "TRC20" ? /^[0-9a-f]{64}$/i.test(hash) : /^0x[0-9a-f]{64}$/i.test(hash);
 }
 
-/** 모의 TxID — 형식만 맞는 난수. 실제 체인에 존재하지 않는다. */
-export function mockTxHash(network: Network, seed = Date.now()): string {
-  let x = seed >>> 0;
-  let hex = "";
-  while (hex.length < 64) {
-    x = (Math.imul(x, 1664525) + 1013904223) >>> 0;
-    hex += x.toString(16).padStart(8, "0");
-  }
-  hex = hex.slice(0, 64);
-  return network === "TRC20" ? hex : `0x${hex}`;
-}
-
-/** 데모 상태 전이 지연(ms): 신청 → BROADCASTING → COMPLETED */
-export const DEMO_BROADCAST_DELAY_MS = 1600;
-export const DEMO_COMPLETE_DELAY_MS = 4800;
 
 export type WithdrawError = "address" | "min" | "insufficient" | "nan";
 

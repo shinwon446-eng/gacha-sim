@@ -88,7 +88,25 @@ const SOURCES: Record<string, ProductImage> = {
   "gdy-dyson": { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/%E3%83%80%E3%82%A4%E3%82%BD%E3%83%B3_%2846699109862%29.jpg/1920px-%E3%83%80%E3%82%A4%E3%82%BD%E3%83%B3_%2846699109862%29.jpg", credit: "ダイソン (46699109862).jpg · whity · CC BY 2.0", cutout: false },
 };
 
-export const imageFor = (id: string): ProductImage => SOURCES[id] ?? NONE;
+/** 새 박스/상품 id → 기존 확보 자산 재사용 (같은 피사체) */
+const ALIASES: Record<string, string> = {
+  "dollar-apple": "flagship-phone",
+  "dollar-galaxy": "flg-fold",
+  "dollar-gaming": "gpu-rig",
+  "starter-ps5": "gpu-rig",
+  "starter-macbook": "apex-workstation",
+  "starter-phone": "flagship-phone",
+  "vault-submariner": "rolex-vault",
+  "vault-omega": "swiss-watch",
+  "vault-handbag": "grail-handbag",
+  "vault-gold": "rlx-daytona",
+  "jackpot-cybertruck": "cybertruck-dream",
+  "jackpot-supercar": "urban-mobility",
+  "sp-switch2": "gpu-rig",
+  "sp2-airpods": "flg-buds",
+};
+
+export const imageFor = (id: string): ProductImage => SOURCES[id] ?? SOURCES[ALIASES[id] ?? ""] ?? NONE;
 
 /** 자산 확보율 — 관리 화면과 테스트에서 쓴다. */
 export const imageCoverage = (ids: string[]): { have: number; total: number } => ({

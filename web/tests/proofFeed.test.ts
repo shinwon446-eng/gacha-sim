@@ -1,44 +1,56 @@
-// 실지급/실배송 모의 피드 — 형식 계약
+// 실지급/실배송 피드 — 이 기기의 실제 기록에서만 만든다. TxID·운송장은 발급된 것만 링크한다.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { RESERVE, buildPayoutFeed, buildShipmentFeed, maskUserId } from "../lib/proofFeed";
-import { isValidTxHash } from "../lib/withdrawal";
-import { isValidTrackingNumber } from "../lib/carriers";
-import { looksLikeAddress } from "../lib/depositAddress";
-import { BOX_BY_SLUG } from "../lib/products";
+import { buildLocalPayouts, buildLocalShipments, maskRecipient } from "../lib/proofFeed";
+import type { OwnedItem } from "../stores/inventoryStore";
+import type { Transaction } from "../stores/walletStore";
 
-const BASE = Date.UTC(2026, 8, 17, 12, 0, 0);
-
-test("지급 피드: 박스 존재, TxID 형식, 시각은 base 이전, 결정적", () => {
-  const a = buildPayoutFeed(BASE);
-  assert.ok(a.length >= 6);
-  for (const p of a) {
-    assert.ok(BOX_BY_SLUG[p.boxSlug], p.boxSlug);
-    assert.ok(isValidTxHash(p.network, p.txHash), p.txHash);
-    assert.ok(new Date(p.at).getTime() < BASE);
-    assert.ok(p.amountUsdt > 0);
-    assert.match(p.user, /^u_[0-9a-f]{4}…[0-9a-f]{2}$/);
-  }
-  assert.deepEqual(buildPayoutFeed(BASE), a);
+test("수령인 마스킹 — 한글은 가운데, 영문은 이름 첫 글자 + 성 이니셜", () => {
+  assert.equal(maskRecipient("홍길동"), "홍*동");
+  assert.equal(maskRecipient("김연"), "김*");
+  assert.equal(maskRecipient("John Smith"), "J*** S.");
+  assert.equal(maskRecipient("Emma"), "E***");
+  assert.equal(maskRecipient(""), "***");
 });
 
-test("배송 피드: 박스·아이템 존재, 택배사 운송장 형식, 3개 국어 마스킹", () => {
-  for (const s of buildShipmentFeed(BASE)) {
-    const box = BOX_BY_SLUG[s.boxSlug];
-    assert.ok(box, s.boxSlug);
-    assert.ok(box.items.some((i) => i.id === s.itemId), s.itemId);
-    assert.ok(isValidTrackingNumber(s.carrier, s.trackingNumber), `${s.carrier} ${s.trackingNumber}`);
-    for (const loc of ["ko", "en", "zh"] as const) {
-      assert.ok(s.recipient[loc].includes("*"), `${loc} 마스킹`);
-      assert.ok(s.region[loc].length > 0);
-    }
-  }
+test("지급 피드: withdraw/sellback 만, TxID 는 있는 경우에만 실린다", () => {
+  const txs: Transaction[] = [
+    { id: "w1", type: "withdraw", amountUsdt: -30, at: "2026-09-18T04:00:00Z", ref: "TRC20:Tabc", status: "PENDING" },
+    { id: "w2", type: "withdraw", amountUsdt: -50, at: "2026-09-18T05:00:00Z", ref: "BEP20:0xabc", status: "COMPLETED", txHash: "0x" + "a".repeat(64) },
+    { id: "s1", type: "sellback", amountUsdt: 26.6, at: "2026-09-18T02:00:00Z" },
+    { id: "o1", type: "open", amountUsdt: -1, at: "2026-09-18T01:00:00Z" },
+  ];
+  const p = buildLocalPayouts(txs, "u_x***");
+  assert.deepEqual(
+    p.map((x) => x.kind),
+    ["withdraw", "withdraw", "sellback"],
+  );
+  assert.equal(p[0].txHash, undefined);
+  assert.equal(p[1].txHash, "0x" + "a".repeat(64));
+  assert.equal(p[1].network, "BEP20");
+  assert.equal(p[2].amountUsdt, 26.6);
 });
 
-test("지급 준비금: 최소 500,000 USDT, 보유량 ≥ 최소, 리저브 주소는 TRC-20 형식", () => {
-  assert.equal(RESERVE.minUsdt, 500_000);
-  assert.ok(RESERVE.balanceUsdt >= RESERVE.minUsdt);
-  assert.ok(looksLikeAddress("TRC20", RESERVE.address));
-  assert.ok(RESERVE.explorerUrl(RESERVE.address).startsWith("https://tronscan.org/#/address/"));
-  assert.equal(maskUserId("u_3f9c12ab"), "u_3f…ab");
+test("출고 피드: 배송 신청 이후 항목만, 운송장은 발급된 경우에만", () => {
+  const base: OwnedItem = {
+    id: "a",
+    itemId: "rlx-sub",
+    boxSlug: "vault-submariner",
+    valueUsdt: 15600,
+    tier: "royal",
+    status: "SHIPPING_REQUESTED",
+    acquiredAt: "2026-09-18T00:00:00Z",
+    fair: { serverSeedHash: "h", serverSeed: "s", clientSeed: "c", nonce: 1, roll: 1 },
+    shipping: { address: { recipient: "홍길동", country: "KR", phone: "0", postalCode: "0", address: "a" }, feeUsdt: 15, requestedAt: "2026-09-18T01:00:00Z" },
+  };
+  const shipped: OwnedItem = { ...base, id: "b", status: "SHIPPING", shipping: { ...base.shipping!, carrier: "CJ", trackingNumber: "123456789012", shippedAt: "2026-09-18T02:00:00Z" } };
+  const stored: OwnedItem = { ...base, id: "c", status: "IN_STORAGE", shipping: undefined };
+  const s = buildLocalShipments([base, shipped, stored]);
+  assert.deepEqual(
+    s.map((x) => x.id),
+    ["b", "a"],
+  );
+  assert.equal(s[0].trackingNumber, "123456789012");
+  assert.equal(s[1].trackingNumber, undefined);
+  assert.equal(s[1].recipient, "홍*동");
 });

@@ -1,33 +1,44 @@
-// 라이브 드랍 티커 — 결정적 생성, 상품 참조 무결성
+// 라이브 드랍 티커 — 이 기기의 실제 기록에서만 만든다 (지어낸 활동 없음)
 import test from "node:test";
 import assert from "node:assert/strict";
-import { LIVE_DROPS_CYCLE_MS, buildLiveDrops, liveDropsClock } from "../lib/liveDrops";
-import { BOX_BY_SLUG } from "../lib/products";
+import { buildLocalDrops, localHandle } from "../lib/liveDrops";
+import type { OwnedItem } from "../stores/inventoryStore";
+import type { Transaction } from "../stores/walletStore";
 
-test("같은 seed → 같은 티커, 다른 seed → 다른 티커", () => {
-  assert.deepEqual(buildLiveDrops(7), buildLiveDrops(7));
-  assert.notDeepEqual(buildLiveDrops(7), buildLiveDrops(8));
+const own = (id: string, at: string, shipping = false): OwnedItem => ({
+  id,
+  itemId: "da-iphone16",
+  boxSlug: "dollar-apple",
+  valueUsdt: 1000,
+  tier: "royal",
+  status: shipping ? "SHIPPING_REQUESTED" : "IN_STORAGE",
+  acquiredAt: at,
+  fair: { serverSeedHash: "h", serverSeed: "s", clientSeed: "c", nonce: 1, roll: 1 },
+  ...(shipping ? { shipping: { address: { recipient: "홍길동", country: "KR" as const, phone: "0", postalCode: "0", address: "a" }, feeUsdt: 15, requestedAt: at } } : {}),
+});
+const tx = (id: string, type: Transaction["type"], amount: number, at: string): Transaction => ({ id, type, amountUsdt: amount, at });
+
+test("핸들 마스킹 — 클라이언트 시드 앞 4자 + ***", () => {
+  assert.equal(localHandle("3f9c12ab"), "u_3f9c***");
+  assert.equal(localHandle(""), "u_anon***");
 });
 
-test("모든 이벤트가 유효한 박스·항목을 가리키고 시각은 단조 증가", () => {
-  const drops = buildLiveDrops(42);
-  assert.ok(drops.length >= 10);
-  let prev = -1;
-  for (const d of drops) {
-    assert.match(d.user, /\*\*\*/, "마스킹");
-    assert.ok(d.secondsAgo > prev);
-    prev = d.secondsAgo;
-    if (d.kind === "cashout") assert.ok((d.amountUsdt ?? 0) > 0);
-    else {
-      const box = BOX_BY_SLUG[d.boxSlug!];
-      assert.ok(box && box.items.some((i) => i.id === d.itemId), `${d.boxSlug}/${d.itemId}`);
-    }
-  }
-});
-
-test("clock: 주기마다 seed 가 1 증가하고 경과 초는 주기 안에 있다", () => {
-  const a = liveDropsClock(LIVE_DROPS_CYCLE_MS * 3 + 5000);
-  assert.equal(a.seed, 3);
-  assert.equal(a.elapsedSec, 5);
-  assert.equal(liveDropsClock(LIVE_DROPS_CYCLE_MS * 4).seed, 4);
+test("기록이 없으면 비어 있고, 있으면 당첨·출고·환전만 최신순으로 나온다", () => {
+  assert.deepEqual(buildLocalDrops([], [], "u_x***"), []);
+  const drops = buildLocalDrops(
+    [own("a", "2026-09-18T01:00:00Z"), own("b", "2026-09-18T03:00:00Z", true)],
+    [
+      tx("t1", "sellback", 26.6, "2026-09-18T02:00:00Z"),
+      tx("t2", "open", -1, "2026-09-18T02:30:00Z"),
+      tx("t3", "withdraw", -30, "2026-09-18T04:00:00Z"),
+      tx("t4", "bonus", 5, "2026-09-18T05:00:00Z"),
+    ],
+    "u_x***",
+  );
+  assert.deepEqual(
+    drops.map((d) => d.kind),
+    ["cashout", "win", "ship", "cashout", "win"],
+  );
+  assert.ok(drops.every((d) => d.user === "u_x***"));
+  assert.equal(drops[0].amountUsdt, 30);
 });

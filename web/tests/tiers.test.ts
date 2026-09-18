@@ -94,15 +94,12 @@ test("boxTopTier / boxFloorTier 가 실제 최고·최저 항목과 일치한다
   }
 });
 
-test("보장 박스는 최저 등급이 CURATED 이상이고, 일반 박스는 CURATED 다", () => {
+test("모든 박스의 최저 등급은 CURATED 이고 바닥 배수는 0.8 이상 1 이하", () => {
   for (const b of BOXES) {
-    const floor = boxFloorTier(b);
-    if (isValueGuaranteed(b)) {
-      // 최저가가 오픈가 이상이므로 배수 1 이상 — CURATED 구간 안쪽이지만 0 배는 아니다
-      assert.ok(b.guaranteedMin / b.price >= 1, `${b.slug}: 배수 ${b.guaranteedMin / b.price}`);
-    } else {
-      assert.equal(floor.key, "curated", `${b.slug}: 최저 등급 ${floor.label}`);
-    }
+    assert.equal(boxFloorTier(b).key, "curated", `${b.slug}: 최저 등급 ${boxFloorTier(b).label}`);
+    const m = b.guaranteedMin / b.price;
+    assert.ok(m >= 0.8 && m <= 1.01, `${b.slug}: 바닥 배수 ${m}`);
+    assert.ok(isValueGuaranteed(b), b.slug);
   }
 });
 
@@ -124,10 +121,11 @@ test("본전 이상 확률은 0 이상 100 미만이며 실제 항목 합계와 
   }
 });
 
-test("보장 박스의 본전 이상 확률은 정확히 100", () => {
+test("본전 이상 확률: 바닥이 가격 미만이면 100 미만, 바닥 = 가격(잭팟)이면 100", () => {
   for (const b of BOXES) {
-    if (!isValueGuaranteed(b)) continue;
-    assert.ok(Math.abs(breakEvenRate(b) - 100) < 1e-3, `${b.slug}: ${breakEvenRate(b)}`);
+    const r = breakEvenRate(b);
+    if (b.guaranteedMin >= b.price) assert.ok(Math.abs(r - 100) < 1e-6, `${b.slug}: ${r}`);
+    else assert.ok(r > 0 && r < 100, `${b.slug}: ${r}`);
   }
 });
 

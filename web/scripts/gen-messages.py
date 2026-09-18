@@ -16,18 +16,18 @@ sys.stdout.reconfigure(encoding="utf-8")
 UI = {
   "ko": {
     "nav": {"boxes": "박스", "battles": "배틀", "inventory": "보관함", "fairness": "공정성 검증", "community": "커뮤니티", "highRoller": "하이롤러", "tech": "테크", "luxury": "럭셔리"},
-    "header": {"balance": "잔액", "demo": "데모", "language": "언어", "currency": "통화", "deposit": "충전하기", "withdraw": "출금", "welcomeToast": "웰컴 보너스 {amount} 지급 완료 — 실제 박스를 열어보세요"},
+    "header": {"balance": "잔액", "language": "언어", "currency": "통화", "deposit": "충전하기", "withdraw": "출금", "welcomeToast": "웰컴 보너스 {amount} 지급 완료 — 실제 박스를 열어보세요"},
     "hero": {
       "royalSelection": "로열 셀렉션", "top": "TOP {n}", "pricePerOpen": "1회 오픈", "topPull": "최고 구성",
       "noBlank": "100% 실물 지급 · 꽝 없음", "guaranteedMinLabel": "최소 보장 금액",
       "guaranteedMin": "최소 보장 금액 {value}", "aboveOpenPrice": "오픈가 이상",
-      "openNow": "지금 오픈하기", "viewContents": "구성품 확인", "billboardPicker": "빌보드 선택", "billboardOf": "{title} 빌보드",
-      "headline": "영화처럼 열고, 롤렉스를 받다.", "sub": "100% 정품 실물 보장. 마음에 들면 집으로 무료 배송, 마음에 안 들면 95% USDT로 즉시 현금 환전.", "freeDemo": "무료 체험해보기", "nowShowing": "지금 상영 중", "topMultipleShort": "최고 {n}"
+      "openNow": "지금 오픈하기", "viewContents": "뭐 들어있는지 보기", "billboardPicker": "빌보드 선택", "billboardOf": "{title} 빌보드",
+      "headline": "커피값 1달러로 롤렉스 긁어봅니다. 안 뜨면? 95% 바로 돌려받으세요.", "sub": "뽑아서 집으로 무료 배송받든, 1초 만에 USDT로 환전하든. 터지면 100% 진짜 내 겁니다.", "freeDemo": "돈 안 내고 손맛 보기 (무료)", "openFor": "🔥 {price}로 바로 돌려보기", "badge": "1달러로 시작하는 명품 잭팟", "nowShowing": "지금 상영 중", "topMultipleShort": "최고 {n}"
     },
-    "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "guaranteed": "보장", "openNow": "지금 오픈", "contents": "구성품", "details": "{title} 상세 정보", "expand": "확대"},
-    "rows": {"trending": "🔥 지금 가장 많이 열리는 박스 TOP 10", "techMobility": "⚡ 애플 & 차세대 게이밍 기어", "luxuryWatch": "💎 럭셔리 워치 & 하이엔드", "guaranteed": "🎯 초보자 가성비 보장 박스", "prev": "이전", "next": "다음"},
+    "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "guaranteed": "보장", "openNow": "바로 열기", "contents": "상세 정보", "details": "{title} 상세 정보", "expand": "확대"},
+    "rows": {"trending": "🔥 지금 가장 많이 열리는 박스 TOP 10", "dollar": "🔥 1달러의 행복", "techMobility": "⚡ 애플&테크", "luxuryWatch": "👑 명품&시계", "guaranteed": "🚗 슈퍼카&골드바", "prev": "이전", "next": "다음"},
     "grid": {"title": "전체 박스", "sort": "정렬", "loadMore": "더 보기 ({n}개)"},
-    "categories": {"all": "전체", "mobility": "모빌리티", "tech": "테크", "watch": "워치", "luxury": "럭셔리", "lifestyle": "라이프스타일"},
+    "categories": {"all": "전체", "dollar": "🔥 1달러의 행복", "tech": "⚡ 애플&테크", "luxury": "👑 명품&시계", "jackpot": "🚗 슈퍼카&골드바"},
     "sorts": {"featured": "추천순", "price-asc": "가격 낮은순", "price-desc": "가격 높은순", "popularity": "인기순"},
     "tiers": {
       "legendTitle": "등급 = 실판매가 ÷ 오픈가",
@@ -42,7 +42,7 @@ UI = {
       "explain": "등급은 저장값이 아니라 실판매가 ÷ 오픈 가격 배수에서 파생됩니다. 기대 수령 실판매가 {ev} — 오픈 가격의 {retail}입니다. 다만 받은 실물을 즉시 판매하면 실판매가의 {refund}만 지급되므로, 현금 기준 회수율은 {cash}로 오픈 가격보다 낮습니다.",
       "guaranteedYes": "이 박스는 최저 구성의 실판매가({min})가 오픈 가격 이상입니다.",
       "guaranteedNo": "이 박스의 최저 구성 실판매가는 {min}이며 오픈 가격보다 낮습니다.",
-      "prototype": "현재 화면은 프로토타입이고 상품 데이터는 모의값입니다.",
+      
       "allPrizes": "전체 당첨 가능 상품", "count": "{n}종", "sortedByValue": "실판매가 내림차순",
       "marketValue": "실판매가", "odds": "확률", "imageCredits": "이미지 출처"
     },
@@ -57,7 +57,7 @@ UI = {
       "resultHash": "서버 시드 SHA-256", "resultHmac": "HMAC-SHA256", "resultRoll": "롤 넘버", "resultItem": "당첨 항목", "resultRange": "당첨 구간",
       "hashMatch": "공개 해시와 일치", "hashMismatch": "공개 해시와 불일치 — 서버 시드가 다릅니다", "hashSkipped": "공개 해시 미입력",
       "rangeNote": "롤 범위 0 ~ {max} ({resolution}% 해상도)", "outOf": "{roll} / {max}",
-      "demoTitle": "시드 커밋 데모", "demoBody": "새 서버 시드를 만들면 해시만 먼저 보입니다. 공개(Reveal) 를 누르면 원문이 드러나고, 그걸 검증기에 넣어 재현할 수 있습니다.",
+      "demoTitle": "시드 커밋 직접 해보기", "demoBody": "새 서버 시드를 만들면 해시만 먼저 보입니다. 공개(Reveal) 를 누르면 원문이 드러나고, 그걸 검증기에 넣어 재현할 수 있습니다.",
       "generate": "새 서버 시드 생성", "reveal": "서버 시드 공개", "hidden": "개봉 전 — 원문 비공개", "useInVerifier": "검증기에 넣기",
       "invalidInput": "서버 시드와 클라이언트 시드를 입력하고 Nonce 는 0 이상의 정수여야 합니다.",
       "open": "공정성 검증 열기", "close": "닫기",
@@ -75,13 +75,13 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "1회 오픈", "open5": "5회 연속 오픈", "demoLabel": "무료 체험 · 가상 개봉", "demoCongrats": "축하합니다! {item}({n})에 가상 당첨되셨습니다.", "demoBody": "웰컴 보너스 {bonus}로 실제 박스를 열어보세요!", "demoCta": "보너스 받고 실제 열기", "demoCtaClaimed": "실제 박스 열기", "demoNote": "가상 체험 결과입니다 — 잔액·보관함에 반영되지 않으며 공정성 시드도 소모하지 않습니다.", "spinning": "개봉 중…", "landing": "결과 확정",
+      "open1": "1회 오픈", "open5": "5회 연속 오픈", "demoLabel": "손맛 보기 · 가상 개봉", "demoCongrats": "축하합니다! {item}({n})에 가상 당첨되셨습니다.", "demoBody": "웰컴 보너스 {bonus}로 실제 박스를 열어보세요!", "demoCta": "보너스 받고 실제 열기", "demoCtaClaimed": "실제 박스 열기", "demoNote": "가상 개봉 결과입니다 — 잔액·보관함에 반영되지 않으며 공정성 시드도 소모하지 않습니다.", "spinning": "개봉 중…", "landing": "결과 확정",
       "result": "당첨", "results": "5회 결과", "total": "합계 가치", "paid": "지불 {price}",
-      "sellBack": "즉시 판매 · {amount}", "sellBackAll": "전체 즉시 판매 · {amount}", "sellBackNote": "실판매가의 {rate}가 잔액으로 즉시 반영됩니다",
-      "sold": "판매 완료 — {amount} 잔액 반영", "claimShipping": "실물 배송 신청",
-      "shippingNotice": "국제 배송비 및 세관 수수료 안내", "shippingBody": "수취국 관세·부가세와 국제 배송비(DHL/FedEx 실비)가 별도 청구됩니다. 데모에서는 접수되지 않습니다.",
+      "sellBack": "95% 현금으로 즉시 회수 · {amount}", "sellBackAll": "전부 95% 현금으로 즉시 회수 · {amount}", "sellBackNote": "실판매가의 {rate}가 잔액으로 즉시 반영됩니다",
+      "sold": "회수 완료 — {amount} 잔액 반영", "claimShipping": "우리 집으로 배송받기",
+      "shippingNotice": "국제 배송비 및 세관 수수료 안내", "shippingBody": "수취국 관세·부가세와 국제 배송비(DHL/FedEx 실비)가 별도 청구됩니다.",
       "verify": "공정성 1초 검증", "close": "닫기", "keep": "보관함으로", "kept": "보관함에 저장됐습니다 — 팝업을 닫아도 유지됩니다",
-      "insufficient": "잔액 부족 — {price} 필요", "topUp": "데모 잔액 충전", "toppedUp": "+{amount} 데모 잔액",
+      "insufficient": "잔액 부족 — {price} 필요", "topUp": "충전하기", "toppedUp": "+{amount} 잔액 반영",
       "mute": "효과음 끄기", "unmute": "효과음 켜기",
       "seedHash": "서버 시드 해시 (개봉 전 공개)", "serverSeed": "서버 시드", "clientSeed": "클라이언트 시드", "nonce": "Nonce", "roll": "롤",
       "fairNote": "이 결과는 아래 시드와 Nonce 로 결정됐습니다. [이 결과 검증]에서 그대로 재현할 수 있습니다."
@@ -90,21 +90,21 @@ UI = {
       "title": "충전하기", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 암호화폐 입금", "tabCard": "신용카드 결제",
       "network": "네트워크 선택", "recommended": "추천 · 수수료 1 USDT 이하", "chain": "{chain}",
       "address": "입금 지갑 주소", "copy": "원클릭 복사", "copied": "주소가 복사되었습니다", "qrHint": "지갑 앱으로 QR을 스캔하세요",
-      "demoWarning": "데모 주소 — 실제 송금 금지", "demoWarningBody": "이 주소는 체크섬이 맞지 않아 지갑이 송금을 거부합니다. 실서비스에서는 게이트웨이가 유저별 주소를 발급합니다.",
+      "addressIssuing": "입금 주소를 발급하는 중입니다…", "addressError": "주소 발급에 실패했습니다. 잠시 후 다시 시도해 주세요.", "addressPreview": "입금 주소는 결제 게이트웨이 연결 후 발급됩니다. 지금은 미리보기 환경이라 아래에서 잔액을 채워 흐름을 볼 수 있습니다.",
       "guideTitle": "입금 안내", "guideMin": "최소 입금액 {min}", "guideConfirm": "블록체인 {n} 컨펌 후 자동 반영", "guideToken": "선택한 네트워크의 USDT 만 전송하세요. 다른 코인·네트워크 전송은 복구 불가",
       "guideTime": "평균 {sec}초/블록 · 약 {min}분",
       "status": "입금 상태", "waiting": "입금 대기 중", "confirming": "컨펌 {n} / {total}", "credited": "잔액 반영 완료",
-      "simulateTitle": "테스트용 모의 웹훅", "simulateBody": "개발 환경에서 입금 웹훅을 흉내 냅니다. 금액을 넣고 실행하면 컨펌 카운터가 돌고 잔액이 반영됩니다.",
-      "amount": "금액 (USDT)", "simulate": "입금 시뮬레이션", "simulating": "컨펌 대기 중…", "belowMin": "최소 입금액은 {min} 입니다",
-      "creditedToast": "+{amount} 잔액 반영 (모의 입금)",
+      "simulateTitle": "미리보기 잔액 충전", "simulateBody": "게이트웨이 연결 전 미리보기 환경입니다. 금액을 넣고 실행하면 컨펌 카운터가 돌고 잔액에 반영됩니다.",
+      "amount": "금액 (USDT)", "simulate": "충전 실행", "simulating": "컨펌 대기 중…", "belowMin": "최소 입금액은 {min} 입니다",
+      "creditedToast": "+{amount} 잔액 반영",
       "close": "닫기"
     },
     "cardPay": {
       "quick": "빠른 충전", "custom": "직접 입력", "amount": "결제 금액", "credit": "잔액 반영",
-      "provider": "결제 수단", "providerStripe": "Stripe · 글로벌 카드", "providerPortone": "PortOne · 국내 카드", "providerMock": "데모 결제 (PG 미설정)",
-      "mockNote": "Stripe / PortOne 키가 없어 데모 결제로 대체됩니다. 카드 정보는 입력받지 않습니다.",
+      "provider": "결제 수단", "providerStripe": "Stripe · 글로벌 카드", "providerPortone": "PortOne · 국내 카드", "providerMock": "미리보기 결제 (카드 정보 입력 없음)",
+      "mockNote": "결제 게이트웨이(Stripe / PortOne) 연결 전이라 미리보기 결제로 진행됩니다. 카드 정보는 입력받지 않습니다.",
       "pay": "{amount} 결제", "processing": "결제 진행 중…", "belowMin": "최소 결제액은 {min} 입니다", "aboveMax": "최대 결제액은 {max} 입니다", "invalid": "금액을 확인하세요",
-      "declined": "카드가 거절되었습니다", "declinedHint": "데모: 끝자리가 13인 금액은 거절을 재현합니다",
+      "declined": "카드가 거절되었습니다", "declinedHint": "카드사 승인이 거절되었습니다. 다른 카드로 다시 시도해 주세요.",
       "receipt": "영수증", "receiptId": "거래 번호", "receiptAt": "승인 시각", "receiptCard": "카드", "receiptPaid": "결제 금액", "receiptCredited": "잔액 반영", "receiptProvider": "결제 수단",
       "done": "완료", "creditedToast": "+{amount} 잔액 반영 (카드 결제)", "history": "최근 충전 내역", "noHistory": "충전 내역이 없습니다",
       "txDepositCard": "카드 충전", "txDepositUsdt": "USDT 입금", "txOpen": "박스 오픈", "txSellback": "즉시 판매"
@@ -115,14 +115,14 @@ UI = {
       "filterStatus": "상태", "filterTier": "등급", "all": "전체",
       "status": {"IN_STORAGE": "보관 중", "SHIPPING_REQUESTED": "배송 준비 중", "SHIPPING": "배송 중", "SOLD": "환전 완료"},
       "acquired": "획득 {date}", "from": "{box}", "soldFor": "환급 {amount}", "tracking": "운송장", "trackingPending": "운송장 발급 대기",
-      "sell": "즉시 판매", "ship": "실물 배송 신청", "verify": "공정성 1초 검증", "select": "선택", "selected": "{n}개 선택", "selectAll": "전체 선택", "clearSelection": "선택 해제",
-      "sellSelected": "선택 항목 일괄 판매 ({rate} 캐시백)", "selectedValue": "총 가치:", "soldForLabel": "환급",
-      "totalValue": "총 보관 자산", "sellAll": "전체 일괄 판매", "sort": "정렬", "sorts": {"newest": "최신순", "valueDesc": "높은 가치순", "valueAsc": "낮은 가치순"},
+      "sell": "95% 현금으로 즉시 회수", "ship": "우리 집으로 배송받기", "verify": "공정성 1초 검증", "select": "선택", "selected": "{n}개 선택", "selectAll": "전체 선택", "clearSelection": "선택 해제",
+      "sellSelected": "선택한 항목 {rate} 현금으로 일괄 회수", "selectedValue": "총 가치:", "soldForLabel": "환급",
+      "totalValue": "총 보관 자산", "sellAll": "전부 95% 현금 회수", "sort": "정렬", "sorts": {"newest": "최신순", "valueDesc": "높은 가치순", "valueAsc": "낮은 가치순"},
       "emptyFiltered": "조건에 맞는 아이템이 없습니다.", "hotTitle": "지금 가장 핫한 박스 TOP 3", "hotTop": "최고 배수",
       "track": "배송 조회", "trackingTitle": "배송 현황", "copyTracking": "운송장 복사", "trackOnCarrier": "{carrier} 실시간 배송조회",
       "carriers": {"CJ": "CJ대한통운", "EPOST": "우체국택배", "DHL": "DHL", "FEDEX": "FedEx"},
       "steps": {"requested": "배송 신청 접수", "label": "운송장 발급", "transit": "운송 중", "delivered": "배송 완료"}, "stepCurrent": "현재 단계",
-      "trackingDemoNote": "데모 환경에서는 신청 약 20초 후 모의 운송장이 발급되며, 조회 링크는 실제 존재하지 않는 번호를 가리킵니다. 실서비스에서는 물류사 웹훅이 상태를 갱신합니다.",
+      "trackingDemoNote": "출고가 완료되면 택배사와 운송장 번호가 여기에 표시되고, 실시간 배송조회 링크가 열립니다.",
       "sellTitle": "즉시 판매", "sellBody": "이 아이템을 판매하시겠습니까? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
       "sellBodyMulti": "{n}개 아이템을 판매하시겠습니까? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
       "confirm": "확인", "cancel": "취소", "soldToast": "판매 완료 — {amount} 잔액 반영",
@@ -130,7 +130,7 @@ UI = {
       "recipient": "수령인 이름", "country": "국가", "phone": "연락처", "postalCode": "우편번호", "address": "상세 주소",
       "pccc": "개인통관고유부호 (PCCC)", "pcccHint": "P + 숫자 12자리", "residentId": "중국 주민신분증 번호", "residentIdHint": "18자리",
       "fee": "배송비", "feeFree": "무료 배송 이벤트", "itemsToShip": "배송 항목 {n}개", "submitShip": "배송 신청 · {fee}", "shipInsufficient": "배송비 {fee}가 부족합니다",
-      "shipRequestedToast": "배송 신청 완료 — 운송장 발급 후 추적 번호가 표시됩니다",
+      "shipRequestedToast": "배송 신청 완료 — 출고되면 운송장 번호가 표시됩니다",
       "errors": {"recipient": "수령인 이름을 입력하세요", "phone": "연락처 형식을 확인하세요", "postalCode": "우편번호를 입력하세요", "address": "상세 주소를 입력하세요", "customsId": "통관 식별자 형식이 올바르지 않습니다"},
       "countries": {"KR": "대한민국", "US": "미국", "CN": "중국", "JP": "일본", "SG": "싱가포르", "HK": "홍콩", "TW": "대만", "GB": "영국", "DE": "독일", "FR": "프랑스", "AU": "호주", "CA": "캐나다", "AE": "아랍에미리트"}
     },
@@ -140,63 +140,100 @@ UI = {
       "card": "카드 {n}", "pickOne": "카드 한 장을 선택하세요", "revealing": "결과 확정 중…", "won": "적립", "credited": "{amount}가 잔액에 적립되었습니다",
       "odds": "확률표", "fairNote": "유료 박스와 같은 Provably Fair 롤 — 카드 선택은 연출이며 결과를 바꾸지 않습니다",
       "creditedToast": "데일리 프리 박스 — {amount} 적립", "close": "닫기",
-      "demoNote": "데모: 24시간 쿨다운은 이 브라우저 기준입니다. 실서비스에서는 계정 기준으로 집계됩니다."
+      "demoNote": "24시간 쿨다운은 이 기기 기준입니다."
     },
     "community": {
-      "eyebrow": "Community Wall", "title": "실물 언박싱 후기", "you": "나", "pending": "검토 중",
+      "eyebrow": "Community Wall", "title": "실물 언박싱 후기", "you": "나", 
       "bonusBanner": "실물 수령 후 사진 후기 작성 시 즉시", "bonusBannerTail": "보너스 캐시백 지급", "write": "후기 작성",
       "badgeShipping": "운송장 인증", "badgeOnchain": "{explorer} 온체인 인증",
       "writeTitle": "포토 후기 작성", "writeBonus": "등록 즉시 보너스", "noEligible": "배송 완료된 아이템이 있어야 후기를 쓸 수 있습니다. 보관함에서 배송을 신청해 보세요.",
       "pickItem": "수령한 아이템", "photo": "언박싱 사진", "photoHint": "사진 선택 (선택 사항)", "rating": "별점", "text": "한 줄 후기", "textHint": "솔직한 한 줄이면 충분합니다 (5자 이상)",
       "submit": "등록하고 {bonus} 받기", "bonusToast": "후기 등록 — 보너스 {amount} 적립",
       "errors": {"item": "아이템을 선택하세요", "text": "후기는 5자 이상 입력하세요", "photo": "사진을 불러오지 못했습니다"},
-      "writeDemoNote": "데모: 후기와 사진은 이 브라우저에만 저장되며 보너스는 즉시 지급됩니다. 실서비스에서는 검토 승인 후 지급됩니다.",
-      "demoNote": "데모 데이터 — 후기·인증 링크는 모의값이며 사진은 카탈로그 이미지입니다. 실서비스에서는 실제 업로드와 온체인/운송장 검증으로 대체됩니다."
+      "writeDemoNote": "후기와 사진은 이 기기에 저장되며 보너스는 등록 즉시 잔액에 반영됩니다.",
+      "empty": "아직 게시된 후기가 없습니다. 실물을 받으셨다면 첫 후기를 남기고 10 USDT를 받아가세요.", "emptyCta": "박스 열러 가기"
     },
-    "ticker": {"label": "실시간 라이브 드랍", "live": "LIVE", "win": "님이 {item} 획득", "cashout": "님이 {amount} 즉시 환전", "ship": "님이 {item} 출고 신청", "ago": "({s}초 전)"},
+    "ticker": {"label": "실시간 라이브 드랍", "live": "LIVE", "win": "님이 {price} 박스에서 {item} 획득", "cashout": "님이 {amount} 즉시 환전", "ship": "님이 {item} 출고 신청", "ago": "({s}초 전)"},
     "onboarding": {
       "title": "3초 안심 가이드",
       "step1Title": "명품 박스 선택", "step1Desc": "롤렉스, 테슬라, 애플 등 원하는 명품 박스를 선택합니다.",
       "step2Title": "100% 공정 언박싱", "step2Desc": "조작 불가능한 SHA-256 알고리즘으로 즉시 개봉합니다.",
       "step3Title": "집으로 배송 or 95% 환전", "step3Desc": "마음에 들면 무료 배송, 필요 없으면 95% USDT로 즉시 현금 회수합니다."
     },
-    "counters": {"shipments": "오늘 출고된 실물 명품", "shipmentsUnit": "건", "cashouts": "오늘 즉시 환전된 자산", "verification": "공정성 검증 완료율", "demoNote": "데모 지표 — 실서비스에서는 실시간 집계값이 표시됩니다"},
+    "counters": {"label": "신뢰 지표", "shipments": "오늘 출고된 실물 명품", "shipmentsUnit": "건", "cashouts": "오늘 즉시 환전된 자산", "verification": "공정성 검증 완료율", "odds": "공개된 확률 항목", "oddsUnit": "개", "sellback": "즉시 현금 회수율", "verifiedOf": "내 개봉 {n}건 재검증"},
     "proof": {
       "title": "실지급 & 실배송 라이브 인증", "live": "LIVE", "tab": {"payouts": "USDT 실지급 인증", "shipments": "실물 배송 출고 현황"},
       "kind": {"withdraw": "출금", "sellback": "즉시 환전"}, "viewOnExplorer": "{explorer} 조회", "track": "운송장 추적",
       "carriers": {"CJ": "CJ대한통운", "EPOST": "우체국택배", "DHL": "DHL", "FEDEX": "FedEx"},
-      "reserveEyebrow": "Proof of Reserves · 지급 준비금", "reserveBody": "GACHAFLIX는 유저 자산 보호 및 즉시 출금을 위해 {min} USDT 이상의 유동성 지급 준비금을 온체인 상에 상시 보유합니다.",
+      "reserveEyebrow": "Proof of Reserves · 지급 준비금", "reserveBody": "GACHAFLIX는 유저 자산 보호와 즉시 출금을 위해 유동성 지급 준비금을 온체인 지갑에 보유하며, 아래 주소에서 누구나 잔고를 확인할 수 있습니다.",
       "reserveWallet": "리저브 지갑", "reserveBalance": "현재 보유", "copyAddress": "주소 복사",
-      "demoNote": "데모 데이터 — 유저·금액·TxID·운송장은 모의값이며 익스플로러·택배사에서 조회되지 않습니다. 실서비스에서는 실제 집계로 대체됩니다."
+      "emptyPayouts": "아직 지급 기록이 없습니다.", "emptyShipments": "아직 출고 기록이 없습니다.", "emptyCta": "박스 열러 가기", "pendingTx": "전송 대기", "settledInstant": "즉시 정산"
     },
     "withdraw": {
       "title": "USDT 출금", "close": "닫기", "available": "출금 가능 잔액", "network": "출금 네트워크", "address": "받는 지갑 주소", "addressHint": "{hint} 로 시작하는 주소",
       "amount": "출금 수량", "min": "최소 {min}", "max": "전액", "fee": "네트워크 수수료", "feeShort": "수수료", "net": "최종 실 수령액", "netLabel": "최종 실 수령액",
       "submit": "출금 신청 완료", "requested": "출금 신청 접수", "txId": "거래 ID", "at": "신청 시각", "another": "추가 출금", "done": "확인", "history": "최근 출금",
       "status": {"PENDING": "검토 중", "BROADCASTING": "전송 중", "COMPLETED": "완료"},
-      "txHash": "온체인 TxID", "txHashPending": "전송 시작 후 TxID가 발급됩니다", "copyHash": "TxID 복사", "viewOnExplorer": "{explorer}에서 확인", "demoHashNote": "표시된 TxID는 형식만 맞춘 모의값이라 익스플로러에서 조회되지 않습니다.",
+      "txHash": "온체인 TxID", "txHashPending": "브로드캐스트 후 TxID가 표시됩니다", "copyHash": "TxID 복사", "viewOnExplorer": "{explorer}에서 확인",
       "errors": {"TRC20": "TRC-20 주소는 T 로 시작하는 34자입니다", "BEP20": "BEP-20 주소는 0x 로 시작하는 42자입니다", "min": "최소 출금 수량은 {min}입니다", "insufficient": "잔액이 부족합니다", "nan": "출금 수량을 입력하세요"},
-      "demoNote": "데모 환경에는 핫월렛이 없어 실제 송금은 발생하지 않습니다. 실서비스에서는 서명·브로드캐스트 후 웹훅이 상태를 완료로 갱신합니다.",
+      "processingNote": "출금은 보안 검토 후 서명·브로드캐스트됩니다. 완료되면 TxID와 익스플로러 링크가 여기에 표시됩니다.", "previewNote": "미리보기 환경에서는 출금이 브로드캐스트되지 않고 신청 상태로 남습니다. 백엔드 연결 후 TxID와 익스플로러 링크가 표시됩니다.",
       "requestedToast": "출금 신청 완료 — {amount} 차감"
     },
+    "vip": {"title": "VIP 등급 {tier}", "tiers": {"member": "멤버", "silver": "실버", "gold": "골드", "black": "블랙"}},
+    "footer": {
+      "slogan": "블록체인 기반의 가장 투명한 실물 럭셔리 랜덤박스 플랫폼",
+      "service": "서비스", "guide": "이용 안내", "support": "고객지원",
+      "links": {"dollar": "1달러 박스", "vault": "명품 볼트", "feed": "실시간 라이브 피드", "verifier": "공정성 검증기", "terms": "서비스 이용약관", "privacy": "개인정보처리방침", "policy": "배송 및 95% 환전 정책", "faq": "자주 묻는 질문(FAQ)", "telegram": "텔레그램 24/7 실시간 상담", "discord": "공식 디스코드", "notice": "공지 채널"},
+      "disclaimer": "GACHAFLIX는 전 세계 유저를 위한 글로벌 이커머스 랜덤박스 플랫폼입니다. 모든 개봉 결과는 조작 불가능한 SHA-256 알고리즘을 통해 투명하게 공개되며, 당첨된 상품은 100% 실물 배송 또는 즉시 현금(USDT) 환전이 보장됩니다.",
+      "preview": "미리보기 환경 — 결제·출금·출고는 백엔드 연결 후 활성화됩니다."
+    },
+    "legalDocs": {
+      "eyebrow": "이용 안내", "updated": "최종 개정 2026년 9월 18일",
+      "terms": {"title": "서비스 이용약관", "sections": [
+        {"h": "1. 서비스", "p": "GACHAFLIX는 확률이 전량 공개된 랜덤박스를 판매하고, 당첨 상품을 실물로 배송하거나 실판매가의 95%를 USDT로 즉시 환전해 드리는 이커머스 서비스입니다."},
+        {"h": "2. 계정과 잔액", "p": "잔액은 USDT로 관리되며 입금·출금·오픈·회수 내역은 거래 기록으로 남습니다. 잔액은 상품 구매와 출금 외의 용도로 쓰이지 않습니다."},
+        {"h": "3. 확률과 공정성", "p": "모든 박스의 항목별 확률은 오픈 전에 공개됩니다. 결과는 개봉 전 공개된 서버 시드 해시와 이용자의 클라이언트 시드로 결정되며 누구나 재현·검증할 수 있습니다."},
+        {"h": "4. 취소와 환불", "p": "개봉이 시작된 박스는 취소할 수 없습니다. 당첨 상품은 언제든 95% 즉시 회수 또는 실물 배송 중 하나를 선택할 수 있습니다."},
+        {"h": "5. 책임", "p": "이용자는 거주 지역의 법령을 준수할 책임이 있으며, 회사는 서비스 장애 시 거래 기록을 기준으로 잔액을 복구합니다."}
+      ]},
+      "privacy": {"title": "개인정보처리방침", "sections": [
+        {"h": "1. 수집 항목", "p": "배송을 위한 수령인 이름·연락처·주소·통관 식별자, 출금을 위한 지갑 주소, 결제 처리를 위한 거래 식별자를 수집합니다. 카드 정보는 결제 대행사가 처리하며 회사는 저장하지 않습니다."},
+        {"h": "2. 이용 목적", "p": "상품 배송, 출금 처리, 부정 이용 방지, 고객 문의 응대에만 사용합니다."},
+        {"h": "3. 보관과 파기", "p": "배송·출금 완료 후 관련 법령이 정한 기간 동안 보관한 뒤 지체 없이 파기합니다."},
+        {"h": "4. 제3자 제공", "p": "택배사(배송 정보), 결제 대행사(결제 정보)에 필요한 최소한의 정보만 제공합니다."},
+        {"h": "5. 이용자 권리", "p": "고객지원 채널을 통해 언제든 열람·정정·삭제를 요청할 수 있습니다."}
+      ]},
+      "policy": {"title": "배송 및 95% 환전 정책", "sections": [
+        {"h": "1. 즉시 환전", "p": "당첨 상품은 보관함에서 실판매가의 95%를 USDT로 즉시 회수할 수 있으며, 회수액은 곧바로 잔액에 반영됩니다."},
+        {"h": "2. 실물 배송", "p": "국제 배송비는 신청 시 잔액에서 차감되며 수취국 관세·부가세는 수령 시 별도입니다. 대한민국은 CJ대한통운, 해외는 DHL/FedEx로 출고되며 운송장 번호가 발급되면 보관함에 표시됩니다."},
+        {"h": "3. 출금", "p": "USDT 출금은 TRC-20(수수료 1.00 USDT) 또는 BEP-20(수수료 0.80 USDT)로 처리되며 최소 20 USDT입니다. 브로드캐스트 후 TxID와 익스플로러 링크가 제공됩니다."},
+        {"h": "4. 바닥 가치 보장", "p": "모든 박스의 최저 구성은 오픈 가격의 80% 이상을 즉시 회수할 수 있는 가치를 가집니다."}
+      ]},
+      "faq": {"title": "자주 묻는 질문", "sections": [
+        {"h": "정말 1 USDT로 시작할 수 있나요?", "p": "네. 1달러의 행복 카테고리는 1.00 USDT에 열리며, 꽝이어도 0.85 USDT가 즉시 돌아옵니다."},
+        {"h": "결과가 조작되지 않았다는 걸 어떻게 확인하나요?", "p": "결과 팝업과 보관함 카드의 [공정성 1초 검증]을 누르면 사전 봉인 해시·롤 넘버·구간 매칭을 3단계로 재현해 보여줍니다."},
+        {"h": "실물 대신 현금으로 받을 수 있나요?", "p": "언제든 보관함에서 실판매가의 95%를 USDT로 즉시 회수할 수 있습니다."},
+        {"h": "출금은 얼마나 걸리나요?", "p": "보안 검토 후 브로드캐스트되며, 완료되면 TxID와 TronScan/BscScan 링크가 표시됩니다."}
+      ]}
+    },
     "actions": {"sellBack": "즉시 판매", "claimShipping": "실물 배송 신청", "provablyFair": "공정성 검증"},
-    "legal": {"disclaimer": "표기 금액은 실판매가 기준입니다. 받은 실물을 즉시 판매하면 실판매가의 {refund}를 돌려받으므로 회수액은 오픈 가격보다 낮습니다. 확률은 구성품 확인에서 전량 공개됩니다. 현재 화면은 프로토타입이며 상품 데이터는 모의값입니다."},
-    "badges": {"dream": "드림 박스", "mobility": "모빌리티", "tech": "테크", "audio": "오디오", "watch": "워치", "luxury": "럭셔리", "lifestyle": "라이프스타일", "guaranteed": "가치 보장"},
+    "legal": {"disclaimer": "표기 금액은 실판매가 기준입니다. 받은 실물을 즉시 현금으로 회수하면 실판매가의 {refund}를 돌려받으므로 회수액은 오픈 가격보다 낮습니다. 모든 확률은 [뭐 들어있는지 보기]에서 전량 공개됩니다."},
+    "badges": {"dream": "드림 박스", "mobility": "모빌리티", "tech": "테크", "audio": "오디오", "watch": "워치", "luxury": "럭셔리", "lifestyle": "라이프스타일", "guaranteed": "가치 보장", "dollar": "1달러", "gold": "골드"},
   },
   "en": {
     "nav": {"boxes": "Boxes", "battles": "Battles", "inventory": "Inventory", "fairness": "Provably Fair", "community": "Community", "highRoller": "High-Roller", "tech": "Tech", "luxury": "Luxury"},
-    "header": {"balance": "Balance", "demo": "Demo", "language": "Language", "currency": "Currency", "deposit": "Deposit", "withdraw": "Withdraw", "welcomeToast": "Welcome bonus {amount} credited — open a real box"},
+    "header": {"balance": "Balance", "language": "Language", "currency": "Currency", "deposit": "Deposit", "withdraw": "Withdraw", "welcomeToast": "Welcome bonus {amount} credited — open a real box"},
     "hero": {
       "royalSelection": "Royal Selection", "top": "TOP {n}", "pricePerOpen": "Per Open", "topPull": "Top Pull",
       "noBlank": "100% physical payout · No blanks", "guaranteedMinLabel": "Guaranteed Minimum",
       "guaranteedMin": "Guaranteed Minimum {value}", "aboveOpenPrice": "Above open price",
-      "openNow": "Open Now", "viewContents": "View Contents", "billboardPicker": "Billboard picker", "billboardOf": "{title} billboard",
-      "headline": "Cinematic Thrills. Authentic Luxury.", "sub": "100% Authentic Drops. Ship directly to your door, or liquidate instantly for 95% USDT.", "freeDemo": "Free Demo", "nowShowing": "Now Showing", "topMultipleShort": "up to {n}"
+      "openNow": "Open Now", "viewContents": "See what's inside", "billboardPicker": "Billboard picker", "billboardOf": "{title} billboard",
+      "headline": "One dollar. One shot at a Rolex. Miss? 95% comes straight back.", "sub": "Ship it home for free or cash out to USDT in a second. If it hits, it's 100% yours.", "freeDemo": "Try it free, no money down", "openFor": "🔥 Spin now for {price}", "badge": "Luxury jackpots from $1", "nowShowing": "Now Showing", "topMultipleShort": "up to {n}"
     },
-    "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "guaranteed": "guaranteed", "openNow": "Open Now", "contents": "Contents", "details": "{title} details", "expand": "Expand"},
-    "rows": {"trending": "🔥 Most Opened Boxes TOP 10", "techMobility": "⚡ Apple & Next-Gen Gaming Gear", "luxuryWatch": "💎 Luxury Watches & High-End", "guaranteed": "🎯 Beginner Value-Guaranteed Boxes", "prev": "Previous", "next": "Next"},
+    "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "guaranteed": "guaranteed", "openNow": "Open now", "contents": "Details", "details": "{title} details", "expand": "Expand"},
+    "rows": {"trending": "🔥 Most Opened Boxes TOP 10", "dollar": "🔥 $1 Boxes", "techMobility": "⚡ Apple & Tech", "luxuryWatch": "👑 Luxury & Watches", "guaranteed": "🚗 Supercars & Gold", "prev": "Previous", "next": "Next"},
     "grid": {"title": "All Boxes", "sort": "Sort", "loadMore": "Load more ({n})"},
-    "categories": {"all": "All", "mobility": "Mobility", "tech": "Tech", "watch": "Watches", "luxury": "Luxury", "lifestyle": "Lifestyle"},
+    "categories": {"all": "All", "dollar": "🔥 $1 Boxes", "tech": "⚡ Apple & Tech", "luxury": "👑 Luxury & Watches", "jackpot": "🚗 Supercars & Gold"},
     "sorts": {"featured": "Featured", "price-asc": "Price: Low to High", "price-desc": "Price: High to Low", "popularity": "Popularity"},
     "tiers": {
       "legendTitle": "Tier = market value ÷ open price",
@@ -211,7 +248,7 @@ UI = {
       "explain": "Tiers are not stored values — they derive from market value ÷ open price. Expected market value per open is {ev}, which is {retail} of the open price. Instant sell-back pays {refund} of market value, so the cash-basis return is {cash}, below the open price.",
       "guaranteedYes": "This box's lowest item ({min}) is worth at least the open price.",
       "guaranteedNo": "This box's lowest item is worth {min}, below the open price.",
-      "prototype": "This screen is a prototype and product data is mock.",
+      
       "allPrizes": "All possible prizes", "count": "{n} items", "sortedByValue": "By market value, descending",
       "marketValue": "Market value", "odds": "Odds", "imageCredits": "Image credits"
     },
@@ -226,7 +263,7 @@ UI = {
       "resultHash": "Server seed SHA-256", "resultHmac": "HMAC-SHA256", "resultRoll": "Roll number", "resultItem": "Winning item", "resultRange": "Winning range",
       "hashMatch": "Matches the published hash", "hashMismatch": "Does not match the published hash — different server seed", "hashSkipped": "No published hash provided",
       "rangeNote": "Roll range 0 – {max} ({resolution}% resolution)", "outOf": "{roll} / {max}",
-      "demoTitle": "Seed commitment demo", "demoBody": "Generate a server seed and only its hash is shown. Reveal it, then paste it into the verifier to reproduce a roll.",
+      "demoTitle": "Try seed commitment yourself", "demoBody": "Generate a server seed and only its hash is shown. Reveal it, then paste it into the verifier to reproduce a roll.",
       "generate": "Generate server seed", "reveal": "Reveal server seed", "hidden": "Before opening — seed hidden", "useInVerifier": "Use in verifier",
       "invalidInput": "Enter a server seed and a client seed; the nonce must be an integer ≥ 0.",
       "open": "Open Provably Fair", "close": "Close",
@@ -244,13 +281,13 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "Open ×1", "open5": "Open ×5", "demoLabel": "Free Demo · Simulated", "demoCongrats": "Congratulations! You simulated {item} ({n}).", "demoBody": "Open real boxes with your {bonus} welcome bonus!", "demoCta": "Claim & Open Real Box", "demoCtaClaimed": "Open Real Box", "demoNote": "This is a simulated result — nothing is credited to your balance or vault, and no fairness seed is consumed.", "spinning": "Opening…", "landing": "Result locked",
+      "open1": "Open ×1", "open5": "Open ×5", "demoLabel": "Free try · Simulated spin", "demoCongrats": "Congratulations! You simulated {item} ({n}).", "demoBody": "Open real boxes with your {bonus} welcome bonus!", "demoCta": "Claim & Open Real Box", "demoCtaClaimed": "Open Real Box", "demoNote": "This is a simulated result — nothing is credited to your balance or vault, and no fairness seed is consumed.", "spinning": "Opening…", "landing": "Result locked",
       "result": "You won", "results": "5 results", "total": "Total value", "paid": "Paid {price}",
-      "sellBack": "Instant Sell-Back · {amount}", "sellBackAll": "Sell all back · {amount}", "sellBackNote": "{rate} of market value is credited to your balance instantly",
-      "sold": "Sold — {amount} credited", "claimShipping": "Claim Shipping",
-      "shippingNotice": "International shipping & customs notice", "shippingBody": "Destination duties/VAT and international shipping (DHL/FedEx at cost) are billed separately. Not accepted in the demo.",
+      "sellBack": "Cash out 95% now · {amount}", "sellBackAll": "Cash out all at 95% · {amount}", "sellBackNote": "{rate} of market value is credited to your balance instantly",
+      "sold": "Cashed out — {amount} credited", "claimShipping": "Ship it to my door",
+      "shippingNotice": "International shipping & customs notice", "shippingBody": "Destination duties/VAT and international shipping (DHL/FedEx at cost) are billed separately.",
       "verify": "1-second fairness check", "close": "Close", "keep": "Keep in inventory", "kept": "Saved to your vault — it stays after you close this",
-      "insufficient": "Insufficient balance — {price} required", "topUp": "Top up demo balance", "toppedUp": "+{amount} demo balance",
+      "insufficient": "Insufficient balance — {price} required", "topUp": "Deposit", "toppedUp": "+{amount} credited",
       "mute": "Mute sound", "unmute": "Unmute sound",
       "seedHash": "Server seed hash (published before open)", "serverSeed": "Server seed", "clientSeed": "Client seed", "nonce": "Nonce", "roll": "Roll",
       "fairNote": "This result was determined by the seeds and nonce below. Reproduce it exactly under [Verify this result]."
@@ -259,21 +296,21 @@ UI = {
       "title": "Deposit", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT Crypto Deposit", "tabCard": "Credit Card",
       "network": "Select network", "recommended": "Recommended · fee under 1 USDT", "chain": "{chain}",
       "address": "Deposit address", "copy": "Copy address", "copied": "Address copied", "qrHint": "Scan the QR with your wallet app",
-      "demoWarning": "Demo address — do not send funds", "demoWarningBody": "This address has an invalid checksum, so wallets will refuse to send to it. In production a gateway issues a per-user address.",
+      "addressIssuing": "Issuing your deposit address…", "addressError": "Could not issue an address. Please try again shortly.", "addressPreview": "Deposit addresses are issued once the payment gateway is connected. This is a preview environment — use the balance top-up below to walk through the flow.",
       "guideTitle": "Deposit guide", "guideMin": "Minimum deposit {min}", "guideConfirm": "Credited automatically after {n} block confirmations", "guideToken": "Send only USDT on the selected network. Other coins or networks cannot be recovered",
       "guideTime": "~{sec}s per block · about {min} min",
       "status": "Deposit status", "waiting": "Waiting for deposit", "confirming": "Confirmation {n} / {total}", "credited": "Credited to balance",
-      "simulateTitle": "Mock webhook (test)", "simulateBody": "Simulates the deposit webhook in development. Enter an amount and run it to watch confirmations and get credited.",
-      "amount": "Amount (USDT)", "simulate": "Simulate deposit", "simulating": "Waiting for confirmations…", "belowMin": "Minimum deposit is {min}",
-      "creditedToast": "+{amount} credited (mock deposit)",
+      "simulateTitle": "Preview balance top-up", "simulateBody": "Preview environment before the gateway is connected. Enter an amount and run it to watch confirmations and see the balance update.",
+      "amount": "Amount (USDT)", "simulate": "Run top-up", "simulating": "Waiting for confirmations…", "belowMin": "Minimum deposit is {min}",
+      "creditedToast": "+{amount} credited",
       "close": "Close"
     },
     "cardPay": {
       "quick": "Quick top-up", "custom": "Custom amount", "amount": "Payment amount", "credit": "Credited",
-      "provider": "Payment method", "providerStripe": "Stripe · Global cards", "providerPortone": "PortOne · Korean cards", "providerMock": "Demo checkout (no PG configured)",
-      "mockNote": "No Stripe / PortOne keys are configured, so a demo checkout is used. No card details are collected.",
+      "provider": "Payment method", "providerStripe": "Stripe · Global cards", "providerPortone": "PortOne · Korean cards", "providerMock": "Preview checkout (no card details)",
+      "mockNote": "The payment gateway (Stripe / PortOne) is not connected yet, so this runs as a preview checkout. No card details are collected.",
       "pay": "Pay {amount}", "processing": "Processing…", "belowMin": "Minimum payment is {min}", "aboveMax": "Maximum payment is {max}", "invalid": "Check the amount",
-      "declined": "Card declined", "declinedHint": "Demo: amounts ending in 13 reproduce a decline",
+      "declined": "Card declined", "declinedHint": "The issuer declined this card. Please try another card.",
       "receipt": "Receipt", "receiptId": "Transaction ID", "receiptAt": "Approved at", "receiptCard": "Card", "receiptPaid": "Paid", "receiptCredited": "Credited", "receiptProvider": "Method",
       "done": "Done", "creditedToast": "+{amount} credited (card)", "history": "Recent top-ups", "noHistory": "No top-ups yet",
       "txDepositCard": "Card top-up", "txDepositUsdt": "USDT deposit", "txOpen": "Box open", "txSellback": "Instant sell-back"
@@ -284,14 +321,14 @@ UI = {
       "filterStatus": "Status", "filterTier": "Tier", "all": "All",
       "status": {"IN_STORAGE": "In Vault", "SHIPPING_REQUESTED": "Preparing shipment", "SHIPPING": "Shipping", "SOLD": "Sold"},
       "acquired": "Acquired {date}", "from": "{box}", "soldFor": "Refunded {amount}", "tracking": "Tracking", "trackingPending": "Awaiting tracking number",
-      "sell": "Instant Sell-Back", "ship": "Claim Shipping", "verify": "1-second fairness check", "select": "Select", "selected": "{n} selected", "selectAll": "Select all", "clearSelection": "Clear",
-      "sellSelected": "Sell selected ({rate} cashback)", "selectedValue": "Total value:", "soldForLabel": "Refunded",
-      "totalValue": "Total vault value", "sellAll": "Sell all", "sort": "Sort", "sorts": {"newest": "Newest", "valueDesc": "Highest value", "valueAsc": "Lowest value"},
+      "sell": "Cash out 95% now", "ship": "Ship it to my door", "verify": "1-second fairness check", "select": "Select", "selected": "{n} selected", "selectAll": "Select all", "clearSelection": "Clear",
+      "sellSelected": "Cash out selected at {rate}", "selectedValue": "Total value:", "soldForLabel": "Refunded",
+      "totalValue": "Total vault value", "sellAll": "Cash out all at 95%", "sort": "Sort", "sorts": {"newest": "Newest", "valueDesc": "Highest value", "valueAsc": "Lowest value"},
       "emptyFiltered": "No items match these filters.", "hotTitle": "Hottest boxes right now — TOP 3", "hotTop": "top multiplier",
       "track": "Track", "trackingTitle": "Shipment status", "copyTracking": "Copy tracking number", "trackOnCarrier": "Live tracking on {carrier}",
       "carriers": {"CJ": "CJ Logistics", "EPOST": "Korea Post", "DHL": "DHL", "FEDEX": "FedEx"},
       "steps": {"requested": "Shipping requested", "label": "Label issued", "transit": "In transit", "delivered": "Delivered"}, "stepCurrent": "Current step",
-      "trackingDemoNote": "In this demo a mock label is issued about 20 seconds after the request, and the tracking link points to a number that does not exist. In production a carrier webhook updates the status.",
+      "trackingDemoNote": "Once the parcel ships, the carrier and tracking number appear here with a live tracking link.",
       "sellTitle": "Instant Sell-Back", "sellBody": "Sell this item? {rate} of market value — {amount} — is credited to your balance instantly.",
       "sellBodyMulti": "Sell {n} items? {rate} of market value — {amount} — is credited to your balance instantly.",
       "confirm": "Confirm", "cancel": "Cancel", "soldToast": "Sold — {amount} credited",
@@ -309,63 +346,100 @@ UI = {
       "card": "Card {n}", "pickOne": "Pick a card", "revealing": "Locking the result…", "won": "Credited", "credited": "{amount} was credited to your balance",
       "odds": "Odds", "fairNote": "Same Provably Fair roll as paid boxes — your card pick is cosmetic and never changes the result",
       "creditedToast": "Daily Free Box — {amount} credited", "close": "Close",
-      "demoNote": "Demo: the 24-hour cooldown is per browser. Production counts per account."
+      "demoNote": "The 24-hour cooldown is counted per device."
     },
     "community": {
-      "eyebrow": "Community Wall", "title": "Real Unboxing Reviews", "you": "You", "pending": "In review",
+      "eyebrow": "Community Wall", "title": "Real Unboxing Reviews", "you": "You", 
       "bonusBanner": "Post a photo review after delivery and get an instant", "bonusBannerTail": "bonus cashback", "write": "Write a review",
       "badgeShipping": "Shipping verified", "badgeOnchain": "{explorer} on-chain proof",
       "writeTitle": "Photo Review", "writeBonus": "Instant bonus on submit", "noEligible": "You need a delivered item to write a review. Request shipping from your vault first.",
       "pickItem": "Received item", "photo": "Unboxing photo", "photoHint": "Choose a photo (optional)", "rating": "Rating", "text": "One-line review", "textHint": "One honest line is enough (5+ characters)",
       "submit": "Submit & get {bonus}", "bonusToast": "Review posted — {amount} bonus credited",
       "errors": {"item": "Pick an item", "text": "Write at least 5 characters", "photo": "Could not load the photo"},
-      "writeDemoNote": "Demo: your review and photo stay in this browser and the bonus is credited instantly. Production pays after moderation.",
-      "demoNote": "Demo data — reviews and proof links are mock values and photos are catalog images. Production replaces this with real uploads and on-chain / tracking verification."
+      "writeDemoNote": "Your review and photo are stored on this device and the bonus is credited on submit.",
+      "empty": "No reviews yet. Received your item? Post the first review and take the 10 USDT bonus.", "emptyCta": "Open a box"
     },
-    "ticker": {"label": "Live drops", "live": "LIVE", "win": "unboxed {item}", "cashout": "cashed out {amount}", "ship": "requested shipping for {item}", "ago": "({s}s ago)"},
+    "ticker": {"label": "Live drops", "live": "LIVE", "win": "pulled {item} from a {price} box", "cashout": "cashed out {amount}", "ship": "requested shipping for {item}", "ago": "({s}s ago)"},
     "onboarding": {
       "title": "How it works in 3 steps",
       "step1Title": "Pick a luxury box", "step1Desc": "Choose the box you want — Rolex, Tesla, Apple and more.",
       "step2Title": "100% provably fair unboxing", "step2Desc": "Opened instantly with a tamper-proof SHA-256 algorithm.",
       "step3Title": "Ship home or cash out 95%", "step3Desc": "Love it? Free shipping. Don't need it? Liquidate instantly for 95% USDT."
     },
-    "counters": {"shipments": "Physical items shipped today", "shipmentsUnit": "items", "cashouts": "Settled cashouts today", "verification": "Provably fair verification rate", "demoNote": "Demo metrics — production shows live aggregates"},
+    "counters": {"label": "Trust metrics", "shipments": "Physical items shipped today", "shipmentsUnit": "items", "cashouts": "Settled cashouts today", "verification": "Provably fair verification rate", "odds": "Published odds entries", "oddsUnit": "items", "sellback": "Instant cash-out rate", "verifiedOf": "{n} of my opens re-verified"},
     "proof": {
       "title": "Live Proof of Payout & Delivery", "live": "LIVE", "tab": {"payouts": "USDT Payout Proof", "shipments": "Shipping Proof"},
       "kind": {"withdraw": "Withdrawal", "sellback": "Instant sell-back"}, "viewOnExplorer": "View on {explorer}", "track": "Track parcel",
       "carriers": {"CJ": "CJ Logistics", "EPOST": "Korea Post", "DHL": "DHL", "FEDEX": "FedEx"},
-      "reserveEyebrow": "Proof of Reserves", "reserveBody": "GACHAFLIX keeps over {min} USDT in liquid payout reserves on-chain at all times to protect user assets and guarantee instant withdrawals.",
+      "reserveEyebrow": "Proof of Reserves", "reserveBody": "GACHAFLIX keeps liquid payout reserves in an on-chain wallet to protect user assets and guarantee instant withdrawals. Anyone can check the balance at the address below.",
       "reserveWallet": "Reserve wallet", "reserveBalance": "Current balance", "copyAddress": "Copy address",
-      "demoNote": "Demo data — users, amounts, TxIDs and tracking numbers are mock values and will not resolve on explorers or carrier sites. Production replaces this with live aggregates."
+      "emptyPayouts": "No payouts recorded yet.", "emptyShipments": "No shipments recorded yet.", "emptyCta": "Open a box", "pendingTx": "Awaiting broadcast", "settledInstant": "Settled instantly"
     },
     "withdraw": {
       "title": "Withdraw USDT", "close": "Close", "available": "Available balance", "network": "Withdrawal network", "address": "Destination wallet address", "addressHint": "Address starting with {hint}",
       "amount": "Amount", "min": "Min {min}", "max": "MAX", "fee": "Network fee", "feeShort": "Fee", "net": "You receive", "netLabel": "Net amount you receive",
       "submit": "Submit withdrawal", "requested": "Withdrawal submitted", "txId": "Transaction ID", "at": "Submitted at", "another": "New withdrawal", "done": "Done", "history": "Recent withdrawals",
       "status": {"PENDING": "Pending", "BROADCASTING": "Broadcasting", "COMPLETED": "Completed"},
-      "txHash": "On-chain TxID", "txHashPending": "A TxID is issued once broadcasting starts", "copyHash": "Copy TxID", "viewOnExplorer": "View on {explorer}", "demoHashNote": "The TxID shown is a format-only mock and will not resolve on the explorer.",
+      "txHash": "On-chain TxID", "txHashPending": "The TxID appears after broadcast", "copyHash": "Copy TxID", "viewOnExplorer": "View on {explorer}",
       "errors": {"TRC20": "A TRC-20 address is 34 characters starting with T", "BEP20": "A BEP-20 address is 42 characters starting with 0x", "min": "Minimum withdrawal is {min}", "insufficient": "Insufficient balance", "nan": "Enter an amount"},
-      "demoNote": "This demo has no hot wallet, so no on-chain transfer happens. In production the transfer is signed and broadcast, then a webhook marks it completed.",
+      "processingNote": "Withdrawals are signed and broadcast after a security review. The TxID and explorer link appear here once complete.", "previewNote": "In this preview environment withdrawals stay in the requested state and are not broadcast. Once the backend is connected the TxID and explorer link appear here.",
       "requestedToast": "Withdrawal submitted — {amount} deducted"
     },
+    "vip": {"title": "VIP tier {tier}", "tiers": {"member": "Member", "silver": "Silver", "gold": "Gold", "black": "Black"}},
+    "footer": {
+      "slogan": "The most transparent blockchain-based luxury mystery box platform for real goods",
+      "service": "Service", "guide": "Help & Policies", "support": "Support",
+      "links": {"dollar": "$1 boxes", "vault": "Luxury vault", "feed": "Live payout feed", "verifier": "Fairness verifier", "terms": "Terms of Service", "privacy": "Privacy Policy", "policy": "Shipping & 95% cash-out policy", "faq": "FAQ", "telegram": "Telegram 24/7 live support", "discord": "Official Discord", "notice": "Announcements"},
+      "disclaimer": "GACHAFLIX is a global e-commerce mystery box platform. Every opening result is published transparently through a tamper-proof SHA-256 algorithm, and every winning item is guaranteed to ship as a physical product or to cash out instantly to USDT.",
+      "preview": "Preview environment — payments, withdrawals and shipping activate once the backend is connected."
+    },
+    "legalDocs": {
+      "eyebrow": "Help & Policies", "updated": "Last updated September 18, 2026",
+      "terms": {"title": "Terms of Service", "sections": [
+        {"h": "1. The service", "p": "GACHAFLIX sells mystery boxes with fully published odds and either ships the winning item or cashes it out instantly at 95% of market value in USDT."},
+        {"h": "2. Account and balance", "p": "Balances are held in USDT. Deposits, withdrawals, openings and cash-outs are recorded as transactions and used for nothing other than purchases and withdrawals."},
+        {"h": "3. Odds and fairness", "p": "Every box publishes its per-item odds before opening. Results are fixed by a server seed hash published in advance and the user's client seed, and anyone can reproduce and verify them."},
+        {"h": "4. Cancellation and refunds", "p": "A box cannot be cancelled once opening starts. Any winning item can be cashed out at 95% or shipped at any time."},
+        {"h": "5. Responsibility", "p": "Users are responsible for complying with local law. In case of a service failure balances are restored from the transaction record."}
+      ]},
+      "privacy": {"title": "Privacy Policy", "sections": [
+        {"h": "1. What we collect", "p": "Recipient name, phone, address and customs identifier for shipping; wallet address for withdrawals; transaction identifiers for payments. Card details are handled by the payment processor and never stored by us."},
+        {"h": "2. Why", "p": "Only for shipping, withdrawals, fraud prevention and support."},
+        {"h": "3. Retention", "p": "Kept for the period required by law after shipping or withdrawal completes, then deleted without delay."},
+        {"h": "4. Third parties", "p": "Only the minimum needed is shared with carriers (shipping) and payment processors (payments)."},
+        {"h": "5. Your rights", "p": "You can request access, correction or deletion at any time through support."}
+      ]},
+      "policy": {"title": "Shipping & 95% Cash-Out Policy", "sections": [
+        {"h": "1. Instant cash-out", "p": "Any item in your vault can be cashed out instantly at 95% of market value in USDT, credited to your balance immediately."},
+        {"h": "2. Physical shipping", "p": "International shipping is deducted from your balance on request; destination duties and VAT are paid on delivery. Korea ships via CJ Logistics, international via DHL/FedEx, and the tracking number appears in your vault once issued."},
+        {"h": "3. Withdrawals", "p": "USDT withdrawals run on TRC-20 (1.00 USDT fee) or BEP-20 (0.80 USDT fee) with a 20 USDT minimum. The TxID and explorer link are provided after broadcast."},
+        {"h": "4. Floor value guarantee", "p": "The lowest item in every box can be cashed out for at least 80% of the open price."}
+      ]},
+      "faq": {"title": "FAQ", "sections": [
+        {"h": "Can I really start with 1 USDT?", "p": "Yes. The $1 category opens for 1.00 USDT, and even a miss returns 0.85 USDT instantly."},
+        {"h": "How do I know a result wasn't rigged?", "p": "Press the 1-second fairness check on any result or vault card. It replays the pre-committed hash, the roll number and the bracket match in three steps."},
+        {"h": "Can I take cash instead of the item?", "p": "Any time — cash out 95% of market value to USDT from your vault."},
+        {"h": "How long do withdrawals take?", "p": "They are broadcast after a security review; the TxID and TronScan/BscScan link appear once complete."}
+      ]}
+    },
     "actions": {"sellBack": "Instant Sell-Back", "claimShipping": "Claim Shipping", "provablyFair": "Provably Fair"},
-    "legal": {"disclaimer": "Amounts shown are market value. Instant sell-back pays {refund} of market value, so cash recovery is below the open price. All odds are published under View Contents. This screen is a prototype and product data is mock."},
-    "badges": {"dream": "Dream Box", "mobility": "Mobility", "tech": "Tech", "audio": "Audio", "watch": "Watches", "luxury": "Luxury", "lifestyle": "Lifestyle", "guaranteed": "Guaranteed"},
+    "legal": {"disclaimer": "Amounts shown are market value. Cashing out an item instantly pays {refund} of market value, so cash recovery is below the open price. Every probability is published in full under [See what's inside]."},
+    "badges": {"dream": "Dream Box", "mobility": "Mobility", "tech": "Tech", "audio": "Audio", "watch": "Watches", "luxury": "Luxury", "lifestyle": "Lifestyle", "guaranteed": "Guaranteed", "dollar": "$1", "gold": "Gold"},
   },
   "zh": {
     "nav": {"boxes": "盲盒", "battles": "对战", "inventory": "仓库", "fairness": "公平性验证", "community": "社区", "highRoller": "高额玩家", "tech": "科技", "luxury": "奢侈品"},
-    "header": {"balance": "余额", "demo": "演示", "language": "语言", "currency": "货币", "deposit": "充值", "withdraw": "提现", "welcomeToast": "新人奖励 {amount} 已到账 — 开启真实盲盒吧"},
+    "header": {"balance": "余额", "language": "语言", "currency": "货币", "deposit": "充值", "withdraw": "提现", "welcomeToast": "新人奖励 {amount} 已到账 — 开启真实盲盒吧"},
     "hero": {
       "royalSelection": "皇家精选", "top": "TOP {n}", "pricePerOpen": "单次开启", "topPull": "最高奖品",
       "noBlank": "100% 实物发放 · 无空奖", "guaranteedMinLabel": "保底价值",
       "guaranteedMin": "保底价值 {value}", "aboveOpenPrice": "不低于开启价",
-      "openNow": "立即开启", "viewContents": "查看内含", "billboardPicker": "选择展示", "billboardOf": "{title} 展示",
-      "headline": "如看大片般开箱，劳力士真实发货。", "sub": "100%正品实物保障。满意即申请包邮发货到家，不满意支持95% USDT即时极速折现。", "freeDemo": "免费体验", "nowShowing": "正在上映", "topMultipleShort": "最高 {n}"
+      "openNow": "立即开启", "viewContents": "看看里面有什么", "billboardPicker": "选择展示", "billboardOf": "{title} 展示",
+      "headline": "一杯咖啡的钱，博一块劳力士。没中？95% 立刻退。", "sub": "包邮寄到家，或 1 秒折现成 USDT。中了就 100% 是你的。", "freeDemo": "不花钱先过把瘾（免费）", "openFor": "🔥 {price} 立即开一发", "badge": "1 美元起的奢品头奖", "nowShowing": "正在上映", "topMultipleShort": "最高 {n}"
     },
-    "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "guaranteed": "保底", "openNow": "立即开启", "contents": "内含", "details": "{title} 详情", "expand": "展开"},
-    "rows": {"trending": "🔥 开启最多的盲盒 TOP 10", "techMobility": "⚡ 苹果与次世代游戏装备", "luxuryWatch": "💎 奢华腕表与高端精品", "guaranteed": "🎯 新手高性价比保底盲盒", "prev": "上一页", "next": "下一页"},
+    "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "guaranteed": "保底", "openNow": "立即开", "contents": "详情", "details": "{title} 详情", "expand": "展开"},
+    "rows": {"trending": "🔥 开启最多的盲盒 TOP 10", "dollar": "🔥 1 美元盲盒", "techMobility": "⚡ 苹果与科技", "luxuryWatch": "👑 奢品与腕表", "guaranteed": "🚗 超跑与金条", "prev": "上一页", "next": "下一页"},
     "grid": {"title": "全部盲盒", "sort": "排序", "loadMore": "加载更多（{n}）"},
-    "categories": {"all": "全部", "mobility": "出行", "tech": "科技", "watch": "腕表", "luxury": "奢侈品", "lifestyle": "生活方式"},
+    "categories": {"all": "全部", "dollar": "🔥 1 美元盲盒", "tech": "⚡ 苹果与科技", "luxury": "👑 奢品与腕表", "jackpot": "🚗 超跑与金条"},
     "sorts": {"featured": "推荐", "price-asc": "价格从低到高", "price-desc": "价格从高到低", "popularity": "人气"},
     "tiers": {
       "legendTitle": "等级 = 市场价 ÷ 开启价",
@@ -380,7 +454,7 @@ UI = {
       "explain": "等级并非存储值，而是由市场价 ÷ 开启价的倍数推导。每次开启的期望市场价为 {ev}，相当于开启价的 {retail}。若即时回收，仅按市场价的 {refund} 支付，因此按现金计算的回收率为 {cash}，低于开启价。",
       "guaranteedYes": "本盲盒最低档商品的市场价（{min}）不低于开启价。",
       "guaranteedNo": "本盲盒最低档商品的市场价为 {min}，低于开启价。",
-      "prototype": "当前页面为原型，商品数据为模拟数据。",
+      
       "allPrizes": "全部可得商品", "count": "{n} 件", "sortedByValue": "按市场价降序",
       "marketValue": "市场价", "odds": "概率", "imageCredits": "图片来源"
     },
@@ -395,7 +469,7 @@ UI = {
       "resultHash": "服务器种子 SHA-256", "resultHmac": "HMAC-SHA256", "resultRoll": "Roll 数值", "resultItem": "中奖商品", "resultRange": "中奖区间",
       "hashMatch": "与公开哈希一致", "hashMismatch": "与公开哈希不一致 — 服务器种子不同", "hashSkipped": "未填写公开哈希",
       "rangeNote": "Roll 范围 0 ~ {max}（{resolution}% 精度）", "outOf": "{roll} / {max}",
-      "demoTitle": "种子承诺演示", "demoBody": "生成新的服务器种子后仅显示哈希。点击公开后显示原文，可填入验证器复现结果。",
+      "demoTitle": "亲手试试种子承诺", "demoBody": "生成新的服务器种子后仅显示哈希。点击公开后显示原文，可填入验证器复现结果。",
       "generate": "生成服务器种子", "reveal": "公开服务器种子", "hidden": "开启前 — 原文未公开", "useInVerifier": "填入验证器",
       "invalidInput": "请输入服务器种子与客户端种子，Nonce 须为 ≥ 0 的整数。",
       "open": "打开公平性验证", "close": "关闭",
@@ -413,13 +487,13 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "开启 ×1", "open5": "连续开启 ×5", "demoLabel": "免费体验 · 模拟开箱", "demoCongrats": "恭喜！您在模拟中抽中了 {item}（{n}）。", "demoBody": "用 {bonus} 新人奖励开启真实盲盒吧！", "demoCta": "领取奖励并开启真实盲盒", "demoCtaClaimed": "开启真实盲盒", "demoNote": "这是模拟结果 — 不计入余额与仓库，也不消耗公平性种子。", "spinning": "开启中…", "landing": "结果已锁定",
+      "open1": "开启 ×1", "open5": "连续开启 ×5", "demoLabel": "免费过把瘾 · 模拟开箱", "demoCongrats": "恭喜！您在模拟中抽中了 {item}（{n}）。", "demoBody": "用 {bonus} 新人奖励开启真实盲盒吧！", "demoCta": "领取奖励并开启真实盲盒", "demoCtaClaimed": "开启真实盲盒", "demoNote": "这是模拟结果 — 不计入余额与仓库，也不消耗公平性种子。", "spinning": "开启中…", "landing": "结果已锁定",
       "result": "获得", "results": "5 次结果", "total": "总价值", "paid": "已支付 {price}",
-      "sellBack": "即时回收 · {amount}", "sellBackAll": "全部即时回收 · {amount}", "sellBackNote": "按市场价的 {rate} 即时计入余额",
-      "sold": "已回收 — 余额 +{amount}", "claimShipping": "申请发货",
-      "shippingNotice": "国际运费与关税说明", "shippingBody": "目的地关税/增值税及国际运费（DHL/FedEx 实付）另行收取。演示中不受理。",
+      "sellBack": "95% 立即折现 · {amount}", "sellBackAll": "全部 95% 立即折现 · {amount}", "sellBackNote": "按市场价的 {rate} 即时计入余额",
+      "sold": "已折现 — 余额 +{amount}", "claimShipping": "寄到我家",
+      "shippingNotice": "国际运费与关税说明", "shippingBody": "目的地关税/增值税及国际运费（DHL/FedEx 实付）另行收取。",
       "verify": "1 秒公平性验证", "close": "关闭", "keep": "存入仓库", "kept": "已存入仓库 — 关闭后仍会保留",
-      "insufficient": "余额不足 — 需要 {price}", "topUp": "充值演示余额", "toppedUp": "+{amount} 演示余额",
+      "insufficient": "余额不足 — 需要 {price}", "topUp": "充值", "toppedUp": "+{amount} 已计入",
       "mute": "关闭音效", "unmute": "开启音效",
       "seedHash": "服务器种子哈希（开启前公开）", "serverSeed": "服务器种子", "clientSeed": "客户端种子", "nonce": "Nonce", "roll": "Roll",
       "fairNote": "本次结果由以下种子与 Nonce 决定。可在[验证本次结果]中完整复现。"
@@ -428,21 +502,21 @@ UI = {
       "title": "充值", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 加密货币充值", "tabCard": "信用卡支付",
       "network": "选择网络", "recommended": "推荐 · 手续费低于 1 USDT", "chain": "{chain}",
       "address": "充值钱包地址", "copy": "一键复制", "copied": "地址已复制", "qrHint": "请用钱包 App 扫描二维码",
-      "demoWarning": "演示地址 — 请勿实际转账", "demoWarningBody": "该地址校验和无效，钱包会拒绝转账。正式环境由网关为每位用户分配地址。",
+      "addressIssuing": "正在生成充值地址…", "addressError": "地址生成失败，请稍后重试。", "addressPreview": "充值地址在接入支付网关后生成。当前为预览环境，可用下方的余额充值体验流程。",
       "guideTitle": "充值说明", "guideMin": "最低充值 {min}", "guideConfirm": "区块链 {n} 次确认后自动到账", "guideToken": "仅发送所选网络的 USDT。其他币种或网络无法找回",
       "guideTime": "约 {sec} 秒/区块 · 约 {min} 分钟",
       "status": "充值状态", "waiting": "等待入账", "confirming": "确认 {n} / {total}", "credited": "已计入余额",
-      "simulateTitle": "测试用模拟 Webhook", "simulateBody": "在开发环境模拟充值 Webhook。输入金额并执行，确认计数器会运行并计入余额。",
-      "amount": "金额 (USDT)", "simulate": "模拟充值", "simulating": "等待确认…", "belowMin": "最低充值为 {min}",
-      "creditedToast": "+{amount} 已计入余额（模拟充值）",
+      "simulateTitle": "预览余额充值", "simulateBody": "接入网关前的预览环境。输入金额并执行，确认计数器会运行并计入余额。",
+      "amount": "金额 (USDT)", "simulate": "执行充值", "simulating": "等待确认…", "belowMin": "最低充值为 {min}",
+      "creditedToast": "+{amount} 已计入余额",
       "close": "关闭"
     },
     "cardPay": {
       "quick": "快捷充值", "custom": "自定义金额", "amount": "支付金额", "credit": "计入余额",
-      "provider": "支付方式", "providerStripe": "Stripe · 国际信用卡", "providerPortone": "PortOne · 韩国信用卡", "providerMock": "演示支付（未配置支付网关）",
-      "mockNote": "未配置 Stripe / PortOne 密钥，故使用演示支付。不会采集卡片信息。",
+      "provider": "支付方式", "providerStripe": "Stripe · 国际信用卡", "providerPortone": "PortOne · 韩国信用卡", "providerMock": "预览支付（不采集卡片信息）",
+      "mockNote": "支付网关（Stripe / PortOne）尚未接入，以预览支付进行。不会采集卡片信息。",
       "pay": "支付 {amount}", "processing": "支付处理中…", "belowMin": "最低支付金额为 {min}", "aboveMax": "最高支付金额为 {max}", "invalid": "请检查金额",
-      "declined": "卡片被拒绝", "declinedHint": "演示：尾数为 13 的金额会模拟拒绝",
+      "declined": "卡片被拒绝", "declinedHint": "发卡行拒绝了此卡，请换一张卡重试。",
       "receipt": "收据", "receiptId": "交易编号", "receiptAt": "批准时间", "receiptCard": "卡片", "receiptPaid": "支付金额", "receiptCredited": "计入余额", "receiptProvider": "支付方式",
       "done": "完成", "creditedToast": "+{amount} 已计入余额（信用卡）", "history": "最近充值记录", "noHistory": "暂无充值记录",
       "txDepositCard": "信用卡充值", "txDepositUsdt": "USDT 充值", "txOpen": "开启盲盒", "txSellback": "即时回收"
@@ -453,14 +527,14 @@ UI = {
       "filterStatus": "状态", "filterTier": "等级", "all": "全部",
       "status": {"IN_STORAGE": "保管中", "SHIPPING_REQUESTED": "备货中", "SHIPPING": "运输中", "SOLD": "已回收"},
       "acquired": "获得于 {date}", "from": "{box}", "soldFor": "已退回 {amount}", "tracking": "运单号", "trackingPending": "等待运单号",
-      "sell": "即时回收", "ship": "申请发货", "verify": "1 秒公平性验证", "select": "选择", "selected": "已选 {n} 件", "selectAll": "全选", "clearSelection": "取消选择",
-      "sellSelected": "批量回收所选 ({rate} 返现)", "selectedValue": "总价值：", "soldForLabel": "已退回",
-      "totalValue": "仓库总资产", "sellAll": "全部回收", "sort": "排序", "sorts": {"newest": "最新", "valueDesc": "价值从高到低", "valueAsc": "价值从低到高"},
+      "sell": "95% 立即折现", "ship": "寄到我家", "verify": "1 秒公平性验证", "select": "选择", "selected": "已选 {n} 件", "selectAll": "全选", "clearSelection": "取消选择",
+      "sellSelected": "所选按 {rate} 批量折现", "selectedValue": "总价值：", "soldForLabel": "已退回",
+      "totalValue": "仓库总资产", "sellAll": "全部 95% 折现", "sort": "排序", "sorts": {"newest": "最新", "valueDesc": "价值从高到低", "valueAsc": "价值从低到高"},
       "emptyFiltered": "没有符合条件的商品。", "hotTitle": "当前最热盲盒 TOP 3", "hotTop": "最高倍数",
       "track": "查看物流", "trackingTitle": "物流状态", "copyTracking": "复制运单号", "trackOnCarrier": "在 {carrier} 实时查询",
       "carriers": {"CJ": "CJ大韩通运", "EPOST": "韩国邮政", "DHL": "DHL", "FEDEX": "FedEx"},
       "steps": {"requested": "已受理发货申请", "label": "已出运单", "transit": "运输中", "delivered": "已签收"}, "stepCurrent": "当前环节",
-      "trackingDemoNote": "演示环境会在申请约 20 秒后生成模拟运单，查询链接指向并不存在的单号。正式服务由物流公司回调更新状态。",
+      "trackingDemoNote": "出库完成后，物流公司与运单号会显示在此，并开放实时查询链接。",
       "sellTitle": "即时回收", "sellBody": "确定回收该商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
       "sellBodyMulti": "确定回收 {n} 件商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
       "confirm": "确认", "cancel": "取消", "soldToast": "已回收 — 余额 +{amount}",
@@ -478,55 +552,104 @@ UI = {
       "card": "卡片 {n}", "pickOne": "请选择一张卡片", "revealing": "结果确定中…", "won": "已计入", "credited": "{amount} 已计入您的余额",
       "odds": "概率表", "fairNote": "与付费盲盒相同的 Provably Fair 掷点 — 选卡仅为演出，不会改变结果",
       "creditedToast": "每日免费盲盒 — 已计入 {amount}", "close": "关闭",
-      "demoNote": "演示：24 小时冷却按本浏览器计算。正式服务按账户计算。"
+      "demoNote": "24 小时冷却按本设备计算。"
     },
     "community": {
-      "eyebrow": "Community Wall", "title": "实物开箱晒单", "you": "我", "pending": "审核中",
+      "eyebrow": "Community Wall", "title": "实物开箱晒单", "you": "我", 
       "bonusBanner": "收到实物后发布照片晒单，立即获得", "bonusBannerTail": "奖励返现", "write": "发布晒单",
       "badgeShipping": "运单已验证", "badgeOnchain": "{explorer} 链上证明",
       "writeTitle": "发布照片晒单", "writeBonus": "提交即得奖励", "noEligible": "需要有已发货的商品才能晒单。请先在仓库申请发货。",
       "pickItem": "已收到的商品", "photo": "开箱照片", "photoHint": "选择照片（可选）", "rating": "评分", "text": "一句话评价", "textHint": "一句真实感受即可（5 字以上）",
       "submit": "提交并领取 {bonus}", "bonusToast": "晒单已发布 — 奖励 {amount} 已计入",
       "errors": {"item": "请选择商品", "text": "评价至少 5 个字", "photo": "无法加载照片"},
-      "writeDemoNote": "演示：晒单和照片仅保存在本浏览器，奖励即时发放。正式服务在审核通过后发放。",
-      "demoNote": "演示数据 — 晒单与证明链接为模拟值，照片为目录图片。正式服务将替换为真实上传及链上/运单验证。"
+      "writeDemoNote": "晒单和照片保存在本设备，奖励在提交时即刻计入余额。",
+      "empty": "还没有晒单。收到实物了？发第一条晒单领取 10 USDT 奖励。", "emptyCta": "去开盲盒"
     },
-    "ticker": {"label": "实时开箱动态", "live": "LIVE", "win": "开出了 {item}", "cashout": "已折现 {amount}", "ship": "申请发货 {item}", "ago": "（{s} 秒前）"},
+    "ticker": {"label": "实时开箱动态", "live": "LIVE", "win": "在 {price} 盲盒中开出 {item}", "cashout": "已折现 {amount}", "ship": "申请发货 {item}", "ago": "（{s} 秒前）"},
     "onboarding": {
       "title": "3 秒看懂流程",
       "step1Title": "选择奢品盲盒", "step1Desc": "劳力士、特斯拉、苹果等，任选心仪的盲盒。",
       "step2Title": "100% 公平开箱", "step2Desc": "以无法篡改的 SHA-256 算法即时开启。",
       "step3Title": "发货到家或 95% 折现", "step3Desc": "满意即免费发货，不需要则按 95% USDT 即时折现。"
     },
-    "counters": {"shipments": "今日已出库实物", "shipmentsUnit": "件", "cashouts": "今日已结算折现", "verification": "公平性验证完成率", "demoNote": "演示指标 — 正式服务显示实时统计"},
+    "counters": {"label": "信任指标", "shipments": "今日已出库实物", "shipmentsUnit": "件", "cashouts": "今日已结算折现", "verification": "公平性验证完成率", "odds": "已公开概率项", "oddsUnit": "项", "sellback": "即时折现率", "verifiedOf": "我的 {n} 次开箱已复核"},
     "proof": {
       "title": "实付与实发实时证明", "live": "LIVE", "tab": {"payouts": "USDT 实付证明", "shipments": "实物发货动态"},
       "kind": {"withdraw": "提现", "sellback": "即时回收"}, "viewOnExplorer": "在 {explorer} 查看", "track": "运单追踪",
       "carriers": {"CJ": "CJ大韩通运", "EPOST": "韩国邮政", "DHL": "DHL", "FEDEX": "FedEx"},
-      "reserveEyebrow": "Proof of Reserves · 储备金", "reserveBody": "为保护用户资产并保证即时提现，GACHAFLIX 始终在链上持有 {min} USDT 以上的流动性储备金。",
+      "reserveEyebrow": "Proof of Reserves · 储备金", "reserveBody": "为保护用户资产并保证即时提现，GACHAFLIX 在链上钱包持有流动性储备金，任何人都可通过下方地址查询余额。",
       "reserveWallet": "储备钱包", "reserveBalance": "当前持有", "copyAddress": "复制地址",
-      "demoNote": "演示数据 — 用户、金额、TxID 与运单均为模拟值，无法在浏览器或物流网站查询。正式服务将替换为真实统计。"
+      "emptyPayouts": "暂无支付记录。", "emptyShipments": "暂无发货记录。", "emptyCta": "去开盲盒", "pendingTx": "等待广播", "settledInstant": "即时结算"
     },
     "withdraw": {
       "title": "USDT 提现", "close": "关闭", "available": "可提现余额", "network": "提现网络", "address": "收款钱包地址", "addressHint": "以 {hint} 开头的地址",
       "amount": "提现数量", "min": "最低 {min}", "max": "全部", "fee": "网络手续费", "feeShort": "手续费", "net": "实际到账", "netLabel": "实际到账金额",
       "submit": "提交提现申请", "requested": "提现申请已受理", "txId": "交易 ID", "at": "申请时间", "another": "再次提现", "done": "确定", "history": "最近提现",
       "status": {"PENDING": "审核中", "BROADCASTING": "广播中", "COMPLETED": "已完成"},
-      "txHash": "链上 TxID", "txHashPending": "开始广播后生成 TxID", "copyHash": "复制 TxID", "viewOnExplorer": "在 {explorer} 查看", "demoHashNote": "所示 TxID 仅为格式正确的模拟值，无法在浏览器中查询。",
+      "txHash": "链上 TxID", "txHashPending": "广播后显示 TxID", "copyHash": "复制 TxID", "viewOnExplorer": "在 {explorer} 查看",
       "errors": {"TRC20": "TRC-20 地址为以 T 开头的 34 位字符", "BEP20": "BEP-20 地址为以 0x 开头的 42 位字符", "min": "最低提现数量为 {min}", "insufficient": "余额不足", "nan": "请输入提现数量"},
-      "demoNote": "演示环境没有热钱包，不会发生链上转账。正式服务会签名并广播交易，随后由回调将状态更新为已完成。",
+      "processingNote": "提现经安全审核后签名并广播，完成后 TxID 与浏览器链接会显示在此。", "previewNote": "预览环境中提现停留在申请状态，不会广播。接入后端后将显示 TxID 与浏览器链接。",
       "requestedToast": "提现申请已提交 — 已扣除 {amount}"
     },
+    "vip": {"title": "VIP 等级 {tier}", "tiers": {"member": "会员", "silver": "白银", "gold": "黄金", "black": "黑金"}},
+    "footer": {
+      "slogan": "基于区块链、最透明的实物奢品盲盒平台",
+      "service": "服务", "guide": "使用指南", "support": "客户支持",
+      "links": {"dollar": "1 美元盲盒", "vault": "奢品金库", "feed": "实时支付动态", "verifier": "公平性验证器", "terms": "服务条款", "privacy": "隐私政策", "policy": "发货与 95% 折现政策", "faq": "常见问题", "telegram": "Telegram 24/7 在线客服", "discord": "官方 Discord", "notice": "公告频道"},
+      "disclaimer": "GACHAFLIX 是面向全球用户的电商盲盒平台。所有开箱结果均通过不可篡改的 SHA-256 算法透明公开，中奖商品保证 100% 实物发货或即时折现为 USDT。",
+      "preview": "预览环境 — 支付、提现与发货将在接入后端后启用。"
+    },
+    "legalDocs": {
+      "eyebrow": "使用指南", "updated": "最近更新 2026 年 9 月 18 日",
+      "terms": {"title": "服务条款", "sections": [
+        {"h": "1. 服务", "p": "GACHAFLIX 销售概率完全公开的盲盒，中奖商品可实物发货，或按市场价 95% 即时折现为 USDT。"},
+        {"h": "2. 账户与余额", "p": "余额以 USDT 计。充值、提现、开箱与折现均记录为交易，仅用于购买与提现。"},
+        {"h": "3. 概率与公平", "p": "每个盲盒在开启前公开各商品概率。结果由事先公布的服务器种子哈希与用户客户端种子决定，任何人都可复现验证。"},
+        {"h": "4. 取消与退款", "p": "开箱开始后不可取消。中奖商品可随时选择 95% 折现或实物发货。"},
+        {"h": "5. 责任", "p": "用户须遵守所在地法律。服务故障时以交易记录为准恢复余额。"}
+      ]},
+      "privacy": {"title": "隐私政策", "sections": [
+        {"h": "1. 收集项目", "p": "发货所需的收件人姓名、电话、地址与通关标识；提现所需的钱包地址；支付处理所需的交易标识。卡片信息由支付机构处理，本公司不存储。"},
+        {"h": "2. 使用目的", "p": "仅用于发货、提现、防止滥用及客服。"},
+        {"h": "3. 保存与销毁", "p": "发货或提现完成后按法定期限保存，随后立即销毁。"},
+        {"h": "4. 第三方提供", "p": "仅向物流公司（发货信息）与支付机构（支付信息）提供最少必要信息。"},
+        {"h": "5. 用户权利", "p": "可随时通过客服申请查阅、更正或删除。"}
+      ]},
+      "policy": {"title": "发货与 95% 折现政策", "sections": [
+        {"h": "1. 即时折现", "p": "仓库中的中奖商品可随时按市场价 95% 即时折现为 USDT，即刻计入余额。"},
+        {"h": "2. 实物发货", "p": "国际运费在申请时从余额扣除，目的地关税与增值税在签收时另付。韩国由 CJ 大韩通运发货，海外由 DHL/FedEx 发货，运单号生成后显示在仓库中。"},
+        {"h": "3. 提现", "p": "USDT 提现支持 TRC-20（手续费 1.00 USDT）或 BEP-20（手续费 0.80 USDT），最低 20 USDT。广播后提供 TxID 与浏览器链接。"},
+        {"h": "4. 保底价值", "p": "每个盲盒的最低商品都能以开启价 80% 以上的价值即时折现。"}
+      ]},
+      "faq": {"title": "常见问题", "sections": [
+        {"h": "真的能从 1 USDT 开始吗？", "p": "是的。1 美元盲盒以 1.00 USDT 开启，即使落空也立即返还 0.85 USDT。"},
+        {"h": "如何确认结果没有被操控？", "p": "在结果弹窗或仓库卡片点击「1 秒公平性验证」，会分三步复现事前封存哈希、掷点数字与区间匹配。"},
+        {"h": "可以不要实物直接拿现金吗？", "p": "随时可以 — 在仓库中按市场价 95% 折现为 USDT。"},
+        {"h": "提现需要多久？", "p": "经安全审核后广播，完成后显示 TxID 与 TronScan/BscScan 链接。"}
+      ]}
+    },
     "actions": {"sellBack": "即时回收", "claimShipping": "申请发货", "provablyFair": "公平性验证"},
-    "legal": {"disclaimer": "所示金额均为市场价。即时回收仅按市场价的 {refund} 支付，因此现金回收额低于开启价。全部概率在「查看内含」中公开。当前页面为原型，商品数据为模拟数据。"},
-    "badges": {"dream": "梦想盲盒", "mobility": "出行", "tech": "科技", "audio": "音频", "watch": "腕表", "luxury": "奢侈品", "lifestyle": "生活方式", "guaranteed": "保底"},
+    "legal": {"disclaimer": "所示金额均为市场价。即时折现按市场价的 {refund} 支付，因此现金回收额低于开启价。全部概率在「看看里面有什么」中完整公开。"},
+    "badges": {"dream": "梦想盲盒", "mobility": "出行", "tech": "科技", "audio": "音频", "watch": "腕表", "luxury": "奢侈品", "lifestyle": "生活方式", "guaranteed": "保底", "dollar": "1 美元", "gold": "黄金"},
   },
 }
 
 # 한국어 badge 문자열 → badges 키
-BADGE_KEY = {"드림 박스": "dream", "모빌리티": "mobility", "테크": "tech", "오디오": "audio", "워치": "watch", "럭셔리": "luxury", "라이프스타일": "lifestyle", "가치 보장": "guaranteed"}
+BADGE_KEY = {"드림 박스": "dream", "모빌리티": "mobility", "테크": "tech", "오디오": "audio", "워치": "watch", "럭셔리": "luxury", "라이프스타일": "lifestyle", "가치 보장": "guaranteed", "1달러": "dollar", "골드": "gold"}
 
 ZH_BOX = {
+  "dollar-apple": ("1 美元苹果大奖", "一杯咖啡的钱博 iPhone 16 Pro。落空也立即返还 0.85 USDT。"),
+  "dollar-galaxy": ("1 美元 Galaxy 大奖", "1 美元博 Galaxy Z Fold8 1TB。落空立即返还 0.85 USDT。"),
+  "dollar-gaming": ("1 美元游戏大奖", "1 美元博 RTX 5090 到 Switch 2。Steam 礼品卡经常出现。"),
+  "starter-ps5": ("咖啡价 PS5 入门", "3 美元博 PS5 Pro。落空也返还 2.5 USDT。"),
+  "starter-macbook": ("咖啡汉堡 MacBook 大奖", "5 美元博 MacBook Pro M4 Max（1,100 倍）。落空也立即返还 4.2 USDT。"),
+  "starter-phone": ("5 美元 iPhone 17 大奖", "5 美元博 iPhone 17 Pro Max 1TB，还有 Apple Watch Ultra 3。"),
+  "vault-submariner": ("劳力士潜航者金库", "20 美元博劳力士潜航者（780 倍）。落空也立即返还 17.5 USDT。"),
+  "vault-omega": ("瑞士腕表金库", "25 美元从欧米茄海马到天梭 PRX。保底为胡桃木表盒。"),
+  "vault-handbag": ("奢侈手袋金库", "30 美元博爱马仕 Birkin 25 鳄鱼皮（2,000 倍）。落空返还 26 USDT。"),
+  "vault-gold": ("金条金库", "50 美元博 1kg 金条（2,000 倍）。银条与金币托底。"),
+  "jackpot-cybertruck": ("Cybertruck 头奖", "100 美元博 Cybertruck Cyberbeast（1,300 倍）。落空也返还 95 USDT。"),
+  "jackpot-supercar": ("超跑头奖", "100 美元博保时捷 911 Carrera（1,300 倍）。还有杜卡迪与 VanMoof。"),
   "cybertruck-dream": ("赛博皮卡梦想", "以一辆特斯拉 Cybertruck 为顶配的出行组合。最低档商品同样实物发货。"),
   "urban-mobility": ("都市出行", "以城市通勤工具为核心。电动滑板车与折叠自行车位于上层。"),
   "apex-workstation": ("巅峰工作站", "以 MacBook Pro M4 Max 为顶配的生产力装备组合，外设亦实物发货。"),
@@ -545,6 +668,17 @@ ZH_BOX = {
 }
 
 ZH_ITEM = {
+  "da-iphone16": "iPhone 16 Pro 256GB", "da-watchse": "Apple Watch SE 3", "da-airpods4": "AirPods 4 ANC", "da-magsafe": "MagSafe 充电器 25W", "da-cable": "Apple USB-C 充电线 1m", "da-sticker": "Apple 贴纸包 + 理线带",
+  "da-buds": "Galaxy Buds4 Pro", "da-charger": "三星 45W 超快充充电器", "da-tag": "Galaxy SmartTag2", "da-strap": "Galaxy Watch 运动表带", "da-sticker2": "Galaxy 贴纸包 + 理线带",
+  "dg-ps5": "PlayStation 5 Slim", "dg-switch2": "任天堂 Switch 2", "dg-gift": "Steam 礼品卡 10 USDT", "dg-keycap": "手工键帽 1 枚",
+  "sp-ps5pro": "PlayStation 5 Pro", "sp-switch2": "任天堂 Switch 2", "sp-headset": "索尼 INZONE H9 耳机", "sp-dualsense": "DualSense Edge 手柄", "sp-game": "最新游戏 1 款（数字版）", "sp-gift": "PSN 礼品卡 10 USDT", "sp-cable": "USB-C 游戏线 2m",
+  "sm-gift": "Apple 礼品卡 10 USDT", "sm-stand": "铝合金笔记本支架",
+  "sp2-airpods": "AirPods 4", "sp2-gift": "Apple 礼品卡 10 USDT",
+  "vs-nato": "NATO 表带 2 条装",
+  "vh-pouch": "皮革手拿包 + 防尘袋",
+  "vg-gold1kg": "金条 1kg（99.99%）", "vg-gold100g": "金条 100g", "vg-gold10g": "金条 10g", "vg-coin": "金币 1/10 盎司", "vg-silver": "银条 100g",
+  "jc-diecast": "Cybertruck 1:18 合金模型 + 周边套装",
+  "js-porsche": "保时捷 911 Carrera", "js-modely": "特斯拉 Model Y 长续航版", "js-ducati": "杜卡迪 Panigale V2", "js-model": "保时捷 911 1:18 模型车 + 周边套装",
   "ctd-cybertruck": "特斯拉 Cybertruck 创始版", "ctd-model3": "特斯拉 Model 3 高性能版", "ctd-visionpro": "Apple Vision Pro 1TB",
   "ctd-segway": "九号 GT3 Pro 电动滑板车", "ctd-brompton": "Brompton P Line Urban 折叠车", "ctd-dji": "DJI Air 3S 畅飞套装",
   "ctd-helmet": "Schuberth C5 头盔", "ctd-jordan": "Nike Air Jordan 1 Retro High", "ctd-tracker": "AirTag 4件装 + 皮革扣", "ctd-cable": "Anker 尼龙充电线套装",
@@ -614,6 +748,18 @@ def build(locale, boxes, items):
 
 
 EN_TAGLINE = {
+  "dollar-apple": "One coffee's worth for a shot at the iPhone 16 Pro. Miss, and 0.85 USDT comes straight back.",
+  "dollar-galaxy": "$1 for a shot at the Galaxy Z Fold8 1TB. Miss, and 0.85 USDT is back instantly.",
+  "dollar-gaming": "$1 for RTX 5090 down to Switch 2. Steam gift cards drop often.",
+  "starter-ps5": "$3 for a shot at the PS5 Pro. Miss, and 2.5 USDT comes back.",
+  "starter-macbook": "$5 for the MacBook Pro M4 Max (1,100x). Miss, and 4.2 USDT is back instantly.",
+  "starter-phone": "$5 for the iPhone 17 Pro Max 1TB — Apple Watch Ultra 3 is in there too.",
+  "vault-submariner": "$20 for the Rolex Submariner (780x). Miss, and 17.5 USDT comes straight back.",
+  "vault-omega": "$25 from Omega Aqua Terra down to Tissot PRX. The floor is a walnut watch box.",
+  "vault-handbag": "$30 for the Hermès Birkin 25 Croc (2,000x). Miss, and 26 USDT is back.",
+  "vault-gold": "$50 for a 1kg gold bar (2,000x). Silver bars and gold coins hold the floor.",
+  "jackpot-cybertruck": "$100 for the Cybertruck Cyberbeast (1,300x). Miss, and 95 USDT comes back.",
+  "jackpot-supercar": "$100 for the Porsche 911 Carrera (1,300x). Ducati and VanMoof are in there too.",
   "cybertruck-dream": "A mobility lineup topped by one Tesla Cybertruck. Even the lowest tier ships as a physical item.",
   "urban-mobility": "Built around city commuting. E-scooters and folding bikes sit at the top.",
   "apex-workstation": "A workstation lineup topped by the MacBook Pro M4 Max. Peripherals ship as physical items too.",

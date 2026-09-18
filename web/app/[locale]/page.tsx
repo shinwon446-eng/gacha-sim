@@ -8,11 +8,12 @@ import {
   CATEGORY_FILTERS,
   SORTS,
   byCategory,
-  guaranteedValue,
+  jackpotRow,
+  dollarRow,
   heroBox,
-  luxuryAndWatch,
+  luxuryRow,
   sortBoxes,
-  techAndMobility,
+  techRow,
   trending,
   type BoxCategory,
   type ProductBox,
@@ -23,6 +24,8 @@ import { OnboardingStrip } from "@/components/home/OnboardingStrip";
 import { LiveCounters } from "@/components/home/LiveCounters";
 import { LiveTicker } from "@/components/home/LiveTicker";
 import { DailyFreeBoxModal, DailyFreeBoxPill, DailyFreeBoxStrip } from "@/components/home/DailyFreeBox";
+import { QuickTabs } from "@/components/home/QuickTabs";
+import { VipBadge } from "@/components/layout/VipBadge";
 import { ProofFeed } from "@/components/fairness/ProofFeed";
 import { NetflixRow } from "@/components/home/NetflixRow";
 import { BoxCard } from "@/components/box/BoxCard";
@@ -99,9 +102,9 @@ export default function BoxesPage() {
     [credit, addTransaction, pushToast, t, fmt],
   );
 
-  // 무료 체험: 롤렉스 볼트를 잔액 없이 가상으로 돌린다. 결과는 서브마리너로 고정 — 잔액·보관함·nonce 무변화.
+  // 손맛 보기: 서브마리너 볼트를 잔액 없이 가상으로 돌린다. 결과는 서브마리너로 고정 — 잔액·보관함·nonce 무변화.
   const openDemo = useCallback((box: ProductBox) => {
-    const rolex = BOXES.find((b) => b.slug === "rolex-vault") ?? box;
+    const rolex = BOXES.find((b) => b.slug === "vault-submariner") ?? box;
     const hero = rolex.items.find((i) => i.id === "rlx-sub") ?? rolex.items[0];
     setDetail(null);
     setUnbox({ box: rolex, count: 1, demo: { itemId: hero.id } });
@@ -122,7 +125,7 @@ export default function BoxesPage() {
 
   // 빌보드: 사이버트럭 / 롤렉스 / 하이엔드 테크 순환
   const billboard = useMemo(
-    () => ["cybertruck-dream", "rolex-vault", "apex-workstation"].map((slug) => BOXES.find((b) => b.slug === slug) ?? heroBox()),
+    () => ["dollar-apple", "starter-macbook", "vault-gold"].map((slug) => BOXES.find((b) => b.slug === slug) ?? heroBox()),
     [],
   );
   const grid = useMemo(() => sortBoxes(byCategory(category), sort), [category, sort]);
@@ -178,7 +181,7 @@ export default function BoxesPage() {
           </button>
           <LanguageSelector />
           <CurrencySelector />
-          <span className="caption-luxury hidden whitespace-nowrap rounded-sm border border-hairline px-2 py-1 lg:inline">{t("header.demo")}</span>
+          <VipBadge className="hidden lg:inline-flex" />
         </div>
       </header>
 
@@ -188,8 +191,11 @@ export default function BoxesPage() {
       {/* 2. 히어로 — 다이어트판 */}
       <BillboardHero boxes={billboard} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} onDemo={openDemo} />
 
-      {/* 3. 상품 우선 — TOP 10 을 히어로 바로 아래에 */}
-      <div className="pt-6">
+      {/* 3. 퀵 카테고리 탭 → 해당 캐러셀로 */}
+      <QuickTabs className="pt-5" />
+
+      {/* 4. 상품 우선 — TOP 10 을 히어로 바로 아래에 */}
+      <div className="pt-5">
         <NetflixRow title={t("rows.trending")} boxes={trending()} variant="top10" onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
       </div>
 
@@ -202,9 +208,10 @@ export default function BoxesPage() {
 
       {/* 5. 보조 큐레이션 캐러셀 */}
       <div className="pt-10">
-        <NetflixRow title={t("rows.luxuryWatch")} boxes={luxuryAndWatch()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
-        <NetflixRow title={t("rows.techMobility")} boxes={techAndMobility()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
-        <NetflixRow title={t("rows.guaranteed")} boxes={guaranteedValue()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow id="row-dollar" title={t("rows.dollar")} boxes={dollarRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow id="row-tech" title={t("rows.techMobility")} boxes={techRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow id="row-luxury" title={t("rows.luxuryWatch")} boxes={luxuryRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow id="row-jackpot" title={t("rows.guaranteed")} boxes={jackpotRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
       </div>
 
       {/* 등급 범례 — 배수 기준을 한 번만 설명한다 */}

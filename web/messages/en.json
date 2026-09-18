@@ -11,7 +11,6 @@
   },
   "header": {
     "balance": "Balance",
-    "demo": "Demo",
     "language": "Language",
     "currency": "Currency",
     "deposit": "Deposit",
@@ -28,12 +27,14 @@
     "guaranteedMin": "Guaranteed Minimum {value}",
     "aboveOpenPrice": "Above open price",
     "openNow": "Open Now",
-    "viewContents": "View Contents",
+    "viewContents": "See what's inside",
     "billboardPicker": "Billboard picker",
     "billboardOf": "{title} billboard",
-    "headline": "Cinematic Thrills. Authentic Luxury.",
-    "sub": "100% Authentic Drops. Ship directly to your door, or liquidate instantly for 95% USDT.",
-    "freeDemo": "Free Demo",
+    "headline": "One dollar. One shot at a Rolex. Miss? 95% comes straight back.",
+    "sub": "Ship it home for free or cash out to USDT in a second. If it hits, it's 100% yours.",
+    "freeDemo": "Try it free, no money down",
+    "openFor": "🔥 Spin now for {price}",
+    "badge": "Luxury jackpots from $1",
     "nowShowing": "Now Showing",
     "topMultipleShort": "up to {n}"
   },
@@ -43,16 +44,17 @@
     "guaranteedMinShort": "Min {value}",
     "noBlankBadge": "100% No Blanks · Min {value} guaranteed",
     "guaranteed": "guaranteed",
-    "openNow": "Open Now",
-    "contents": "Contents",
+    "openNow": "Open now",
+    "contents": "Details",
     "details": "{title} details",
     "expand": "Expand"
   },
   "rows": {
     "trending": "🔥 Most Opened Boxes TOP 10",
-    "techMobility": "⚡ Apple & Next-Gen Gaming Gear",
-    "luxuryWatch": "💎 Luxury Watches & High-End",
-    "guaranteed": "🎯 Beginner Value-Guaranteed Boxes",
+    "dollar": "🔥 $1 Boxes",
+    "techMobility": "⚡ Apple & Tech",
+    "luxuryWatch": "👑 Luxury & Watches",
+    "guaranteed": "🚗 Supercars & Gold",
     "prev": "Previous",
     "next": "Next"
   },
@@ -63,11 +65,10 @@
   },
   "categories": {
     "all": "All",
-    "mobility": "Mobility",
-    "tech": "Tech",
-    "watch": "Watches",
-    "luxury": "Luxury",
-    "lifestyle": "Lifestyle"
+    "dollar": "🔥 $1 Boxes",
+    "tech": "⚡ Apple & Tech",
+    "luxury": "👑 Luxury & Watches",
+    "jackpot": "🚗 Supercars & Gold"
   },
   "sorts": {
     "featured": "Featured",
@@ -104,7 +105,6 @@
     "explain": "Tiers are not stored values — they derive from market value ÷ open price. Expected market value per open is {ev}, which is {retail} of the open price. Instant sell-back pays {refund} of market value, so the cash-basis return is {cash}, below the open price.",
     "guaranteedYes": "This box's lowest item ({min}) is worth at least the open price.",
     "guaranteedNo": "This box's lowest item is worth {min}, below the open price.",
-    "prototype": "This screen is a prototype and product data is mock.",
     "allPrizes": "All possible prizes",
     "count": "{n} items",
     "sortedByValue": "By market value, descending",
@@ -138,7 +138,7 @@
     "hashSkipped": "No published hash provided",
     "rangeNote": "Roll range 0 – {max} ({resolution}% resolution)",
     "outOf": "{roll} / {max}",
-    "demoTitle": "Seed commitment demo",
+    "demoTitle": "Try seed commitment yourself",
     "demoBody": "Generate a server seed and only its hash is shown. Reveal it, then paste it into the verifier to reproduce a roll.",
     "generate": "Generate server seed",
     "reveal": "Reveal server seed",
@@ -182,7 +182,7 @@
   "unbox": {
     "open1": "Open ×1",
     "open5": "Open ×5",
-    "demoLabel": "Free Demo · Simulated",
+    "demoLabel": "Free try · Simulated spin",
     "demoCongrats": "Congratulations! You simulated {item} ({n}).",
     "demoBody": "Open real boxes with your {bonus} welcome bonus!",
     "demoCta": "Claim & Open Real Box",
@@ -194,20 +194,20 @@
     "results": "5 results",
     "total": "Total value",
     "paid": "Paid {price}",
-    "sellBack": "Instant Sell-Back · {amount}",
-    "sellBackAll": "Sell all back · {amount}",
+    "sellBack": "Cash out 95% now · {amount}",
+    "sellBackAll": "Cash out all at 95% · {amount}",
     "sellBackNote": "{rate} of market value is credited to your balance instantly",
-    "sold": "Sold — {amount} credited",
-    "claimShipping": "Claim Shipping",
+    "sold": "Cashed out — {amount} credited",
+    "claimShipping": "Ship it to my door",
     "shippingNotice": "International shipping & customs notice",
-    "shippingBody": "Destination duties/VAT and international shipping (DHL/FedEx at cost) are billed separately. Not accepted in the demo.",
+    "shippingBody": "Destination duties/VAT and international shipping (DHL/FedEx at cost) are billed separately.",
     "verify": "1-second fairness check",
     "close": "Close",
     "keep": "Keep in inventory",
     "kept": "Saved to your vault — it stays after you close this",
     "insufficient": "Insufficient balance — {price} required",
-    "topUp": "Top up demo balance",
-    "toppedUp": "+{amount} demo balance",
+    "topUp": "Deposit",
+    "toppedUp": "+{amount} credited",
     "mute": "Mute sound",
     "unmute": "Unmute sound",
     "seedHash": "Server seed hash (published before open)",
@@ -229,8 +229,9 @@
     "copy": "Copy address",
     "copied": "Address copied",
     "qrHint": "Scan the QR with your wallet app",
-    "demoWarning": "Demo address — do not send funds",
-    "demoWarningBody": "This address has an invalid checksum, so wallets will refuse to send to it. In production a gateway issues a per-user address.",
+    "addressIssuing": "Issuing your deposit address…",
+    "addressError": "Could not issue an address. Please try again shortly.",
+    "addressPreview": "Deposit addresses are issued once the payment gateway is connected. This is a preview environment — use the balance top-up below to walk through the flow.",
     "guideTitle": "Deposit guide",
     "guideMin": "Minimum deposit {min}",
     "guideConfirm": "Credited automatically after {n} block confirmations",
@@ -240,13 +241,13 @@
     "waiting": "Waiting for deposit",
     "confirming": "Confirmation {n} / {total}",
     "credited": "Credited to balance",
-    "simulateTitle": "Mock webhook (test)",
-    "simulateBody": "Simulates the deposit webhook in development. Enter an amount and run it to watch confirmations and get credited.",
+    "simulateTitle": "Preview balance top-up",
+    "simulateBody": "Preview environment before the gateway is connected. Enter an amount and run it to watch confirmations and see the balance update.",
     "amount": "Amount (USDT)",
-    "simulate": "Simulate deposit",
+    "simulate": "Run top-up",
     "simulating": "Waiting for confirmations…",
     "belowMin": "Minimum deposit is {min}",
-    "creditedToast": "+{amount} credited (mock deposit)",
+    "creditedToast": "+{amount} credited",
     "close": "Close"
   },
   "cardPay": {
@@ -257,15 +258,15 @@
     "provider": "Payment method",
     "providerStripe": "Stripe · Global cards",
     "providerPortone": "PortOne · Korean cards",
-    "providerMock": "Demo checkout (no PG configured)",
-    "mockNote": "No Stripe / PortOne keys are configured, so a demo checkout is used. No card details are collected.",
+    "providerMock": "Preview checkout (no card details)",
+    "mockNote": "The payment gateway (Stripe / PortOne) is not connected yet, so this runs as a preview checkout. No card details are collected.",
     "pay": "Pay {amount}",
     "processing": "Processing…",
     "belowMin": "Minimum payment is {min}",
     "aboveMax": "Maximum payment is {max}",
     "invalid": "Check the amount",
     "declined": "Card declined",
-    "declinedHint": "Demo: amounts ending in 13 reproduce a decline",
+    "declinedHint": "The issuer declined this card. Please try another card.",
     "receipt": "Receipt",
     "receiptId": "Transaction ID",
     "receiptAt": "Approved at",
@@ -305,18 +306,18 @@
     "soldFor": "Refunded {amount}",
     "tracking": "Tracking",
     "trackingPending": "Awaiting tracking number",
-    "sell": "Instant Sell-Back",
-    "ship": "Claim Shipping",
+    "sell": "Cash out 95% now",
+    "ship": "Ship it to my door",
     "verify": "1-second fairness check",
     "select": "Select",
     "selected": "{n} selected",
     "selectAll": "Select all",
     "clearSelection": "Clear",
-    "sellSelected": "Sell selected ({rate} cashback)",
+    "sellSelected": "Cash out selected at {rate}",
     "selectedValue": "Total value:",
     "soldForLabel": "Refunded",
     "totalValue": "Total vault value",
-    "sellAll": "Sell all",
+    "sellAll": "Cash out all at 95%",
     "sort": "Sort",
     "sorts": {
       "newest": "Newest",
@@ -343,7 +344,7 @@
       "delivered": "Delivered"
     },
     "stepCurrent": "Current step",
-    "trackingDemoNote": "In this demo a mock label is issued about 20 seconds after the request, and the tracking link points to a number that does not exist. In production a carrier webhook updates the status.",
+    "trackingDemoNote": "Once the parcel ships, the carrier and tracking number appear here with a live tracking link.",
     "sellTitle": "Instant Sell-Back",
     "sellBody": "Sell this item? {rate} of market value — {amount} — is credited to your balance instantly.",
     "sellBodyMulti": "Sell {n} items? {rate} of market value — {amount} — is credited to your balance instantly.",
@@ -406,13 +407,12 @@
     "fairNote": "Same Provably Fair roll as paid boxes — your card pick is cosmetic and never changes the result",
     "creditedToast": "Daily Free Box — {amount} credited",
     "close": "Close",
-    "demoNote": "Demo: the 24-hour cooldown is per browser. Production counts per account."
+    "demoNote": "The 24-hour cooldown is counted per device."
   },
   "community": {
     "eyebrow": "Community Wall",
     "title": "Real Unboxing Reviews",
     "you": "You",
-    "pending": "In review",
     "bonusBanner": "Post a photo review after delivery and get an instant",
     "bonusBannerTail": "bonus cashback",
     "write": "Write a review",
@@ -434,13 +434,14 @@
       "text": "Write at least 5 characters",
       "photo": "Could not load the photo"
     },
-    "writeDemoNote": "Demo: your review and photo stay in this browser and the bonus is credited instantly. Production pays after moderation.",
-    "demoNote": "Demo data — reviews and proof links are mock values and photos are catalog images. Production replaces this with real uploads and on-chain / tracking verification."
+    "writeDemoNote": "Your review and photo are stored on this device and the bonus is credited on submit.",
+    "empty": "No reviews yet. Received your item? Post the first review and take the 10 USDT bonus.",
+    "emptyCta": "Open a box"
   },
   "ticker": {
     "label": "Live drops",
     "live": "LIVE",
-    "win": "unboxed {item}",
+    "win": "pulled {item} from a {price} box",
     "cashout": "cashed out {amount}",
     "ship": "requested shipping for {item}",
     "ago": "({s}s ago)"
@@ -455,11 +456,15 @@
     "step3Desc": "Love it? Free shipping. Don't need it? Liquidate instantly for 95% USDT."
   },
   "counters": {
+    "label": "Trust metrics",
     "shipments": "Physical items shipped today",
     "shipmentsUnit": "items",
     "cashouts": "Settled cashouts today",
     "verification": "Provably fair verification rate",
-    "demoNote": "Demo metrics — production shows live aggregates"
+    "odds": "Published odds entries",
+    "oddsUnit": "items",
+    "sellback": "Instant cash-out rate",
+    "verifiedOf": "{n} of my opens re-verified"
   },
   "proof": {
     "title": "Live Proof of Payout & Delivery",
@@ -481,11 +486,15 @@
       "FEDEX": "FedEx"
     },
     "reserveEyebrow": "Proof of Reserves",
-    "reserveBody": "GACHAFLIX keeps over {min} USDT in liquid payout reserves on-chain at all times to protect user assets and guarantee instant withdrawals.",
+    "reserveBody": "GACHAFLIX keeps liquid payout reserves in an on-chain wallet to protect user assets and guarantee instant withdrawals. Anyone can check the balance at the address below.",
     "reserveWallet": "Reserve wallet",
     "reserveBalance": "Current balance",
     "copyAddress": "Copy address",
-    "demoNote": "Demo data — users, amounts, TxIDs and tracking numbers are mock values and will not resolve on explorers or carrier sites. Production replaces this with live aggregates."
+    "emptyPayouts": "No payouts recorded yet.",
+    "emptyShipments": "No shipments recorded yet.",
+    "emptyCta": "Open a box",
+    "pendingTx": "Awaiting broadcast",
+    "settledInstant": "Settled instantly"
   },
   "withdraw": {
     "title": "Withdraw USDT",
@@ -514,10 +523,9 @@
       "COMPLETED": "Completed"
     },
     "txHash": "On-chain TxID",
-    "txHashPending": "A TxID is issued once broadcasting starts",
+    "txHashPending": "The TxID appears after broadcast",
     "copyHash": "Copy TxID",
     "viewOnExplorer": "View on {explorer}",
-    "demoHashNote": "The TxID shown is a format-only mock and will not resolve on the explorer.",
     "errors": {
       "TRC20": "A TRC-20 address is 34 characters starting with T",
       "BEP20": "A BEP-20 address is 42 characters starting with 0x",
@@ -525,8 +533,135 @@
       "insufficient": "Insufficient balance",
       "nan": "Enter an amount"
     },
-    "demoNote": "This demo has no hot wallet, so no on-chain transfer happens. In production the transfer is signed and broadcast, then a webhook marks it completed.",
+    "processingNote": "Withdrawals are signed and broadcast after a security review. The TxID and explorer link appear here once complete.",
+    "previewNote": "In this preview environment withdrawals stay in the requested state and are not broadcast. Once the backend is connected the TxID and explorer link appear here.",
     "requestedToast": "Withdrawal submitted — {amount} deducted"
+  },
+  "vip": {
+    "title": "VIP tier {tier}",
+    "tiers": {
+      "member": "Member",
+      "silver": "Silver",
+      "gold": "Gold",
+      "black": "Black"
+    }
+  },
+  "footer": {
+    "slogan": "The most transparent blockchain-based luxury mystery box platform for real goods",
+    "service": "Service",
+    "guide": "Help & Policies",
+    "support": "Support",
+    "links": {
+      "dollar": "$1 boxes",
+      "vault": "Luxury vault",
+      "feed": "Live payout feed",
+      "verifier": "Fairness verifier",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "policy": "Shipping & 95% cash-out policy",
+      "faq": "FAQ",
+      "telegram": "Telegram 24/7 live support",
+      "discord": "Official Discord",
+      "notice": "Announcements"
+    },
+    "disclaimer": "GACHAFLIX is a global e-commerce mystery box platform. Every opening result is published transparently through a tamper-proof SHA-256 algorithm, and every winning item is guaranteed to ship as a physical product or to cash out instantly to USDT.",
+    "preview": "Preview environment — payments, withdrawals and shipping activate once the backend is connected."
+  },
+  "legalDocs": {
+    "eyebrow": "Help & Policies",
+    "updated": "Last updated September 18, 2026",
+    "terms": {
+      "title": "Terms of Service",
+      "sections": [
+        {
+          "h": "1. The service",
+          "p": "GACHAFLIX sells mystery boxes with fully published odds and either ships the winning item or cashes it out instantly at 95% of market value in USDT."
+        },
+        {
+          "h": "2. Account and balance",
+          "p": "Balances are held in USDT. Deposits, withdrawals, openings and cash-outs are recorded as transactions and used for nothing other than purchases and withdrawals."
+        },
+        {
+          "h": "3. Odds and fairness",
+          "p": "Every box publishes its per-item odds before opening. Results are fixed by a server seed hash published in advance and the user's client seed, and anyone can reproduce and verify them."
+        },
+        {
+          "h": "4. Cancellation and refunds",
+          "p": "A box cannot be cancelled once opening starts. Any winning item can be cashed out at 95% or shipped at any time."
+        },
+        {
+          "h": "5. Responsibility",
+          "p": "Users are responsible for complying with local law. In case of a service failure balances are restored from the transaction record."
+        }
+      ]
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "sections": [
+        {
+          "h": "1. What we collect",
+          "p": "Recipient name, phone, address and customs identifier for shipping; wallet address for withdrawals; transaction identifiers for payments. Card details are handled by the payment processor and never stored by us."
+        },
+        {
+          "h": "2. Why",
+          "p": "Only for shipping, withdrawals, fraud prevention and support."
+        },
+        {
+          "h": "3. Retention",
+          "p": "Kept for the period required by law after shipping or withdrawal completes, then deleted without delay."
+        },
+        {
+          "h": "4. Third parties",
+          "p": "Only the minimum needed is shared with carriers (shipping) and payment processors (payments)."
+        },
+        {
+          "h": "5. Your rights",
+          "p": "You can request access, correction or deletion at any time through support."
+        }
+      ]
+    },
+    "policy": {
+      "title": "Shipping & 95% Cash-Out Policy",
+      "sections": [
+        {
+          "h": "1. Instant cash-out",
+          "p": "Any item in your vault can be cashed out instantly at 95% of market value in USDT, credited to your balance immediately."
+        },
+        {
+          "h": "2. Physical shipping",
+          "p": "International shipping is deducted from your balance on request; destination duties and VAT are paid on delivery. Korea ships via CJ Logistics, international via DHL/FedEx, and the tracking number appears in your vault once issued."
+        },
+        {
+          "h": "3. Withdrawals",
+          "p": "USDT withdrawals run on TRC-20 (1.00 USDT fee) or BEP-20 (0.80 USDT fee) with a 20 USDT minimum. The TxID and explorer link are provided after broadcast."
+        },
+        {
+          "h": "4. Floor value guarantee",
+          "p": "The lowest item in every box can be cashed out for at least 80% of the open price."
+        }
+      ]
+    },
+    "faq": {
+      "title": "FAQ",
+      "sections": [
+        {
+          "h": "Can I really start with 1 USDT?",
+          "p": "Yes. The $1 category opens for 1.00 USDT, and even a miss returns 0.85 USDT instantly."
+        },
+        {
+          "h": "How do I know a result wasn't rigged?",
+          "p": "Press the 1-second fairness check on any result or vault card. It replays the pre-committed hash, the roll number and the bracket match in three steps."
+        },
+        {
+          "h": "Can I take cash instead of the item?",
+          "p": "Any time — cash out 95% of market value to USDT from your vault."
+        },
+        {
+          "h": "How long do withdrawals take?",
+          "p": "They are broadcast after a security review; the TxID and TronScan/BscScan link appear once complete."
+        }
+      ]
+    }
   },
   "actions": {
     "sellBack": "Instant Sell-Back",
@@ -534,7 +669,7 @@
     "provablyFair": "Provably Fair"
   },
   "legal": {
-    "disclaimer": "Amounts shown are market value. Instant sell-back pays {refund} of market value, so cash recovery is below the open price. All odds are published under View Contents. This screen is a prototype and product data is mock."
+    "disclaimer": "Amounts shown are market value. Cashing out an item instantly pays {refund} of market value, so cash recovery is below the open price. Every probability is published in full under [See what's inside]."
   },
   "badges": {
     "dream": "Dream Box",
@@ -544,226 +679,158 @@
     "watch": "Watches",
     "luxury": "Luxury",
     "lifestyle": "Lifestyle",
-    "guaranteed": "Guaranteed"
+    "guaranteed": "Guaranteed",
+    "dollar": "$1",
+    "gold": "Gold"
   },
   "products": {
     "boxes": {
-      "cybertruck-dream": {
-        "title": "Cybertruck Dream",
-        "tagline": "A mobility lineup topped by one Tesla Cybertruck. Even the lowest tier ships as a physical item.",
+      "dollar-apple": {
+        "title": "One Dollar Apple Jackpot",
+        "tagline": "One coffee's worth for a shot at the iPhone 16 Pro. Miss, and 0.85 USDT comes straight back.",
+        "badge": "$1"
+      },
+      "dollar-galaxy": {
+        "title": "One Dollar Galaxy Jackpot",
+        "tagline": "$1 for a shot at the Galaxy Z Fold8 1TB. Miss, and 0.85 USDT is back instantly.",
+        "badge": "$1"
+      },
+      "dollar-gaming": {
+        "title": "One Dollar Gaming Jackpot",
+        "tagline": "$1 for RTX 5090 down to Switch 2. Steam gift cards drop often.",
+        "badge": "$1"
+      },
+      "starter-ps5": {
+        "title": "Coffee Ps5 Starter",
+        "tagline": "$3 for a shot at the PS5 Pro. Miss, and 2.5 USDT comes back.",
+        "badge": "Tech"
+      },
+      "starter-macbook": {
+        "title": "Coffee & Burger Macbook Jackpot",
+        "tagline": "$5 for the MacBook Pro M4 Max (1,100x). Miss, and 4.2 USDT is back instantly.",
+        "badge": "Tech"
+      },
+      "starter-phone": {
+        "title": "Five Dollar Iphone 17 Jackpot",
+        "tagline": "$5 for the iPhone 17 Pro Max 1TB — Apple Watch Ultra 3 is in there too.",
+        "badge": "Tech"
+      },
+      "vault-submariner": {
+        "title": "Rolex Submariner Vault",
+        "tagline": "$20 for the Rolex Submariner (780x). Miss, and 17.5 USDT comes straight back.",
+        "badge": "Watches"
+      },
+      "vault-omega": {
+        "title": "Swiss Watch Vault",
+        "tagline": "$25 from Omega Aqua Terra down to Tissot PRX. The floor is a walnut watch box.",
+        "badge": "Watches"
+      },
+      "vault-handbag": {
+        "title": "Luxury Handbag Vault",
+        "tagline": "$30 for the Hermès Birkin 25 Croc (2,000x). Miss, and 26 USDT is back.",
+        "badge": "Luxury"
+      },
+      "vault-gold": {
+        "title": "Gold Bar Vault",
+        "tagline": "$50 for a 1kg gold bar (2,000x). Silver bars and gold coins hold the floor.",
+        "badge": "Gold"
+      },
+      "jackpot-cybertruck": {
+        "title": "Cybertruck Jackpot",
+        "tagline": "$100 for the Cybertruck Cyberbeast (1,300x). Miss, and 95 USDT comes back.",
         "badge": "Dream Box"
       },
-      "urban-mobility": {
-        "title": "Urban Mobility",
-        "tagline": "Built around city commuting. E-scooters and folding bikes sit at the top.",
-        "badge": "Mobility"
-      },
-      "apex-workstation": {
-        "title": "Apex Workstation",
-        "tagline": "A workstation lineup topped by the MacBook Pro M4 Max. Peripherals ship as physical items too.",
-        "badge": "Tech"
-      },
-      "flagship-phone": {
-        "title": "Flagship Phone",
-        "tagline": "The latest flagship smartphones. Even the lowest tier is a genuine accessory.",
-        "badge": "Tech"
-      },
-      "gpu-rig": {
-        "title": "GPU Rig",
-        "tagline": "Graphics cards and peripherals. The top item is the RTX 5090 Founders Edition.",
-        "badge": "Tech"
-      },
-      "camera-studio": {
-        "title": "Camera Studio",
-        "tagline": "Mirrorless bodies and prime lenses. The lowest tier is a genuine strap set.",
-        "badge": "Tech"
-      },
-      "reference-audio": {
-        "title": "Reference Audio",
-        "tagline": "Monitor speakers and headphones. The lowest tier is a genuine cable set.",
-        "badge": "Audio"
-      },
-      "rolex-vault": {
-        "title": "Rolex Vault",
-        "tagline": "Watches shipped with authenticity papers. The top item is the Rolex Daytona 116500LN.",
-        "badge": "Watches"
-      },
-      "swiss-watch": {
-        "title": "Swiss Watch",
-        "tagline": "Entry-level Swiss made. Every item includes authenticity papers.",
-        "badge": "Watches"
-      },
-      "luxury-leather": {
-        "title": "Luxury Leather",
-        "tagline": "Luxury leather goods. Ships with the original invoice and dust bag.",
-        "badge": "Luxury"
-      },
-      "grail-handbag": {
-        "title": "Grail Handbag",
-        "tagline": "A top-tier box of high-end handbags only. Even the lowest tier is an authentic luxury piece.",
-        "badge": "Luxury"
-      },
-      "sneaker-drop": {
-        "title": "Sneaker Drop",
-        "tagline": "Limited-release sneakers. Every item is authenticated before shipping.",
-        "badge": "Lifestyle"
-      },
-      "guaranteed-tech": {
-        "title": "Guaranteed Tech",
-        "tagline": "Every item is worth at least the open price. Even the lowest tier is a genuine full-price product.",
-        "badge": "Guaranteed"
-      },
-      "guaranteed-luxury": {
-        "title": "Guaranteed Luxury",
-        "tagline": "Every item is worth at least the open price. Ships with the original invoice.",
-        "badge": "Guaranteed"
-      },
-      "guaranteed-daily": {
-        "title": "Guaranteed Daily",
-        "tagline": "Every item is worth at least the open price. Everyday essentials.",
-        "badge": "Guaranteed"
+      "jackpot-supercar": {
+        "title": "Supercar Jackpot",
+        "tagline": "$100 for the Porsche 911 Carrera (1,300x). Ducati and VanMoof are in there too.",
+        "badge": "Dream Box"
       }
     },
     "items": {
-      "ctd-cybertruck": "Tesla Cybertruck Foundation",
-      "ctd-model3": "Tesla Model 3 Performance",
-      "ctd-visionpro": "Apple Vision Pro 1TB",
-      "ctd-segway": "Segway GT3 Pro",
-      "ctd-brompton": "Brompton P Line Urban",
-      "ctd-dji": "DJI Air 3S Fly More",
-      "ctd-helmet": "Schuberth C5 Helmet",
-      "ctd-jordan": "Nike Air Jordan 1 Retro High",
-      "ctd-tracker": "AirTag 4-Pack + Leather",
-      "ctd-cable": "Anker Nylon Cable Set",
-      "urb-vanmoof": "VanMoof S5",
-      "urb-segway": "Segway Max G2",
-      "urb-brompton": "Brompton C Line Explore",
-      "urb-garmin": "Garmin Edge 1050",
-      "urb-helmet": "POC Urbane Helmet",
-      "urb-lock": "ABUS Granit Chain Lock",
-      "urb-light": "Lumos Light Set",
-      "urb-bottle": "CamelBak Bottle",
-      "apx-mbp": "MacBook Pro 16 M4 Max",
-      "apx-studio": "Mac Studio M4 Ultra",
-      "apx-xdr": "Pro Display XDR",
-      "apx-mba": "MacBook Air 15 M4",
-      "apx-ipad": "iPad Pro 13 M5",
-      "apx-mx": "Logitech MX Master 4 Set",
-      "apx-dock": "CalDigit TS5 Plus",
-      "apx-hub": "Anker Prime Hub",
-      "apx-sleeve": "Bellroy Laptop Sleeve",
-      "apx-cable": "Belkin 240W Cable",
+      "da-iphone16": "iPhone 16 Pro 256GB",
+      "aud-airpods": "AirPods Max USB-C",
+      "da-watchse": "Apple Watch SE 3",
+      "da-airpods4": "AirPods 4 ANC",
+      "da-magsafe": "MagSafe Charger 25W",
+      "da-cable": "Apple USB-C Cable 1m",
+      "da-sticker": "Apple Sticker Pack + Cable Tie",
       "flg-fold": "Galaxy Z Fold8 1TB",
-      "flg-iphone": "iPhone 17 Pro Max 1TB",
       "flg-flip": "Galaxy Z Flip8",
-      "flg-pixel": "Pixel 10 Pro XL",
-      "flg-watch": "Apple Watch Ultra 3",
-      "flg-buds": "AirPods Pro 3",
-      "flg-case": "MagSafe Leather Case",
-      "flg-charger": "Anker MagGo 3-in-1",
-      "flg-film": "Tempered Glass 2-Pack",
+      "da-buds": "Galaxy Buds4 Pro",
+      "da-charger": "Samsung 45W Charger",
+      "da-tag": "Galaxy SmartTag2",
+      "da-strap": "Galaxy Watch Sport Band",
+      "da-sticker2": "Galaxy Sticker Pack + Cable Tie",
       "gpu-5090": "RTX 5090 Founders",
-      "gpu-5080": "RTX 5080",
-      "gpu-cpu": "Ryzen 9 9950X3D",
-      "gpu-monitor": "LG UltraGear 27 OLED",
-      "gpu-ssd": "Samsung 990 Pro 4TB",
+      "dg-ps5": "PlayStation 5 Slim",
+      "dg-switch2": "Nintendo Switch 2",
       "gpu-kb": "Wooting HE65",
       "gpu-mouse": "Razer Basilisk V4 Pro",
-      "gpu-pad": "Artemus XL Deskpad",
-      "gpu-fan": "Noctua NF-A12 3-Pack",
-      "cam-a1": "Sony A1 II Body",
-      "cam-r5": "Canon EOS R5 Mark II",
-      "cam-leica": "Leica Q3 43",
-      "cam-lens": "Sony FE 50mm F1.2 GM",
-      "cam-fuji": "Fujifilm X100VI",
-      "cam-gimbal": "DJI RS 4 Pro",
-      "cam-tripod": "Gitzo GT2545T",
-      "cam-sd": "Sony TOUGH CFexpress",
-      "cam-bag": "Peak Design Everyday 30L",
-      "cam-strap": "Peak Design Leash Set",
-      "aud-genelec": "Genelec 8361A Pair",
-      "aud-focal": "Focal Utopia 2022",
-      "aud-he1000": "HIFIMAN Susvara Unveiled",
-      "aud-dac": "Chord Anni DAC",
-      "aud-sony": "Sony WH-1000XM6",
-      "aud-airpods": "AirPods Max USB-C",
-      "aud-iem": "Unique Melody MEST MK3",
-      "aud-stand": "Walnut Headphone Stand",
-      "aud-cable": "Mogami 2549 Cable",
-      "rlx-daytona": "Rolex Daytona 116500LN",
+      "dg-gift": "Steam Gift Card 10 USDT",
+      "dg-keycap": "Artisan Keycap",
+      "sp-ps5pro": "PlayStation 5 Pro",
+      "sp-switch2": "Nintendo Switch 2",
+      "sp-headset": "Sony INZONE H9",
+      "sp-dualsense": "DualSense Edge",
+      "sp-game": "Latest Title (Digital)",
+      "sp-gift": "PSN Gift Card 10 USDT",
+      "sp-cable": "USB-C Gaming Cable 2m",
+      "apx-mbp": "MacBook Pro 16 M4 Max",
+      "gtc-ipadpro": "iPad Pro 11 M5",
+      "gtc-mba": "MacBook Air 13 M4",
+      "apx-mx": "Logitech MX Master 4 Set",
+      "flg-buds": "AirPods Pro 3",
+      "sm-gift": "Apple Gift Card 10 USDT",
+      "sm-stand": "Aluminum Laptop Stand",
+      "flg-iphone": "iPhone 17 Pro Max 1TB",
+      "flg-pixel": "Pixel 10 Pro XL",
+      "flg-watch": "Apple Watch Ultra 3",
+      "sp2-airpods": "AirPods 4",
+      "flg-charger": "Anker MagGo 3-in-1",
+      "sp2-gift": "Apple Gift Card 10 USDT",
+      "flg-film": "Tempered Glass 2-Pack",
       "rlx-sub": "Rolex Submariner 126610LN",
-      "rlx-gmt": "Rolex GMT-Master II Pepsi",
-      "rlx-ap": "AP Royal Oak 15500ST",
       "rlx-omega": "Omega Speedmaster Pro",
       "rlx-tudor": "Tudor Black Bay 58",
       "rlx-seiko": "Seiko Prospex Marinemaster",
       "rlx-hamilton": "Hamilton Khaki Field Mech",
       "rlx-strap": "Leather Strap + Tool Set",
-      "rlx-roll": "Watch Roll Case",
+      "vs-nato": "NATO Strap 2-Pack",
       "sws-omega": "Omega Aqua Terra 150M",
       "sws-tudor": "Tudor Pelagos 39",
       "sws-longines": "Longines Spirit Zulu 5",
       "sws-oris": "Oris Aquis Date",
       "sws-tissot": "Tissot PRX Powermatic 80",
-      "sws-hamilton": "Hamilton Jazzmaster",
-      "sws-certina": "Certina DS Action Diver",
       "sws-strap": "Swiss Rubber Strap x2",
       "sws-box": "Walnut Watch Box 6",
-      "lth-birkin": "Hermès Birkin 30 Togo",
-      "lth-kelly": "Hermès Kelly 28",
-      "lth-chanel": "Chanel Classic Flap Medium",
-      "lth-lv": "Louis Vuitton Capucines MM",
-      "lth-loewe": "Loewe Puzzle Small",
-      "lth-goyard": "Goyard Saint Louis PM",
-      "lth-wallet": "Bottega Intrecciato Wallet",
-      "lth-card": "Prada Saffiano Cardholder",
-      "lth-belt": "Montblanc Reversible Belt",
-      "lth-key": "Italian Leather Key Holder",
       "grl-birkin25": "Hermès Birkin 25 Croc",
-      "grl-kelly25": "Hermès Kelly 25 Sellier",
-      "grl-chanel19": "Chanel 19 Large",
+      "lth-chanel": "Chanel Classic Flap Medium",
       "grl-dior": "Dior Lady Dior Medium",
-      "grl-lv": "LV Alma BB Epi",
-      "grl-celine": "Celine Triomphe Medium",
-      "grl-ysl": "Saint Laurent Loulou Small",
       "grl-polene": "Polène Numéro Un Nano",
-      "grl-charm": "Leather Bag Charm + Dust Bag",
-      "snk-dior": "Air Jordan 1 High x Dior",
-      "snk-offwhite": "Nike Dunk Low x Off-White",
-      "snk-travis": "AJ1 Low x Travis Scott",
-      "snk-yeezy": "Yeezy Boost 350 V2",
-      "snk-nb": "New Balance 990v6 USA",
-      "snk-dunk": "Nike Dunk Low Retro",
-      "snk-sambda": "Adidas Samba OG",
-      "snk-care": "Jason Markk Care Kit",
-      "snk-lace": "Premium Wax Laces x3",
-      "gtc-mbp": "MacBook Pro 14 M4 Pro",
-      "gtc-ipadpro": "iPad Pro 11 M5",
-      "gtc-mba": "MacBook Air 13 M4",
-      "gtc-iphone": "iPhone 17 256GB",
-      "gtc-watch": "Apple Watch Series 11",
-      "gtc-xm6": "Sony WH-1000XM6",
-      "gtc-buds": "Galaxy Buds4 Pro + Watch8",
-      "gtc-mx": "Logitech MX Master 4 Set",
-      "gtc-anker": "Anker 727 PowerHouse",
-      "glx-lv": "LV Alma BB",
-      "glx-btv": "Bottega Cassette Mini",
-      "glx-gucci": "Gucci Marmont Mini",
-      "glx-polene": "Polène Numéro Un Mini",
-      "glx-wallet": "Saint Laurent Wallet",
-      "glx-belt": "Montblanc Belt",
       "glx-scarf": "Hermès Twilly Scarf",
       "glx-key": "Delvaux Leather Key Holder",
-      "glx-card": "Prada Saffiano Cardholder",
-      "gdy-breville": "Breville Barista Express",
-      "gdy-lamp": "Louis Poulsen PH 5 Mini",
-      "gdy-dyson": "Dyson Supersonic Nural",
-      "gdy-balmuda": "BALMUDA The Toaster Pro",
-      "gdy-airpods": "AirPods 4 ANC",
-      "gdy-kettle": "BALMUDA The Pot",
-      "gdy-towel": "Ikeuchi Organic Towel Set",
-      "gdy-candle": "Diptyque Baies 300g",
-      "gdy-mug": "Kinto Ceramic Mug x4 + Tray"
+      "vh-pouch": "Leather Pouch + Dust Bag",
+      "vg-gold1kg": "Gold Bar 1kg (99.99%)",
+      "rlx-daytona": "Rolex Daytona 116500LN",
+      "vg-gold100g": "Gold Bar 100g",
+      "vg-gold10g": "Gold Bar 10g",
+      "vg-coin": "Gold Coin 1/10 oz",
+      "vg-silver": "Silver Bar 100g",
+      "rlx-roll": "Watch Roll Case",
+      "ctd-cybertruck": "Tesla Cybertruck Cyberbeast",
+      "ctd-model3": "Tesla Model 3 Performance",
+      "ctd-visionpro": "Apple Vision Pro 1TB",
+      "ctd-segway": "Segway GT3 Pro",
+      "ctd-dji": "DJI Air 3S Fly More",
+      "ctd-helmet": "Schuberth C5 Helmet",
+      "jc-diecast": "Cybertruck 1:18 Diecast + Merch Set",
+      "js-porsche": "Porsche 911 Carrera",
+      "js-modely": "Tesla Model Y Long Range",
+      "js-ducati": "Ducati Panigale V2",
+      "urb-vanmoof": "VanMoof S5",
+      "ctd-brompton": "Brompton P Line Urban",
+      "urb-garmin": "Garmin Edge 1050",
+      "js-model": "Porsche 911 1:18 Model + Merch Set"
     }
   }
 }

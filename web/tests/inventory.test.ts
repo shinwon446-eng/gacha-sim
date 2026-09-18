@@ -6,7 +6,7 @@ import { COUNTRIES, SHIPPING_FEE_USDT, customsKindFor, isValidPccc, isValidResid
 
 const base = (over: Partial<Omit<OwnedItem, "id" | "status" | "acquiredAt">> = {}) => ({
   itemId: "ctd-cable",
-  boxSlug: "cybertruck-dream",
+  boxSlug: "jackpot-cybertruck",
   valueUsdt: 28,
   tier: "curated" as const,
   fair: { serverSeedHash: "h", serverSeed: "s", clientSeed: "c", nonce: 0, roll: 1 },

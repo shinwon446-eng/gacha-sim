@@ -6,7 +6,9 @@ import { QRCodeSVG } from "qrcode.react";
 import { Copy, Check, AlertTriangle, ShieldAlert, Radio, Play } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
-import { MIN_DEPOSIT_USDT, NETWORKS, demoAddress, looksLikeAddress, type Network } from "@/lib/depositAddress";
+import { MIN_DEPOSIT_USDT, NETWORKS, looksLikeAddress, type Network } from "@/lib/depositAddress";
+import { isLive } from "@/lib/runtime";
+import { api } from "@/lib/api";
 import { useFairStore } from "@/stores/fairStore";
 import { useWalletStore } from "@/stores/walletStore";
 import { playChime } from "@/lib/audio";
@@ -35,13 +37,29 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   const userKey = useFairStore((s) => s.clientSeed) || "anon";
 
   const meta = useMemo(() => NETWORKS.find((n) => n.key === network)!, [network]);
-  const address = useMemo(() => {
-    const a = demoAddress(network, userKey);
-    if (!looksLikeAddress(network, a)) throw new Error(`데모 주소 형식 오류: ${a}`);
-    return a;
+  // 입금 주소는 게이트웨이(API)만 발급한다. 없으면 null — 형식만 맞는 가짜 주소를 보여주지 않는다.
+  const [address, setAddress] = useState<string | null>(null);
+  const [addrError, setAddrError] = useState(false);
+  useEffect(() => {
+    setAddress(null);
+    setAddrError(false);
+    if (!isLive()) return;
+    let alive = true;
+    api
+      .depositAddress(network, userKey)
+      .then((r) => {
+        if (!alive) return;
+        if (looksLikeAddress(network, r.address)) setAddress(r.address);
+        else setAddrError(true);
+      })
+      .catch(() => alive && setAddrError(true));
+    return () => {
+      alive = false;
+    };
   }, [network, userKey]);
 
   const copy = useCallback(async () => {
+    if (!address) return;
     try {
       await navigator.clipboard.writeText(address);
       setCopied(true);
@@ -68,7 +86,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
         if (timer.current) clearInterval(timer.current);
         timer.current = null;
         credit(usdt);
-        addTransaction({ type: "deposit_usdt", amountUsdt: usdt, ref: `${network}:mock-webhook` });
+        addTransaction({ type: "deposit_usdt", amountUsdt: usdt, ref: `${network}:preview` });
         setStatus({ kind: "credited", amount: usdt });
         if (!useSettingsStore.getState().muted) playChime();
         onCredited(usdt);
@@ -118,23 +136,24 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
 
         <div>
           <div className="caption-luxury">{t("address")}</div>
-          <div className="border-metallic-subtle mt-2 flex items-center gap-2 rounded-lg bg-obsidian p-3">
-            <code className="min-w-0 flex-1 break-all font-mono text-xs leading-relaxed text-secondary">{address}</code>
-            <button
-              type="button"
-              onClick={copy}
-              className={cn("flex h-9 flex-none items-center gap-1.5 rounded-md px-3 text-xs font-bold transition-colors", copied ? "bg-gold-champagne text-obsidian" : "bg-crimson text-white hover:bg-red-600")}
-            >
-              {copied ? <Check className="h-3.5 w-3.5" strokeWidth={2.5} /> : <Copy className="h-3.5 w-3.5" strokeWidth={2.2} />}
-              {copied ? t("copied") : t("copy")}
-            </button>
-          </div>
-          <div className="mt-2 flex items-start gap-2 rounded-md border border-crimson/40 bg-crimson/10 p-2.5 text-[11px] leading-relaxed text-secondary">
-            <ShieldAlert className="mt-0.5 h-3.5 w-3.5 flex-none text-crimson" strokeWidth={2.2} />
-            <span>
-              <strong className="text-crimson">{t("demoWarning")}</strong> — {t("demoWarningBody")}
-            </span>
-          </div>
+          {address ? (
+            <div className="border-metallic-subtle mt-2 flex items-center gap-2 rounded-lg bg-obsidian p-3">
+              <code className="min-w-0 flex-1 break-all font-mono text-xs leading-relaxed text-secondary">{address}</code>
+              <button
+                type="button"
+                onClick={copy}
+                className={cn("flex h-9 flex-none items-center gap-1.5 rounded-md px-3 text-xs font-bold transition-colors", copied ? "bg-gold-champagne text-obsidian" : "bg-crimson text-white hover:bg-red-600")}
+              >
+                {copied ? <Check className="h-3.5 w-3.5" strokeWidth={2.5} /> : <Copy className="h-3.5 w-3.5" strokeWidth={2.2} />}
+                {copied ? t("copied") : t("copy")}
+              </button>
+            </div>
+          ) : (
+            <div className="mt-2 flex items-start gap-2 rounded-md border border-hairline bg-obsidian p-3 text-[11px] leading-relaxed text-secondary">
+              <ShieldAlert className="mt-0.5 h-3.5 w-3.5 flex-none text-gold-champagne" strokeWidth={2.2} />
+              <span>{isLive() ? (addrError ? t("addressError") : t("addressIssuing")) : t("addressPreview")}</span>
+            </div>
+          )}
         </div>
 
         {/* 안내 */}
@@ -153,10 +172,12 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
 
       {/* ── 우: QR + 상태 + 모의 웹훅 ── */}
       <div className="grid gap-4 md:col-span-2">
-        <div className="border-metallic-gold flex flex-col items-center rounded-lg bg-white p-4">
-          <QRCodeSVG value={address} size={168} level="M" bgColor="#ffffff" fgColor="#0B0B0B" includeMargin={false} />
-          <span className="mt-2 text-center text-[10px] text-neutral-600">{t("qrHint")}</span>
-        </div>
+        {address && (
+          <div className="border-metallic-gold flex flex-col items-center rounded-lg bg-white p-4">
+            <QRCodeSVG value={address} size={168} level="M" bgColor="#ffffff" fgColor="#0B0B0B" includeMargin={false} />
+            <span className="mt-2 text-center text-[10px] text-neutral-600">{t("qrHint")}</span>
+          </div>
+        )}
 
         {/* 컨펌 인디케이터 */}
         <div className="border-metallic-subtle rounded-lg bg-obsidian p-3">
@@ -180,7 +201,8 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
           )}
         </div>
 
-        {/* 모의 웹훅 */}
+        {/* preview 전용 — 잔액 시뮬레이션 (백엔드 없이 흐름을 끝까지 볼 수 있게) */}
+        {!isLive() && (
         <div className="rounded-lg border border-dashed border-hairline p-3">
           <div className="caption-luxury">{t("simulateTitle")}</div>
           <p className="mt-1 text-[10px] leading-relaxed text-faint">{t("simulateBody")}</p>
@@ -205,6 +227,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
           </div>
           {error && <p className="mt-1.5 text-[11px] text-crimson">{error}</p>}
         </div>
+        )}
       </div>
     </div>
   );

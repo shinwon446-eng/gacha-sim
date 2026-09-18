@@ -1,7 +1,7 @@
 /**
  * 택배사 실시간 배송조회 링크 (CLAUDE.md §5-B-2, PROMPTS 2-5).
  * 국내(KR)는 CJ대한통운·우체국, 해외는 DHL·FedEx. 링크는 각 택배사 공식 조회 페이지 형식이다.
- * 정적 데모에는 물류 백엔드가 없으므로 운송장은 모의 발급되며, 링크는 형식만 맞는 가짜 번호를 가리킨다 — 화면에 명시한다.
+ * 운송장은 물류 API(live 모드)가 발급한 것만 표시한다 — 번호를 지어내지 않는다.
  */
 import type { CountryCode } from "@/lib/shipping";
 
@@ -37,17 +37,3 @@ export function isValidTrackingNumber(carrier: CarrierKey, trackingNumber: strin
   return CARRIERS[carrier].pattern.test(trackingNumber);
 }
 
-/** 모의 운송장 번호 — 택배사 형식에 맞는 자릿수. 실제로 존재하지 않는 번호다. */
-export function mockTrackingNumber(carrier: CarrierKey, seed = Date.now()): string {
-  const len = carrier === "EPOST" ? 13 : carrier === "FEDEX" ? 12 : carrier === "DHL" ? 10 : 12;
-  let x = seed >>> 0;
-  let out = "";
-  while (out.length < len) {
-    x = (Math.imul(x, 1664525) + 1013904223) >>> 0;
-    out += String(x % 10);
-  }
-  return out;
-}
-
-/** 데모: 배송 신청 후 이 시간이 지나면 창고 웹훅을 흉내 내 운송장을 발급한다 */
-export const DEMO_LABEL_DELAY_MS = 20_000;

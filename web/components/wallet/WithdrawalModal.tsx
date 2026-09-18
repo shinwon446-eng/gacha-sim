@@ -11,7 +11,10 @@ import { useWalletStore, type Transaction, type TxStatus } from "@/stores/wallet
 import { useSettingsStore } from "@/stores/settingsStore";
 import { playChime } from "@/lib/audio";
 import type { Network } from "@/lib/depositAddress";
-import { DEMO_BROADCAST_DELAY_MS, DEMO_COMPLETE_DELAY_MS, EXPLORERS, MIN_WITHDRAW_USDT, WITHDRAW_NETWORKS, WITHDRAW_NETWORK_BY_KEY, explorerTxUrl, maxWithdrawable, mockTxHash, netReceive, validateWithdrawal, type WithdrawError } from "@/lib/withdrawal";
+import { EXPLORERS, MIN_WITHDRAW_USDT, WITHDRAW_NETWORKS, WITHDRAW_NETWORK_BY_KEY, explorerTxUrl, maxWithdrawable, netReceive, validateWithdrawal, type WithdrawError } from "@/lib/withdrawal";
+import { isLive } from "@/lib/runtime";
+import { api } from "@/lib/api";
+import { useFairStore } from "@/stores/fairStore";
 import { Money } from "@/components/ui/Money";
 
 export interface WithdrawalModalProps {
@@ -76,6 +79,7 @@ export function WithdrawalModal({ open, onClose, onRequested }: WithdrawalModalP
   const transactions = useWalletStore((s) => s.transactions);
   const panelRef = useRef<HTMLDivElement>(null);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const userKey = useFairStore((s) => s.clientSeed) || "anon";
   const [copied, setCopied] = useState<string | null>(null);
 
   const [network, setNetwork] = useState<Network>("TRC20");
@@ -144,10 +148,27 @@ export function WithdrawalModal({ open, onClose, onRequested }: WithdrawalModalP
     if (!useSettingsStore.getState().muted) playChime();
     onRequested?.(amountUsdt, network);
     setStage({ kind: "done", tx, amountUsdt, network, address: addr });
-    // 데모 상태 전이: PENDING → BROADCASTING(TxID 발급) → COMPLETED. 실서비스는 핫월렛 서명·브로드캐스트 뒤 웹훅이 갱신한다.
-    timers.current.push(setTimeout(() => setTransactionStatus(tx.id, "BROADCASTING", { txHash: mockTxHash(network) }), DEMO_BROADCAST_DELAY_MS));
-    timers.current.push(setTimeout(() => setTransactionStatus(tx.id, "COMPLETED"), DEMO_COMPLETE_DELAY_MS));
-  }, [errors, stage.kind, debit, amountUsdt, address, addTransaction, network, onRequested, setTransactionStatus]);
+    // live: 서버가 서명·브로드캐스트 → 상태·TxID 를 폴링으로 반영. preview: PENDING 에 머문다 (TxID 를 지어내지 않는다).
+    if (isLive()) {
+      api
+        .withdraw({ network, address: addr, amountUsdt, userKey })
+        .then((r) => {
+          setTransactionStatus(tx.id, r.status, r.txHash ? { txHash: r.txHash } : undefined);
+          const poll = () =>
+            api
+              .withdrawStatus(r.id)
+              .then((s) => {
+                setTransactionStatus(tx.id, s.status, s.txHash ? { txHash: s.txHash } : undefined);
+                if (s.status !== "COMPLETED") timers.current.push(setTimeout(poll, 5000));
+              })
+              .catch(() => timers.current.push(setTimeout(poll, 10000)));
+          if (r.status !== "COMPLETED") timers.current.push(setTimeout(poll, 5000));
+        })
+        .catch(() => {
+          /* 신청은 기록됐다 — 상태는 다음 조회에서 동기화 */
+        });
+    }
+  }, [errors, stage.kind, debit, amountUsdt, address, addTransaction, network, onRequested, setTransactionStatus, userKey]);
 
   const reset = () => {
     setStage({ kind: "form" });
@@ -238,7 +259,7 @@ export function WithdrawalModal({ open, onClose, onRequested }: WithdrawalModalP
                     {liveTx?.txHash ? <TxLink network={stage.network} hash={liveTx.txHash} t={t} copied={copied} onCopy={copy} /> : <span className="text-xs text-faint">{t("txHashPending")}</span>}
                   </div>
                 </div>
-                <p className="mt-3 text-[10px] leading-relaxed text-faint">{t("demoNote")} {t("demoHashNote")}</p>
+                <p className="mt-3 text-[10px] leading-relaxed text-faint">{isLive() ? t("processingNote") : t("previewNote")}</p>
                 <div className="mt-4 grid grid-cols-2 gap-2">
                   <button type="button" onClick={reset} className="glass-dark h-11 rounded-md text-sm font-semibold text-secondary hover:text-white">
                     {t("another")}

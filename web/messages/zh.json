@@ -11,7 +11,6 @@
   },
   "header": {
     "balance": "余额",
-    "demo": "演示",
     "language": "语言",
     "currency": "货币",
     "deposit": "充值",
@@ -28,12 +27,14 @@
     "guaranteedMin": "保底价值 {value}",
     "aboveOpenPrice": "不低于开启价",
     "openNow": "立即开启",
-    "viewContents": "查看内含",
+    "viewContents": "看看里面有什么",
     "billboardPicker": "选择展示",
     "billboardOf": "{title} 展示",
-    "headline": "如看大片般开箱，劳力士真实发货。",
-    "sub": "100%正品实物保障。满意即申请包邮发货到家，不满意支持95% USDT即时极速折现。",
-    "freeDemo": "免费体验",
+    "headline": "一杯咖啡的钱，博一块劳力士。没中？95% 立刻退。",
+    "sub": "包邮寄到家，或 1 秒折现成 USDT。中了就 100% 是你的。",
+    "freeDemo": "不花钱先过把瘾（免费）",
+    "openFor": "🔥 {price} 立即开一发",
+    "badge": "1 美元起的奢品头奖",
     "nowShowing": "正在上映",
     "topMultipleShort": "最高 {n}"
   },
@@ -43,16 +44,17 @@
     "guaranteedMinShort": "保底 {value}",
     "noBlankBadge": "100% 不落空 · 最低 {value} 保底",
     "guaranteed": "保底",
-    "openNow": "立即开启",
-    "contents": "内含",
+    "openNow": "立即开",
+    "contents": "详情",
     "details": "{title} 详情",
     "expand": "展开"
   },
   "rows": {
     "trending": "🔥 开启最多的盲盒 TOP 10",
-    "techMobility": "⚡ 苹果与次世代游戏装备",
-    "luxuryWatch": "💎 奢华腕表与高端精品",
-    "guaranteed": "🎯 新手高性价比保底盲盒",
+    "dollar": "🔥 1 美元盲盒",
+    "techMobility": "⚡ 苹果与科技",
+    "luxuryWatch": "👑 奢品与腕表",
+    "guaranteed": "🚗 超跑与金条",
     "prev": "上一页",
     "next": "下一页"
   },
@@ -63,11 +65,10 @@
   },
   "categories": {
     "all": "全部",
-    "mobility": "出行",
-    "tech": "科技",
-    "watch": "腕表",
-    "luxury": "奢侈品",
-    "lifestyle": "生活方式"
+    "dollar": "🔥 1 美元盲盒",
+    "tech": "⚡ 苹果与科技",
+    "luxury": "👑 奢品与腕表",
+    "jackpot": "🚗 超跑与金条"
   },
   "sorts": {
     "featured": "推荐",
@@ -104,7 +105,6 @@
     "explain": "等级并非存储值，而是由市场价 ÷ 开启价的倍数推导。每次开启的期望市场价为 {ev}，相当于开启价的 {retail}。若即时回收，仅按市场价的 {refund} 支付，因此按现金计算的回收率为 {cash}，低于开启价。",
     "guaranteedYes": "本盲盒最低档商品的市场价（{min}）不低于开启价。",
     "guaranteedNo": "本盲盒最低档商品的市场价为 {min}，低于开启价。",
-    "prototype": "当前页面为原型，商品数据为模拟数据。",
     "allPrizes": "全部可得商品",
     "count": "{n} 件",
     "sortedByValue": "按市场价降序",
@@ -138,7 +138,7 @@
     "hashSkipped": "未填写公开哈希",
     "rangeNote": "Roll 范围 0 ~ {max}（{resolution}% 精度）",
     "outOf": "{roll} / {max}",
-    "demoTitle": "种子承诺演示",
+    "demoTitle": "亲手试试种子承诺",
     "demoBody": "生成新的服务器种子后仅显示哈希。点击公开后显示原文，可填入验证器复现结果。",
     "generate": "生成服务器种子",
     "reveal": "公开服务器种子",
@@ -182,7 +182,7 @@
   "unbox": {
     "open1": "开启 ×1",
     "open5": "连续开启 ×5",
-    "demoLabel": "免费体验 · 模拟开箱",
+    "demoLabel": "免费过把瘾 · 模拟开箱",
     "demoCongrats": "恭喜！您在模拟中抽中了 {item}（{n}）。",
     "demoBody": "用 {bonus} 新人奖励开启真实盲盒吧！",
     "demoCta": "领取奖励并开启真实盲盒",
@@ -194,20 +194,20 @@
     "results": "5 次结果",
     "total": "总价值",
     "paid": "已支付 {price}",
-    "sellBack": "即时回收 · {amount}",
-    "sellBackAll": "全部即时回收 · {amount}",
+    "sellBack": "95% 立即折现 · {amount}",
+    "sellBackAll": "全部 95% 立即折现 · {amount}",
     "sellBackNote": "按市场价的 {rate} 即时计入余额",
-    "sold": "已回收 — 余额 +{amount}",
-    "claimShipping": "申请发货",
+    "sold": "已折现 — 余额 +{amount}",
+    "claimShipping": "寄到我家",
     "shippingNotice": "国际运费与关税说明",
-    "shippingBody": "目的地关税/增值税及国际运费（DHL/FedEx 实付）另行收取。演示中不受理。",
+    "shippingBody": "目的地关税/增值税及国际运费（DHL/FedEx 实付）另行收取。",
     "verify": "1 秒公平性验证",
     "close": "关闭",
     "keep": "存入仓库",
     "kept": "已存入仓库 — 关闭后仍会保留",
     "insufficient": "余额不足 — 需要 {price}",
-    "topUp": "充值演示余额",
-    "toppedUp": "+{amount} 演示余额",
+    "topUp": "充值",
+    "toppedUp": "+{amount} 已计入",
     "mute": "关闭音效",
     "unmute": "开启音效",
     "seedHash": "服务器种子哈希（开启前公开）",
@@ -229,8 +229,9 @@
     "copy": "一键复制",
     "copied": "地址已复制",
     "qrHint": "请用钱包 App 扫描二维码",
-    "demoWarning": "演示地址 — 请勿实际转账",
-    "demoWarningBody": "该地址校验和无效，钱包会拒绝转账。正式环境由网关为每位用户分配地址。",
+    "addressIssuing": "正在生成充值地址…",
+    "addressError": "地址生成失败，请稍后重试。",
+    "addressPreview": "充值地址在接入支付网关后生成。当前为预览环境，可用下方的余额充值体验流程。",
     "guideTitle": "充值说明",
     "guideMin": "最低充值 {min}",
     "guideConfirm": "区块链 {n} 次确认后自动到账",
@@ -240,13 +241,13 @@
     "waiting": "等待入账",
     "confirming": "确认 {n} / {total}",
     "credited": "已计入余额",
-    "simulateTitle": "测试用模拟 Webhook",
-    "simulateBody": "在开发环境模拟充值 Webhook。输入金额并执行，确认计数器会运行并计入余额。",
+    "simulateTitle": "预览余额充值",
+    "simulateBody": "接入网关前的预览环境。输入金额并执行，确认计数器会运行并计入余额。",
     "amount": "金额 (USDT)",
-    "simulate": "模拟充值",
+    "simulate": "执行充值",
     "simulating": "等待确认…",
     "belowMin": "最低充值为 {min}",
-    "creditedToast": "+{amount} 已计入余额（模拟充值）",
+    "creditedToast": "+{amount} 已计入余额",
     "close": "关闭"
   },
   "cardPay": {
@@ -257,15 +258,15 @@
     "provider": "支付方式",
     "providerStripe": "Stripe · 国际信用卡",
     "providerPortone": "PortOne · 韩国信用卡",
-    "providerMock": "演示支付（未配置支付网关）",
-    "mockNote": "未配置 Stripe / PortOne 密钥，故使用演示支付。不会采集卡片信息。",
+    "providerMock": "预览支付（不采集卡片信息）",
+    "mockNote": "支付网关（Stripe / PortOne）尚未接入，以预览支付进行。不会采集卡片信息。",
     "pay": "支付 {amount}",
     "processing": "支付处理中…",
     "belowMin": "最低支付金额为 {min}",
     "aboveMax": "最高支付金额为 {max}",
     "invalid": "请检查金额",
     "declined": "卡片被拒绝",
-    "declinedHint": "演示：尾数为 13 的金额会模拟拒绝",
+    "declinedHint": "发卡行拒绝了此卡，请换一张卡重试。",
     "receipt": "收据",
     "receiptId": "交易编号",
     "receiptAt": "批准时间",
@@ -305,18 +306,18 @@
     "soldFor": "已退回 {amount}",
     "tracking": "运单号",
     "trackingPending": "等待运单号",
-    "sell": "即时回收",
-    "ship": "申请发货",
+    "sell": "95% 立即折现",
+    "ship": "寄到我家",
     "verify": "1 秒公平性验证",
     "select": "选择",
     "selected": "已选 {n} 件",
     "selectAll": "全选",
     "clearSelection": "取消选择",
-    "sellSelected": "批量回收所选 ({rate} 返现)",
+    "sellSelected": "所选按 {rate} 批量折现",
     "selectedValue": "总价值：",
     "soldForLabel": "已退回",
     "totalValue": "仓库总资产",
-    "sellAll": "全部回收",
+    "sellAll": "全部 95% 折现",
     "sort": "排序",
     "sorts": {
       "newest": "最新",
@@ -343,7 +344,7 @@
       "delivered": "已签收"
     },
     "stepCurrent": "当前环节",
-    "trackingDemoNote": "演示环境会在申请约 20 秒后生成模拟运单，查询链接指向并不存在的单号。正式服务由物流公司回调更新状态。",
+    "trackingDemoNote": "出库完成后，物流公司与运单号会显示在此，并开放实时查询链接。",
     "sellTitle": "即时回收",
     "sellBody": "确定回收该商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
     "sellBodyMulti": "确定回收 {n} 件商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
@@ -406,13 +407,12 @@
     "fairNote": "与付费盲盒相同的 Provably Fair 掷点 — 选卡仅为演出，不会改变结果",
     "creditedToast": "每日免费盲盒 — 已计入 {amount}",
     "close": "关闭",
-    "demoNote": "演示：24 小时冷却按本浏览器计算。正式服务按账户计算。"
+    "demoNote": "24 小时冷却按本设备计算。"
   },
   "community": {
     "eyebrow": "Community Wall",
     "title": "实物开箱晒单",
     "you": "我",
-    "pending": "审核中",
     "bonusBanner": "收到实物后发布照片晒单，立即获得",
     "bonusBannerTail": "奖励返现",
     "write": "发布晒单",
@@ -434,13 +434,14 @@
       "text": "评价至少 5 个字",
       "photo": "无法加载照片"
     },
-    "writeDemoNote": "演示：晒单和照片仅保存在本浏览器，奖励即时发放。正式服务在审核通过后发放。",
-    "demoNote": "演示数据 — 晒单与证明链接为模拟值，照片为目录图片。正式服务将替换为真实上传及链上/运单验证。"
+    "writeDemoNote": "晒单和照片保存在本设备，奖励在提交时即刻计入余额。",
+    "empty": "还没有晒单。收到实物了？发第一条晒单领取 10 USDT 奖励。",
+    "emptyCta": "去开盲盒"
   },
   "ticker": {
     "label": "实时开箱动态",
     "live": "LIVE",
-    "win": "开出了 {item}",
+    "win": "在 {price} 盲盒中开出 {item}",
     "cashout": "已折现 {amount}",
     "ship": "申请发货 {item}",
     "ago": "（{s} 秒前）"
@@ -455,11 +456,15 @@
     "step3Desc": "满意即免费发货，不需要则按 95% USDT 即时折现。"
   },
   "counters": {
+    "label": "信任指标",
     "shipments": "今日已出库实物",
     "shipmentsUnit": "件",
     "cashouts": "今日已结算折现",
     "verification": "公平性验证完成率",
-    "demoNote": "演示指标 — 正式服务显示实时统计"
+    "odds": "已公开概率项",
+    "oddsUnit": "项",
+    "sellback": "即时折现率",
+    "verifiedOf": "我的 {n} 次开箱已复核"
   },
   "proof": {
     "title": "实付与实发实时证明",
@@ -481,11 +486,15 @@
       "FEDEX": "FedEx"
     },
     "reserveEyebrow": "Proof of Reserves · 储备金",
-    "reserveBody": "为保护用户资产并保证即时提现，GACHAFLIX 始终在链上持有 {min} USDT 以上的流动性储备金。",
+    "reserveBody": "为保护用户资产并保证即时提现，GACHAFLIX 在链上钱包持有流动性储备金，任何人都可通过下方地址查询余额。",
     "reserveWallet": "储备钱包",
     "reserveBalance": "当前持有",
     "copyAddress": "复制地址",
-    "demoNote": "演示数据 — 用户、金额、TxID 与运单均为模拟值，无法在浏览器或物流网站查询。正式服务将替换为真实统计。"
+    "emptyPayouts": "暂无支付记录。",
+    "emptyShipments": "暂无发货记录。",
+    "emptyCta": "去开盲盒",
+    "pendingTx": "等待广播",
+    "settledInstant": "即时结算"
   },
   "withdraw": {
     "title": "USDT 提现",
@@ -514,10 +523,9 @@
       "COMPLETED": "已完成"
     },
     "txHash": "链上 TxID",
-    "txHashPending": "开始广播后生成 TxID",
+    "txHashPending": "广播后显示 TxID",
     "copyHash": "复制 TxID",
     "viewOnExplorer": "在 {explorer} 查看",
-    "demoHashNote": "所示 TxID 仅为格式正确的模拟值，无法在浏览器中查询。",
     "errors": {
       "TRC20": "TRC-20 地址为以 T 开头的 34 位字符",
       "BEP20": "BEP-20 地址为以 0x 开头的 42 位字符",
@@ -525,8 +533,135 @@
       "insufficient": "余额不足",
       "nan": "请输入提现数量"
     },
-    "demoNote": "演示环境没有热钱包，不会发生链上转账。正式服务会签名并广播交易，随后由回调将状态更新为已完成。",
+    "processingNote": "提现经安全审核后签名并广播，完成后 TxID 与浏览器链接会显示在此。",
+    "previewNote": "预览环境中提现停留在申请状态，不会广播。接入后端后将显示 TxID 与浏览器链接。",
     "requestedToast": "提现申请已提交 — 已扣除 {amount}"
+  },
+  "vip": {
+    "title": "VIP 等级 {tier}",
+    "tiers": {
+      "member": "会员",
+      "silver": "白银",
+      "gold": "黄金",
+      "black": "黑金"
+    }
+  },
+  "footer": {
+    "slogan": "基于区块链、最透明的实物奢品盲盒平台",
+    "service": "服务",
+    "guide": "使用指南",
+    "support": "客户支持",
+    "links": {
+      "dollar": "1 美元盲盒",
+      "vault": "奢品金库",
+      "feed": "实时支付动态",
+      "verifier": "公平性验证器",
+      "terms": "服务条款",
+      "privacy": "隐私政策",
+      "policy": "发货与 95% 折现政策",
+      "faq": "常见问题",
+      "telegram": "Telegram 24/7 在线客服",
+      "discord": "官方 Discord",
+      "notice": "公告频道"
+    },
+    "disclaimer": "GACHAFLIX 是面向全球用户的电商盲盒平台。所有开箱结果均通过不可篡改的 SHA-256 算法透明公开，中奖商品保证 100% 实物发货或即时折现为 USDT。",
+    "preview": "预览环境 — 支付、提现与发货将在接入后端后启用。"
+  },
+  "legalDocs": {
+    "eyebrow": "使用指南",
+    "updated": "最近更新 2026 年 9 月 18 日",
+    "terms": {
+      "title": "服务条款",
+      "sections": [
+        {
+          "h": "1. 服务",
+          "p": "GACHAFLIX 销售概率完全公开的盲盒，中奖商品可实物发货，或按市场价 95% 即时折现为 USDT。"
+        },
+        {
+          "h": "2. 账户与余额",
+          "p": "余额以 USDT 计。充值、提现、开箱与折现均记录为交易，仅用于购买与提现。"
+        },
+        {
+          "h": "3. 概率与公平",
+          "p": "每个盲盒在开启前公开各商品概率。结果由事先公布的服务器种子哈希与用户客户端种子决定，任何人都可复现验证。"
+        },
+        {
+          "h": "4. 取消与退款",
+          "p": "开箱开始后不可取消。中奖商品可随时选择 95% 折现或实物发货。"
+        },
+        {
+          "h": "5. 责任",
+          "p": "用户须遵守所在地法律。服务故障时以交易记录为准恢复余额。"
+        }
+      ]
+    },
+    "privacy": {
+      "title": "隐私政策",
+      "sections": [
+        {
+          "h": "1. 收集项目",
+          "p": "发货所需的收件人姓名、电话、地址与通关标识；提现所需的钱包地址；支付处理所需的交易标识。卡片信息由支付机构处理，本公司不存储。"
+        },
+        {
+          "h": "2. 使用目的",
+          "p": "仅用于发货、提现、防止滥用及客服。"
+        },
+        {
+          "h": "3. 保存与销毁",
+          "p": "发货或提现完成后按法定期限保存，随后立即销毁。"
+        },
+        {
+          "h": "4. 第三方提供",
+          "p": "仅向物流公司（发货信息）与支付机构（支付信息）提供最少必要信息。"
+        },
+        {
+          "h": "5. 用户权利",
+          "p": "可随时通过客服申请查阅、更正或删除。"
+        }
+      ]
+    },
+    "policy": {
+      "title": "发货与 95% 折现政策",
+      "sections": [
+        {
+          "h": "1. 即时折现",
+          "p": "仓库中的中奖商品可随时按市场价 95% 即时折现为 USDT，即刻计入余额。"
+        },
+        {
+          "h": "2. 实物发货",
+          "p": "国际运费在申请时从余额扣除，目的地关税与增值税在签收时另付。韩国由 CJ 大韩通运发货，海外由 DHL/FedEx 发货，运单号生成后显示在仓库中。"
+        },
+        {
+          "h": "3. 提现",
+          "p": "USDT 提现支持 TRC-20（手续费 1.00 USDT）或 BEP-20（手续费 0.80 USDT），最低 20 USDT。广播后提供 TxID 与浏览器链接。"
+        },
+        {
+          "h": "4. 保底价值",
+          "p": "每个盲盒的最低商品都能以开启价 80% 以上的价值即时折现。"
+        }
+      ]
+    },
+    "faq": {
+      "title": "常见问题",
+      "sections": [
+        {
+          "h": "真的能从 1 USDT 开始吗？",
+          "p": "是的。1 美元盲盒以 1.00 USDT 开启，即使落空也立即返还 0.85 USDT。"
+        },
+        {
+          "h": "如何确认结果没有被操控？",
+          "p": "在结果弹窗或仓库卡片点击「1 秒公平性验证」，会分三步复现事前封存哈希、掷点数字与区间匹配。"
+        },
+        {
+          "h": "可以不要实物直接拿现金吗？",
+          "p": "随时可以 — 在仓库中按市场价 95% 折现为 USDT。"
+        },
+        {
+          "h": "提现需要多久？",
+          "p": "经安全审核后广播，完成后显示 TxID 与 TronScan/BscScan 链接。"
+        }
+      ]
+    }
   },
   "actions": {
     "sellBack": "即时回收",
@@ -534,7 +669,7 @@
     "provablyFair": "公平性验证"
   },
   "legal": {
-    "disclaimer": "所示金额均为市场价。即时回收仅按市场价的 {refund} 支付，因此现金回收额低于开启价。全部概率在「查看内含」中公开。当前页面为原型，商品数据为模拟数据。"
+    "disclaimer": "所示金额均为市场价。即时折现按市场价的 {refund} 支付，因此现金回收额低于开启价。全部概率在「看看里面有什么」中完整公开。"
   },
   "badges": {
     "dream": "梦想盲盒",
@@ -544,226 +679,158 @@
     "watch": "腕表",
     "luxury": "奢侈品",
     "lifestyle": "生活方式",
-    "guaranteed": "保底"
+    "guaranteed": "保底",
+    "dollar": "1 美元",
+    "gold": "黄金"
   },
   "products": {
     "boxes": {
-      "cybertruck-dream": {
-        "title": "赛博皮卡梦想",
-        "tagline": "以一辆特斯拉 Cybertruck 为顶配的出行组合。最低档商品同样实物发货。",
+      "dollar-apple": {
+        "title": "1 美元苹果大奖",
+        "tagline": "一杯咖啡的钱博 iPhone 16 Pro。落空也立即返还 0.85 USDT。",
+        "badge": "1 美元"
+      },
+      "dollar-galaxy": {
+        "title": "1 美元 Galaxy 大奖",
+        "tagline": "1 美元博 Galaxy Z Fold8 1TB。落空立即返还 0.85 USDT。",
+        "badge": "1 美元"
+      },
+      "dollar-gaming": {
+        "title": "1 美元游戏大奖",
+        "tagline": "1 美元博 RTX 5090 到 Switch 2。Steam 礼品卡经常出现。",
+        "badge": "1 美元"
+      },
+      "starter-ps5": {
+        "title": "咖啡价 PS5 入门",
+        "tagline": "3 美元博 PS5 Pro。落空也返还 2.5 USDT。",
+        "badge": "科技"
+      },
+      "starter-macbook": {
+        "title": "咖啡汉堡 MacBook 大奖",
+        "tagline": "5 美元博 MacBook Pro M4 Max（1,100 倍）。落空也立即返还 4.2 USDT。",
+        "badge": "科技"
+      },
+      "starter-phone": {
+        "title": "5 美元 iPhone 17 大奖",
+        "tagline": "5 美元博 iPhone 17 Pro Max 1TB，还有 Apple Watch Ultra 3。",
+        "badge": "科技"
+      },
+      "vault-submariner": {
+        "title": "劳力士潜航者金库",
+        "tagline": "20 美元博劳力士潜航者（780 倍）。落空也立即返还 17.5 USDT。",
+        "badge": "腕表"
+      },
+      "vault-omega": {
+        "title": "瑞士腕表金库",
+        "tagline": "25 美元从欧米茄海马到天梭 PRX。保底为胡桃木表盒。",
+        "badge": "腕表"
+      },
+      "vault-handbag": {
+        "title": "奢侈手袋金库",
+        "tagline": "30 美元博爱马仕 Birkin 25 鳄鱼皮（2,000 倍）。落空返还 26 USDT。",
+        "badge": "奢侈品"
+      },
+      "vault-gold": {
+        "title": "金条金库",
+        "tagline": "50 美元博 1kg 金条（2,000 倍）。银条与金币托底。",
+        "badge": "黄金"
+      },
+      "jackpot-cybertruck": {
+        "title": "Cybertruck 头奖",
+        "tagline": "100 美元博 Cybertruck Cyberbeast（1,300 倍）。落空也返还 95 USDT。",
         "badge": "梦想盲盒"
       },
-      "urban-mobility": {
-        "title": "都市出行",
-        "tagline": "以城市通勤工具为核心。电动滑板车与折叠自行车位于上层。",
-        "badge": "出行"
-      },
-      "apex-workstation": {
-        "title": "巅峰工作站",
-        "tagline": "以 MacBook Pro M4 Max 为顶配的生产力装备组合，外设亦实物发货。",
-        "badge": "科技"
-      },
-      "flagship-phone": {
-        "title": "旗舰手机",
-        "tagline": "最新旗舰智能手机阵容。最低档亦为正品配件。",
-        "badge": "科技"
-      },
-      "gpu-rig": {
-        "title": "显卡主机",
-        "tagline": "以显卡与外设为核心。顶配为 RTX 5090 Founders Edition。",
-        "badge": "科技"
-      },
-      "camera-studio": {
-        "title": "影像工作室",
-        "tagline": "以无反机身与定焦镜头为核心。最低档为正品背带套装。",
-        "badge": "科技"
-      },
-      "reference-audio": {
-        "title": "参考级音频",
-        "tagline": "以监听音箱与耳机为核心。最低档为正品线材套装。",
-        "badge": "音频"
-      },
-      "rolex-vault": {
-        "title": "劳力士金库",
-        "tagline": "附正品保卡的腕表组合。顶配为劳力士迪通拿 116500LN。",
-        "badge": "腕表"
-      },
-      "swiss-watch": {
-        "title": "瑞士腕表",
-        "tagline": "以入门级瑞士制造为核心。所有商品均附正品保卡。",
-        "badge": "腕表"
-      },
-      "luxury-leather": {
-        "title": "奢华皮具",
-        "tagline": "奢侈品皮具组合。附正品发票与防尘袋一同发货。",
-        "badge": "奢侈品"
-      },
-      "grail-handbag": {
-        "title": "圣杯手袋",
-        "tagline": "仅由高端手袋构成的上层盲盒。最低档亦为奢侈品正品。",
-        "badge": "奢侈品"
-      },
-      "sneaker-drop": {
-        "title": "球鞋发售",
-        "tagline": "以限量发售球鞋为核心。全部商品经正品验证后发货。",
-        "badge": "生活方式"
-      },
-      "guaranteed-tech": {
-        "title": "科技保底",
-        "tagline": "全部商品的市场价均不低于开启价。最低档亦为正品原价商品。",
-        "badge": "保底"
-      },
-      "guaranteed-luxury": {
-        "title": "奢侈品保底",
-        "tagline": "全部商品的市场价均不低于开启价。附正品发票。",
-        "badge": "保底"
-      },
-      "guaranteed-daily": {
-        "title": "日常保底",
-        "tagline": "全部商品的市场价均不低于开启价。贴近生活的组合。",
-        "badge": "保底"
+      "jackpot-supercar": {
+        "title": "超跑头奖",
+        "tagline": "100 美元博保时捷 911 Carrera（1,300 倍）。还有杜卡迪与 VanMoof。",
+        "badge": "梦想盲盒"
       }
     },
     "items": {
-      "ctd-cybertruck": "特斯拉 Cybertruck 创始版",
-      "ctd-model3": "特斯拉 Model 3 高性能版",
-      "ctd-visionpro": "Apple Vision Pro 1TB",
-      "ctd-segway": "九号 GT3 Pro 电动滑板车",
-      "ctd-brompton": "Brompton P Line Urban 折叠车",
-      "ctd-dji": "DJI Air 3S 畅飞套装",
-      "ctd-helmet": "Schuberth C5 头盔",
-      "ctd-jordan": "Nike Air Jordan 1 Retro High",
-      "ctd-tracker": "AirTag 4件装 + 皮革扣",
-      "ctd-cable": "Anker 尼龙充电线套装",
-      "urb-vanmoof": "VanMoof S5 电动自行车",
-      "urb-segway": "九号 Max G2",
-      "urb-brompton": "Brompton C Line Explore",
-      "urb-garmin": "Garmin Edge 1050 码表",
-      "urb-helmet": "POC Urbane 头盔",
-      "urb-lock": "ABUS Granit 链条锁",
-      "urb-light": "Lumos 智能车灯套装",
-      "urb-bottle": "CamelBak 保温水壶",
-      "apx-mbp": "MacBook Pro 16 M4 Max 128GB",
-      "apx-studio": "Mac Studio M4 Ultra",
-      "apx-xdr": "Pro Display XDR",
-      "apx-mba": "MacBook Air 15 M4",
-      "apx-ipad": "iPad Pro 13 M5",
-      "apx-mx": "罗技 MX Master 4 + MX 键盘",
-      "apx-dock": "CalDigit TS5 Plus 扩展坞",
-      "apx-hub": "Anker Prime USB-C 集线器",
-      "apx-sleeve": "Bellroy 笔记本内胆包",
-      "apx-cable": "Belkin 240W USB-C 线",
+      "da-iphone16": "iPhone 16 Pro 256GB",
+      "aud-airpods": "AirPods Max USB-C",
+      "da-watchse": "Apple Watch SE 3",
+      "da-airpods4": "AirPods 4 ANC",
+      "da-magsafe": "MagSafe 充电器 25W",
+      "da-cable": "Apple USB-C 充电线 1m",
+      "da-sticker": "Apple 贴纸包 + 理线带",
       "flg-fold": "Galaxy Z Fold8 1TB",
-      "flg-iphone": "iPhone 17 Pro Max 1TB",
       "flg-flip": "Galaxy Z Flip8",
-      "flg-pixel": "Pixel 10 Pro XL",
-      "flg-watch": "Apple Watch Ultra 3",
-      "flg-buds": "AirPods Pro 3",
-      "flg-case": "MagSafe 皮革保护壳",
-      "flg-charger": "Anker MagGo 三合一充电支架",
-      "flg-film": "钢化玻璃膜 2 片装",
+      "da-buds": "Galaxy Buds4 Pro",
+      "da-charger": "三星 45W 超快充充电器",
+      "da-tag": "Galaxy SmartTag2",
+      "da-strap": "Galaxy Watch 运动表带",
+      "da-sticker2": "Galaxy 贴纸包 + 理线带",
       "gpu-5090": "GeForce RTX 5090 Founders",
-      "gpu-5080": "GeForce RTX 5080",
-      "gpu-cpu": "锐龙 9 9950X3D",
-      "gpu-monitor": "LG UltraGear 27 OLED 480Hz",
-      "gpu-ssd": "三星 990 Pro 4TB",
+      "dg-ps5": "PlayStation 5 Slim",
+      "dg-switch2": "任天堂 Switch 2",
       "gpu-kb": "Wooting HE65 磁轴键盘",
       "gpu-mouse": "雷蛇 Basilisk V4 Pro",
-      "gpu-pad": "Artemus XL 桌垫",
-      "gpu-fan": "猫头鹰 NF-A12 3 只装",
-      "cam-a1": "索尼 A1 II 机身",
-      "cam-r5": "佳能 EOS R5 Mark II",
-      "cam-leica": "徕卡 Q3 43",
-      "cam-lens": "索尼 FE 50mm F1.2 GM",
-      "cam-fuji": "富士 X100VI",
-      "cam-gimbal": "DJI RS 4 Pro",
-      "cam-tripod": "捷信 GT2545T 旅行者",
-      "cam-sd": "索尼 TOUGH CFexpress 320GB",
-      "cam-bag": "Peak Design Everyday 30L 背包",
-      "cam-strap": "Peak Design Leash 背带套装",
-      "aud-genelec": "真力 8361A 一对",
-      "aud-focal": "劲浪 Utopia 2022",
-      "aud-he1000": "HIFIMAN Susvara Unveiled",
-      "aud-dac": "Chord Anni DAC",
-      "aud-sony": "索尼 WH-1000XM6",
-      "aud-airpods": "AirPods Max USB-C",
-      "aud-iem": "Unique Melody MEST MK3",
-      "aud-stand": "胡桃木耳机架",
-      "aud-cable": "Mogami 2549 平衡线",
-      "rlx-daytona": "劳力士迪通拿 116500LN",
+      "dg-gift": "Steam 礼品卡 10 USDT",
+      "dg-keycap": "手工键帽 1 枚",
+      "sp-ps5pro": "PlayStation 5 Pro",
+      "sp-switch2": "任天堂 Switch 2",
+      "sp-headset": "索尼 INZONE H9 耳机",
+      "sp-dualsense": "DualSense Edge 手柄",
+      "sp-game": "最新游戏 1 款（数字版）",
+      "sp-gift": "PSN 礼品卡 10 USDT",
+      "sp-cable": "USB-C 游戏线 2m",
+      "apx-mbp": "MacBook Pro 16 M4 Max 128GB",
+      "gtc-ipadpro": "iPad Pro 11 M5",
+      "gtc-mba": "MacBook Air 13 M4",
+      "apx-mx": "罗技 MX Master 4 + MX 键盘",
+      "flg-buds": "AirPods Pro 3",
+      "sm-gift": "Apple 礼品卡 10 USDT",
+      "sm-stand": "铝合金笔记本支架",
+      "flg-iphone": "iPhone 17 Pro Max 1TB",
+      "flg-pixel": "Pixel 10 Pro XL",
+      "flg-watch": "Apple Watch Ultra 3",
+      "sp2-airpods": "AirPods 4",
+      "flg-charger": "Anker MagGo 三合一充电支架",
+      "sp2-gift": "Apple 礼品卡 10 USDT",
+      "flg-film": "钢化玻璃膜 2 片装",
       "rlx-sub": "劳力士潜航者 126610LN",
-      "rlx-gmt": "劳力士 GMT-Master II 百事圈",
-      "rlx-ap": "爱彼皇家橡树 15500ST",
       "rlx-omega": "欧米茄超霸 Pro",
       "rlx-tudor": "帝舵碧湾 58",
       "rlx-seiko": "精工 Prospex Marinemaster",
       "rlx-hamilton": "汉米尔顿卡其野战机械款",
       "rlx-strap": "正品皮革表带 + 工具套装",
-      "rlx-roll": "腕表卷收纳袋",
+      "vs-nato": "NATO 表带 2 条装",
       "sws-omega": "欧米茄海马 Aqua Terra 150M",
       "sws-tudor": "帝舵 Pelagos 39",
       "sws-longines": "浪琴先行者 Zulu Time",
       "sws-oris": "豪利时 Aquis Date",
       "sws-tissot": "天梭 PRX Powermatic 80",
-      "sws-hamilton": "汉米尔顿爵士开心款",
-      "sws-certina": "雪铁纳 DS Action 潜水表",
       "sws-strap": "瑞士橡胶表带 2 条",
       "sws-box": "胡桃木表盒 6 格",
-      "lth-birkin": "爱马仕 Birkin 30 Togo",
-      "lth-kelly": "爱马仕 Kelly 28",
-      "lth-chanel": "香奈儿 Classic Flap 中号",
-      "lth-lv": "路易威登 Capucines MM",
-      "lth-loewe": "罗意威 Puzzle 小号",
-      "lth-goyard": "戈雅 Saint Louis PM",
-      "lth-wallet": "葆蝶家 Intrecciato 钱包",
-      "lth-card": "普拉达 Saffiano 卡包",
-      "lth-belt": "万宝龙双面腰带",
-      "lth-key": "意大利皮革钥匙包",
       "grl-birkin25": "爱马仕 Birkin 25 鳄鱼皮",
-      "grl-kelly25": "爱马仕 Kelly 25 Sellier",
-      "grl-chanel19": "香奈儿 19 大号",
+      "lth-chanel": "香奈儿 Classic Flap 中号",
       "grl-dior": "迪奥 Lady Dior 中号",
-      "grl-lv": "路易威登 Alma BB Epi",
-      "grl-celine": "思琳 Triomphe 中号",
-      "grl-ysl": "圣罗兰 Loulou 小号",
       "grl-polene": "Polène Numéro Un Nano",
-      "grl-charm": "皮革包挂 + 防尘袋",
-      "snk-dior": "Air Jordan 1 High x Dior",
-      "snk-offwhite": "Nike Dunk Low x Off-White",
-      "snk-travis": "AJ1 Low x Travis Scott",
-      "snk-yeezy": "Yeezy Boost 350 V2",
-      "snk-nb": "New Balance 990v6 美产",
-      "snk-dunk": "Nike Dunk Low Retro",
-      "snk-sambda": "阿迪达斯 Samba OG",
-      "snk-care": "Jason Markk 鞋履护理套装",
-      "snk-lace": "高级蜡质鞋带 3 套",
-      "gtc-mbp": "MacBook Pro 14 M4 Pro",
-      "gtc-ipadpro": "iPad Pro 11 M5",
-      "gtc-mba": "MacBook Air 13 M4",
-      "gtc-iphone": "iPhone 17 256GB",
-      "gtc-watch": "Apple Watch Series 11 GPS",
-      "gtc-xm6": "索尼 WH-1000XM6",
-      "gtc-buds": "Galaxy Buds4 Pro + Watch8",
-      "gtc-mx": "罗技 MX Master 4 套装",
-      "gtc-anker": "Anker 727 户外电源",
-      "glx-lv": "路易威登 Alma BB",
-      "glx-btv": "葆蝶家 Cassette 迷你",
-      "glx-gucci": "古驰 Marmont 迷你",
-      "glx-polene": "Polène Numéro Un 迷你",
-      "glx-wallet": "圣罗兰 Monogram 钱包",
-      "glx-belt": "万宝龙双面腰带",
       "glx-scarf": "爱马仕 Twilly 丝巾",
       "glx-key": "Delvaux 皮革钥匙包",
-      "glx-card": "普拉达 Saffiano 卡包",
-      "gdy-breville": "铂富 Barista Express",
-      "gdy-lamp": "Louis Poulsen PH 5 迷你",
-      "gdy-dyson": "戴森 Supersonic Nural",
-      "gdy-balmuda": "BALMUDA The Toaster Pro",
-      "gdy-airpods": "AirPods 4 ANC",
-      "gdy-kettle": "BALMUDA The Pot",
-      "gdy-towel": "Ikeuchi 有机毛巾套装",
-      "gdy-candle": "蒂普提克 Baies 300g",
-      "gdy-mug": "Kinto 陶瓷马克杯 4 只 + 托盘"
+      "vh-pouch": "皮革手拿包 + 防尘袋",
+      "vg-gold1kg": "金条 1kg（99.99%）",
+      "rlx-daytona": "劳力士迪通拿 116500LN",
+      "vg-gold100g": "金条 100g",
+      "vg-gold10g": "金条 10g",
+      "vg-coin": "金币 1/10 盎司",
+      "vg-silver": "银条 100g",
+      "rlx-roll": "腕表卷收纳袋",
+      "ctd-cybertruck": "特斯拉 Cybertruck 创始版",
+      "ctd-model3": "特斯拉 Model 3 高性能版",
+      "ctd-visionpro": "Apple Vision Pro 1TB",
+      "ctd-segway": "九号 GT3 Pro 电动滑板车",
+      "ctd-dji": "DJI Air 3S 畅飞套装",
+      "ctd-helmet": "Schuberth C5 头盔",
+      "jc-diecast": "Cybertruck 1:18 合金模型 + 周边套装",
+      "js-porsche": "保时捷 911 Carrera",
+      "js-modely": "特斯拉 Model Y 长续航版",
+      "js-ducati": "杜卡迪 Panigale V2",
+      "urb-vanmoof": "VanMoof S5 电动自行车",
+      "ctd-brompton": "Brompton P Line Urban 折叠车",
+      "urb-garmin": "Garmin Edge 1050 码表",
+      "js-model": "保时捷 911 1:18 模型车 + 周边套装"
     }
   }
 }

@@ -1,7 +1,7 @@
 // 택배사 배송조회 링크 + 모의 운송장
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CARRIERS, isValidTrackingNumber, mockTrackingNumber, pickCarrier, trackingUrl } from "../lib/carriers";
+import { CARRIERS, isValidTrackingNumber, pickCarrier, trackingUrl } from "../lib/carriers";
 
 test("국내(KR)는 CJ대한통운, 해외는 DHL", () => {
   assert.equal(pickCarrier("KR"), "CJ");
@@ -9,9 +9,11 @@ test("국내(KR)는 CJ대한통운, 해외는 DHL", () => {
   assert.equal(pickCarrier("CN"), "DHL");
 });
 
-test("모의 운송장은 택배사 형식에 맞고 공식 조회 URL 에 삽입된다", () => {
+test("운송장 형식 검사와 공식 조회 URL", () => {
+  const sample: Record<keyof typeof CARRIERS, string> = { CJ: "123456789012", EPOST: "1234567890123", DHL: "1234567890", FEDEX: "123456789012" };
   for (const key of Object.keys(CARRIERS) as (keyof typeof CARRIERS)[]) {
-    const no = mockTrackingNumber(key, 7);
+    const no = sample[key];
+    assert.ok(!isValidTrackingNumber(key, "12"), key);
     assert.ok(isValidTrackingNumber(key, no), `${key}: ${no}`);
     assert.ok(trackingUrl(key, no).includes(no), key);
     assert.ok(/^https:\/\//.test(trackingUrl(key, no)));

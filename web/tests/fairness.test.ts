@@ -80,11 +80,11 @@ test("determineItem 경계: 각 구간의 from/to 는 그 항목, 밖은 이웃 
 });
 
 test("roll 을 균등하게 훑으면 항목별 빈도가 표기 확률과 정확히 같다", () => {
-  const b = BOXES.find((x) => x.slug === "cybertruck-dream")!;
+  const b = BOXES.find((x) => x.slug === "jackpot-cybertruck")!;
   const ranges = rollRanges(b.items);
   const top = ranges.find((r) => r.item.id === "ctd-cybertruck")!;
-  // 0.0004% → 4칸. 0.001% 해상도였다면 0칸으로 영영 안 나온다.
-  assert.equal(top.units, 4);
+  // 0.0003% → 3칸. 0.001% 해상도였다면 0칸으로 영영 안 나온다.
+  assert.equal(top.units, 3);
   const count = new Map<string, number>();
   for (let roll = 0; roll < ROLL_RANGE; roll += 1) {
     const it = determineItem(roll, b.items);

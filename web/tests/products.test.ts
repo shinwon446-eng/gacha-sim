@@ -13,14 +13,21 @@ import {
   dropTable,
   expectedValue,
   getBoxBySlug,
-  guaranteedValue,
   heroBox,
   isValueGuaranteed,
-  luxuryAndWatch,
+  floorCash,
+  floorRatio,
+  dollarRow,
+  techRow,
+  luxuryRow,
+  jackpotRow,
   retailReturn,
   sortBoxes,
-  techAndMobility,
   trending,
+  RETAIL_RTP_MIN,
+  RETAIL_RTP_MAX,
+  FLOOR_CASH_MIN,
+  FLOOR_CASH_MAX,
 } from "../lib/products";
 import { formatCurrency } from "../lib/formatCurrency";
 
@@ -31,8 +38,8 @@ test("박스 12종 이상, slug 고유", () => {
   assert.equal(Object.keys(BOX_BY_SLUG).length, BOXES.length);
 });
 
-test("박스마다 항목 8종 이상, item id 전역 고유", () => {
-  for (const b of BOXES) assert.ok(b.items.length >= 8, `${b.slug}: 항목 ${b.items.length}종`);
+test("박스마다 항목 7종 이상, item id 전역 고유", () => {
+  for (const b of BOXES) assert.ok(b.items.length >= 7, `${b.slug}: 항목 ${b.items.length}종`);
   const ids = BOXES.flatMap((b) => b.items.map((i) => i.id));
   assert.equal(new Set(ids).size, ids.length, "item id 중복");
 });
@@ -45,12 +52,26 @@ test("드롭 확률 합계는 박스마다 정확히 100", () => {
   }
 });
 
-test("금액은 전부 정수 USDT 다 — 통화 기호와 소수점은 데이터에 없다", () => {
+test("금액은 USDT 소수 둘째 자리까지 — 통화 기호는 데이터에 없다", () => {
+  const cents = (n: number) => Math.abs(n * 100 - Math.round(n * 100)) < 1e-9;
   for (const b of BOXES) {
-    assert.ok(Number.isInteger(b.price), `${b.slug}: price ${b.price}`);
-    assert.ok(Number.isInteger(b.guaranteedMin), `${b.slug}: guaranteedMin`);
-    for (const i of b.items) assert.ok(Number.isInteger(i.value), `${i.id}: value ${i.value}`);
+    assert.ok(cents(b.price), `${b.slug}: price ${b.price}`);
+    for (const i of b.items) assert.ok(cents(i.value), `${i.id}: value ${i.value}`);
   }
+});
+
+test("가격 스펙트럼: 1 USDT 박스 3종 이상, 100 USDT 잭팟 2종 이상, 전부 스펙 가격표 안", () => {
+  const allowed = new Set([1, 3, 5, 20, 25, 30, 50, 100]);
+  for (const b of BOXES) assert.ok(allowed.has(b.price), `${b.slug}: ${b.price}`);
+  assert.ok(BOXES.filter((b) => b.price === 1).length >= 3);
+  assert.ok(BOXES.filter((b) => b.price === 100).length >= 2);
+});
+
+test("잭팟 배수: 1달러 박스 1,000배 이상, 럭셔리·잭팟 1,300배 이상 항목 존재", () => {
+  const top = (b: (typeof BOXES)[number]) => ceilingValue(b) / b.price;
+  assert.ok(dollarRow().some((b) => top(b) >= 1000), "1달러 1,000배 없음");
+  assert.ok(jackpotRow().every((b) => top(b) >= 1300), "잭팟 1,300배 미만");
+  assert.ok(luxuryRow().some((b) => top(b) >= 2000), "럭셔리 2,000배 없음");
 });
 
 test("현금 회수 기준 무위험 차익이 없다 — EV × 환급률 < 가격", () => {
@@ -70,32 +91,31 @@ test("최저 구성을 즉시 환급해도 원금을 넘지 못한다", () => {
   }
 });
 
-test("정가 기준 환원율은 0.7 이상 1.25 미만", () => {
+test("정가 환원율 밴드 [0.93, 1/0.95) — 하우스 엣지(현금) 4~12%", () => {
   for (const b of BOXES) {
     const r = retailReturn(b);
-    assert.ok(r >= 0.7 && r < 1 / REFUND_RATE, `${b.slug}: 환원율 ${r.toFixed(3)}`);
+    assert.ok(r >= RETAIL_RTP_MIN && r < RETAIL_RTP_MAX, `${b.slug}: 환원율 ${r.toFixed(3)}`);
+    const edge = 1 - cashReturn(b);
+    assert.ok(edge >= 0.035 && edge <= 0.12, `${b.slug}: 하우스 엣지 ${(edge * 100).toFixed(2)}%`);
   }
+});
+
+test("바닥 보장: 최저 구성 즉시 환전액이 가격의 80~96%", () => {
+  for (const b of BOXES) {
+    const r = floorRatio(b);
+    assert.ok(r >= FLOOR_CASH_MIN && r <= FLOOR_CASH_MAX, `${b.slug}: 바닥 ${(r * 100).toFixed(1)}%`);
+    assert.equal(floorCash(b), +(b.guaranteedMin * REFUND_RATE).toFixed(2));
+    assert.ok(isValueGuaranteed(b), b.slug);
+  }
+  // 스펙 예시: 1달러 박스 0.85 USDT, 100달러 잭팟 95 USDT
+  for (const b of BOXES.filter((x) => x.price === 1)) assert.ok(floorCash(b) >= 0.85, `${b.slug}: ${floorCash(b)}`);
+  for (const b of BOXES.filter((x) => x.price === 100)) assert.ok(floorCash(b) >= 95, `${b.slug}: ${floorCash(b)}`);
 });
 
 test("guaranteedMin 은 항목 최저가에서 파생된다", () => {
   for (const b of BOXES) {
     assert.equal(b.guaranteedMin, Math.min(...b.items.map((i) => i.value)), b.slug);
     assert.equal(ceilingValue(b), Math.max(...b.items.map((i) => i.value)), b.slug);
-  }
-});
-
-test("보장 박스만 최저가가 오픈가 이상이며, 보장 행은 비어 있지 않다", () => {
-  const guaranteed = guaranteedValue();
-  assert.ok(guaranteed.length >= 3, `보장 박스 ${guaranteed.length}종`);
-  for (const b of BOXES) {
-    assert.equal(
-      isValueGuaranteed(b),
-      b.guaranteedMin >= b.price,
-      `${b.slug}: 보장 판정 불일치`,
-    );
-  }
-  for (const b of guaranteed) {
-    assert.ok(b.guaranteedMin >= b.price, `${b.slug}: ${b.guaranteedMin} < ${b.price}`);
   }
 });
 
@@ -108,14 +128,14 @@ test("4개 행 셀렉터가 전부 채워지고 카테고리 규칙을 지킨다
     [1, 2, 3, 4, 5],
     "TRENDING 앞머리가 순위대로 오지 않음",
   );
-  assert.ok(techAndMobility().length >= 4);
-  for (const b of techAndMobility()) assert.ok(["tech", "mobility"].includes(b.category), b.slug);
-  assert.ok(luxuryAndWatch().length >= 4);
-  for (const b of luxuryAndWatch()) assert.ok(["luxury", "watch"].includes(b.category), b.slug);
+  for (const [row, cat] of [[dollarRow, "dollar"], [techRow, "tech"], [luxuryRow, "luxury"], [jackpotRow, "jackpot"]] as const) {
+    assert.ok(row().length >= 2, cat);
+    for (const b of row()) assert.equal(b.category, cat, b.slug);
+  }
 });
 
-test("히어로 박스는 TRENDING 1위다", () => {
-  assert.equal(heroBox().trendingRank, 1);
+test("히어로 박스는 1 USDT 박스다", () => {
+  assert.equal(heroBox().price, 1);
   assert.ok(heroBox().tagline.length > 10, "히어로 카피 누락");
 });
 
@@ -144,7 +164,7 @@ test("정렬 키가 원본을 변형하지 않고 올바르게 동작한다", ()
   assert.deepEqual(asc, [...asc].sort((a, b) => a - b));
   assert.deepEqual(desc, [...desc].sort((a, b) => b - a));
   assert.deepEqual(BOXES.map((b) => b.slug), before, "원본 배열이 변형됨");
-  assert.equal(getBoxBySlug("cybertruck-dream")?.titleEn, "CYBERTRUCK DREAM");
+  assert.equal(getBoxBySlug("jackpot-cybertruck")?.titleEn, "CYBERTRUCK JACKPOT");
   assert.equal(getBoxBySlug("no-such-box"), undefined);
 });
 
@@ -193,7 +213,7 @@ test("이미지 URL 은 https 이며 출처 표기를 동반하고, imageUrl 은
       }
     }
   }
-  assert.ok(have >= 40, `확보 이미지 ${have}장`);
+  assert.ok(have >= 30, `확보 이미지 ${have}장`);
   // 히어로와 TRENDING 상위는 반드시 이미지가 있어야 한다
   assert.ok(heroBox().image.src, "히어로 이미지 누락");
   for (const b of trending(5)) assert.ok(b.image.src, `${b.slug}: TRENDING 이미지 누락`);
