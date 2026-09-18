@@ -22,6 +22,7 @@ import { BillboardHero } from "@/components/home/BillboardHero";
 import { OnboardingStrip } from "@/components/home/OnboardingStrip";
 import { LiveCounters } from "@/components/home/LiveCounters";
 import { LiveTicker } from "@/components/home/LiveTicker";
+import { DailyFreeBoxModal, DailyFreeBoxPill, DailyFreeBoxStrip } from "@/components/home/DailyFreeBox";
 import { ProofFeed } from "@/components/fairness/ProofFeed";
 import { NetflixRow } from "@/components/home/NetflixRow";
 import { BoxCard } from "@/components/box/BoxCard";
@@ -59,6 +60,7 @@ export default function BoxesPage() {
   const [unbox, setUnbox] = useState<{ box: ProductBox; count: number; demo?: { itemId: string } } | null>(null);
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const [dailyOpen, setDailyOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const balance = useWalletStore((s) => s.balance);
   const debit = useWalletStore((s) => s.debit);
@@ -142,8 +144,12 @@ export default function BoxesPage() {
           <Link href="/fairness" className="transition-colors hover:text-white">
             {t("nav.fairness")}
           </Link>
+          <Link href="/community" className="transition-colors hover:text-white">
+            {t("nav.community")}
+          </Link>
         </nav>
         <div className="ml-auto flex items-center gap-2">
+          <DailyFreeBoxPill onOpen={() => setDailyOpen(true)} className="hidden lg:flex" />
           {/* 잔액 — 데모 고정값. 선택 통화로만 표기된다. */}
           <div className="glass-dark flex h-9 flex-none items-center gap-2 whitespace-nowrap rounded-md px-3">
             <Wallet className="h-3.5 w-3.5 text-muted" strokeWidth={2} />
@@ -187,8 +193,11 @@ export default function BoxesPage() {
         <NetflixRow title={t("rows.trending")} boxes={trending()} variant="top10" onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
       </div>
 
+      {/* 데일리 프리 박스 — 첫 캐러셀 아래, 무위험 체험 */}
+      <DailyFreeBoxStrip onOpen={() => setDailyOpen(true)} className="pt-2" />
+
       {/* 4. 안심 가이드 + 신뢰 지표 — 첫 캐러셀 아래 */}
-      <OnboardingStrip className="pt-2" />
+      <OnboardingStrip className="pt-6" />
       <LiveCounters className="pt-4" />
 
       {/* 5. 보조 큐레이션 캐러셀 */}
@@ -312,6 +321,8 @@ export default function BoxesPage() {
           pushToast({ title: t(source === "card" ? "cardPay.creditedToast" : "deposit.creditedToast", { amount: fmt(amount) }), tone: "#E6CA65" })
         }
       />
+
+      <DailyFreeBoxModal open={dailyOpen} onClose={() => setDailyOpen(false)} onCredited={(amount) => pushToast({ title: t("daily.creditedToast", { amount: fmt(amount) }), tone: "#E6CA65" })} />
 
       <WithdrawalModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onRequested={(amount) => pushToast({ title: t("withdraw.requestedToast", { amount: fmt(amount) }), tone: "#E6CA65" })} />
 

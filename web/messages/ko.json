@@ -4,6 +4,7 @@
     "battles": "배틀",
     "inventory": "보관함",
     "fairness": "공정성 검증",
+    "community": "커뮤니티",
     "highRoller": "하이롤러",
     "tech": "테크",
     "luxury": "럭셔리"
@@ -386,6 +387,53 @@
       "CA": "캐나다",
       "AE": "아랍에미리트"
     }
+  },
+  "daily": {
+    "title": "데일리 프리 박스",
+    "pill": "무료 상자",
+    "openFree": "무료로 열기",
+    "nextIn": "다음 오픈까지 {time}",
+    "stripBody": "24시간마다 1회, 결제 없이 {min} ~ {max}를 잔액에 바로 적립합니다.",
+    "body": "24시간마다 1회. 카드 한 장을 고르면 {min} ~ {max}가 잔액에 즉시 적립됩니다. 결제·가입 없음.",
+    "card": "카드 {n}",
+    "pickOne": "카드 한 장을 선택하세요",
+    "revealing": "결과 확정 중…",
+    "won": "적립",
+    "credited": "{amount}가 잔액에 적립되었습니다",
+    "odds": "확률표",
+    "fairNote": "유료 박스와 같은 Provably Fair 롤 — 카드 선택은 연출이며 결과를 바꾸지 않습니다",
+    "creditedToast": "데일리 프리 박스 — {amount} 적립",
+    "close": "닫기",
+    "demoNote": "데모: 24시간 쿨다운은 이 브라우저 기준입니다. 실서비스에서는 계정 기준으로 집계됩니다."
+  },
+  "community": {
+    "eyebrow": "Community Wall",
+    "title": "실물 언박싱 후기",
+    "you": "나",
+    "pending": "검토 중",
+    "bonusBanner": "실물 수령 후 사진 후기 작성 시 즉시",
+    "bonusBannerTail": "보너스 캐시백 지급",
+    "write": "후기 작성",
+    "badgeShipping": "운송장 인증",
+    "badgeOnchain": "{explorer} 온체인 인증",
+    "writeTitle": "포토 후기 작성",
+    "writeBonus": "등록 즉시 보너스",
+    "noEligible": "배송 완료된 아이템이 있어야 후기를 쓸 수 있습니다. 보관함에서 배송을 신청해 보세요.",
+    "pickItem": "수령한 아이템",
+    "photo": "언박싱 사진",
+    "photoHint": "사진 선택 (선택 사항)",
+    "rating": "별점",
+    "text": "한 줄 후기",
+    "textHint": "솔직한 한 줄이면 충분합니다 (5자 이상)",
+    "submit": "등록하고 {bonus} 받기",
+    "bonusToast": "후기 등록 — 보너스 {amount} 적립",
+    "errors": {
+      "item": "아이템을 선택하세요",
+      "text": "후기는 5자 이상 입력하세요",
+      "photo": "사진을 불러오지 못했습니다"
+    },
+    "writeDemoNote": "데모: 후기와 사진은 이 브라우저에만 저장되며 보너스는 즉시 지급됩니다. 실서비스에서는 검토 승인 후 지급됩니다.",
+    "demoNote": "데모 데이터 — 후기·인증 링크는 모의값이며 사진은 카탈로그 이미지입니다. 실서비스에서는 실제 업로드와 온체인/운송장 검증으로 대체됩니다."
   },
   "ticker": {
     "label": "실시간 라이브 드랍",

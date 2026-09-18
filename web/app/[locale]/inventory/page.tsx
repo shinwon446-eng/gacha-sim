@@ -180,6 +180,9 @@ export default function InventoryPage() {
           <Link href="/fairness" className="hover:text-white">
             {t("nav.fairness")}
           </Link>
+          <Link href="/community" className="hover:text-white">
+            {t("nav.community")}
+          </Link>
         </nav>
         <div className="ml-auto flex flex-none items-center gap-2">
           <div className="glass-dark hidden h-9 items-center gap-2 rounded-md px-3 sm:flex">

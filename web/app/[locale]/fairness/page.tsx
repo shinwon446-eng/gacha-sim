@@ -26,6 +26,9 @@ export default function FairnessPage() {
             {t("nav.inventory")}
           </Link>
           <span className="font-semibold text-white">{t("nav.fairness")}</span>
+          <Link href="/community" className="transition-colors hover:text-white">
+            {t("nav.community")}
+          </Link>
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <LanguageSelector />

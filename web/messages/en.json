@@ -4,6 +4,7 @@
     "battles": "Battles",
     "inventory": "Inventory",
     "fairness": "Provably Fair",
+    "community": "Community",
     "highRoller": "High-Roller",
     "tech": "Tech",
     "luxury": "Luxury"
@@ -386,6 +387,53 @@
       "CA": "Canada",
       "AE": "United Arab Emirates"
     }
+  },
+  "daily": {
+    "title": "Daily Free Box",
+    "pill": "Free Box",
+    "openFree": "Open for free",
+    "nextIn": "Next in {time}",
+    "stripBody": "Once every 24 hours, no payment — {min} to {max} credited straight to your balance.",
+    "body": "Once every 24 hours. Pick a card and {min} to {max} is credited instantly. No deposit, no sign-up.",
+    "card": "Card {n}",
+    "pickOne": "Pick a card",
+    "revealing": "Locking the result…",
+    "won": "Credited",
+    "credited": "{amount} was credited to your balance",
+    "odds": "Odds",
+    "fairNote": "Same Provably Fair roll as paid boxes — your card pick is cosmetic and never changes the result",
+    "creditedToast": "Daily Free Box — {amount} credited",
+    "close": "Close",
+    "demoNote": "Demo: the 24-hour cooldown is per browser. Production counts per account."
+  },
+  "community": {
+    "eyebrow": "Community Wall",
+    "title": "Real Unboxing Reviews",
+    "you": "You",
+    "pending": "In review",
+    "bonusBanner": "Post a photo review after delivery and get an instant",
+    "bonusBannerTail": "bonus cashback",
+    "write": "Write a review",
+    "badgeShipping": "Shipping verified",
+    "badgeOnchain": "{explorer} on-chain proof",
+    "writeTitle": "Photo Review",
+    "writeBonus": "Instant bonus on submit",
+    "noEligible": "You need a delivered item to write a review. Request shipping from your vault first.",
+    "pickItem": "Received item",
+    "photo": "Unboxing photo",
+    "photoHint": "Choose a photo (optional)",
+    "rating": "Rating",
+    "text": "One-line review",
+    "textHint": "One honest line is enough (5+ characters)",
+    "submit": "Submit & get {bonus}",
+    "bonusToast": "Review posted — {amount} bonus credited",
+    "errors": {
+      "item": "Pick an item",
+      "text": "Write at least 5 characters",
+      "photo": "Could not load the photo"
+    },
+    "writeDemoNote": "Demo: your review and photo stay in this browser and the bonus is credited instantly. Production pays after moderation.",
+    "demoNote": "Demo data — reviews and proof links are mock values and photos are catalog images. Production replaces this with real uploads and on-chain / tracking verification."
   },
   "ticker": {
     "label": "Live drops",

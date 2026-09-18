@@ -152,22 +152,20 @@ v4 본문이 다루지 않는 항목은 이전 규범을 그대로 유지한다.
 - **i18n / 통화**: `next-intl` 정적 라우팅 `app/[locale]/` (ko/en/zh), 메시지는 `scripts/gen-messages.py`가 생성(`npx tsx scripts/dump-products.ts` 선행)하며 테스트가 3개 국어 키 집합·혼용 0건을 강제. 단일 통화 표기는 `formatCurrency` / `<Money>` 만 사용.
 - **배포**: GitHub Pages 정적 export(basePath `/gacha-sim`, 브랜치 `feat/netflix-gacha-web`). 미들웨어·API 라우트 없음. 로그인·DB·PG·핫월렛·물류 웹훅은 없으며 클라이언트 모의(mock)로 흐름만 재현하고 화면에 "데모"임을 명시한다. 모의 TxID·운송장·리저브 주소는 형식만 맞고 실제 조회되지 않는다.
 
-## 부록 B. v4 규범 대비 현재 코드베이스 격차 (2026-09-17)
+## 부록 B. v4 규범 대비 현재 코드베이스 상태 (2026-09-18)
 
-| v4 항목 | 상태 | 위치 / 비고 |
+| v4 항목 | 상태 | 위치 |
 |---|---|---|
-| §2-1 최상단 라이브 드랍 티커 | ❌ | 홈 헤더 직하 — 모의 이벤트 무한 루프 스트립 신설 |
-| §2-2 히어로 다이어트(뱃지 1개 · H1 · 서브 1줄 · 가격 칩 · CTA 2개), 비주얼 마스킹 제거 | ❌ | `BillboardHero` — 현재 뱃지 3개, "지금 상영 중" 칩, CTA 3개, 상위 구성 3종, 좌측 26% + 하단 페이드 |
-| §2-3 히어로 직하 TOP 10 캐러셀 | ❌ | 현재 순서: 히어로 → 3-Step → 카운터 → 등급 범례 → TOP 10 |
-| §2-4 3-Step·카운터를 첫 캐러셀 아래로 | ❌ | 순서 재배치 |
-| §2-5 보조 캐러셀 명칭(럭셔리 워치 & 하이엔드 / 애플 & 게이밍 기어 / 초보자 가성비 보장) | ❌ | `rows.*` 메시지 + 셀렉터 |
-| §3 카드: 기본 콤팩트(서브 3종 숨김), 호버 1.15x 확장 시 확률 바·썸네일 3개·퀵 버튼 | ❌ | `BoxCard` — 현재 1.12x, 썸네일 3개 상시 노출 |
-| §4 숫자·통화 분리 타이포 | ✅ | `components/ui/Money.tsx` — 보관함·헤더·히어로·카드·룰렛·피드 |
-| §5-A 3-Step 비주얼 검증기 | ✅ | `VisualVerifier` (`/fairness`, 전문가 모드 토글). "모든 언박싱 결과·보관함 카드"의 버튼은 기존 hex 모달(`FairnessModal`) — 비주얼 타임라인으로 교체 여지 |
-| §5-B 실지급/실배송 피드 + 준비금 | ✅ (모의) | `ProofFeed`, `lib/proofFeed.ts` — `/fairness` 전체, 홈 요약 4행 |
-| §6-A 입금 / §6-B 출금(BROADCASTING · TxID · TronScan/BscScan) | ✅ (모의) | `UsdtDepositTab`, `WithdrawalModal` |
-| §7-A 데일리 무료 상자 | ❌ | 로그인 없음 → 브라우저 단위 24h 타이머 |
-| §7-B `/community` 후기 월 | ❌ | 업로드 백엔드 없음 → 모의 갤러리 |
-| §8 보관함 표준 | ✅ | 배너·출금/일괄판매·전체선택·플로팅 바·정렬·빈 화면 TOP 3·배송 추적(택배사 링크) |
+| §2-1 라이브 드랍 티커 | ✅ (모의) | `components/home/LiveTicker.tsx`, `lib/liveDrops.ts` |
+| §2-2 히어로 다이어트 · 마스킹 제거 | ✅ | `components/home/BillboardHero.tsx` |
+| §2-3~5 상품 우선 순서 · 보조 캐러셀 명칭 | ✅ | `app/[locale]/page.tsx`, `rows.*` 메시지 |
+| §3 카드 콤팩트 + 호버 1.15x 확장 | ✅ | `components/box/BoxCard.tsx` |
+| §4 숫자·통화 분리 타이포 | ✅ | `components/ui/Money.tsx` |
+| §5-A 3-Step 비주얼 검증기 | ✅ | `components/fairness/VisualVerifier.tsx` (`/fairness`). 룰렛 팝업·보관함 카드의 [검증] 버튼은 hex 모달(`FairnessModal`) |
+| §5-B 실지급/실배송 피드 · 준비금 | ✅ (모의) | `components/fairness/ProofFeed.tsx`, `lib/proofFeed.ts` |
+| §6 입금 / 출금(BROADCASTING · TxID · 익스플로러) | ✅ (모의) | `components/wallet/*`, `lib/withdrawal.ts` |
+| §7-A 데일리 무료 상자 | ✅ (브라우저 단위 24h) | `components/home/DailyFreeBox.tsx`, `lib/dailyBox.ts`, `stores/dailyStore.ts` |
+| §7-B `/community` 후기 월 · 10 USDT 보너스 | ✅ (로컬 저장) | `app/[locale]/community/page.tsx`, `lib/community.ts`, `stores/communityStore.ts` |
+| §8 보관함 표준 | ✅ | `app/[locale]/inventory/page.tsx` |
 
-**PROMPTS.md 진행 순서**: [프롬프트 1(v4)] → [4]. [2]·[3]은 완료.
+PROMPTS.md 1~4 전부 반영 완료. 남은 것은 백엔드(계정·DB·PG·핫월렛·물류 웹훅·업로드 스토리지)로, 모의 모듈(`lib/liveDrops`, `lib/proofFeed`, `lib/community`, `lib/carriers`·`lib/withdrawal` 의 mock*)을 API 로 교체하면 된다.

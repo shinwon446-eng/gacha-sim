@@ -4,6 +4,7 @@
     "battles": "对战",
     "inventory": "仓库",
     "fairness": "公平性验证",
+    "community": "社区",
     "highRoller": "高额玩家",
     "tech": "科技",
     "luxury": "奢侈品"
@@ -386,6 +387,53 @@
       "CA": "加拿大",
       "AE": "阿联酋"
     }
+  },
+  "daily": {
+    "title": "每日免费盲盒",
+    "pill": "免费盲盒",
+    "openFree": "免费开启",
+    "nextIn": "距下次开启 {time}",
+    "stripBody": "每 24 小时一次，无需支付，{min} ~ {max} 直接计入余额。",
+    "body": "每 24 小时一次。选一张卡，{min} ~ {max} 即时计入余额。无需充值或注册。",
+    "card": "卡片 {n}",
+    "pickOne": "请选择一张卡片",
+    "revealing": "结果确定中…",
+    "won": "已计入",
+    "credited": "{amount} 已计入您的余额",
+    "odds": "概率表",
+    "fairNote": "与付费盲盒相同的 Provably Fair 掷点 — 选卡仅为演出，不会改变结果",
+    "creditedToast": "每日免费盲盒 — 已计入 {amount}",
+    "close": "关闭",
+    "demoNote": "演示：24 小时冷却按本浏览器计算。正式服务按账户计算。"
+  },
+  "community": {
+    "eyebrow": "Community Wall",
+    "title": "实物开箱晒单",
+    "you": "我",
+    "pending": "审核中",
+    "bonusBanner": "收到实物后发布照片晒单，立即获得",
+    "bonusBannerTail": "奖励返现",
+    "write": "发布晒单",
+    "badgeShipping": "运单已验证",
+    "badgeOnchain": "{explorer} 链上证明",
+    "writeTitle": "发布照片晒单",
+    "writeBonus": "提交即得奖励",
+    "noEligible": "需要有已发货的商品才能晒单。请先在仓库申请发货。",
+    "pickItem": "已收到的商品",
+    "photo": "开箱照片",
+    "photoHint": "选择照片（可选）",
+    "rating": "评分",
+    "text": "一句话评价",
+    "textHint": "一句真实感受即可（5 字以上）",
+    "submit": "提交并领取 {bonus}",
+    "bonusToast": "晒单已发布 — 奖励 {amount} 已计入",
+    "errors": {
+      "item": "请选择商品",
+      "text": "评价至少 5 个字",
+      "photo": "无法加载照片"
+    },
+    "writeDemoNote": "演示：晒单和照片仅保存在本浏览器，奖励即时发放。正式服务在审核通过后发放。",
+    "demoNote": "演示数据 — 晒单与证明链接为模拟值，照片为目录图片。正式服务将替换为真实上传及链上/运单验证。"
   },
   "ticker": {
     "label": "实时开箱动态",

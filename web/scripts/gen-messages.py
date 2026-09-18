@@ -15,7 +15,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 # ── UI 문자열 ──────────────────────────────────────────────
 UI = {
   "ko": {
-    "nav": {"boxes": "박스", "battles": "배틀", "inventory": "보관함", "fairness": "공정성 검증", "highRoller": "하이롤러", "tech": "테크", "luxury": "럭셔리"},
+    "nav": {"boxes": "박스", "battles": "배틀", "inventory": "보관함", "fairness": "공정성 검증", "community": "커뮤니티", "highRoller": "하이롤러", "tech": "테크", "luxury": "럭셔리"},
     "header": {"balance": "잔액", "demo": "데모", "language": "언어", "currency": "통화", "deposit": "충전하기", "withdraw": "출금", "welcomeToast": "웰컴 보너스 {amount} 지급 완료 — 실제 박스를 열어보세요"},
     "hero": {
       "royalSelection": "로열 셀렉션", "top": "TOP {n}", "pricePerOpen": "1회 오픈", "topPull": "최고 구성",
@@ -134,6 +134,25 @@ UI = {
       "errors": {"recipient": "수령인 이름을 입력하세요", "phone": "연락처 형식을 확인하세요", "postalCode": "우편번호를 입력하세요", "address": "상세 주소를 입력하세요", "customsId": "통관 식별자 형식이 올바르지 않습니다"},
       "countries": {"KR": "대한민국", "US": "미국", "CN": "중국", "JP": "일본", "SG": "싱가포르", "HK": "홍콩", "TW": "대만", "GB": "영국", "DE": "독일", "FR": "프랑스", "AU": "호주", "CA": "캐나다", "AE": "아랍에미리트"}
     },
+    "daily": {
+      "title": "데일리 프리 박스", "pill": "무료 상자", "openFree": "무료로 열기", "nextIn": "다음 오픈까지 {time}",
+      "stripBody": "24시간마다 1회, 결제 없이 {min} ~ {max}를 잔액에 바로 적립합니다.", "body": "24시간마다 1회. 카드 한 장을 고르면 {min} ~ {max}가 잔액에 즉시 적립됩니다. 결제·가입 없음.",
+      "card": "카드 {n}", "pickOne": "카드 한 장을 선택하세요", "revealing": "결과 확정 중…", "won": "적립", "credited": "{amount}가 잔액에 적립되었습니다",
+      "odds": "확률표", "fairNote": "유료 박스와 같은 Provably Fair 롤 — 카드 선택은 연출이며 결과를 바꾸지 않습니다",
+      "creditedToast": "데일리 프리 박스 — {amount} 적립", "close": "닫기",
+      "demoNote": "데모: 24시간 쿨다운은 이 브라우저 기준입니다. 실서비스에서는 계정 기준으로 집계됩니다."
+    },
+    "community": {
+      "eyebrow": "Community Wall", "title": "실물 언박싱 후기", "you": "나", "pending": "검토 중",
+      "bonusBanner": "실물 수령 후 사진 후기 작성 시 즉시", "bonusBannerTail": "보너스 캐시백 지급", "write": "후기 작성",
+      "badgeShipping": "운송장 인증", "badgeOnchain": "{explorer} 온체인 인증",
+      "writeTitle": "포토 후기 작성", "writeBonus": "등록 즉시 보너스", "noEligible": "배송 완료된 아이템이 있어야 후기를 쓸 수 있습니다. 보관함에서 배송을 신청해 보세요.",
+      "pickItem": "수령한 아이템", "photo": "언박싱 사진", "photoHint": "사진 선택 (선택 사항)", "rating": "별점", "text": "한 줄 후기", "textHint": "솔직한 한 줄이면 충분합니다 (5자 이상)",
+      "submit": "등록하고 {bonus} 받기", "bonusToast": "후기 등록 — 보너스 {amount} 적립",
+      "errors": {"item": "아이템을 선택하세요", "text": "후기는 5자 이상 입력하세요", "photo": "사진을 불러오지 못했습니다"},
+      "writeDemoNote": "데모: 후기와 사진은 이 브라우저에만 저장되며 보너스는 즉시 지급됩니다. 실서비스에서는 검토 승인 후 지급됩니다.",
+      "demoNote": "데모 데이터 — 후기·인증 링크는 모의값이며 사진은 카탈로그 이미지입니다. 실서비스에서는 실제 업로드와 온체인/운송장 검증으로 대체됩니다."
+    },
     "ticker": {"label": "실시간 라이브 드랍", "live": "LIVE", "win": "님이 {item} 획득", "cashout": "님이 {amount} 즉시 환전", "ship": "님이 {item} 출고 신청", "ago": "({s}초 전)"},
     "onboarding": {
       "title": "3초 안심 가이드",
@@ -165,7 +184,7 @@ UI = {
     "badges": {"dream": "드림 박스", "mobility": "모빌리티", "tech": "테크", "audio": "오디오", "watch": "워치", "luxury": "럭셔리", "lifestyle": "라이프스타일", "guaranteed": "가치 보장"},
   },
   "en": {
-    "nav": {"boxes": "Boxes", "battles": "Battles", "inventory": "Inventory", "fairness": "Provably Fair", "highRoller": "High-Roller", "tech": "Tech", "luxury": "Luxury"},
+    "nav": {"boxes": "Boxes", "battles": "Battles", "inventory": "Inventory", "fairness": "Provably Fair", "community": "Community", "highRoller": "High-Roller", "tech": "Tech", "luxury": "Luxury"},
     "header": {"balance": "Balance", "demo": "Demo", "language": "Language", "currency": "Currency", "deposit": "Deposit", "withdraw": "Withdraw", "welcomeToast": "Welcome bonus {amount} credited — open a real box"},
     "hero": {
       "royalSelection": "Royal Selection", "top": "TOP {n}", "pricePerOpen": "Per Open", "topPull": "Top Pull",
@@ -284,6 +303,25 @@ UI = {
       "errors": {"recipient": "Enter the recipient name", "phone": "Check the phone number format", "postalCode": "Enter a postal code", "address": "Enter the street address", "customsId": "Invalid customs identifier format"},
       "countries": {"KR": "South Korea", "US": "United States", "CN": "China", "JP": "Japan", "SG": "Singapore", "HK": "Hong Kong", "TW": "Taiwan", "GB": "United Kingdom", "DE": "Germany", "FR": "France", "AU": "Australia", "CA": "Canada", "AE": "United Arab Emirates"}
     },
+    "daily": {
+      "title": "Daily Free Box", "pill": "Free Box", "openFree": "Open for free", "nextIn": "Next in {time}",
+      "stripBody": "Once every 24 hours, no payment — {min} to {max} credited straight to your balance.", "body": "Once every 24 hours. Pick a card and {min} to {max} is credited instantly. No deposit, no sign-up.",
+      "card": "Card {n}", "pickOne": "Pick a card", "revealing": "Locking the result…", "won": "Credited", "credited": "{amount} was credited to your balance",
+      "odds": "Odds", "fairNote": "Same Provably Fair roll as paid boxes — your card pick is cosmetic and never changes the result",
+      "creditedToast": "Daily Free Box — {amount} credited", "close": "Close",
+      "demoNote": "Demo: the 24-hour cooldown is per browser. Production counts per account."
+    },
+    "community": {
+      "eyebrow": "Community Wall", "title": "Real Unboxing Reviews", "you": "You", "pending": "In review",
+      "bonusBanner": "Post a photo review after delivery and get an instant", "bonusBannerTail": "bonus cashback", "write": "Write a review",
+      "badgeShipping": "Shipping verified", "badgeOnchain": "{explorer} on-chain proof",
+      "writeTitle": "Photo Review", "writeBonus": "Instant bonus on submit", "noEligible": "You need a delivered item to write a review. Request shipping from your vault first.",
+      "pickItem": "Received item", "photo": "Unboxing photo", "photoHint": "Choose a photo (optional)", "rating": "Rating", "text": "One-line review", "textHint": "One honest line is enough (5+ characters)",
+      "submit": "Submit & get {bonus}", "bonusToast": "Review posted — {amount} bonus credited",
+      "errors": {"item": "Pick an item", "text": "Write at least 5 characters", "photo": "Could not load the photo"},
+      "writeDemoNote": "Demo: your review and photo stay in this browser and the bonus is credited instantly. Production pays after moderation.",
+      "demoNote": "Demo data — reviews and proof links are mock values and photos are catalog images. Production replaces this with real uploads and on-chain / tracking verification."
+    },
     "ticker": {"label": "Live drops", "live": "LIVE", "win": "unboxed {item}", "cashout": "cashed out {amount}", "ship": "requested shipping for {item}", "ago": "({s}s ago)"},
     "onboarding": {
       "title": "How it works in 3 steps",
@@ -315,7 +353,7 @@ UI = {
     "badges": {"dream": "Dream Box", "mobility": "Mobility", "tech": "Tech", "audio": "Audio", "watch": "Watches", "luxury": "Luxury", "lifestyle": "Lifestyle", "guaranteed": "Guaranteed"},
   },
   "zh": {
-    "nav": {"boxes": "盲盒", "battles": "对战", "inventory": "仓库", "fairness": "公平性验证", "highRoller": "高额玩家", "tech": "科技", "luxury": "奢侈品"},
+    "nav": {"boxes": "盲盒", "battles": "对战", "inventory": "仓库", "fairness": "公平性验证", "community": "社区", "highRoller": "高额玩家", "tech": "科技", "luxury": "奢侈品"},
     "header": {"balance": "余额", "demo": "演示", "language": "语言", "currency": "货币", "deposit": "充值", "withdraw": "提现", "welcomeToast": "新人奖励 {amount} 已到账 — 开启真实盲盒吧"},
     "hero": {
       "royalSelection": "皇家精选", "top": "TOP {n}", "pricePerOpen": "单次开启", "topPull": "最高奖品",
@@ -433,6 +471,25 @@ UI = {
       "shipRequestedToast": "已申请发货 — 出单后将显示运单号",
       "errors": {"recipient": "请输入收件人姓名", "phone": "请检查电话格式", "postalCode": "请输入邮政编码", "address": "请输入详细地址", "customsId": "通关标识格式不正确"},
       "countries": {"KR": "韩国", "US": "美国", "CN": "中国", "JP": "日本", "SG": "新加坡", "HK": "中国香港", "TW": "中国台湾", "GB": "英国", "DE": "德国", "FR": "法国", "AU": "澳大利亚", "CA": "加拿大", "AE": "阿联酋"}
+    },
+    "daily": {
+      "title": "每日免费盲盒", "pill": "免费盲盒", "openFree": "免费开启", "nextIn": "距下次开启 {time}",
+      "stripBody": "每 24 小时一次，无需支付，{min} ~ {max} 直接计入余额。", "body": "每 24 小时一次。选一张卡，{min} ~ {max} 即时计入余额。无需充值或注册。",
+      "card": "卡片 {n}", "pickOne": "请选择一张卡片", "revealing": "结果确定中…", "won": "已计入", "credited": "{amount} 已计入您的余额",
+      "odds": "概率表", "fairNote": "与付费盲盒相同的 Provably Fair 掷点 — 选卡仅为演出，不会改变结果",
+      "creditedToast": "每日免费盲盒 — 已计入 {amount}", "close": "关闭",
+      "demoNote": "演示：24 小时冷却按本浏览器计算。正式服务按账户计算。"
+    },
+    "community": {
+      "eyebrow": "Community Wall", "title": "实物开箱晒单", "you": "我", "pending": "审核中",
+      "bonusBanner": "收到实物后发布照片晒单，立即获得", "bonusBannerTail": "奖励返现", "write": "发布晒单",
+      "badgeShipping": "运单已验证", "badgeOnchain": "{explorer} 链上证明",
+      "writeTitle": "发布照片晒单", "writeBonus": "提交即得奖励", "noEligible": "需要有已发货的商品才能晒单。请先在仓库申请发货。",
+      "pickItem": "已收到的商品", "photo": "开箱照片", "photoHint": "选择照片（可选）", "rating": "评分", "text": "一句话评价", "textHint": "一句真实感受即可（5 字以上）",
+      "submit": "提交并领取 {bonus}", "bonusToast": "晒单已发布 — 奖励 {amount} 已计入",
+      "errors": {"item": "请选择商品", "text": "评价至少 5 个字", "photo": "无法加载照片"},
+      "writeDemoNote": "演示：晒单和照片仅保存在本浏览器，奖励即时发放。正式服务在审核通过后发放。",
+      "demoNote": "演示数据 — 晒单与证明链接为模拟值，照片为目录图片。正式服务将替换为真实上传及链上/运单验证。"
     },
     "ticker": {"label": "实时开箱动态", "live": "LIVE", "win": "开出了 {item}", "cashout": "已折现 {amount}", "ship": "申请发货 {item}", "ago": "（{s} 秒前）"},
     "onboarding": {
