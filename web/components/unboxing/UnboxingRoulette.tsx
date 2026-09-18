@@ -16,7 +16,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { playTick, playWin, playTaDum } from "@/lib/audio";
 import { ProductArt } from "@/components/box/ProductArt";
 import { Money } from "@/components/ui/Money";
-import { FairnessModal } from "@/components/fairness/FairnessModal";
+import { VisualVerifyModal } from "@/components/fairness/VisualVerifyModal";
 import { ShippingModal } from "@/components/inventory/ShippingModal";
 import { useInventoryStore, type OwnedItem } from "@/stores/inventoryStore";
 import { useWalletStore, WELCOME_BONUS_USDT } from "@/stores/walletStore";
@@ -88,7 +88,9 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
   const [current, setCurrent] = useState<UnboxResult | null>(null);
   const [results, setResults] = useState<UnboxResult[]>([]);
   const [flash, setFlash] = useState<string | null>(null);
-  const [verifyOpen, setVerifyOpen] = useState(false);
+  const [verifyId, setVerifyId] = useState<string | null>(null);
+  const ownedItems = useInventoryStore((s) => s.items);
+  const verifyRecord = verifyId ? ownedItems.find((o) => o.id === verifyId) ?? null : null;
   const [sold, setSold] = useState(false);
   const [shipOpen, setShipOpen] = useState(false);
   const [shipped, setShipped] = useState(false);
@@ -397,6 +399,9 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
                           <span className="font-mono text-sm font-bold tabular-nums" style={{ color: r.tier.accent }}>
                             {fmt(r.item.value)}
                           </span>
+                          <button type="button" disabled={!r.ownedId} onClick={() => r.ownedId && setVerifyId(r.ownedId)} aria-label={t("verify")} title={t("verify")} className="glass-dark flex h-7 w-7 flex-none items-center justify-center rounded-md text-gold-champagne hover:border-gold-champagne disabled:opacity-40">
+                            <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2.2} />
+                          </button>
                         </li>
                       ))}
                     </ul>
@@ -446,7 +451,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
                       <Truck className="h-4 w-4" strokeWidth={2} />
                       {t("claimShipping")}
                     </button>
-                    <button type="button" onClick={() => setVerifyOpen(true)} className="glass-dark flex h-11 items-center justify-center gap-2 rounded-lg text-sm font-semibold text-gold-champagne hover:border-gold-champagne">
+                    <button type="button" disabled={!last?.ownedId} onClick={() => last?.ownedId && setVerifyId(last.ownedId)} className="glass-dark flex h-11 items-center justify-center gap-2 rounded-lg text-sm font-semibold text-gold-champagne hover:border-gold-champagne disabled:opacity-50">
                       <ShieldCheck className="h-4 w-4" strokeWidth={2.2} />
                       {t("verify")}
                     </button>
@@ -494,12 +499,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
             onShip(results);
           }}
         />
-        <FairnessModal
-          open={verifyOpen}
-          onClose={() => setVerifyOpen(false)}
-          box={box}
-          initial={last ? { serverSeed: last.serverSeed, serverSeedHash: last.serverSeedHash, clientSeed: last.clientSeed, nonce: last.nonce } : undefined}
-        />
+        <VisualVerifyModal item={verifyRecord} onClose={() => setVerifyId(null)} />
       </motion.div>
     </AnimatePresence>
   );

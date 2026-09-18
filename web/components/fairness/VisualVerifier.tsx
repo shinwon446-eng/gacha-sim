@@ -34,15 +34,25 @@ const STEP_MS = 850;
  *   3 🎯 구간 매칭: 게이지 바 위 롤 위치가 당첨 항목 구간 안
  * 계산은 lib/fairness.ts 그대로. hex 입력은 "전문가 모드" 토글 뒤에 있다.
  */
-export function VisualVerifier({ className }: { className?: string }) {
+export interface VisualVerifierProps {
+  className?: string;
+  /** 고정 레코드 — 주어지면 선택 드롭다운을 숨기고 이 건만 검증한다 (룰렛 팝업·보관함 카드) */
+  record?: OwnedItem;
+  /** 마운트 즉시 검증 시작 */
+  autoRun?: boolean;
+  /** 모달 안에서 쓸 때 — 헤더·전문가 토글을 간소화 */
+  embedded?: boolean;
+}
+
+export function VisualVerifier({ className, record, autoRun = false, embedded = false }: VisualVerifierProps) {
   const t = useTranslations("fairness.visual");
   const locale = useLocale();
   const { boxTitle, itemName } = useProductText();
   const items = useInventoryStore((s) => s.items);
-  const recent = useMemo(() => [...items].sort((a, b) => b.acquiredAt.localeCompare(a.acquiredAt)).slice(0, 12), [items]);
+  const recent = useMemo(() => (record ? [record] : [...items].sort((a, b) => b.acquiredAt.localeCompare(a.acquiredAt)).slice(0, 12)), [items, record]);
 
   const [pickedId, setPickedId] = useState<string | null>(null);
-  const picked: OwnedItem | undefined = recent.find((o) => o.id === pickedId) ?? recent[0];
+  const picked: OwnedItem | undefined = record ?? (recent.find((o) => o.id === pickedId) ?? recent[0]);
   const [steps, setSteps] = useState<[StepState, StepState, StepState]>(["idle", "idle", "idle"]);
   const [out, setOut] = useState<Outcome | null>(null);
   const [expert, setExpert] = useState(false);
@@ -82,13 +92,21 @@ export function VisualVerifier({ className }: { className?: string }) {
     setBusy(false);
   }, [picked, box, busy, table]);
 
+  // 자동 실행 — 레코드가 주어진 모달에서 한 번
+  const [autoFired, setAutoFired] = useState(false);
+  useEffect(() => {
+    if (!autoRun || autoFired || !picked) return;
+    setAutoFired(true);
+    void run();
+  }, [autoRun, autoFired, picked, run]);
+
   const allPass = steps.every((s) => s === "pass");
   const winRange = out ? ranges.find((x) => x.item.id === out.itemId) : undefined;
   const rollPct = out ? (out.roll / ROLL_RANGE) * 100 : 0;
 
   return (
-    <section className={cn("border-metallic-gold relative overflow-hidden rounded-xl bg-surface p-5 md:p-6", className)} aria-label={t("title")}>
-      <span aria-hidden className="pedestal-glow pointer-events-none absolute inset-0" />
+    <section className={cn(embedded ? "relative" : "border-metallic-gold relative overflow-hidden rounded-xl bg-surface p-5 md:p-6", className)} aria-label={t("title")}>
+      {!embedded && <span aria-hidden className="pedestal-glow pointer-events-none absolute inset-0" />}
       <div className="relative flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
@@ -96,7 +114,7 @@ export function VisualVerifier({ className }: { className?: string }) {
             <span className="caption-luxury !text-gold-champagne">{t("eyebrow")}</span>
           </div>
           <h2 className="mt-1 font-display text-2xl font-bold uppercase tracking-tight text-white">{t("title")}</h2>
-          <p className="mt-1 max-w-2xl text-xs leading-relaxed text-muted">{t("body")}</p>
+          {!embedded && <p className="mt-1 max-w-2xl text-xs leading-relaxed text-muted">{t("body")}</p>}
         </div>
         <button type="button" onClick={() => setExpert((v) => !v)} aria-expanded={expert} className="glass-dark flex h-9 items-center gap-1.5 rounded-md px-3 text-xs font-semibold text-secondary hover:text-white">
           {t("expert")}
@@ -104,9 +122,15 @@ export function VisualVerifier({ className }: { className?: string }) {
         </button>
       </div>
 
-      {/* 최근 언박싱 선택 + 검증 버튼 */}
+      {/* 최근 언박싱 선택 + 검증 버튼 (고정 레코드면 요약 줄) */}
       <div className="relative mt-5 grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
-        {recent.length === 0 ? (
+        {record && box ? (
+          <div className="border-metallic-subtle flex min-w-0 items-baseline gap-2 rounded-lg bg-obsidian px-3 py-2.5 text-sm">
+            <span className="truncate font-semibold text-white">{(() => { const it = box.items.find((i) => i.id === record.itemId); return it ? itemName(it) : record.itemId; })()}</span>
+            <span className="truncate text-xs text-muted">{boxTitle(box)}</span>
+            <span className="ml-auto flex-none font-mono text-[10px] text-faint">nonce #{record.fair.nonce}</span>
+          </div>
+        ) : recent.length === 0 ? (
           <div className="border-metallic-subtle rounded-lg bg-obsidian p-4 text-sm text-muted">
             {t("noRecent")}{" "}
             <Link href="/" className="font-semibold text-gold-champagne underline-offset-2 hover:underline">
@@ -139,7 +163,7 @@ export function VisualVerifier({ className }: { className?: string }) {
           className="flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-crimson px-6 text-sm font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2.4} /> : <ShieldCheck className="h-4 w-4" strokeWidth={2.4} />}
-          {busy ? t("verifying") : t("verify")}
+          {busy ? t("verifying") : out ? t("reverify") : t("verify")}
         </button>
       </div>
 

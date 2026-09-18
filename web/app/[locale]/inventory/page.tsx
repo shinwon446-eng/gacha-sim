@@ -27,7 +27,7 @@ import { ShippingModal } from "@/components/inventory/ShippingModal";
 import { TrackingModal } from "@/components/inventory/TrackingModal";
 import { HotBoxes } from "@/components/inventory/HotBoxes";
 import { WithdrawalModal } from "@/components/wallet/WithdrawalModal";
-import { FairnessModal } from "@/components/fairness/FairnessModal";
+import { VisualVerifyModal } from "@/components/fairness/VisualVerifyModal";
 
 const STATUSES: OwnedStatus[] = ["IN_STORAGE", "SHIPPING_REQUESTED", "SHIPPING", "SOLD"];
 type SortKey = "newest" | "valueDesc" | "valueAsc";
@@ -417,7 +417,7 @@ export default function InventoryPage() {
       <ShippingModal open={!!shipTarget} itemCount={shipTarget?.length ?? 0} balanceUsdt={balance} onClose={() => setShipTarget(null)} onSubmit={submitShip} />
       <TrackingModal item={track} onClose={() => setTrack(null)} />
       <WithdrawalModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onRequested={(amount) => say(t("withdraw.requestedToast", { amount: fmt(amount) }), "#E6CA65")} />
-      <FairnessModal open={!!verify} onClose={() => setVerify(null)} box={verify ? BOX_BY_SLUG[verify.boxSlug] : undefined} initial={verify ? { serverSeed: verify.fair.serverSeed, serverSeedHash: verify.fair.serverSeedHash, clientSeed: verify.fair.clientSeed, nonce: verify.fair.nonce } : undefined} />
+      <VisualVerifyModal item={verify} onClose={() => setVerify(null)} />
       <DetailModal box={detail} onClose={() => setDetail(null)} onOpen={openBox} />
       <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={() => say(t("inventory.shipRequestedToast"), "#93C5FD")} />
 

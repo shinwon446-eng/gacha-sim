@@ -161,7 +161,7 @@ v4 본문이 다루지 않는 항목은 이전 규범을 그대로 유지한다.
 | §2-3~5 상품 우선 순서 · 보조 캐러셀 명칭 | ✅ | `app/[locale]/page.tsx`, `rows.*` 메시지 |
 | §3 카드 콤팩트 + 호버 1.15x 확장 | ✅ | `components/box/BoxCard.tsx` |
 | §4 숫자·통화 분리 타이포 | ✅ | `components/ui/Money.tsx` |
-| §5-A 3-Step 비주얼 검증기 | ✅ | `components/fairness/VisualVerifier.tsx` (`/fairness`). 룰렛 팝업·보관함 카드의 [검증] 버튼은 hex 모달(`FairnessModal`) |
+| §5-A 3-Step 비주얼 검증기 | ✅ | `components/fairness/VisualVerifier.tsx` (`/fairness`) + `VisualVerifyModal` (룰렛 결과 팝업·보관함 카드 [공정성 1초 검증] — 열리면 자동 검증, hex 는 전문가 모드) |
 | §5-B 실지급/실배송 피드 · 준비금 | ✅ (모의) | `components/fairness/ProofFeed.tsx`, `lib/proofFeed.ts` |
 | §6 입금 / 출금(BROADCASTING · TxID · 익스플로러) | ✅ (모의) | `components/wallet/*`, `lib/withdrawal.ts` |
 | §7-A 데일리 무료 상자 | ✅ (브라우저 단위 24h) | `components/home/DailyFreeBox.tsx`, `lib/dailyBox.ts`, `stores/dailyStore.ts` |
