@@ -1,38 +1,19 @@
-"use client";
-
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { LOCALES, routing, type Locale } from "@/i18n/routing";
-
-const STORAGE_KEY = "gachaflix.locale";
-
-/** 브라우저 언어 → 지원 로케일. zh-* 는 전부 zh(간체)로. */
-function detect(): Locale {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved && (LOCALES as readonly string[]).includes(saved)) return saved as Locale;
-  } catch {
-    /* 저장소 접근 불가 — 감지로 진행 */
-  }
-  const lang = (navigator.language || "").toLowerCase();
-  if (lang.startsWith("ko")) return "ko";
-  if (lang.startsWith("zh")) return "zh";
-  if (lang.startsWith("en")) return "en";
-  return routing.defaultLocale;
-}
-
 /**
- * 루트(/) — 정적 export 라 middleware 가 없으므로 클라이언트에서 로케일로 보낸다.
- * 저장된 선택 > 브라우저 언어 > 기본(ko).
+ * 루트(/) — 정적 export 라 middleware 가 없다. 하이드레이션을 기다리지 않고 브라우저 수준에서 즉시 보낸다.
+ *   1) 인라인 스크립트(파싱 즉시 실행): 저장된 선택 > navigator.language(ko→ko, zh→zh, 그 외 전 세계 → en) 로 location.replace
+ *   2) 폴백 <meta http-equiv="refresh" content="0; url=./ko/">: JS 가 꺼진 환경
+ * 상대 경로(./ko/)라 basePath(/gacha-sim) 아래에서도 그대로 동작한다.
  */
+const REDIRECT = `(function(){try{var k="gachaflix.locale";var s=null;try{s=localStorage.getItem(k)}catch(e){}var l=(navigator.language||"").toLowerCase();var t=(s==="ko"||s==="en"||s==="zh")?s:(l.indexOf("ko")===0?"ko":l.indexOf("zh")===0?"zh":"en");location.replace("./"+t+"/")}catch(e){location.replace("./en/")}})();`;
+
 export default function RootRedirect() {
-  const router = useRouter();
-  useEffect(() => {
-    router.replace(`/${detect()}`);
-  }, [router]);
   return (
-    <main className="flex min-h-screen items-center justify-center bg-canvas">
-      <span className="caption-luxury">GACHAFLIX</span>
-    </main>
+    <>
+      <meta httpEquiv="refresh" content="0; url=./ko/" />
+      <script dangerouslySetInnerHTML={{ __html: REDIRECT }} />
+      <main className="flex min-h-screen items-center justify-center bg-canvas">
+        <span className="caption-luxury">GACHAFLIX</span>
+      </main>
+    </>
   );
 }

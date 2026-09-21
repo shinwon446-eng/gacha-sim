@@ -221,15 +221,17 @@ test("이미지 URL 은 https 이며 출처 표기를 동반하고, imageUrl 은
         have += 1;
         assert.match(
           x.image.src,
-          /^https:\/\/((upload|thumb)\.wikimedia\.org|images\.unsplash\.com)\//,
-          `${x.id}: 검증되지 않은 호스트`,
+          /^https:\/\/images\.unsplash\.com\//,
+          `${x.id}: Unsplash 다크 럭셔리 컬렉션만 허용 (위키백과·스톡 금지)`,
         );
         assert.ok(x.image.credit && x.image.credit.length > 8, `${x.id}: 출처 누락`);
-        assert.match(x.image.credit!, /CC|Public domain|Unsplash License/, `${x.id}: 라이선스 표기 누락`);
+        assert.match(x.image.credit!, /Unsplash License/, `${x.id}: 라이선스 표기 누락`);
       }
     }
   }
-  assert.ok(have >= 30, `확보 이미지 ${have}장`);
+  assert.ok(have >= 60, `확보 이미지 ${have}장`);
+  // 모든 박스 커버는 이미지가 있어야 한다
+  for (const b of BOXES) assert.ok(b.image.src, `${b.slug}: 커버 이미지 없음`);
   // 히어로와 TRENDING 상위는 반드시 이미지가 있어야 한다
   assert.ok(heroBox().image.src, "히어로 이미지 누락");
   for (const b of trending(5)) assert.ok(b.image.src, `${b.slug}: TRENDING 이미지 누락`);

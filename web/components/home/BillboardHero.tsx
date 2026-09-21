@@ -110,7 +110,7 @@ export function BillboardHero({ boxes, onOpen, onInspect, onDemo, intervalMs = 9
               <span className="caption-luxury !text-gold-champagne">{t("hero.badge")}</span>
             </span>
 
-            <h1 className="mt-3 font-display text-3xl font-bold leading-[1.08] tracking-tight text-white sm:text-4xl lg:text-5xl">
+            <h1 className="mt-3 break-keep font-display text-3xl font-bold leading-[1.08] tracking-tight text-white sm:text-4xl lg:text-5xl">
               {t("hero.headline")}
             </h1>
 
