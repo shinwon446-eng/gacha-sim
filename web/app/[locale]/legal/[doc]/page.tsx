@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
+import { LegalNav } from "@/components/legal/LegalNav";
 
 const DOCS = ["terms", "privacy", "policy", "faq"] as const;
 type Doc = (typeof DOCS)[number];
@@ -20,17 +21,11 @@ export default async function LegalPage({ params: { locale, doc } }: { params: {
   const sections = t.raw(`${key}.sections`) as { h: string; p: string }[];
   return (
     <main className="min-h-screen bg-canvas pb-16">
-      <header className="sticky top-0 z-40 flex items-center gap-4 border-b border-hairline bg-obsidian/90 px-[4%] py-3 backdrop-blur-md">
-        <Link href="/" className="font-display text-xl font-bold uppercase leading-none tracking-tight text-crimson">
+      <header className="sticky top-0 z-40 flex items-center gap-4 border-b border-hairline bg-obsidian/90 py-3 pl-[4%] backdrop-blur-md">
+        <Link href="/" className="flex-none font-display text-xl font-bold uppercase leading-none tracking-tight text-crimson">
           Gachaflix
         </Link>
-        <nav className="flex items-center gap-3 text-xs text-muted">
-          {DOCS.map((d) => (
-            <Link key={d} href={`/legal/${d}`} className={d === key ? "font-semibold text-white" : "hover:text-white"}>
-              {t(`${d}.title`)}
-            </Link>
-          ))}
-        </nav>
+        <LegalNav items={DOCS.map((d) => ({ key: d, title: t(`${d}.title`) }))} current={key} />
       </header>
       <article className="mx-auto w-full max-w-3xl px-[4%] pt-10">
         <div className="caption-luxury">{t("eyebrow")}</div>

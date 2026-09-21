@@ -65,7 +65,7 @@ export function Footer() {
         </div>
       </div>
       <div className="mx-auto mt-8 max-w-7xl border-t border-hairline pt-5">
-        <p className="max-w-4xl text-[11px] leading-relaxed text-faint">{t("disclaimer")}</p>
+        <p className="max-w-4xl break-keep text-[11px] leading-relaxed text-faint">{t("disclaimer")}</p>
         <div className="mt-3 text-[11px] text-faint">© {year} GACHAFLIX. All rights reserved.</div>
       </div>
     </footer>
