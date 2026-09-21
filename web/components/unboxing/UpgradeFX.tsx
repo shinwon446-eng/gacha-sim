@@ -28,9 +28,9 @@ export function UpgradeFX({ accent }: { accent: string }) {
       {/* 24K 골드 / 바이올렛 번개 */}
       <motion.svg
         viewBox="0 0 160 160"
-        className="absolute left-1/2 top-0 h-[70vh] w-auto -translate-x-1/2"
-        initial={{ opacity: 0, scaleY: 0.2, originY: 0 }}
-        animate={{ opacity: [0, 1, 0.6, 1, 0], scaleY: [0.2, 1, 1, 1, 1] }}
+        className="absolute left-1/2 top-0 h-[70vh] w-auto"
+        initial={{ opacity: 0, scaleY: 0.2, originY: 0, x: "-50%" }}
+        animate={{ opacity: [0, 1, 0.6, 1, 0], scaleY: [0.2, 1, 1, 1, 1], x: "-50%" }}
         transition={{ duration: 0.55, delay: 0.25, times: [0, 0.15, 0.4, 0.6, 1] }}
         style={{ filter: `drop-shadow(0 0 22px ${glow(accent, 0.95)}) drop-shadow(0 0 60px rgba(139,92,246,0.7))` }}
       >

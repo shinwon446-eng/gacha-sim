@@ -189,6 +189,11 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
         const { serverSeed, serverSeedHash, clientSeed } = useFairStore.getState();
         const r = await calculateRollResult(serverSeed, clientSeed, nonce);
         item = determineItem(r.roll, items);
+        // 개발 전용 연출 리허설 — 프로덕션 빌드에서는 코드가 제거된다. 결과·잔액은 실제로 반영되므로 리허설 후 되돌린다.
+        if (process.env.NODE_ENV !== "production") {
+          const force = (window as unknown as { __gfForce?: { itemId?: string; fakeout?: boolean } }).__gfForce;
+          if (force?.itemId) item = items.find((i) => i.id === force.itemId) ?? item;
+        }
         res = { item, tier: tierOf(item.value, box.price), roll: r.roll, hmac: r.hmac, nonce, serverSeed, serverSeedHash, clientSeed };
         // 확정 즉시 보관함에 IN_STORAGE 로 넣는다 — 팝업을 닫아도 사라지지 않는다
         const rec: Omit<OwnedItem, "id" | "status" | "acquiredAt"> = {
@@ -290,7 +295,8 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       setCurrent(res);
       setPhase("landed");
       const big = res.tier.key === "royal" || res.tier.key === "prestige";
-      const fakeout = big && !demo && !auto && count === 1 && Math.random() < FAKEOUT_RATE;
+      const forced = process.env.NODE_ENV !== "production" ? (window as unknown as { __gfForce?: { fakeout?: boolean } }).__gfForce?.fakeout : undefined;
+      const fakeout = big && !demo && !auto && count === 1 && (forced ?? Math.random() < FAKEOUT_RATE);
       if (fakeout) {
         // 승급 반전: 바닥(캐시백)으로 위장한 채 회색 플래시 → 0.5초 뒤 글리치·번개 → 진짜 결과 각성
         const floor = items[items.length - 1];
@@ -656,8 +662,8 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                   </div>
                 ) : (
                 <>
-                {/* 액션 — 즉시 회수와 집으로 배송을 같은 비중으로 */}
-                <div className="relative mt-5 grid gap-2">
+                {/* 액션 — 즉시 회수와 집으로 배송을 같은 비중으로. 승급 반전 위장 중에는 진짜 금액이 새지 않게 숨긴다 */}
+                <div className={cn("relative mt-5 grid gap-2", disguise && "invisible")}>
                   {settledAmount > 0 && results.length > 1 && (
                     <p className="break-keep text-center text-[11px] font-semibold text-gold-champagne">⚡ {t("cashCredited", { amount: fmt(settledAmount) })}</p>
                   )}
