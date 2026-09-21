@@ -220,7 +220,7 @@
   "deposit": {
     "title": "충전하기",
     "eyebrow": "Wallet · Deposit",
-    "tabUsdt": "USDT 암호화폐 입금",
+    "tabUsdt": "USDT 입금",
     "tabCard": "신용카드 결제",
     "network": "네트워크 선택",
     "recommended": "추천 · 수수료 1 USDT 이하",

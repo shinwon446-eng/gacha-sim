@@ -92,7 +92,7 @@ export function DepositModal({ open, onClose, onCredited }: DepositModalProps) {
                   aria-selected={tab === key}
                   onClick={() => setTab(key)}
                   className={cn(
-                    "flex h-10 flex-1 items-center justify-center gap-2 rounded-md text-sm font-semibold transition-colors",
+                    "flex h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-2 text-xs font-semibold transition-colors sm:gap-2 sm:text-sm",
                     tab === key ? "border-metallic-gold bg-surface text-gold-champagne" : "text-muted hover:text-white",
                   )}
                 >

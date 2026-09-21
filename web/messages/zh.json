@@ -220,7 +220,7 @@
   "deposit": {
     "title": "充值",
     "eyebrow": "Wallet · Deposit",
-    "tabUsdt": "USDT 加密货币充值",
+    "tabUsdt": "USDT 充值",
     "tabCard": "信用卡支付",
     "network": "选择网络",
     "recommended": "推荐 · 手续费低于 1 USDT",

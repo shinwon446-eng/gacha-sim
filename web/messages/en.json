@@ -220,7 +220,7 @@
   "deposit": {
     "title": "Deposit",
     "eyebrow": "Wallet · Deposit",
-    "tabUsdt": "USDT Crypto Deposit",
+    "tabUsdt": "USDT Deposit",
     "tabCard": "Credit Card",
     "network": "Select network",
     "recommended": "Recommended · fee under 1 USDT",
