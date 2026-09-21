@@ -96,7 +96,7 @@ export function NetflixRow({
     <section
       id={id}
       className={cn(
-        "group/row relative mb-12 scroll-mt-28",
+        "group/row relative mb-12 scroll-mt-24",
         expandedCount > 0 ? "z-50" : "z-10",
         className,
       )}

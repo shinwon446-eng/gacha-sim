@@ -440,7 +440,7 @@
     "label": "Live drops",
     "live": "LIVE",
     "lineup": "{box} · {item} {mult} · odds {rate}",
-    "win": "pulled {item} from a {price} box",
+    "win": "{box} ➔ {item}",
     "cashout": "cashed out {amount}",
     "ship": "requested shipping for {item}",
     "ago": "({s}s ago)"

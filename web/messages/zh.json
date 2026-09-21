@@ -440,7 +440,7 @@
     "label": "实时开箱动态",
     "live": "LIVE",
     "lineup": "{box} · {item} {mult} · 概率 {rate}",
-    "win": "在 {price} 盲盒中开出 {item}",
+    "win": "{box} ➔ 开出 {item}",
     "cashout": "已折现 {amount}",
     "ship": "申请发货 {item}",
     "ago": "（{s} 秒前）"

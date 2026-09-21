@@ -208,10 +208,10 @@ export default function BoxesPage() {
 
       {/* 5. 보조 큐레이션 캐러셀 */}
       <div className="pt-10">
-        <NetflixRow id="row-dollar" title={t("rows.dollar")} boxes={dollarRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
-        <NetflixRow id="row-tech" title={t("rows.techMobility")} boxes={techRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
-        <NetflixRow id="row-luxury" title={t("rows.luxuryWatch")} boxes={luxuryRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
-        <NetflixRow id="row-jackpot" title={t("rows.guaranteed")} boxes={jackpotRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow id="category-dollar" title={t("rows.dollar")} boxes={dollarRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow id="category-tech" title={t("rows.techMobility")} boxes={techRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow id="category-luxury" title={t("rows.luxuryWatch")} boxes={luxuryRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow id="category-jackpot" title={t("rows.guaranteed")} boxes={jackpotRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
       </div>
 
       {/* 등급 범례 — 배수 기준을 한 번만 설명한다 */}

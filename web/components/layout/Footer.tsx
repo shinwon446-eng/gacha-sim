@@ -39,8 +39,8 @@ export function Footer() {
           <div>
             <div className="caption-luxury !text-gold-champagne">{t("service")}</div>
             <ul className="mt-2.5 space-y-1.5">
-              <li><Link href="/#row-dollar" className="hover:text-white">{t("links.dollar")}</Link></li>
-              <li><Link href="/#row-luxury" className="hover:text-white">{t("links.vault")}</Link></li>
+              <li><Link href="/#category-dollar" className="hover:text-white">{t("links.dollar")}</Link></li>
+              <li><Link href="/#category-luxury" className="hover:text-white">{t("links.vault")}</Link></li>
               <li><Link href="/fairness" className="hover:text-white">{t("links.feed")}</Link></li>
               <li><Link href="/fairness" className="hover:text-white">{t("links.verifier")}</Link></li>
             </ul>

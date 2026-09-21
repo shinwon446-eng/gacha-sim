@@ -153,7 +153,7 @@ UI = {
       "bonusNote": "후기 등록 즉시 {bonus} 보너스가 계정 잔액으로 입금됩니다.",
       "empty": "아직 게시된 후기가 없습니다. 실물을 받으셨다면 첫 후기를 남기고 10 USDT를 받아가세요.", "emptyCta": "박스 열러 가기", "close": "닫기"
     },
-    "ticker": {"label": "실시간 라이브 드랍", "live": "LIVE", "lineup": "{box} · {item} {mult} · 확률 {rate}", "win": "님이 {price} 박스에서 {item} 획득", "cashout": "님이 {amount} 즉시 환전", "ship": "님이 {item} 출고 신청", "ago": "({s}초 전)"},
+    "ticker": {"label": "실시간 라이브 드랍", "live": "LIVE", "lineup": "{box} · {item} {mult} · 확률 {rate}", "win": "{box} ➔ {item} 획득", "cashout": "{amount} 즉시 환전", "ship": "{item} 출고 신청", "ago": "({s}초 전)"},
     "onboarding": {
       "title": "3초 안심 가이드",
       "step1Title": "박스 고르기", "step1Desc": "1달러부터. 롤렉스·테슬라·애플.",
@@ -358,7 +358,7 @@ UI = {
       "bonusNote": "The {bonus} bonus is credited to your account the moment your review is posted.",
       "empty": "No reviews yet. Received your item? Post the first review and take the 10 USDT bonus.", "emptyCta": "Open a box", "close": "Close"
     },
-    "ticker": {"label": "Live drops", "live": "LIVE", "lineup": "{box} · {item} {mult} · odds {rate}", "win": "pulled {item} from a {price} box", "cashout": "cashed out {amount}", "ship": "requested shipping for {item}", "ago": "({s}s ago)"},
+    "ticker": {"label": "Live drops", "live": "LIVE", "lineup": "{box} · {item} {mult} · odds {rate}", "win": "{box} ➔ {item}", "cashout": "cashed out {amount}", "ship": "requested shipping for {item}", "ago": "({s}s ago)"},
     "onboarding": {
       "title": "How it works in 3 steps",
       "step1Title": "Pick a box", "step1Desc": "From $1. Rolex, Tesla, Apple.",
@@ -563,7 +563,7 @@ UI = {
       "bonusNote": "晒单发布后，{bonus} 奖励立即计入您的账户余额。",
       "empty": "还没有晒单。收到实物了？发第一条晒单领取 10 USDT 奖励。", "emptyCta": "去开盲盒", "close": "关闭"
     },
-    "ticker": {"label": "实时开箱动态", "live": "LIVE", "lineup": "{box} · {item} {mult} · 概率 {rate}", "win": "在 {price} 盲盒中开出 {item}", "cashout": "已折现 {amount}", "ship": "申请发货 {item}", "ago": "（{s} 秒前）"},
+    "ticker": {"label": "实时开箱动态", "live": "LIVE", "lineup": "{box} · {item} {mult} · 概率 {rate}", "win": "{box} ➔ 开出 {item}", "cashout": "已折现 {amount}", "ship": "申请发货 {item}", "ago": "（{s} 秒前）"},
     "onboarding": {
       "title": "3 秒看懂流程",
       "step1Title": "选盲盒", "step1Desc": "1 美元起。劳力士、特斯拉、苹果。",

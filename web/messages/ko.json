@@ -440,9 +440,9 @@
     "label": "실시간 라이브 드랍",
     "live": "LIVE",
     "lineup": "{box} · {item} {mult} · 확률 {rate}",
-    "win": "님이 {price} 박스에서 {item} 획득",
-    "cashout": "님이 {amount} 즉시 환전",
-    "ship": "님이 {item} 출고 신청",
+    "win": "{box} ➔ {item} 획득",
+    "cashout": "{amount} 즉시 환전",
+    "ship": "{item} 출고 신청",
     "ago": "({s}초 전)"
   },
   "onboarding": {

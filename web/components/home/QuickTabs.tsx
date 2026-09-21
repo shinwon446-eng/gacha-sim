@@ -1,35 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/format";
 
 const TABS = [
-  { key: "dollar", anchor: "row-dollar" },
-  { key: "tech", anchor: "row-tech" },
-  { key: "luxury", anchor: "row-luxury" },
-  { key: "jackpot", anchor: "row-jackpot" },
+  { key: "dollar", anchor: "category-dollar" },
+  { key: "tech", anchor: "category-tech" },
+  { key: "luxury", anchor: "category-luxury" },
+  { key: "jackpot", anchor: "category-jackpot" },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
 
-/** 스티키 헤더 높이만큼 위로 여유를 두고 스크롤 */
+/** 스티키 헤더 높이 — IntersectionObserver 상단 여백 (섹션 자체는 scroll-mt-24 로 맞춘다) */
 const HEADER_OFFSET = 72;
 
 /**
- * 퀵 카테고리 탭 (CLAUDE.md §4-3) — 클릭하면 골드 보더로 활성화되고 해당 캐러셀로 부드럽게 스크롤한다.
- * 스크롤 중에는 IntersectionObserver 가 화면 상단에 들어온 캐러셀에 맞춰 활성 탭을 동기화한다.
+ * 퀵 카테고리 탭 (CLAUDE.md §4-3) — 각 탭은 #category-{key} 캐러셀 섹션 앵커.
+ * 클릭: activeCategory 즉시 갱신 + scrollIntoView(smooth). 스크롤 중에는 IntersectionObserver 가 화면 상단의 캐러셀에 맞춰 활성 탭을 동기화한다.
  */
 export function QuickTabs({ className }: { className?: string }) {
   const t = useTranslations("categories");
-  const [active, setActive] = useState<TabKey | null>(null);
+  const [activeCategory, setActiveCategory] = useState<TabKey | null>(null);
 
-  const go = (key: TabKey, anchor: string) => {
-    setActive(key);
-    const el = document.getElementById(anchor);
-    if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
-    window.scrollTo({ top, behavior: "smooth" });
+  const go = (e: MouseEvent<HTMLAnchorElement>, key: TabKey, targetId: string) => {
+    e.preventDefault();
+    setActiveCategory(key);
+    document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   useEffect(() => {
@@ -40,7 +38,7 @@ export function QuickTabs({ className }: { className?: string }) {
         const hit = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
         if (!hit) return;
         const tab = TABS.find((x) => x.anchor === hit.target.id);
-        if (tab) setActive(tab.key);
+        if (tab) setActiveCategory(tab.key);
       },
       { rootMargin: `-${HEADER_OFFSET}px 0px -60% 0px`, threshold: 0 },
     );
@@ -50,23 +48,24 @@ export function QuickTabs({ className }: { className?: string }) {
 
   return (
     <nav className={cn("px-[4%]", className)} aria-label={t("all")}>
-      <ul className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]" role="tablist">
+      <ul className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
         {TABS.map(({ key, anchor }) => {
-          const on = active === key;
+          const on = activeCategory === key;
           return (
             <li key={key} className="flex-none">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={on}
-                onClick={() => go(key, anchor)}
+              <a
+                href={`#${anchor}`}
+                aria-current={on ? "true" : undefined}
+                onClick={(e) => go(e, key, anchor)}
                 className={cn(
-                  "flex h-10 items-center whitespace-nowrap rounded-full px-4 text-xs font-bold transition-colors",
-                  on ? "border-metallic-gold bg-gold-champagne/10 text-gold-champagne" : "border-metallic-subtle bg-surface text-secondary hover:border-gold-champagne/60 hover:bg-elevation hover:text-white",
+                  "flex h-10 items-center whitespace-nowrap rounded-full border px-4 text-xs font-bold transition-all duration-200",
+                  on
+                    ? "border-gold-champagne bg-gold-champagne/15 text-gold-champagne shadow-[0_0_12px_rgba(230,202,101,0.25)]"
+                    : "border-metallic-subtle bg-surface text-secondary hover:border-gold-champagne/60 hover:bg-elevation hover:text-white",
                 )}
               >
                 {t(key)}
-              </button>
+              </a>
             </li>
           );
         })}
