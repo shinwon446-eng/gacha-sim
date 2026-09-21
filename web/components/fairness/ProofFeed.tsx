@@ -139,7 +139,7 @@ export function ProofFeed({ limit, showReserve = true, className }: ProofFeedPro
             const active = tab === k;
             const Icon = k === "payouts" ? Gem : Package;
             return (
-              <button key={k} type="button" role="tab" aria-selected={active} onClick={() => setTab(k)} className={cn("relative flex h-10 items-center gap-2 rounded-t-md px-3 text-xs font-bold transition-colors", active ? "text-white" : "text-muted hover:text-white")}>
+              <button key={k} type="button" role="tab" aria-selected={active} onClick={() => setTab(k)} className={cn("relative flex h-10 items-center gap-1.5 whitespace-nowrap rounded-t-md px-2.5 text-[11px] font-bold transition-colors sm:gap-2 sm:px-3 sm:text-xs", active ? "text-white" : "text-muted hover:text-white")}>
                 <Icon className={cn("h-3.5 w-3.5", active ? "text-gold-champagne" : "text-faint")} strokeWidth={2.2} />
                 {t(`tab.${k}`)}
                 {active && <motion.span layoutId="proof-tab" className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-gold-champagne shadow-[0_0_8px_rgba(230,202,101,0.7)]" />}

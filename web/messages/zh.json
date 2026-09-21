@@ -469,8 +469,8 @@
     "title": "实付与实发实时证明",
     "live": "LIVE",
     "tab": {
-      "payouts": "USDT 实付证明",
-      "shipments": "实物发货动态"
+      "payouts": "USDT 实付",
+      "shipments": "实物发货"
     },
     "kind": {
       "withdraw": "提现",

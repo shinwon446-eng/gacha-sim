@@ -469,8 +469,8 @@
     "title": "Live Proof of Payout & Delivery",
     "live": "LIVE",
     "tab": {
-      "payouts": "USDT Payout Proof",
-      "shipments": "Shipping Proof"
+      "payouts": "USDT Payouts",
+      "shipments": "Shipments"
     },
     "kind": {
       "withdraw": "Withdrawal",

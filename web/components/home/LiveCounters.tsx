@@ -89,7 +89,7 @@ export function LiveCounters({ className }: { className?: string }) {
 function Counter({ value, unit, decimals = 0, sub }: { value: number; unit: string; decimals?: number; sub?: string }) {
   return (
     <span className="inline-flex items-baseline gap-1.5 whitespace-nowrap">
-      <span className="font-display text-2xl font-bold leading-none tabular-nums tracking-tight text-white md:text-3xl">{value.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}</span>
+      <span className="font-display text-2xl font-bold leading-none tabular-nums tracking-tight text-white md:text-3xl">{value.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: decimals })}</span>
       <span className="text-xs font-semibold leading-none text-neutral-400 md:text-sm">{unit}</span>
       {sub && <span className="text-[10px] text-faint">{sub}</span>}
     </span>

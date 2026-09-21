@@ -162,7 +162,7 @@ UI = {
     },
     "counters": {"label": "신뢰 지표", "shipments": "오늘 출고된 실물 명품", "shipmentsUnit": "건", "cashouts": "오늘 즉시 환전된 자산", "verification": "공정성 검증 완료율", "odds": "공개된 확률 항목", "oddsUnit": "개", "sellback": "즉시 현금 회수율", "verifiedOf": "내 개봉 {n}건 재검증"},
     "proof": {
-      "title": "실지급 & 실배송 라이브 인증", "live": "LIVE", "tab": {"payouts": "USDT 실지급 인증", "shipments": "실물 배송 출고 현황"},
+      "title": "실지급 & 실배송 라이브 인증", "live": "LIVE", "tab": {"payouts": "USDT 실지급", "shipments": "실물 출고"},
       "kind": {"withdraw": "출금", "sellback": "즉시 환전"}, "viewOnExplorer": "{explorer} 조회", "track": "운송장 추적",
       "carriers": {"CJ": "CJ대한통운", "EPOST": "우체국택배", "DHL": "DHL", "FEDEX": "FedEx"},
       "reserveEyebrow": "Proof of Reserves · 지급 준비금", "reserveBody": "GACHAFLIX는 유저 자산 보호와 즉시 출금을 위해 유동성 지급 준비금을 온체인 지갑에 보유하며, 아래 주소에서 누구나 잔고를 확인할 수 있습니다.",
@@ -367,7 +367,7 @@ UI = {
     },
     "counters": {"label": "Trust metrics", "shipments": "Physical items shipped today", "shipmentsUnit": "items", "cashouts": "Settled cashouts today", "verification": "Provably fair verification rate", "odds": "Published odds entries", "oddsUnit": "items", "sellback": "Instant cash-out rate", "verifiedOf": "{n} of my opens re-verified"},
     "proof": {
-      "title": "Live Proof of Payout & Delivery", "live": "LIVE", "tab": {"payouts": "USDT Payout Proof", "shipments": "Shipping Proof"},
+      "title": "Live Proof of Payout & Delivery", "live": "LIVE", "tab": {"payouts": "USDT Payouts", "shipments": "Shipments"},
       "kind": {"withdraw": "Withdrawal", "sellback": "Instant sell-back"}, "viewOnExplorer": "View on {explorer}", "track": "Track parcel",
       "carriers": {"CJ": "CJ Logistics", "EPOST": "Korea Post", "DHL": "DHL", "FEDEX": "FedEx"},
       "reserveEyebrow": "Proof of Reserves", "reserveBody": "GACHAFLIX keeps liquid payout reserves in an on-chain wallet to protect user assets and guarantee instant withdrawals. Anyone can check the balance at the address below.",
@@ -572,7 +572,7 @@ UI = {
     },
     "counters": {"label": "信任指标", "shipments": "今日已出库实物", "shipmentsUnit": "件", "cashouts": "今日已结算折现", "verification": "公平性验证完成率", "odds": "已公开概率项", "oddsUnit": "项", "sellback": "即时折现率", "verifiedOf": "我的 {n} 次开箱已复核"},
     "proof": {
-      "title": "实付与实发实时证明", "live": "LIVE", "tab": {"payouts": "USDT 实付证明", "shipments": "实物发货动态"},
+      "title": "实付与实发实时证明", "live": "LIVE", "tab": {"payouts": "USDT 实付", "shipments": "实物发货"},
       "kind": {"withdraw": "提现", "sellback": "即时回收"}, "viewOnExplorer": "在 {explorer} 查看", "track": "运单追踪",
       "carriers": {"CJ": "CJ大韩通运", "EPOST": "韩国邮政", "DHL": "DHL", "FEDEX": "FedEx"},
       "reserveEyebrow": "Proof of Reserves · 储备金", "reserveBody": "为保护用户资产并保证即时提现，GACHAFLIX 在链上钱包持有流动性储备金，任何人都可通过下方地址查询余额。",

@@ -469,8 +469,8 @@
     "title": "실지급 & 실배송 라이브 인증",
     "live": "LIVE",
     "tab": {
-      "payouts": "USDT 실지급 인증",
-      "shipments": "실물 배송 출고 현황"
+      "payouts": "USDT 실지급",
+      "shipments": "실물 출고"
     },
     "kind": {
       "withdraw": "출금",
