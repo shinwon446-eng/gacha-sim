@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
+import { AnimatePresence, animate, motion, useMotionTemplate, useMotionValue } from "framer-motion";
+import { MegaWinFX } from "@/components/unboxing/MegaWinFX";
 import { useTranslations } from "next-intl";
 import { Wallet, Truck, ShieldCheck, X, Volume2, VolumeX, Play } from "lucide-react";
 import { cn } from "@/lib/format";
@@ -84,7 +85,13 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
   const muted = useSettingsStore((s) => s.muted);
   const toggleMuted = useSettingsStore((s) => s.toggleMuted);
 
-  const controls = useAnimationControls();
+  // 릴 x 는 모션 값으로 직접 몬다 — animate() 컨트롤의 speed 를 스핀 중에 바꿔 텐션(0.3배속)을 건다
+  const x = useMotionValue(0);
+  const blurMv = useMotionValue(0);
+  const blurFilter = useMotionTemplate`blur(${blurMv}px)`;
+  const stripRef = useRef<ProductItem[]>([]);
+  const [tension, setTension] = useState(false);
+  const [mega, setMega] = useState<string | null>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const viewportW = useRef(0);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -181,28 +188,75 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       }
 
       // 2. 스트립
-      setStrip(buildStrip(item, items, unitRandom));
+      // 쇼케이스: 고등급(ROYAL·PRESTIGE) 타일을 감속 구간에 심어 텐션 연출 — 결과 칸은 그대로
+      const showcase = items.filter((i) => {
+        const k = tierOf(i.value, box.price).key;
+        return k === "royal" || k === "prestige";
+      });
+      const built = buildStrip(item, items, unitRandom, undefined, undefined, showcase);
+      stripRef.current = built;
+      setStrip(built);
       setCurrent(null);
       setPhase("spinning");
-      controls.set({ x: 0 });
+      x.set(0);
+      blurMv.set(0);
+      setTension(false);
       await new Promise((r) => requestAnimationFrame(() => r(null)));
 
       // 3. 감속
       const target = offsetForTarget({ tileWidth: TILE_W, gap: GAP, viewportWidth: viewportW.current }, REEL_TARGET_INDEX, unitRandom() - 0.5);
       const track = viewportRef.current?.querySelector<HTMLElement>("[data-reel]");
       if (track) startTicks(track);
-      await controls.start({ x: target, transition: { duration, ease: REEL_EASE } });
+      // Phase 1 초광속(속도 → 모션 블러) · Phase 2 안티시페이션(고등급 근처 0.3배속 + 스파크)
+      const step = TILE_W + GAP;
+      const isHigh = (i: number) => {
+        const it = stripRef.current[i];
+        if (!it) return false;
+        const k = tierOf(it.value, box.price).key;
+        return k === "royal" || k === "prestige";
+      };
+      let lastV = 0;
+      let lastT = performance.now();
+      let tense = false;
+      const anim = animate(x, target, {
+        duration,
+        ease: REEL_EASE,
+        onUpdate: (v) => {
+          const now = performance.now();
+          const dt = Math.max(1, now - lastT);
+          const vel = (Math.abs(v - lastV) / dt) * 1000; // px/s (60타일/초 ≈ 9,500px/s)
+          lastV = v;
+          lastT = now;
+          blurMv.set(Math.min(14, Math.max(0, (vel - 1200) / 550)));
+          const progress = target === 0 ? 1 : v / target;
+          const idx = Math.floor((-v + viewportW.current / 2) / step);
+          const near = progress > 0.55 && progress < 0.965 && idx < REEL_TARGET_INDEX - 1 && (isHigh(idx) || isHigh(idx + 1));
+          if (near !== tense) {
+            tense = near;
+            anim.speed = near ? 0.3 : 1;
+            setTension(near);
+          }
+        },
+      });
+      await anim;
+      blurMv.set(0);
+      setTension(false);
       stopTicks();
 
       // 4. 정지
       setCurrent(res);
       setPhase("landed");
-      setFlash(res.tier.key === "royal" || res.tier.key === "prestige" ? res.tier.accent : "#E50914");
+      const big = res.tier.key === "royal" || res.tier.key === "prestige";
+      setFlash(big ? res.tier.accent : "#E50914");
+      if (big) {
+        setMega(res.tier.accent);
+        setTimeout(() => setMega(null), 3200);
+      }
       if (!useSettingsStore.getState().muted) playWin(res.tier.key === "royal" || res.tier.key === "prestige" ? "jackpot" : res.tier.key === "executive" ? "value" : "start");
       setTimeout(() => setFlash(null), 600);
       return res;
     },
-    [box, items, fair, controls, startTicks, addOwned, sellOwned, credit, addTransaction, demo],
+    [box, items, fair, x, blurMv, startTicks, addOwned, sellOwned, credit, addTransaction, demo],
   );
 
   // 오픈 시작 — box 가 들어오면 한 번. 리사이즈는 스핀을 취소하지 않는다.
@@ -228,7 +282,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
     return () => {
       cancelled.current = true;
       stopTicks();
-      controls.stop();
+      x.stop();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [box]);
@@ -297,6 +351,9 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
           </div>
         </header>
 
+        {/* ── Phase 3: 메가 윈 폭발 축제 ── */}
+        <AnimatePresence>{mega && <MegaWinFX key="mega" accent={mega} />}</AnimatePresence>
+
         {/* ── 룰렛 스트립 ── */}
         <div className="relative flex flex-1 flex-col items-center justify-center px-0">
           {count > 1 && (
@@ -307,7 +364,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
             </div>
           )}
 
-          <div ref={viewportRef} className="relative w-full overflow-hidden" style={{ height: TILE_W + 70 }}>
+          <div ref={viewportRef} className={cn("reel-viewport relative w-full overflow-hidden transition-shadow duration-200", tension && "reel-tension")} style={{ height: TILE_W + 70 }}>
             <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 z-20 w-32 bg-gradient-to-r from-obsidian to-transparent" />
             <span aria-hidden className="pointer-events-none absolute inset-y-0 right-0 z-20 w-32 bg-gradient-to-l from-obsidian to-transparent" />
 
@@ -331,7 +388,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
               )}
             </AnimatePresence>
 
-            <motion.ul data-reel className="absolute left-0 top-1/2 flex -translate-y-1/2 items-center" style={{ gap: GAP, willChange: "transform" }} animate={controls} initial={{ x: 0 }}>
+            <motion.ul data-reel className="absolute left-0 top-1/2 flex items-center" style={{ gap: GAP, willChange: "transform, filter", x, y: "-50%", filter: blurFilter }}>
               {strip.map((it, i) => {
                 const tier = tierOf(it.value, box.price);
                 const isTarget = phase !== "spinning" && i === REEL_TARGET_INDEX;
@@ -390,9 +447,15 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                     <div className="caption-luxury" style={{ color: last.tier.accent }}>
                       {last.tier.label} · {t("result")}
                     </div>
-                    <div className="relative mx-auto mt-3 overflow-hidden rounded-xl" style={{ width: 240, height: 200 }}>
+                    <motion.div
+                      className="relative mx-auto mt-3 overflow-hidden rounded-xl"
+                      style={{ width: 240, height: 200, transformPerspective: 900, boxShadow: `0 30px 60px rgba(0,0,0,0.7), 0 0 40px ${glow(last.tier.accent, 0.35)}` }}
+                      initial={{ scale: 0.55, rotateX: 38, opacity: 0 }}
+                      animate={{ scale: 1, rotateX: 0, opacity: 1 }}
+                      transition={{ type: "spring", stiffness: 180, damping: 18, mass: 0.9 }}
+                    >
                       <ProductArt image={last.item.image} alt={itemName(last.item)} accent={last.tier.accent} kind={last.item.kind} glowStrength={0.4} fallbackSize="md" priority />
-                    </div>
+                    </motion.div>
                     <h2 className="mt-4 text-2xl font-bold text-white">{itemName(last.item)}</h2>
                     <div className="mt-1">
                       <Money value={last.item.value} size="lg" numberClassName="text-gold-gradient" />

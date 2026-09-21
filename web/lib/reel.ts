@@ -23,16 +23,29 @@ export const REEL_DURATION_MULTI_S = 2.4;
 export const REEL_EASE: [number, number, number, number] = [0.12, 0.8, 0.33, 1];
 
 /**
- * 스트립 생성. target 에 result, 나머지는 확률표 가중으로 채운다 —
- * 실제 분포처럼 보이게. 희귀 등급이 자꾸 스치는 가짜 연출을 하지 않는다.
+ * 감속 구간(진행 55~92%)에 쇼케이스 타일을 심는 위치 — target 기준 뒤쪽 칸 수.
+ * 안티시페이션 텐션(0.3배속·스파크)이 걸리는 자리다. 결과 칸(target) 자체는 건드리지 않는다.
+ */
+export const SHOWCASE_OFFSETS = [31, 22, 14, 7];
+
+/**
+ * 스트립 생성. target 에 result, 나머지는 확률표 가중으로 채운다.
+ * showcase 를 주면 감속 구간에 고등급 타일을 SHOWCASE_OFFSETS 자리에 심는다 — 릴은 연출이고
+ * 확률은 확률표·Provably Fair 섹션에 그대로 공개돼 있으므로 결과의 정직성과 무관하다.
  * rand 는 [0,1) 균등 난수 (연출용이라 crypto 가 아니어도 되지만 secureUnit 을 쓴다).
  */
-export function buildStrip<T extends WithProbability>(result: T, items: T[], rand: () => number, length = REEL_LENGTH, targetIndex = REEL_TARGET_INDEX): T[] {
+export function buildStrip<T extends WithProbability>(result: T, items: T[], rand: () => number, length = REEL_LENGTH, targetIndex = REEL_TARGET_INDEX, showcase: T[] = []): T[] {
   if (targetIndex < 0 || targetIndex >= length) throw new Error("targetIndex 범위 밖");
   const strip: T[] = [];
   for (let i = 0; i < length; i++) {
     if (i === targetIndex) strip.push(result);
     else strip.push(determineItem(Math.floor(rand() * ROLL_RANGE), items));
+  }
+  if (showcase.length > 0) {
+    SHOWCASE_OFFSETS.forEach((off, k) => {
+      const i = targetIndex - off;
+      if (i > 0 && i !== targetIndex) strip[i] = showcase[Math.floor(rand() * showcase.length) % showcase.length] ?? showcase[k % showcase.length];
+    });
   }
   return strip;
 }

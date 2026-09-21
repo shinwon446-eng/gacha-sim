@@ -75,7 +75,37 @@ export function TierStrip({
   );
 }
 
-/** 바 아래에 붙는 텍스트 범례. 실제 수치는 여기서 읽힌다. */
+/**
+ * 넷플릭스 게임형 등급 바 — 확률에 비례하지 않는다. 존재하는 등급을 같은 폭으로 늘어놓고
+ * LEGENDARY / EPIC / RARE / CASHBACK 라벨만 붙인다. 정밀 확률은 Provably Fair 섹션에서만 본다.
+ */
+export function GameTierBar({ slices, compact = false, className }: { slices: TierSlice[]; compact?: boolean; className?: string }) {
+  return (
+    <div className={cn("w-full", className)}>
+      <div className={cn("flex w-full gap-0.5 overflow-hidden rounded-sm", compact ? "h-1" : "h-2")}>
+        {slices.map((s) => (
+          <span
+            key={s.tier.key}
+            className="block h-full flex-1"
+            style={{ background: `linear-gradient(180deg, ${s.tier.accent} 0%, ${s.tier.deep} 100%)`, boxShadow: `0 0 8px ${glow(s.tier.accent, 0.45)}` }}
+          />
+        ))}
+      </div>
+      <ul className={cn("mt-1.5 flex flex-wrap items-center", compact ? "gap-x-2 gap-y-0.5" : "gap-x-3 gap-y-1")}>
+        {slices.map((s) => (
+          <li key={s.tier.key} className={cn("flex items-center gap-1 leading-none", compact ? "text-[8px]" : "text-[10px]")}>
+            <span aria-hidden className={cn("flex-none rounded-full", compact ? "h-1.5 w-1.5" : "h-2 w-2")} style={{ background: s.tier.accent, boxShadow: `0 0 6px ${glow(s.tier.accent, 0.6)}` }} />
+            <span className="font-bold uppercase tracking-[0.12em]" style={{ color: s.tier.accent }}>
+              {s.tier.gameLabel}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** 바 아래에 붙는 텍스트 범례. 실제 수치는 여기서 읽힌다 — Provably Fair 정밀 확률 섹션 전용. */
 export function TierLegend({ slices, className }: { slices: TierSlice[]; className?: string }) {
   return (
     <ul className={cn("flex flex-wrap items-center gap-x-3 gap-y-1", className)}>

@@ -8,9 +8,9 @@ import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
 import { useCanHover } from "@/lib/useCanHover";
-import { dropTable, type ProductBox, type ProductItem } from "@/lib/products";
+import { dropTable, floorRatio, retailReturn, type ProductBox, type ProductItem } from "@/lib/products";
 import { boxFloorTier, boxTopTier, formatMultiple, glow, tierBreakdown, tierOf, topMultiple } from "@/lib/tiers";
-import { TierStrip } from "@/components/box/TierStrip";
+import { GameTierBar } from "@/components/box/TierStrip";
 import { ProductArt } from "@/components/box/ProductArt";
 import { Money } from "@/components/ui/Money";
 
@@ -107,6 +107,8 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
       mult: topMultiple(box),
       slices: tierBreakdown(box),
       grails: dropTable(box).slice(0, 3),
+      rtp: retailReturn(box),
+      floorPct: Math.round(floorRatio(box) * 100),
     }),
     [box],
   );
@@ -207,7 +209,7 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
             {meta.guaranteed ? ` · ${tr("hero.aboveOpenPrice")}` : ""}
           </span>
           {/* ⚡ 전 품목 1클릭 95% USDT 즉시 정산 · 개인지갑 출금 보장 */}
-          <span className="absolute bottom-2 left-2 z-10 flex items-center gap-1 rounded-sm border border-gold-champagne/50 bg-obsidian/85 px-1.5 py-0.5 text-[9px] font-bold leading-none text-gold-champagne shadow-[0_0_8px_rgba(230,202,101,0.25)] backdrop-blur-sm">
+          <span className={cn("absolute bottom-2 left-2 z-10 flex items-center gap-1 rounded-sm border border-gold-champagne/50 bg-obsidian/85 px-1.5 py-0.5 text-[9px] font-bold leading-none text-gold-champagne shadow-[0_0_8px_rgba(230,202,101,0.25)] backdrop-blur-sm transition-opacity duration-200", hovered && "opacity-0")}>
             ⚡ {tr("card.settleBadge")}
           </span>
 
@@ -221,7 +223,7 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
                 exit={{ opacity: 0, y: 4 }}
                 transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
               >
-                <TierStrip slices={meta.slices} height={3} />
+                <GameTierBar slices={meta.slices} compact />
               </motion.div>
             )}
           </AnimatePresence>
@@ -258,6 +260,18 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
               onClick={(e) => e.stopPropagation()}
             >
+              {/* 도파민 수치 3종 — 최고 배수 · RTP · 바닥 환급. 절망적인 소수점 확률은 쓰지 않는다 */}
+              <ul className="mb-2 grid grid-cols-3 gap-1 text-center">
+                {[
+                  [tr("card.upTo", { n: tr("tiers.multiple", { n: formatMultiple(meta.mult) }) }), accent],
+                  [tr("card.rtp", { rate: (meta.rtp * 100).toFixed(1) }), "#93C5FD"],
+                  [tr("card.floorPct", { pct: meta.floorPct }), "#E6CA65"],
+                ].map(([label, color]) => (
+                  <li key={label} className="rounded-sm border border-white/10 bg-obsidian/70 px-1 py-1 text-[9px] font-bold leading-none" style={{ color }}>
+                    {label}
+                  </li>
+                ))}
+              </ul>
               <ul className="flex gap-2">
                 {meta.grails.map((it) => (
                   <GrailThumb key={it.id} item={it} box={box} />

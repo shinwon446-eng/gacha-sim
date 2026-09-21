@@ -110,6 +110,9 @@ v5 본문이 다루지 않는 항목은 이전 규범을 유지한다. 코드가
 
 - **색·표면 토큰** obsidian `#0B0B0B` / canvas `#141414` / surface `#181818`, champagne `#E6CA65` / metallic `#D4AF37`, crimson `#E50914`. **등급** ROYAL `#E6CA65`(20x+) / PRESTIGE `#93C5FD`(6~20x) / EXECUTIVE `#C084FC`(2~6x) / CURATED `#94A3B8`.
 - **홈 계층** 티커 → 히어로 → 퀵 탭 → TOP 10 → 데일리 프리 박스 → 3-Step + 지표 → 보조 캐러셀 → 그리드 → 인증 피드 → 푸터. **카드** 16:9 콤팩트, 호버 1.15x 확장.
+- **확률 노출 정책 (2026-09-21)** 카드·호버·상세 모달 본문에는 소수점 확률을 쓰지 않는다. 대신 [최고 N배 잭팟] · [환수율 RTP x%] · [최소 y% 환급 보장] 3수치와 게임형 등급 바(`Tier.gameLabel`: LEGENDARY=ROYAL / EPIC=PRESTIGE / RARE=EXECUTIVE / CASHBACK=CURATED — 색은 위 등급색 그대로)만 보인다. 정밀 확률표는 상세 모달의 접힌 "정밀 확률표 · Provably Fair" 섹션과 `/fairness` 에서만 연다(공개 자체는 유지).
+- **룰렛 3단계 연출** Phase 1 속도 기반 모션 블러(≤14px) → Phase 2 감속 구간(55~96%)에서 ROYAL/PRESTIGE 타일 근처 0.3배속 + 골드 스파크 보더(`.reel-tension`) → Phase 3 ROYAL/PRESTIGE 적중 시 `MegaWinFX`(화이트→골드 플래시 · 충격파 · 코인 샤워 · 컨페티) + 결과 카드 3D 줌인. 감속 구간에는 `SHOWCASE_OFFSETS` 자리에 고등급 타일을 심는다 — 결과 칸은 Provably Fair 로 먼저 확정되며 연출이 바꾸지 않는다.
+- **보관함 2단 탭** 👑 보유 중(IN_STORAGE, 기본) / ✅ 처리 완료(SOLD·SHIPPING_REQUESTED·SHIPPING). 보유 중은 즉시 환전 가능 총 가치(95%)·다중 선택 일괄 회수·카드별 [⚡ 95% USDT 즉시 회수]/[📦 우리 집으로 배송]; 처리 완료는 ✅ 환전 완료 +금액 / 🚚 배송 출발 / 📦 출고 준비 뱃지로 격리.
 - **Provably Fair** `HMAC-SHA256(serverSeed, "clientSeed:nonce")` 앞 8 hex → `mod 1,000,000`. 3-Step 비주얼 검증기(`/fairness`, 결과 팝업, 보관함 카드).
 - **i18n / 통화** `next-intl` ko/en/zh, `scripts/gen-messages.py`(`npx tsx scripts/dump-products.ts` 선행), 단일 통화 표기는 `<Money>`만.
 - **배포** GitHub Pages 정적 export(basePath `/gacha-sim`, 브랜치 `feat/netflix-gacha-web`).

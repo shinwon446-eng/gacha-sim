@@ -24,7 +24,7 @@ UI = {
       "openNow": "지금 오픈하기", "viewContents": "뭐 들었나 보기", "billboardPicker": "빌보드 선택", "billboardOf": "{title} 빌보드",
       "headline": "1달러로 롤렉스 & 아이폰, 긁어보세요.", "sub": "터지면 100% 내 것. 안 떠도 95% 즉시 환전해 드립니다.", "freeTry": "손맛 보기 (무료)", "openFor": "🔥 {price}로 돌려보기", "badge": "1달러부터 명품 잭팟", "nowShowing": "지금 상영 중", "topMultipleShort": "최고 {n}"
     },
-    "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "settleBadge": "전 품목 95% USDT 즉시 정산", "guaranteed": "보장", "openNow": "바로 열기", "contents": "상세 정보", "details": "{title} 상세 정보", "expand": "확대"},
+    "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "settleBadge": "전 품목 95% USDT 즉시 정산", "upTo": "최고 {n} 잭팟", "rtp": "RTP {rate}%", "floorPct": "최소 {pct}% 환급", "guaranteed": "보장", "openNow": "바로 열기", "contents": "상세 정보", "details": "{title} 상세 정보", "expand": "확대"},
     "rows": {"trending": "🔥 지금 가장 많이 열리는 박스 TOP 10", "dollar": "🔥 1달러의 행복", "techMobility": "⚡ 애플&테크", "luxuryWatch": "👑 명품&시계", "guaranteed": "🚗 슈퍼카&골드바", "prev": "이전", "next": "다음"},
     "grid": {"title": "전체 박스", "sort": "정렬", "loadMore": "더 보기 ({n}개)"},
     "categories": {"all": "전체", "dollar": "🔥 1달러의 행복", "tech": "⚡ 애플&테크", "luxury": "👑 명품&시계", "jackpot": "🚗 슈퍼카&골드바"},
@@ -46,7 +46,7 @@ UI = {
       "settleBody": "실물·기프트카드는 실판매가의 95%를 1클릭에 USDT로, USDT 캐시백·인스턴트 드롭은 100%를 개봉 즉시 잔액에. 잔액은 TRC-20/BEP-20 개인지갑으로 출금됩니다.",
       
       "allPrizes": "전체 당첨 가능 상품", "count": "{n}종", "sortedByValue": "실판매가 내림차순",
-      "marketValue": "실판매가", "odds": "확률", "imageCredits": "이미지 출처"
+      "marketValue": "실판매가", "odds": "확률", "tierLabel": "등급", "tierBar": "등급 구성", "upToLabel": "최고 잭팟", "rtpLabel": "환수율 RTP", "floorLabel": "바닥 환급 보장", "floorPct": "최소 {pct}%", "preciseOddsLink": "공정성 검증 (Provably Fair)", "preciseOdds": "정밀 확률표 · Provably Fair", "expand": "펼치기", "collapse": "접기", "openVerifier": "3-Step 비주얼 검증기 열기", "imageCredits": "이미지 출처"
     },
     "fairness": {
       "title": "공정성 검증", "eyebrow": "Provably Fair · HMAC-SHA256",
@@ -114,10 +114,10 @@ UI = {
     "inventory": {
       "title": "보관함", "eyebrow": "My Vault", "empty": "보관 중인 아이템이 없습니다. 박스를 열어 채워보세요.", "goBoxes": "박스 보러 가기",
       "summary": "총 아이템 {n}개 · 보관 중인 총 가치 {value}", "storedCount": "보관 중 {n}", "shippingCount": "배송 {n}", "soldCount": "환전 완료 {n}",
-      "filterStatus": "상태", "filterTier": "등급", "all": "전체",
+      "filterStatus": "상태", "filterTier": "등급", "all": "전체", "tabHeld": "보유 중 ({n})", "tabDone": "처리 완료 ({n})", "cashableValue": "즉시 환전 가능한 총 가치", "doneSold": "95% 환전 완료 +{amount}", "doneCash": "캐시백 적립 +{amount}", "archived": "처리 완료", "doneShipping": "배송 출발", "donePreparing": "출고 준비", "emptyDone": "아직 처리 완료된 내역이 없습니다. 환전하거나 배송한 상품이 여기에 보관됩니다.",
       "status": {"IN_STORAGE": "보관 중", "SHIPPING_REQUESTED": "배송 준비 중", "SHIPPING": "배송 중", "SOLD": "환전 완료"},
       "acquired": "획득 {date}", "from": "{box}", "soldFor": "환급 {amount}", "tracking": "운송장", "trackingPending": "운송장 발급 대기",
-      "sell": "⚡ 95% USDT 즉시 회수", "noFee": "수수료 0%", "ship": "집으로 배송", "verify": "공정성 1초 검증", "select": "선택", "selected": "{n}개 선택", "selectAll": "전체 선택", "clearSelection": "선택 해제",
+      "sell": "⚡ 95% USDT 즉시 회수", "noFee": "수수료 0%", "ship": "📦 우리 집으로 배송", "verify": "공정성 1초 검증", "select": "선택", "selected": "{n}개 선택", "selectAll": "전체 선택", "clearSelection": "선택 해제",
       "sellSelected": "선택 {rate} 회수", "selectedValue": "총 가치:", "soldForLabel": "환급",
       "totalValue": "총 보관 자산", "sellAll": "전부 95% 회수", "sort": "정렬", "sorts": {"newest": "최신순", "valueDesc": "높은 가치순", "valueAsc": "낮은 가치순"},
       "emptyFiltered": "조건에 맞는 아이템이 없습니다.", "hotTitle": "지금 가장 핫한 박스 TOP 3", "hotTop": "최고 배수",
@@ -155,7 +155,7 @@ UI = {
       "bonusNote": "후기 등록 즉시 {bonus} 보너스가 계정 잔액으로 입금됩니다.",
       "empty": "아직 게시된 후기가 없습니다. 실물을 받으셨다면 첫 후기를 남기고 10 USDT를 받아가세요.", "emptyCta": "박스 열러 가기", "close": "닫기"
     },
-    "ticker": {"label": "실시간 라이브 드랍", "live": "LIVE", "lineup": "{box} · {item} {mult} · 확률 {rate}", "win": "{box} ➔ {item} 획득", "cashout": "{amount} 즉시 환전", "ship": "{item} 출고 신청", "ago": "({s}초 전)"},
+    "ticker": {"label": "실시간 라이브 드랍", "live": "LIVE", "lineup": "{box} · {item} {mult} 잭팟", "win": "{box} ➔ {item} 획득", "cashout": "{amount} 즉시 환전", "ship": "{item} 출고 신청", "ago": "({s}초 전)"},
     "onboarding": {
       "title": "3초 안심 가이드",
       "step1Title": "박스 고르기", "step1Desc": "1달러부터. 롤렉스·테슬라·애플.",
@@ -231,7 +231,7 @@ UI = {
       "openNow": "Open Now", "viewContents": "What's inside", "billboardPicker": "Billboard picker", "billboardOf": "{title} billboard",
       "headline": "$1. A shot at a Rolex & an iPhone.", "sub": "Hit, it's 100% yours. Miss, 95% cashed out instantly.", "freeTry": "Try free", "openFor": "🔥 Spin for {price}", "badge": "Luxury jackpots from $1", "nowShowing": "Now Showing", "topMultipleShort": "up to {n}"
     },
-    "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "settleBadge": "Every item cashes out 95% in USDT", "guaranteed": "guaranteed", "openNow": "Open now", "contents": "Details", "details": "{title} details", "expand": "Expand"},
+    "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "settleBadge": "Every item cashes out 95% in USDT", "upTo": "Up to {n} jackpot", "rtp": "RTP {rate}%", "floorPct": "Min {pct}% back", "guaranteed": "guaranteed", "openNow": "Open now", "contents": "Details", "details": "{title} details", "expand": "Expand"},
     "rows": {"trending": "🔥 Most Opened Boxes TOP 10", "dollar": "🔥 $1 Boxes", "techMobility": "⚡ Apple & Tech", "luxuryWatch": "👑 Luxury & Watches", "guaranteed": "🚗 Supercars & Gold", "prev": "Previous", "next": "Next"},
     "grid": {"title": "All Boxes", "sort": "Sort", "loadMore": "Load more ({n})"},
     "categories": {"all": "All", "dollar": "🔥 $1 Boxes", "tech": "⚡ Apple & Tech", "luxury": "👑 Luxury & Watches", "jackpot": "🚗 Supercars & Gold"},
@@ -253,7 +253,7 @@ UI = {
       "settleBody": "Physical items and gift cards cash out at 95% of market value in one click; USDT cashback and instant drops are credited at 100% on open. Balance withdraws to your TRC-20 / BEP-20 wallet.",
       
       "allPrizes": "All possible prizes", "count": "{n} items", "sortedByValue": "By market value, descending",
-      "marketValue": "Market value", "odds": "Odds", "imageCredits": "Image credits"
+      "marketValue": "Market value", "odds": "Odds", "tierLabel": "Tier", "tierBar": "Tier lineup", "upToLabel": "Top jackpot", "rtpLabel": "RTP", "floorLabel": "Floor value", "floorPct": "Min {pct}%", "preciseOddsLink": "Provably Fair", "preciseOdds": "Exact odds table · Provably Fair", "expand": "Expand", "collapse": "Collapse", "openVerifier": "Open the 3-step visual verifier", "imageCredits": "Image credits"
     },
     "fairness": {
       "title": "Provably Fair", "eyebrow": "Provably Fair · HMAC-SHA256",
@@ -321,10 +321,10 @@ UI = {
     "inventory": {
       "title": "Inventory", "eyebrow": "My Vault", "empty": "Nothing in your vault yet. Open a box to fill it.", "goBoxes": "Browse boxes",
       "summary": "{n} items · Total value in vault {value}", "storedCount": "In vault {n}", "shippingCount": "Shipping {n}", "soldCount": "Sold {n}",
-      "filterStatus": "Status", "filterTier": "Tier", "all": "All",
+      "filterStatus": "Status", "filterTier": "Tier", "all": "All", "tabHeld": "Holding ({n})", "tabDone": "Settled ({n})", "cashableValue": "Total cash-out value now", "doneSold": "Cashed out 95% +{amount}", "doneCash": "Cashback credited +{amount}", "archived": "Settled", "doneShipping": "Shipped", "donePreparing": "Preparing shipment", "emptyDone": "Nothing settled yet. Items you cash out or ship are archived here.",
       "status": {"IN_STORAGE": "In Vault", "SHIPPING_REQUESTED": "Preparing shipment", "SHIPPING": "Shipping", "SOLD": "Sold"},
       "acquired": "Acquired {date}", "from": "{box}", "soldFor": "Refunded {amount}", "tracking": "Tracking", "trackingPending": "Awaiting tracking number",
-      "sell": "⚡ Cash out 95% USDT", "noFee": "0% fee", "ship": "Ship to me", "verify": "1-second fairness check", "select": "Select", "selected": "{n} selected", "selectAll": "Select all", "clearSelection": "Clear",
+      "sell": "⚡ Cash out 95% USDT", "noFee": "0% fee", "ship": "📦 Ship to my door", "verify": "1-second fairness check", "select": "Select", "selected": "{n} selected", "selectAll": "Select all", "clearSelection": "Clear",
       "sellSelected": "Cash out selected · {rate}", "selectedValue": "Total value:", "soldForLabel": "Refunded",
       "totalValue": "Total vault value", "sellAll": "Cash out all", "sort": "Sort", "sorts": {"newest": "Newest", "valueDesc": "Highest value", "valueAsc": "Lowest value"},
       "emptyFiltered": "No items match these filters.", "hotTitle": "Hottest boxes right now — TOP 3", "hotTop": "top multiplier",
@@ -362,7 +362,7 @@ UI = {
       "bonusNote": "The {bonus} bonus is credited to your account the moment your review is posted.",
       "empty": "No reviews yet. Received your item? Post the first review and take the 10 USDT bonus.", "emptyCta": "Open a box", "close": "Close"
     },
-    "ticker": {"label": "Live drops", "live": "LIVE", "lineup": "{box} · {item} {mult} · odds {rate}", "win": "{box} ➔ {item}", "cashout": "cashed out {amount}", "ship": "requested shipping for {item}", "ago": "({s}s ago)"},
+    "ticker": {"label": "Live drops", "live": "LIVE", "lineup": "{box} · {item} {mult} jackpot", "win": "{box} ➔ {item}", "cashout": "cashed out {amount}", "ship": "requested shipping for {item}", "ago": "({s}s ago)"},
     "onboarding": {
       "title": "How it works in 3 steps",
       "step1Title": "Pick a box", "step1Desc": "From $1. Rolex, Tesla, Apple.",
@@ -438,7 +438,7 @@ UI = {
       "openNow": "立即开启", "viewContents": "看看里面", "billboardPicker": "选择展示", "billboardOf": "{title} 展示",
       "headline": "1 美元，博劳力士和 iPhone。", "sub": "中了 100% 归你，没中也立即折现 95%。", "freeTry": "免费试玩", "openFor": "🔥 {price} 开一发", "badge": "1 美元起的奢品头奖", "nowShowing": "正在上映", "topMultipleShort": "最高 {n}"
     },
-    "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "settleBadge": "全品类 95% USDT 即时结算", "guaranteed": "保底", "openNow": "立即开", "contents": "详情", "details": "{title} 详情", "expand": "展开"},
+    "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "settleBadge": "全品类 95% USDT 即时结算", "upTo": "最高 {n} 头奖", "rtp": "RTP {rate}%", "floorPct": "最低 {pct}% 返还", "guaranteed": "保底", "openNow": "立即开", "contents": "详情", "details": "{title} 详情", "expand": "展开"},
     "rows": {"trending": "🔥 开启最多的盲盒 TOP 10", "dollar": "🔥 1 美元盲盒", "techMobility": "⚡ 苹果与科技", "luxuryWatch": "👑 奢品与腕表", "guaranteed": "🚗 超跑与金条", "prev": "上一页", "next": "下一页"},
     "grid": {"title": "全部盲盒", "sort": "排序", "loadMore": "加载更多（{n}）"},
     "categories": {"all": "全部", "dollar": "🔥 1 美元盲盒", "tech": "⚡ 苹果与科技", "luxury": "👑 奢品与腕表", "jackpot": "🚗 超跑与金条"},
@@ -460,7 +460,7 @@ UI = {
       "settleBody": "实物与礼品卡可一键按市场价 95% 折现为 USDT；USDT 返现与即时到账在开箱时 100% 计入余额。余额可提现至 TRC-20 / BEP-20 个人钱包。",
       
       "allPrizes": "全部可得商品", "count": "{n} 件", "sortedByValue": "按市场价降序",
-      "marketValue": "市场价", "odds": "概率", "imageCredits": "图片来源"
+      "marketValue": "市场价", "odds": "概率", "tierLabel": "等级", "tierBar": "等级构成", "upToLabel": "最高头奖", "rtpLabel": "返还率 RTP", "floorLabel": "保底返还", "floorPct": "最低 {pct}%", "preciseOddsLink": "公平性验证 (Provably Fair)", "preciseOdds": "精确概率表 · Provably Fair", "expand": "展开", "collapse": "收起", "openVerifier": "打开 3 步可视化验证器", "imageCredits": "图片来源"
     },
     "fairness": {
       "title": "公平性验证", "eyebrow": "Provably Fair · HMAC-SHA256",
@@ -528,10 +528,10 @@ UI = {
     "inventory": {
       "title": "仓库", "eyebrow": "My Vault", "empty": "仓库还是空的。开启盲盒来填满它吧。", "goBoxes": "浏览盲盒",
       "summary": "共 {n} 件 · 仓库总价值 {value}", "storedCount": "保管中 {n}", "shippingCount": "发货 {n}", "soldCount": "已回收 {n}",
-      "filterStatus": "状态", "filterTier": "等级", "all": "全部",
+      "filterStatus": "状态", "filterTier": "等级", "all": "全部", "tabHeld": "持有中 ({n})", "tabDone": "已处理 ({n})", "cashableValue": "可即时折现总价值", "doneSold": "95% 折现完成 +{amount}", "doneCash": "返现已计入 +{amount}", "archived": "已处理", "doneShipping": "已发货", "donePreparing": "备货中", "emptyDone": "暂无已处理记录。折现或发货的商品会归档在这里。",
       "status": {"IN_STORAGE": "保管中", "SHIPPING_REQUESTED": "备货中", "SHIPPING": "运输中", "SOLD": "已回收"},
       "acquired": "获得于 {date}", "from": "{box}", "soldFor": "已退回 {amount}", "tracking": "运单号", "trackingPending": "等待运单号",
-      "sell": "⚡ 95% USDT 即时折现", "noFee": "0 手续费", "ship": "寄到家", "verify": "1 秒公平性验证", "select": "选择", "selected": "已选 {n} 件", "selectAll": "全选", "clearSelection": "取消选择",
+      "sell": "⚡ 95% USDT 即时折现", "noFee": "0 手续费", "ship": "📦 寄到我家", "verify": "1 秒公平性验证", "select": "选择", "selected": "已选 {n} 件", "selectAll": "全选", "clearSelection": "取消选择",
       "sellSelected": "所选按 {rate} 批量折现", "selectedValue": "总价值：", "soldForLabel": "已退回",
       "totalValue": "仓库总资产", "sellAll": "全部 95% 折现", "sort": "排序", "sorts": {"newest": "最新", "valueDesc": "价值从高到低", "valueAsc": "价值从低到高"},
       "emptyFiltered": "没有符合条件的商品。", "hotTitle": "当前最热盲盒 TOP 3", "hotTop": "最高倍数",
@@ -569,7 +569,7 @@ UI = {
       "bonusNote": "晒单发布后，{bonus} 奖励立即计入您的账户余额。",
       "empty": "还没有晒单。收到实物了？发第一条晒单领取 10 USDT 奖励。", "emptyCta": "去开盲盒", "close": "关闭"
     },
-    "ticker": {"label": "实时开箱动态", "live": "LIVE", "lineup": "{box} · {item} {mult} · 概率 {rate}", "win": "{box} ➔ 开出 {item}", "cashout": "已折现 {amount}", "ship": "申请发货 {item}", "ago": "（{s} 秒前）"},
+    "ticker": {"label": "实时开箱动态", "live": "LIVE", "lineup": "{box} · {item} {mult} 头奖", "win": "{box} ➔ 开出 {item}", "cashout": "已折现 {amount}", "ship": "申请发货 {item}", "ago": "（{s} 秒前）"},
     "onboarding": {
       "title": "3 秒看懂流程",
       "step1Title": "选盲盒", "step1Desc": "1 美元起。劳力士、特斯拉、苹果。",

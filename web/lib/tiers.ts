@@ -17,6 +17,8 @@ export type TierKey = "royal" | "prestige" | "executive" | "curated";
 export interface Tier {
   key: TierKey;
   label: string;
+  /** 넷플릭스 게임형 등급 바 라벨 — LEGENDARY / EPIC / RARE / CASHBACK (카드·목록의 확률 숫자를 대체) */
+  gameLabel: string;
   /** 뱃지 텍스트 / 보더 기본색 */
   accent: string;
   /** 그라디언트 하단, 눌린 색 */
@@ -29,10 +31,10 @@ export interface Tier {
 
 /** 배수 내림차순. tierOf 가 위에서부터 훑는다. */
 export const TIERS: Tier[] = [
-  { key: "royal", label: "ROYAL", accent: "#E6CA65", deep: "#A27B1E", minMultiple: 20, range: "20배 이상" },
-  { key: "prestige", label: "PRESTIGE", accent: "#93C5FD", deep: "#3B82C4", minMultiple: 6, range: "6~20배" },
-  { key: "executive", label: "EXECUTIVE", accent: "#C084FC", deep: "#7E3FBF", minMultiple: 2, range: "2~6배" },
-  { key: "curated", label: "CURATED", accent: "#94A3B8", deep: "#4B5563", minMultiple: 0, range: "기본 보장" },
+  { key: "royal", label: "ROYAL", gameLabel: "LEGENDARY", accent: "#E6CA65", deep: "#A27B1E", minMultiple: 20, range: "20배 이상" },
+  { key: "prestige", label: "PRESTIGE", gameLabel: "EPIC", accent: "#93C5FD", deep: "#3B82C4", minMultiple: 6, range: "6~20배" },
+  { key: "executive", label: "EXECUTIVE", gameLabel: "RARE", accent: "#C084FC", deep: "#7E3FBF", minMultiple: 2, range: "2~6배" },
+  { key: "curated", label: "CURATED", gameLabel: "CASHBACK", accent: "#94A3B8", deep: "#4B5563", minMultiple: 0, range: "기본 보장" },
 ];
 
 export const TIER_BY_KEY: Record<TierKey, Tier> = Object.fromEntries(

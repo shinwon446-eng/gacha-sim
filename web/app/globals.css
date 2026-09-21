@@ -297,3 +297,66 @@ body {
 .text-shadow-lg {
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.8), 0 0 2px rgba(0, 0, 0, 0.9);
 }
+
+/* ── 룰렛 Phase 2: 번개/골드 전자기 스파크 보더 ─────────── */
+@keyframes spark-sweep {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+@keyframes spark-flicker {
+  0%, 100% { opacity: 0.55; }
+  20% { opacity: 1; }
+  35% { opacity: 0.4; }
+  50% { opacity: 0.95; }
+  70% { opacity: 0.6; }
+  85% { opacity: 1; }
+}
+.reel-tension {
+  box-shadow: 0 0 0 1px rgba(230, 202, 101, 0.7), 0 0 28px rgba(230, 202, 101, 0.45), inset 0 0 40px rgba(230, 202, 101, 0.12);
+}
+.reel-tension::before,
+.reel-tension::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 35;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent 0%, #fff7d6 8%, #E6CA65 14%, transparent 22%, transparent 48%, #ffffff 52%, #E6CA65 58%, transparent 66%, transparent 100%);
+  background-size: 200% 100%;
+  animation: spark-sweep 0.55s linear infinite, spark-flicker 0.32s steps(1) infinite;
+  filter: drop-shadow(0 0 6px rgba(230, 202, 101, 0.9));
+}
+.reel-tension::before { top: 0; }
+.reel-tension::after { bottom: 0; animation-direction: reverse, normal; }
+
+/* ── 룰렛 Phase 3: 골드 코인 샤워 & 컨페티 ────────────── */
+@keyframes coin-fall {
+  0% { transform: translate3d(0, -12vh, 0) rotateY(0deg) rotate(0deg); opacity: 0; }
+  8% { opacity: 1; }
+  100% { transform: translate3d(var(--drift, 0px), 110vh, 0) rotateY(1080deg) rotate(var(--spin, 360deg)); opacity: 0.9; }
+}
+@keyframes confetti-fall {
+  0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translate3d(var(--drift, 0px), 110vh, 0) rotate(var(--spin, 720deg)); opacity: 0.85; }
+}
+.fx-coin {
+  position: absolute;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 30%, #fff3c4 0%, #E6CA65 35%, #A27B1E 100%);
+  box-shadow: 0 0 10px rgba(230, 202, 101, 0.7), inset 0 0 0 2px rgba(255, 255, 255, 0.25);
+  animation: coin-fall var(--dur, 2.2s) cubic-bezier(0.2, 0.7, 0.4, 1) var(--delay, 0s) 1 both;
+}
+.fx-confetti {
+  position: absolute;
+  top: 0;
+  width: 8px;
+  height: 14px;
+  border-radius: 1px;
+  animation: confetti-fall var(--dur, 2.6s) ease-in var(--delay, 0s) 1 both;
+}

@@ -33,7 +33,7 @@ test("지정 문구가 정확히 들어 있다 (CLAUDE.md §2 구어체 카피)"
     "hero.viewContents": ["뭐 들었나 보기", "What's inside", "看看里面"],
     "hero.freeTry": ["손맛 보기 (무료)", "Try free", "免费试玩"],
     "inventory.sell": ["⚡ 95% USDT 즉시 회수", "⚡ Cash out 95% USDT", "⚡ 95% USDT 即时折现"],
-    "inventory.ship": ["집으로 배송", "Ship to me", "寄到家"],
+    "inventory.ship": ["📦 우리 집으로 배송", "📦 Ship to my door", "📦 寄到我家"],
     "hero.guaranteedMinLabel": ["최소 보장 금액", "Guaranteed Minimum", "保底价值"],
     "actions.sellBack": ["95% 즉시 회수", "Cash out 95%", "95% 即时回收"],
     "actions.claimShipping": ["집으로 배송", "Ship to me", "寄到家"],

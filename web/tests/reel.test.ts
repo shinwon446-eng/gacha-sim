@@ -24,6 +24,20 @@ test("스트립은 target 에 결과를 심고 나머지는 확률표에서 뽑�
   assert.throws(() => buildStrip(result, items, rand, 10, 10));
 });
 
+test("쇼케이스 타일은 감속 구간에만 심기고 결과 칸은 그대로다", async () => {
+  const { SHOWCASE_OFFSETS } = await import("../lib/reel");
+  const b = BOXES[0];
+  const items = dropTable(b);
+  const result = items[items.length - 1];
+  const high = items.slice(0, 2);
+  let x = 0.37;
+  const rand = () => (x = (x + 0.6180339887) % 1);
+  const strip = buildStrip(result, items, rand, undefined, undefined, high);
+  assert.equal(strip[REEL_TARGET_INDEX].id, result.id);
+  for (const off of SHOWCASE_OFFSETS) assert.ok(high.some((h) => h.id === strip[REEL_TARGET_INDEX - off].id), `offset ${off}`);
+  assert.ok(SHOWCASE_OFFSETS.every((o) => o >= 6 && o <= 40));
+});
+
 test("정지 오프셋에서 인디케이터 아래 칸은 항상 target (뷰포트·지터 무관)", () => {
   for (const viewportWidth of [320, 640, 960, 1280, 1920]) {
     for (const jitter of [-0.5, -0.2, 0, 0.3, 0.5]) {

@@ -12,6 +12,7 @@ import {
   expectedValue,
   retailReturn,
   cashReturn,
+  floorRatio,
   REFUND_RATE,
   type ProductBox,
   type ProductItem,
@@ -27,7 +28,8 @@ import {
   topMultiple,
   type Tier,
 } from "@/lib/tiers";
-import { TierBadge, TierLegend, TierStrip } from "@/components/box/TierStrip";
+import { GameTierBar, TierBadge, TierLegend, TierStrip } from "@/components/box/TierStrip";
+import { Link } from "@/i18n/navigation";
 import { ProductArt } from "@/components/box/ProductArt";
 
 export interface DetailModalProps {
@@ -83,10 +85,10 @@ function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
           </div>
           <div className="text-right">
             <div className="text-[7px] font-semibold uppercase tracking-[0.16em] text-[#757575]">
-              {t("odds")}
+              {t("tierLabel")}
             </div>
-            <div className="font-mono text-[12px] font-bold leading-none tabular-nums text-white">
-              {formatRate(item.dropRate)}
+            <div className="text-[10px] font-bold uppercase leading-none tracking-[0.12em]" style={{ color: tier.accent }}>
+              {tier.gameLabel}
             </div>
           </div>
         </div>
@@ -121,7 +123,7 @@ function Stat({ label, value, tone = "#FFFFFF" }: { label: string; value: string
 export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
   const t = useTranslations();
   const { fmt } = useCurrency();
-  const { boxTitle, boxBadge } = useProductText();
+  const { boxTitle, boxBadge, itemName } = useProductText();
   const panelRef = useRef<HTMLDivElement>(null);
 
   // ESC 닫기 + 배경 스크롤 잠금
@@ -154,6 +156,7 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
       retail: retailReturn(box),
       cash: cashReturn(box),
       guaranteed: box.guaranteedMin >= box.price, // "오픈가 이상" 문구는 바닥이 가격 이상일 때만 (잭팟 박스)
+      floorPct: Math.round(floorRatio(box) * 100),
     };
   }, [box]);
 
@@ -273,7 +276,7 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
                     {t("unbox.open5")} · {fmt(box.price * 5)}
                   </button>
                   <a
-                    href="#drop-table"
+                    href="#provably-fair"
                     className="flex h-11 items-center gap-2 rounded-sm border border-white/25 bg-[#282828]/80 px-4 text-[13px] font-semibold text-white transition-colors duration-200 hover:border-white hover:bg-[#333333]"
                   >
                     <Percent className="h-4 w-4" strokeWidth={2} />
@@ -306,28 +309,27 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
               </div>
             </section>
 
-            {/* ── 등급 분포 ── */}
+            {/* ── 도파민 수치 3종 + 게임형 등급 바 (확률 숫자 없음) ── */}
             <section className="px-5 md:px-9">
-              <div className="flex items-baseline justify-between gap-3">
-                <h3 className="text-[13px] font-bold text-white">{t("modal.tierOdds")}</h3>
-                <span className="text-[11px] text-[#AAAAAA]">
-                  {t("modal.breakEven", { price: fmt(box.price), rate: formatRate(meta.breakEven) })}
-                </span>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: t("modal.upToLabel"), value: t("tiers.multiple", { n: formatMultiple(meta.mult) }), tone: meta.top.accent },
+                  { label: t("modal.rtpLabel"), value: `${(meta.retail * 100).toFixed(1)}%`, tone: "#93C5FD" },
+                  { label: t("modal.floorLabel"), value: t("modal.floorPct", { pct: meta.floorPct }), tone: "#E6CA65" },
+                ].map((x) => (
+                  <div key={x.label} className="rounded-lg border border-white/10 bg-obsidian px-3 py-3 text-center">
+                    <div className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#8A8A8A]">{x.label}</div>
+                    <div className="mt-1 font-display text-xl font-bold leading-none tracking-tight md:text-2xl" style={{ color: x.tone }}>{x.value}</div>
+                  </div>
+                ))}
               </div>
-              <TierStrip slices={meta.slices} height={10} className="mt-2.5" />
-              <TierLegend slices={meta.slices} className="mt-2.5" />
-
-              <p className="mt-3 border-l-2 border-line pl-3 text-[11px] leading-relaxed text-faint">
-                {t("modal.explain", {
-                  ev: fmt(meta.ev),
-                  retail: `${(meta.retail * 100).toFixed(1)}%`,
-                  refund: `${Math.round(REFUND_RATE * 100)}%`,
-                  cash: `${(meta.cash * 100).toFixed(1)}%`,
-                })}{" "}
-                {meta.guaranteed
-                  ? t("modal.guaranteedYes", { min: fmt(box.guaranteedMin) })
-                  : t("modal.guaranteedNo", { min: fmt(box.guaranteedMin) })}
-              </p>
+              <div className="mt-4 flex items-baseline justify-between gap-3">
+                <h3 className="text-[13px] font-bold text-white">{t("modal.tierBar")}</h3>
+                <a href="#provably-fair" className="text-[11px] font-semibold text-gold-champagne hover:underline">
+                  {t("modal.preciseOddsLink")} ↗
+                </a>
+              </div>
+              <GameTierBar slices={meta.slices} className="mt-2.5" />
             </section>
 
             {/* ── 전체 당첨 가능 상품 ── */}
@@ -349,6 +351,48 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
                   <PrizeCard key={item.id} item={item} tier={tierOf(item.value, box.price)} />
                 ))}
               </ul>
+            </section>
+
+            {/* ── 공정성 검증 (Provably Fair) — 정밀 소수점 확률은 여기서만 ── */}
+            <section id="provably-fair" className="scroll-mt-4 px-5 pb-8 md:px-9">
+              <details className="group rounded-lg border border-hairline bg-obsidian">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-[12px] font-bold text-white [&::-webkit-details-marker]:hidden">
+                  <span className="flex items-center gap-2">
+                    <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-gold-champagne shadow-[0_0_6px_rgba(230,202,101,0.7)]" />
+                    {t("modal.preciseOdds")}
+                  </span>
+                  <span className="text-[10px] font-semibold text-muted group-open:hidden">{t("modal.expand")}</span>
+                  <span className="hidden text-[10px] font-semibold text-muted group-open:inline">{t("modal.collapse")}</span>
+                </summary>
+                <div className="border-t border-hairline px-4 py-3">
+                  <TierStrip slices={meta.slices} height={8} />
+                  <TierLegend slices={meta.slices} className="mt-2" />
+                  <ul className="mt-3 divide-y divide-hairline">
+                    {meta.table.map((item) => {
+                      const tier = tierOf(item.value, box.price);
+                      return (
+                        <li key={item.id} className="flex items-center justify-between gap-3 py-1.5 text-[11px]">
+                          <span className="min-w-0 flex-1 truncate text-secondary">{itemName(item)}</span>
+                          <span className="flex-none text-[9px] font-bold uppercase tracking-[0.12em]" style={{ color: tier.accent }}>{tier.gameLabel}</span>
+                          <span className="w-20 flex-none text-right font-mono tabular-nums text-white">{formatRate(item.dropRate)}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <p className="mt-3 break-keep border-l-2 border-line pl-3 text-[11px] leading-relaxed text-faint">
+                    {t("modal.explain", {
+                      ev: fmt(meta.ev),
+                      retail: `${(meta.retail * 100).toFixed(1)}%`,
+                      refund: `${Math.round(REFUND_RATE * 100)}%`,
+                      cash: `${(meta.cash * 100).toFixed(1)}%`,
+                    })}{" "}
+                    {meta.guaranteed ? t("modal.guaranteedYes", { min: fmt(box.guaranteedMin) }) : t("modal.guaranteedNo", { min: fmt(box.guaranteedMin) })}
+                  </p>
+                  <Link href="/fairness" className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-md border border-gold-champagne/50 px-3 text-[11px] font-bold text-gold-champagne hover:bg-gold-champagne/10">
+                    {t("modal.openVerifier")} ↗
+                  </Link>
+                </div>
+              </details>
             </section>
 
             {/* 이미지 출처 — CC BY / BY-SA 자산은 표기 의무가 있다 */}

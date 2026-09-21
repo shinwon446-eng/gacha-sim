@@ -30,7 +30,9 @@ import { HotBoxes } from "@/components/inventory/HotBoxes";
 import { WithdrawalModal } from "@/components/wallet/WithdrawalModal";
 import { VisualVerifyModal } from "@/components/fairness/VisualVerifyModal";
 
-const STATUSES: OwnedStatus[] = ["IN_STORAGE", "SHIPPING_REQUESTED", "SHIPPING", "SOLD"];
+/** 2단 탭 — 보유 중(미사용 당첨 상품) / 처리 완료(환전·출고 아카이브) */
+type VaultTab = "held" | "done";
+const DONE_STATUSES: OwnedStatus[] = ["SOLD", "SHIPPING_REQUESTED", "SHIPPING"];
 type SortKey = "newest" | "valueDesc" | "valueAsc";
 const SORTS: SortKey[] = ["newest", "valueDesc", "valueAsc"];
 
@@ -61,7 +63,7 @@ export default function InventoryPage() {
   const debit = useWalletStore((s) => s.debit);
   const addTransaction = useWalletStore((s) => s.addTransaction);
 
-  const [status, setStatus] = useState<OwnedStatus | "all">("all");
+  const [tab, setTab] = useState<VaultTab>("held");
   const [tier, setTier] = useState<TierKey | "all">("all");
   const [sort, setSort] = useState<SortKey>("newest");
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -76,17 +78,19 @@ export default function InventoryPage() {
 
   const summary = useMemo(() => summarize(items), [items]);
   const visible = useMemo(() => {
-    const list = items.filter((o) => (status === "all" || o.status === status) && (tier === "all" || o.tier === tier));
+    const list = items.filter((o) => (tab === "held" ? o.status === "IN_STORAGE" : DONE_STATUSES.includes(o.status)) && (tier === "all" || o.tier === tier));
     if (sort === "valueDesc") return [...list].sort((a, b) => b.valueUsdt - a.valueUsdt);
     if (sort === "valueAsc") return [...list].sort((a, b) => a.valueUsdt - b.valueUsdt);
     return [...list].sort((a, b) => b.acquiredAt.localeCompare(a.acquiredAt));
-  }, [items, status, tier, sort]);
+  }, [items, tab, tier, sort]);
   const selectable = useMemo(() => visible.filter((o) => o.status === "IN_STORAGE"), [visible]);
   const allSelected = selectable.length > 0 && selectable.every((o) => selected.has(o.id));
   const selectedItems = items.filter((o) => selected.has(o.id) && o.status === "IN_STORAGE");
   const selectedValue = +selectedItems.reduce((s, o) => s + o.valueUsdt, 0).toFixed(2);
   const storedIds = useMemo(() => items.filter((o) => o.status === "IN_STORAGE").map((o) => o.id), [items]);
   const rateLabel = `${Math.round(REFUND_RATE * 100)}%`;
+  const heldCount = items.filter((o) => o.status === "IN_STORAGE").length;
+  const doneCount = items.filter((o) => DONE_STATUSES.includes(o.status)).length;
 
   // live: 출고 대기 항목의 운송장을 물류 API 에서 동기화한다 (60초). preview 는 발급 주체가 없으므로 대기 상태 그대로 둔다.
   useEffect(() => {
@@ -224,8 +228,11 @@ export default function InventoryPage() {
             {/* 우: 총 자산 · 출금 · 전체 판매 */}
             <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
               <div className="min-w-0 text-right">
-                <div className="caption-luxury">{t("inventory.totalValue")}</div>
-                <Money value={summary.storedValueUsdt} size="lg" numberClassName="text-gold-gradient" className="mt-1" />
+                <div className="caption-luxury !text-gold-champagne">⚡ {t("inventory.cashableValue")}</div>
+                <Money value={sellAmountFor(storedIds)} size="lg" numberClassName="text-gold-gradient" className="mt-1" />
+                <div className="mt-0.5 flex items-baseline justify-end gap-1 text-[10px] text-faint">
+                  {t("inventory.totalValue")} <Money value={summary.storedValueUsdt} size="xs" numberClassName="text-muted" />
+                </div>
               </div>
               <div className="flex gap-2">
                 <button type="button" onClick={() => setWithdrawOpen(true)} className="border-gold-gradient flex h-10 items-center gap-1.5 whitespace-nowrap rounded-md px-4 text-xs font-bold text-gold-champagne transition-colors hover:bg-gold-champagne/10">
@@ -246,12 +253,39 @@ export default function InventoryPage() {
           </div>
         </div>
 
-        {/* ── 필터 바: 전체 선택 · 상태 · 등급 · 정렬 ── */}
-        <div className="mt-5 flex flex-wrap items-center gap-2 border-b border-hairline pb-3">
+        {/* ── 2단 탭: 보유 중 / 처리 완료 ── */}
+        <div role="tablist" aria-label={t("inventory.title")} className="mt-5 grid grid-cols-2 gap-2 rounded-xl border border-hairline bg-obsidian p-1">
+          {(
+            [
+              ["held", `👑 ${t("inventory.tabHeld", { n: heldCount })}`],
+              ["done", `✅ ${t("inventory.tabDone", { n: doneCount })}`],
+            ] as const
+          ).map(([k, label]) => (
+            <button
+              key={k}
+              type="button"
+              role="tab"
+              aria-selected={tab === k}
+              onClick={() => {
+                setTab(k);
+                setSelected(new Set());
+              }}
+              className={cn(
+                "flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg text-sm font-bold transition-all duration-200",
+                tab === k ? "border-metallic-gold bg-gold-champagne/10 text-gold-champagne shadow-[0_0_12px_rgba(230,202,101,0.2)]" : "text-muted hover:bg-elevation hover:text-white",
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* ── 필터 바: 전체 선택 · 등급 · 정렬 ── */}
+        <div className="mt-3 flex flex-wrap items-center gap-2 border-b border-hairline pb-3">
           <button
             type="button"
             onClick={toggleAll}
-            disabled={selectable.length === 0}
+            disabled={tab !== "held" || selectable.length === 0}
             aria-pressed={allSelected}
             className={cn("mr-1 flex items-center gap-1.5 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40", allSelected ? "text-gold-champagne" : "text-muted hover:text-white")}
           >
@@ -259,13 +293,7 @@ export default function InventoryPage() {
             {t("inventory.selectAll")}
           </button>
           <span className="mx-1 hidden h-4 w-px bg-hairline sm:block" />
-          <span className="caption-luxury mr-1">{t("inventory.filterStatus")}</span>
-          {(["all", ...STATUSES] as const).map((s) => (
-            <button key={s} type="button" onClick={() => setStatus(s)} className={cn(chipCls, status === s ? "bg-white text-obsidian" : "border-metallic-subtle text-muted hover:text-white")}>
-              {s === "all" ? t("inventory.all") : t(`inventory.status.${s}`)}
-            </button>
-          ))}
-          <span className="caption-luxury ml-3 mr-1">{t("inventory.filterTier")}</span>
+          <span className="caption-luxury mr-1">{t("inventory.filterTier")}</span>
           {(["all", ...TIERS.map((x) => x.key)] as const).map((k) => (
             <button
               key={k}
@@ -295,7 +323,7 @@ export default function InventoryPage() {
           items.length === 0 ? (
             <HotBoxes className="mt-6" onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
           ) : (
-            <div className="border-metallic-subtle mt-6 rounded-xl bg-surface px-6 py-12 text-center text-sm text-muted">{t("inventory.emptyFiltered")}</div>
+            <div className="border-metallic-subtle mt-6 rounded-xl bg-surface px-6 py-12 text-center text-sm text-muted">{tab === "done" && tier === "all" ? t("inventory.emptyDone") : t("inventory.emptyFiltered")}</div>
           )
         ) : (
           <ul className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-5">
@@ -331,8 +359,14 @@ export default function InventoryPage() {
                         {tierMeta.label}
                       </span>
                     </div>
-                    <span className={cn("absolute right-2 top-2 z-10 rounded-sm px-1.5 py-1 text-[10px] font-semibold", stored ? "bg-obsidian/80 text-secondary" : o.status === "SOLD" ? "bg-obsidian/80 text-faint" : "bg-gold-champagne/15 text-gold-champagne")}>
-                      {t(`inventory.status.${o.status}`)}
+                    <span className={cn("absolute right-2 top-2 z-10 flex items-center gap-1 rounded-sm px-1.5 py-1 text-[10px] font-bold", stored ? "bg-obsidian/80 text-secondary" : o.status === "SOLD" ? "border border-gold-champagne/40 bg-obsidian/85 text-gold-champagne" : "bg-tier-prestige/15 text-tier-prestige")}>
+                      {stored
+                        ? t("inventory.status.IN_STORAGE")
+                        : o.status === "SOLD"
+                          ? `✅ ${t(item?.kind === "cash" ? "inventory.doneCash" : "inventory.doneSold", { amount: fmt(o.soldForUsdt ?? 0) })}`
+                          : o.status === "SHIPPING"
+                            ? `🚚 ${t("inventory.doneShipping")}`
+                            : `📦 ${t("inventory.donePreparing")}`}
                     </span>
                     {shipping && (
                       <span className="absolute bottom-2 right-2 z-10 flex items-center gap-1 rounded-sm bg-obsidian/85 px-1.5 py-1 text-[10px] font-semibold text-tier-prestige">
@@ -360,26 +394,35 @@ export default function InventoryPage() {
                         <span className="font-mono text-secondary">{o.shipping?.trackingNumber ?? t("inventory.trackingPending")}</span>
                       </div>
                     )}
-                    <div className="mt-3 grid grid-cols-[1fr_auto] gap-1.5">
-                      <button type="button" disabled={!stored} onClick={() => setSellTarget([o.id])} className="flex h-8 items-center justify-center gap-1 rounded-sm bg-gold-champagne text-[11px] font-bold text-obsidian hover:bg-gold-metallic disabled:opacity-30">
-                        <Wallet className="h-3 w-3" strokeWidth={2.4} />
-                        {t("inventory.sell")} · {t("inventory.noFee")}
-                      </button>
-                      <button type="button" onClick={() => setVerify(o)} aria-label={t("inventory.verify")} title={t("inventory.verify")} className="glass-dark row-span-2 flex h-full w-8 items-center justify-center rounded-sm text-gold-champagne hover:border-gold-champagne">
-                        <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2.2} />
-                      </button>
-                      {shipping ? (
-                        <button type="button" onClick={() => setTrack(o)} className="glass flex h-8 items-center justify-center gap-1 rounded-sm text-[11px] font-semibold text-white hover:bg-white/15">
-                          <Truck className="h-3 w-3" strokeWidth={2.2} />
-                          {t("inventory.track")}
+                    {stored ? (
+                      <div className="mt-3 grid grid-cols-[1fr_auto] gap-1.5">
+                        <button type="button" onClick={() => setSellTarget([o.id])} className="flex h-8 items-center justify-center gap-1 rounded-sm bg-gold-champagne text-[11px] font-bold text-obsidian hover:bg-gold-metallic">
+                          <Wallet className="h-3 w-3" strokeWidth={2.4} />
+                          {t("inventory.sell")} · {t("inventory.noFee")}
                         </button>
-                      ) : (
-                        <button type="button" disabled={!stored} onClick={() => setShipTarget([o.id])} className="glass flex h-8 items-center justify-center gap-1 rounded-sm text-[11px] font-semibold text-white hover:bg-white/15 disabled:opacity-30">
+                        <button type="button" onClick={() => setVerify(o)} aria-label={t("inventory.verify")} title={t("inventory.verify")} className="glass-dark row-span-2 flex h-full w-8 items-center justify-center rounded-sm text-gold-champagne hover:border-gold-champagne">
+                          <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2.2} />
+                        </button>
+                        <button type="button" onClick={() => setShipTarget([o.id])} className="flex h-8 items-center justify-center gap-1 rounded-sm border border-white/25 bg-transparent text-[11px] font-semibold text-white transition-colors hover:border-gold-champagne hover:text-gold-champagne">
                           <Truck className="h-3 w-3" strokeWidth={2.2} />
                           {t("inventory.ship")}
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <div className="mt-3 grid grid-cols-[1fr_auto] gap-1.5">
+                        {shipping ? (
+                          <button type="button" onClick={() => setTrack(o)} className="glass flex h-8 items-center justify-center gap-1 rounded-sm text-[11px] font-semibold text-white hover:bg-white/15">
+                            <Truck className="h-3 w-3" strokeWidth={2.2} />
+                            {t("inventory.track")}
+                          </button>
+                        ) : (
+                          <span className="flex h-8 items-center justify-center rounded-sm border border-white/10 text-[11px] font-semibold text-faint">{t("inventory.archived")}</span>
+                        )}
+                        <button type="button" onClick={() => setVerify(o)} aria-label={t("inventory.verify")} title={t("inventory.verify")} className="glass-dark flex h-8 w-8 items-center justify-center rounded-sm text-gold-champagne hover:border-gold-champagne">
+                          <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2.2} />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </li>
               );
