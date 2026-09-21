@@ -237,10 +237,10 @@ export function DailyFreeBoxModal({ open, onClose, onCredited }: { open: boolean
 
             {/* 확률표 + 공정성 */}
             <div className="border-metallic-subtle relative mt-2 rounded-lg bg-obsidian p-3">
-              <div className="flex items-center justify-between">
-                <span className="caption-luxury">{t("odds")}</span>
-                <span className="flex items-center gap-1 text-[10px] text-faint">
-                  <ShieldCheck className="h-3 w-3 text-gold-champagne" strokeWidth={2.4} />
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                <span className="caption-luxury whitespace-nowrap">{t("odds")}</span>
+                <span className="flex items-start gap-1 text-[10px] leading-snug text-faint">
+                  <ShieldCheck className="mt-0.5 h-3 w-3 flex-none text-gold-champagne" strokeWidth={2.4} />
                   {t("fairNote")}
                 </span>
               </div>
