@@ -28,8 +28,8 @@ export interface BoxCardProps {
   className?: string;
 }
 
-/** 스펙(CLAUDE.md §3): 1.15x 확대, ±5° 틸트 */
-const HOVER_SCALE = 1.15;
+/** 호버: 1.05x 부상(과하지 않게) + ±5° 틸트. 확장 패널은 카드 바닥에 붙는 플로팅 — 문서 흐름을 밀지 않는다. */
+const HOVER_SCALE = 1.05;
 const TILT_DEG = 5;
 const SPRING = { stiffness: 220, damping: 22, mass: 0.6 };
 
@@ -55,10 +55,11 @@ function GrailThumb({ item, box }: { item: ProductItem; box: ProductBox }) {
  * 럭셔리 박스 카드 (PROMPTS 1-2-2).
  *
  *   기본(콤팩트): 16:9 비주얼 → 박스명 · 1회 가격 · 최고 배수 · [100% 꽝 없음] 미니 뱃지. 서브 항목은 숨긴다.
- *   호버(확장): 대표 명품 3종 썸네일 + 정밀 가격이 아래로 펼쳐진다 (AnimatePresence height).
+ *   호버(확장): 카드 바닥에 붙는 absolute 플로팅 패널(top-full)에 대표 명품 3종 + 퀵 액션이 0.2초 페이드인.
+ *   카드의 물리적 높이는 호버 전후 동일 — 아래 행·섹션이 밀리지 않는다 (Layout Shift 0).
  *
  * 호버(Framer Motion)
- *   · 1.15x 확대 + 마우스 좌표 추적 ±5° 3D 틸트 (스프링) + z 부상
+ *   · 1.05x 확대 + 마우스 좌표 추적 ±5° 3D 틸트 (스프링) + z 부상
  *   · 홀로그램 메탈릭 샤인이 사선으로 한 번 스쳐 지나간다
  *   · 비주얼 하단에서 3px 등급 확률 바가 올라오고, 퀵 액션(오픈 / 구성품)이 나타난다
  *   · 프레임이 최고 등급 색 헤어라인으로 점화된다 (ROYAL 이면 샴페인 골드)
@@ -120,34 +121,32 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
   const royal = meta.topTier.key === "royal";
 
   return (
-    <div className={cn("relative", className)} onMouseEnter={() => setHovered(true)} onMouseLeave={leave} onMouseMove={onMove}>
-      {/* 넷플릭스 오버사이즈 순위 숫자 — 메탈릭 스트로크, 카드 뒤 */}
+    <div className={cn("relative", className)} style={{ zIndex: hovered ? 40 : 10 }} onMouseEnter={() => setHovered(true)} onMouseLeave={leave} onMouseMove={onMove}>
+      {/* 넷플릭스 오버사이즈 순위 숫자 — 카드 좌측 뒤편에 겹친다(약 절반이 카드에 가려짐). 고정 여백 없음 */}
       {typeof rank === "number" && (
-        <span aria-hidden className="rank-numeral absolute -left-1 bottom-0 z-0 font-display">
+        <span aria-hidden className="rank-numeral pointer-events-none absolute bottom-1 left-0 z-0 -translate-x-[38%] font-display">
           {rank}
         </span>
       )}
 
+      {/* 확대·틸트 그룹 — 카드 프레임과 플로팅 패널이 함께 움직인다. overflow 를 걸지 않아 패널이 바닥 밖으로 나온다 */}
       <motion.div
         ref={frameRef}
-        className={cn(
-          "relative cursor-pointer overflow-hidden rounded-xl bg-surface",
-          royal ? "border-metallic-gold" : "border-metallic-subtle",
-          typeof rank === "number" && "ml-[3.75rem]",
-        )}
-        style={{
-          transformOrigin: origin,
-          transformPerspective: 900,
-          rotateX,
-          rotateY,
-          zIndex: hovered ? 40 : 10,
-          // 호버 시 최고 등급 색으로 헤어라인 점화. 등급색은 데이터 값이라 인라인.
-          boxShadow: hovered
-            ? `0 22px 48px rgba(0,0,0,0.7), 0 0 0 1px ${glow(accent, 0.55)}, 0 0 32px ${glow(accent, 0.22)}`
-            : undefined,
-        }}
+        className={cn("relative", typeof rank === "number" && "ml-7")}
+        style={{ transformOrigin: origin, transformPerspective: 900, rotateX, rotateY }}
         animate={{ scale: hovered ? HOVER_SCALE : 1 }}
         transition={{ type: "spring", stiffness: 260, damping: 24, mass: 0.7 }}
+      >
+      <div
+        className={cn(
+          "relative cursor-pointer overflow-hidden rounded-xl bg-surface transition-[border-radius] duration-200",
+          royal ? "border-metallic-gold" : "border-metallic-subtle",
+          hovered && "rounded-b-none",
+        )}
+        style={{
+          // 호버 시 최고 등급 색으로 헤어라인 점화. 등급색은 데이터 값이라 인라인.
+          boxShadow: hovered ? `0 22px 48px rgba(0,0,0,0.7), 0 0 0 1px ${glow(accent, 0.55)}, 0 0 32px ${glow(accent, 0.22)}` : undefined,
+        }}
         onClick={() => onInspect?.(box)}
         role="button"
         tabIndex={0}
@@ -206,35 +205,16 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
             {meta.guaranteed ? ` · ${tr("hero.aboveOpenPrice")}` : ""}
           </span>
 
-          {/* 호버: 퀵 액션 + 3px 등급 확률 바 */}
+          {/* 호버: 3px 등급 확률 바 */}
           <AnimatePresence>
             {hovered && (
               <motion.div
                 className="absolute inset-x-0 bottom-0 z-20 px-2 pb-2"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 6 }}
-                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                onClick={(e) => e.stopPropagation()}
+                exit={{ opacity: 0, y: 4 }}
+                transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
               >
-                <div className="mb-2 flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => onOpen?.(box)}
-                    className="flex h-8 flex-1 items-center justify-center gap-1 rounded-sm bg-crimson text-xs font-bold text-white transition-colors hover:bg-red-600"
-                  >
-                    <Play className="h-3 w-3 fill-current" strokeWidth={0} />
-                    {tr("card.openNow")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onInspect?.(box)}
-                    className="glass flex h-8 flex-1 items-center justify-center gap-1 rounded-sm text-xs font-semibold text-white backdrop-blur-md hover:bg-white/15"
-                  >
-                    <Info className="h-3 w-3" strokeWidth={2} />
-                    {tr("card.contents")}
-                  </button>
-                </div>
                 <TierStrip slices={meta.slices} height={3} />
               </motion.div>
             )}
@@ -258,21 +238,44 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
           </div>
         </div>
 
-        {/* ── 대표 명품 3종 — 호버 시에만 펼쳐진다 (CLAUDE.md §3) ── */}
+      </div>
+
+        {/* ── 플로팅 확장 패널 — 카드 바닥에 absolute 로 붙는다. 문서 흐름 밖이라 아래 섹션이 밀리지 않는다 (CLAUDE.md §3) ── */}
         <AnimatePresence initial={false}>
           {hovered && (
-            <motion.ul
-              key="grails"
-              className="flex gap-2 overflow-hidden border-t border-hairline px-3"
-              initial={{ height: 0, opacity: 0, paddingTop: 0, paddingBottom: 0 }}
-              animate={{ height: "auto", opacity: 1, paddingTop: 10, paddingBottom: 12 }}
-              exit={{ height: 0, opacity: 0, paddingTop: 0, paddingBottom: 0 }}
-              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            <motion.div
+              key="panel"
+              className="border-metallic-gold-xb absolute left-0 right-0 top-full z-50 rounded-b-xl bg-surface px-3 pb-3 pt-2.5 shadow-[0_25px_50px_rgba(0,0,0,0.8)]"
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              onClick={(e) => e.stopPropagation()}
             >
-              {meta.grails.map((it) => (
-                <GrailThumb key={it.id} item={it} box={box} />
-              ))}
-            </motion.ul>
+              <ul className="flex gap-2">
+                {meta.grails.map((it) => (
+                  <GrailThumb key={it.id} item={it} box={box} />
+                ))}
+              </ul>
+              <div className="mt-2.5 flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => onOpen?.(box)}
+                  className="flex h-8 flex-1 items-center justify-center gap-1 rounded-sm bg-crimson text-xs font-bold text-white transition-colors hover:bg-red-600"
+                >
+                  <Play className="h-3 w-3 fill-current" strokeWidth={0} />
+                  {tr("card.openNow")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onInspect?.(box)}
+                  className="glass flex h-8 flex-1 items-center justify-center gap-1 rounded-sm text-xs font-semibold text-white backdrop-blur-md hover:bg-white/15"
+                >
+                  <Info className="h-3 w-3" strokeWidth={2} />
+                  {tr("card.contents")}
+                </button>
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>
       </motion.div>

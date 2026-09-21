@@ -187,6 +187,13 @@ body {
   filter: blur(6px);
 }
 
+/* 플로팅 확장 패널용 — 골드 헤어라인을 좌·우·아래에만 (상단은 카드 프레임과 이어진다) */
+.border-metallic-gold-xb {
+  border-left: 1px solid rgba(212, 175, 55, 0.4);
+  border-right: 1px solid rgba(212, 175, 55, 0.4);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+}
+
 /* 미니 카드용 축소판 — 같은 메탈릭 스트로크, 작은 크기 */
 .rank-numeral-sm {
   font-family: var(--font-display), Cinzel, serif;

@@ -24,14 +24,14 @@ export interface NetflixRowProps {
 function useSlots(variant: "default" | "top10") {
   const [slots, setSlots] = useState(variant === "top10" ? 3 : 4);
 
-  // 4:5 카드는 2:3 포스터보다 넓다. 한 화면에 덜 넣어야 실물이 읽힌다.
+  // 16:9 콤팩트 카드 — 데스크톱에서 4~5개가 꽉 차게. TOP 10 은 순위 숫자 여백만큼 하나 덜.
   useEffect(() => {
     const calc = () => {
       const w = window.innerWidth;
       if (variant === "top10") {
-        setSlots(w >= 1536 ? 4 : w >= 1024 ? 3 : w >= 640 ? 2 : 1);
+        setSlots(w >= 1536 ? 5 : w >= 1024 ? 4 : w >= 640 ? 3 : 2);
       } else {
-        setSlots(w >= 1536 ? 5 : w >= 1024 ? 4 : w >= 768 ? 3 : 2);
+        setSlots(w >= 1536 ? 6 : w >= 1280 ? 5 : w >= 1024 ? 4 : w >= 768 ? 3 : 2);
       }
     };
     calc();
