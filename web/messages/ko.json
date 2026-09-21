@@ -341,6 +341,7 @@
     },
     "stepCurrent": "현재 단계",
     "trackingNote": "출고가 완료되면 택배사와 운송장 번호가 여기에 표시되고, 실시간 배송조회 링크가 열립니다.",
+    "trackingIssuedNote": "운송장이 발급되었습니다. {carrier} 공식 조회 페이지에서 실시간 배송 현황을 확인하세요.",
     "sellTitle": "즉시 판매",
     "sellBody": "이 아이템을 판매하시겠습니까? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
     "sellBodyMulti": "{n}개 아이템을 판매하시겠습니까? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",

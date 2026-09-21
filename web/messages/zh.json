@@ -341,6 +341,7 @@
     },
     "stepCurrent": "当前环节",
     "trackingNote": "出库完成后，物流公司与运单号会显示在此，并开放实时查询链接。",
+    "trackingIssuedNote": "运单已生成。可在 {carrier} 官方查询页面实时查看配送状态。",
     "sellTitle": "即时回收",
     "sellBody": "确定回收该商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
     "sellBodyMulti": "确定回收 {n} 件商品？市场价的 {rate}（{amount}）将即时计入账户余额。",

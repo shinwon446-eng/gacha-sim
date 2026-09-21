@@ -341,6 +341,7 @@
     },
     "stepCurrent": "Current step",
     "trackingNote": "Once the parcel ships, the carrier and tracking number appear here with a live tracking link.",
+    "trackingIssuedNote": "Your tracking number is issued. Follow the parcel live on the official {carrier} tracking page.",
     "sellTitle": "Instant Sell-Back",
     "sellBody": "Sell this item? {rate} of market value — {amount} — is credited to your balance instantly.",
     "sellBodyMulti": "Sell {n} items? {rate} of market value — {amount} — is credited to your balance instantly.",
