@@ -7,6 +7,7 @@ import { cn } from "@/lib/format";
 import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
+import { useCanHover } from "@/lib/useCanHover";
 import { dropTable, type ProductBox, type ProductItem } from "@/lib/products";
 import { boxFloorTier, boxTopTier, formatMultiple, glow, tierBreakdown, tierOf, topMultiple } from "@/lib/tiers";
 import { TierStrip } from "@/components/box/TierStrip";
@@ -70,6 +71,7 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
   const tr = useTranslations();
   const { fmt } = useCurrency();
   const { boxTitle } = useProductText();
+  const canHover = useCanHover();
   const [hovered, setHovered] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
   const frameRef = useRef<HTMLDivElement>(null);
@@ -121,10 +123,10 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
   const royal = meta.topTier.key === "royal";
 
   return (
-    <div className={cn("relative", className)} style={{ zIndex: hovered ? 40 : 10 }} onMouseEnter={() => setHovered(true)} onMouseLeave={leave} onMouseMove={onMove}>
-      {/* 넷플릭스 오버사이즈 순위 숫자 — 카드 좌측 뒤편에 겹친다(약 절반이 카드에 가려짐). 고정 여백 없음 */}
+    <div className={cn("relative", className)} style={{ zIndex: hovered ? 40 : 10 }} onMouseEnter={() => canHover && setHovered(true)} onMouseLeave={leave} onMouseMove={onMove}>
+      {/* 넷플릭스 오버사이즈 순위 숫자 — 오른쪽 20% 가 카드 뒤로 들어간다(글리프 폭과 무관). 모바일은 여백·크기 축소 */}
       {typeof rank === "number" && (
-        <span aria-hidden className="rank-numeral pointer-events-none absolute bottom-1 left-0 z-0 -translate-x-[38%] font-display">
+        <span aria-hidden className="rank-numeral pointer-events-none absolute bottom-1 left-5 z-0 -translate-x-[80%] font-display sm:left-7">
           {rank}
         </span>
       )}
@@ -132,7 +134,7 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
       {/* 확대·틸트 그룹 — 카드 프레임과 플로팅 패널이 함께 움직인다. overflow 를 걸지 않아 패널이 바닥 밖으로 나온다 */}
       <motion.div
         ref={frameRef}
-        className={cn("relative", typeof rank === "number" && "ml-7")}
+        className={cn("relative", typeof rank === "number" && "ml-5 sm:ml-7")}
         style={{ transformOrigin: origin, transformPerspective: 900, rotateX, rotateY }}
         animate={{ scale: hovered ? HOVER_SCALE : 1 }}
         transition={{ type: "spring", stiffness: 260, damping: 24, mass: 0.7 }}

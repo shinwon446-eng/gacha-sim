@@ -157,12 +157,18 @@ body {
 
 /* 넷플릭스 오버사이즈 순위 숫자 — 메탈릭 스트로크 (CLAUDE.md §2-B-4) */
 .rank-numeral {
-  font-size: 8.5rem;
+  font-size: 6rem;
   line-height: 0.72;
   color: transparent;
-  -webkit-text-stroke: 2px #333333;
+  -webkit-text-stroke: 1.5px #333333;
   user-select: none;
   pointer-events: none;
+}
+@media (min-width: 640px) {
+  .rank-numeral {
+    font-size: 8.5rem;
+    -webkit-text-stroke: 2px #333333;
+  }
 }
 
 /* 라이브 드랍 티커 — 목록을 두 번 렌더하고 절반만큼 이동시켜 이음새 없는 무한 루프 */
