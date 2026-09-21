@@ -416,13 +416,13 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
                 {/* 데모: 전환 CTA 하나만 */}
                 {demo ? (
                   <div className="relative mt-5 grid gap-2">
-                    <p className="text-center text-sm font-semibold text-white">{t("trialCongrats", { item: itemName(last.item), n: tr("tiers.multiple", { n: formatMultiple(last.item.value / box.price) }) })}</p>
-                    <p className="text-center text-xs text-secondary">{t("trialBody", { bonus: fmt(WELCOME_BONUS_USDT) })}</p>
+                    <p className="break-keep text-center text-sm font-semibold leading-snug text-white">{t("trialCongrats", { item: itemName(last.item), n: tr("tiers.multiple", { n: formatMultiple(last.item.value / box.price) }) })}</p>
+                    <p className="break-keep text-center text-xs text-secondary">{t("trialBody", { bonus: fmt(WELCOME_BONUS_USDT) })}</p>
                     <button type="button" onClick={() => onDemoConvert?.(box)} className="mt-2 flex h-12 items-center justify-center gap-2 rounded-lg bg-crimson text-sm font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600">
                       <Play className="h-4 w-4 fill-current" strokeWidth={0} />
                       {welcomeClaimed ? t("trialCtaClaimed") : t("trialCta")}
                     </button>
-                    <p className="text-center text-[10px] text-faint">{t("trialNote")}</p>
+                    <p className="break-keep text-center text-[10px] leading-relaxed text-faint">{t("trialNote")}</p>
                     <button type="button" onClick={onClose} className="relative mt-1 h-10 w-full rounded-lg text-sm font-semibold text-muted transition-colors hover:text-white">
                       {t("close")}
                     </button>
