@@ -132,7 +132,7 @@ export function LiveTicker({ className }: { className?: string }) {
 
   return (
     <div className={cn("relative flex items-center overflow-hidden border-b border-hairline bg-obsidian/90 px-[4%] py-2 backdrop-blur-md", className)} aria-label={t("label")}>
-      <span className="z-10 flex flex-none items-center gap-1.5 pr-3 text-[10px] font-bold uppercase tracking-[0.18em] text-crimson">
+      <span className="z-10 hidden flex-none items-center gap-1.5 pr-3 text-[10px] font-bold uppercase tracking-[0.18em] text-crimson sm:flex">
         <span aria-hidden className="h-1.5 w-1.5 animate-pulse rounded-full bg-crimson" />
         {t("live")}
       </span>

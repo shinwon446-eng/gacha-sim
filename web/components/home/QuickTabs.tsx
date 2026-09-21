@@ -47,7 +47,7 @@ export function QuickTabs({ className }: { className?: string }) {
   }, []);
 
   return (
-    <nav className={cn("px-[4%]", className)} aria-label={t("all")}>
+    <nav className={cn("relative px-[4%]", className)} aria-label={t("all")}>
       <ul className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
         {TABS.map(({ key, anchor }) => {
           const on = activeCategory === key;
@@ -70,6 +70,8 @@ export function QuickTabs({ className }: { className?: string }) {
           );
         })}
       </ul>
+      {/* 모바일: 4번째 탭이 잘려 있다는 힌트 — 우측 페이드 */}
+      <span aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-canvas to-transparent sm:hidden" />
     </nav>
   );
 }

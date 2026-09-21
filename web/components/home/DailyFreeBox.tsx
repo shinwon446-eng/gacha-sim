@@ -64,14 +64,14 @@ export function DailyFreeBoxStrip({ onOpen, className }: { onOpen: () => void; c
         <span className="relative flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-gold-champagne/10 text-gold-champagne">
           <Gift className="h-5 w-5" strokeWidth={2} />
         </span>
-        <div className="relative min-w-0 flex-1">
+        <div className="relative min-w-[11rem] flex-1">
           <div className="text-sm font-bold text-white">{t("title")}</div>
           <div className="text-xs text-muted">{t("stripBody", { min: fmt(DAILY_MIN_USDT), max: fmt(DAILY_MAX_USDT) })}</div>
         </div>
         <button
           type="button"
           onClick={onOpen}
-          className={cn("relative flex h-10 items-center gap-2 whitespace-nowrap rounded-md px-4 text-sm font-bold transition-colors", ready ? "bg-gold-champagne text-obsidian hover:bg-gold-metallic" : "glass-dark text-secondary hover:text-white")}
+          className={cn("relative flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 text-sm font-bold transition-colors sm:w-auto", ready ? "bg-gold-champagne text-obsidian hover:bg-gold-metallic" : "glass-dark text-secondary hover:text-white")}
         >
           {ready ? <Sparkles className="h-4 w-4" strokeWidth={2.4} /> : <Clock className="h-4 w-4" strokeWidth={2.2} />}
           {ready ? t("openFree") : left !== null ? t("nextIn", { time: formatCountdown(left) }) : t("pill")}

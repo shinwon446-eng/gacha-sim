@@ -180,6 +180,10 @@ body {
   animation: ticker-scroll 48s linear infinite;
   will-change: transform;
 }
+/* 모바일: 읽을 수 있게 느리게 */
+@media (max-width: 639px) {
+  .ticker-track { animation-duration: 80s; }
+}
 .ticker-viewport:hover .ticker-track {
   animation-play-state: paused;
 }
