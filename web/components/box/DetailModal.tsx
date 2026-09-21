@@ -77,13 +77,13 @@ function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
               {t("marketValue")}
             </div>
             <div
-              className="font-display text-[15px] font-bold leading-none tracking-tight"
+              className="whitespace-nowrap font-display text-[13px] font-bold leading-none tracking-tight sm:text-[15px]"
               style={{ color: tier.accent }}
             >
               {fmt(item.value)}
             </div>
           </div>
-          <div className="text-right">
+          <div className="hidden text-right sm:block">
             <div className="text-[7px] font-semibold uppercase tracking-[0.16em] text-[#757575]">
               {t("tierLabel")}
             </div>
@@ -301,7 +301,6 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
             {/* ── ⚡ 전 품목 1클릭 95% USDT 즉시 정산 · 개인지갑 출금 보장 ── */}
             <section className="px-5 pt-5 md:px-9">
               <div className="flex items-start gap-3 rounded-lg border border-gold-champagne/50 bg-gold-champagne/[0.07] px-4 py-3 shadow-[0_0_16px_rgba(230,202,101,0.18)]">
-                <span aria-hidden className="text-lg leading-none">⚡</span>
                 <div className="min-w-0">
                   <div className="break-keep text-[13px] font-bold leading-snug text-gold-champagne">{t("modal.settleBadge")}</div>
                   <div className="mt-0.5 break-keep text-[11px] leading-relaxed text-secondary">{t("modal.settleBody")}</div>
@@ -317,9 +316,9 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
                   { label: t("modal.rtpLabel"), value: `${(meta.retail * 100).toFixed(1)}%`, tone: "#93C5FD" },
                   { label: t("modal.floorLabel"), value: t("modal.floorPct", { pct: meta.floorPct }), tone: "#E6CA65" },
                 ].map((x) => (
-                  <div key={x.label} className="rounded-lg border border-white/10 bg-obsidian px-3 py-3 text-center">
-                    <div className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#8A8A8A]">{x.label}</div>
-                    <div className="mt-1 font-display text-xl font-bold leading-none tracking-tight md:text-2xl" style={{ color: x.tone }}>{x.value}</div>
+                  <div key={x.label} className="min-w-0 rounded-lg border border-white/10 bg-obsidian px-2 py-3 text-center sm:px-3">
+                    <div className="truncate text-[9px] font-semibold uppercase tracking-[0.12em] text-[#8A8A8A] sm:tracking-[0.16em]">{x.label}</div>
+                    <div className="mt-1 whitespace-nowrap font-display text-lg font-bold leading-none tracking-tight sm:text-xl md:text-2xl" style={{ color: x.tone }}>{x.value}</div>
                   </div>
                 ))}
               </div>
@@ -373,8 +372,9 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
                       return (
                         <li key={item.id} className="flex items-center justify-between gap-3 py-1.5 text-[11px]">
                           <span className="min-w-0 flex-1 truncate text-secondary">{itemName(item)}</span>
-                          <span className="flex-none text-[9px] font-bold uppercase tracking-[0.12em]" style={{ color: tier.accent }}>{tier.gameLabel}</span>
-                          <span className="w-20 flex-none text-right font-mono tabular-nums text-white">{formatRate(item.dropRate)}</span>
+                          <span className="hidden flex-none text-[9px] font-bold uppercase tracking-[0.12em] sm:inline" style={{ color: tier.accent }}>{tier.gameLabel}</span>
+                          <span aria-hidden className="h-2 w-2 flex-none rounded-full sm:hidden" style={{ background: tier.accent, boxShadow: `0 0 6px ${glow(tier.accent, 0.6)}` }} />
+                          <span className="w-16 flex-none text-right font-mono tabular-nums text-white sm:w-20">{formatRate(item.dropRate)}</span>
                         </li>
                       );
                     })}

@@ -46,7 +46,7 @@ UI = {
       "settleBody": "실물·기프트카드는 실판매가의 95%를 1클릭에 USDT로, USDT 캐시백·인스턴트 드롭은 100%를 개봉 즉시 잔액에. 잔액은 TRC-20/BEP-20 개인지갑으로 출금됩니다.",
       
       "allPrizes": "전체 당첨 가능 상품", "count": "{n}종", "sortedByValue": "실판매가 내림차순",
-      "marketValue": "실판매가", "odds": "확률", "tierLabel": "등급", "tierBar": "등급 구성", "upToLabel": "최고 잭팟", "rtpLabel": "환수율 RTP", "floorLabel": "바닥 환급 보장", "floorPct": "최소 {pct}%", "preciseOddsLink": "공정성 검증 (Provably Fair)", "preciseOdds": "정밀 확률표 · Provably Fair", "expand": "펼치기", "collapse": "접기", "openVerifier": "3-Step 비주얼 검증기 열기", "imageCredits": "이미지 출처"
+      "marketValue": "실판매가", "odds": "확률", "tierLabel": "등급", "tierBar": "등급 구성", "upToLabel": "최고 잭팟", "rtpLabel": "환수율 RTP", "floorLabel": "바닥 환급", "floorPct": "최소 {pct}%", "preciseOddsLink": "공정성 검증 (Provably Fair)", "preciseOdds": "정밀 확률표 · Provably Fair", "expand": "펼치기", "collapse": "접기", "openVerifier": "3-Step 비주얼 검증기 열기", "imageCredits": "이미지 출처"
     },
     "fairness": {
       "title": "공정성 검증", "eyebrow": "Provably Fair · HMAC-SHA256",
@@ -253,7 +253,7 @@ UI = {
       "settleBody": "Physical items and gift cards cash out at 95% of market value in one click; USDT cashback and instant drops are credited at 100% on open. Balance withdraws to your TRC-20 / BEP-20 wallet.",
       
       "allPrizes": "All possible prizes", "count": "{n} items", "sortedByValue": "By market value, descending",
-      "marketValue": "Market value", "odds": "Odds", "tierLabel": "Tier", "tierBar": "Tier lineup", "upToLabel": "Top jackpot", "rtpLabel": "RTP", "floorLabel": "Floor value", "floorPct": "Min {pct}%", "preciseOddsLink": "Provably Fair", "preciseOdds": "Exact odds table · Provably Fair", "expand": "Expand", "collapse": "Collapse", "openVerifier": "Open the 3-step visual verifier", "imageCredits": "Image credits"
+      "marketValue": "Market value", "odds": "Odds", "tierLabel": "Tier", "tierBar": "Tier lineup", "upToLabel": "Top jackpot", "rtpLabel": "RTP", "floorLabel": "Floor", "floorPct": "Min {pct}%", "preciseOddsLink": "Provably Fair", "preciseOdds": "Exact odds table · Provably Fair", "expand": "Expand", "collapse": "Collapse", "openVerifier": "Open the 3-step visual verifier", "imageCredits": "Image credits"
     },
     "fairness": {
       "title": "Provably Fair", "eyebrow": "Provably Fair · HMAC-SHA256",
@@ -460,7 +460,7 @@ UI = {
       "settleBody": "实物与礼品卡可一键按市场价 95% 折现为 USDT；USDT 返现与即时到账在开箱时 100% 计入余额。余额可提现至 TRC-20 / BEP-20 个人钱包。",
       
       "allPrizes": "全部可得商品", "count": "{n} 件", "sortedByValue": "按市场价降序",
-      "marketValue": "市场价", "odds": "概率", "tierLabel": "等级", "tierBar": "等级构成", "upToLabel": "最高头奖", "rtpLabel": "返还率 RTP", "floorLabel": "保底返还", "floorPct": "最低 {pct}%", "preciseOddsLink": "公平性验证 (Provably Fair)", "preciseOdds": "精确概率表 · Provably Fair", "expand": "展开", "collapse": "收起", "openVerifier": "打开 3 步可视化验证器", "imageCredits": "图片来源"
+      "marketValue": "市场价", "odds": "概率", "tierLabel": "等级", "tierBar": "等级构成", "upToLabel": "最高头奖", "rtpLabel": "返还率 RTP", "floorLabel": "保底", "floorPct": "最低 {pct}%", "preciseOddsLink": "公平性验证 (Provably Fair)", "preciseOdds": "精确概率表 · Provably Fair", "expand": "展开", "collapse": "收起", "openVerifier": "打开 3 步可视化验证器", "imageCredits": "图片来源"
     },
     "fairness": {
       "title": "公平性验证", "eyebrow": "Provably Fair · HMAC-SHA256",

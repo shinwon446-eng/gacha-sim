@@ -120,7 +120,7 @@
     "tierBar": "등급 구성",
     "upToLabel": "최고 잭팟",
     "rtpLabel": "환수율 RTP",
-    "floorLabel": "바닥 환급 보장",
+    "floorLabel": "바닥 환급",
     "floorPct": "최소 {pct}%",
     "preciseOddsLink": "공정성 검증 (Provably Fair)",
     "preciseOdds": "정밀 확률표 · Provably Fair",

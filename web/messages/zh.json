@@ -120,7 +120,7 @@
     "tierBar": "等级构成",
     "upToLabel": "最高头奖",
     "rtpLabel": "返还率 RTP",
-    "floorLabel": "保底返还",
+    "floorLabel": "保底",
     "floorPct": "最低 {pct}%",
     "preciseOddsLink": "公平性验证 (Provably Fair)",
     "preciseOdds": "精确概率表 · Provably Fair",
