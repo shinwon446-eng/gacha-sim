@@ -123,8 +123,8 @@ UI = {
       "carriers": {"CJ": "CJ대한통운", "EPOST": "우체국택배", "DHL": "DHL", "FEDEX": "FedEx"},
       "steps": {"requested": "배송 신청 접수", "label": "운송장 발급", "transit": "운송 중", "delivered": "배송 완료"}, "stepCurrent": "현재 단계",
       "trackingNote": "출고가 완료되면 택배사와 운송장 번호가 여기에 표시되고, 실시간 배송조회 링크가 열립니다.", "trackingIssuedNote": "운송장이 발급되었습니다. {carrier} 공식 조회 페이지에서 실시간 배송 현황을 확인하세요.",
-      "sellTitle": "즉시 판매", "sellBody": "이 아이템을 판매하시겠습니까? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
-      "sellBodyMulti": "{n}개 아이템을 판매하시겠습니까? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
+      "sellTitle": "95% 즉시 회수", "sellBody": "이 아이템을 회수할까요? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
+      "sellBodyMulti": "{n}개 아이템을 회수할까요? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
       "confirm": "확인", "cancel": "취소", "soldToast": "판매 완료 — {amount} 잔액 반영",
       "shipTitle": "실물 배송 신청", "shipBody": "국제 배송비는 잔액에서 차감되며 수취국 관세·부가세는 수령 시 별도입니다.",
       "recipient": "수령인 이름", "country": "국가", "phone": "연락처", "postalCode": "우편번호", "address": "상세 주소",
@@ -215,7 +215,7 @@ UI = {
         {"h": "출금은 얼마나 걸리나요?", "p": "보안 검토 후 브로드캐스트되며, 완료되면 TxID와 TronScan/BscScan 링크가 표시됩니다."}
       ]}
     },
-    "actions": {"sellBack": "즉시 판매", "claimShipping": "실물 배송 신청", "provablyFair": "공정성 검증"},
+    "actions": {"sellBack": "95% 즉시 회수", "claimShipping": "집으로 배송", "provablyFair": "공정성 검증"},
     "legal": {"disclaimer": "표기 금액은 실판매가 기준입니다. 받은 실물을 즉시 현금으로 회수하면 실판매가의 {refund}를 돌려받으므로 회수액은 오픈 가격보다 낮습니다. 모든 확률은 [뭐 들어있는지 보기]에서 전량 공개됩니다."},
     "badges": {"dream": "드림 박스", "mobility": "모빌리티", "tech": "테크", "audio": "오디오", "watch": "워치", "luxury": "럭셔리", "lifestyle": "라이프스타일", "guaranteed": "가치 보장", "dollar": "1달러", "gold": "골드"},
   },
@@ -328,8 +328,8 @@ UI = {
       "carriers": {"CJ": "CJ Logistics", "EPOST": "Korea Post", "DHL": "DHL", "FEDEX": "FedEx"},
       "steps": {"requested": "Shipping requested", "label": "Label issued", "transit": "In transit", "delivered": "Delivered"}, "stepCurrent": "Current step",
       "trackingNote": "Once the parcel ships, the carrier and tracking number appear here with a live tracking link.", "trackingIssuedNote": "Your tracking number is issued. Follow the parcel live on the official {carrier} tracking page.",
-      "sellTitle": "Instant Sell-Back", "sellBody": "Sell this item? {rate} of market value — {amount} — is credited to your balance instantly.",
-      "sellBodyMulti": "Sell {n} items? {rate} of market value — {amount} — is credited to your balance instantly.",
+      "sellTitle": "95% Instant Cash-Out", "sellBody": "Cash out this item? {rate} of market value — {amount} — is credited to your balance instantly.",
+      "sellBodyMulti": "Cash out {n} items? {rate} of market value — {amount} — is credited to your balance instantly.",
       "confirm": "Confirm", "cancel": "Cancel", "soldToast": "Sold — {amount} credited",
       "shipTitle": "Claim Shipping", "shipBody": "International shipping is deducted from your balance. Destination duties and VAT are billed on delivery.",
       "recipient": "Recipient name", "country": "Country", "phone": "Phone", "postalCode": "Postal code", "address": "Street address",
@@ -420,7 +420,7 @@ UI = {
         {"h": "How long do withdrawals take?", "p": "They are broadcast after a security review; the TxID and TronScan/BscScan link appear once complete."}
       ]}
     },
-    "actions": {"sellBack": "Instant Sell-Back", "claimShipping": "Claim Shipping", "provablyFair": "Provably Fair"},
+    "actions": {"sellBack": "Cash out 95%", "claimShipping": "Ship to me", "provablyFair": "Provably Fair"},
     "legal": {"disclaimer": "Amounts shown are market value. Cashing out an item instantly pays {refund} of market value, so cash recovery is below the open price. Every probability is published in full under [See what's inside]."},
     "badges": {"dream": "Dream Box", "mobility": "Mobility", "tech": "Tech", "audio": "Audio", "watch": "Watches", "luxury": "Luxury", "lifestyle": "Lifestyle", "guaranteed": "Guaranteed", "dollar": "$1", "gold": "Gold"},
   },
@@ -533,7 +533,7 @@ UI = {
       "carriers": {"CJ": "CJ大韩通运", "EPOST": "韩国邮政", "DHL": "DHL", "FEDEX": "FedEx"},
       "steps": {"requested": "已受理发货申请", "label": "已出运单", "transit": "运输中", "delivered": "已签收"}, "stepCurrent": "当前环节",
       "trackingNote": "出库完成后，物流公司与运单号会显示在此，并开放实时查询链接。", "trackingIssuedNote": "运单已生成。可在 {carrier} 官方查询页面实时查看配送状态。",
-      "sellTitle": "即时回收", "sellBody": "确定回收该商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
+      "sellTitle": "95% 即时回收", "sellBody": "确定回收该商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
       "sellBodyMulti": "确定回收 {n} 件商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
       "confirm": "确认", "cancel": "取消", "soldToast": "已回收 — 余额 +{amount}",
       "shipTitle": "申请发货", "shipBody": "国际运费从余额中扣除，目的地关税与增值税在签收时另行支付。",
@@ -625,7 +625,7 @@ UI = {
         {"h": "提现需要多久？", "p": "经安全审核后广播，完成后显示 TxID 与 TronScan/BscScan 链接。"}
       ]}
     },
-    "actions": {"sellBack": "即时回收", "claimShipping": "申请发货", "provablyFair": "公平性验证"},
+    "actions": {"sellBack": "95% 即时回收", "claimShipping": "寄到家", "provablyFair": "公平性验证"},
     "legal": {"disclaimer": "所示金额均为市场价。即时折现按市场价的 {refund} 支付，因此现金回收额低于开启价。全部概率在「看看里面有什么」中完整公开。"},
     "badges": {"dream": "梦想盲盒", "mobility": "出行", "tech": "科技", "audio": "音频", "watch": "腕表", "luxury": "奢侈品", "lifestyle": "生活方式", "guaranteed": "保底", "dollar": "1 美元", "gold": "黄金"},
   },

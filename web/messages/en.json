@@ -342,9 +342,9 @@
     "stepCurrent": "Current step",
     "trackingNote": "Once the parcel ships, the carrier and tracking number appear here with a live tracking link.",
     "trackingIssuedNote": "Your tracking number is issued. Follow the parcel live on the official {carrier} tracking page.",
-    "sellTitle": "Instant Sell-Back",
-    "sellBody": "Sell this item? {rate} of market value — {amount} — is credited to your balance instantly.",
-    "sellBodyMulti": "Sell {n} items? {rate} of market value — {amount} — is credited to your balance instantly.",
+    "sellTitle": "95% Instant Cash-Out",
+    "sellBody": "Cash out this item? {rate} of market value — {amount} — is credited to your balance instantly.",
+    "sellBodyMulti": "Cash out {n} items? {rate} of market value — {amount} — is credited to your balance instantly.",
     "confirm": "Confirm",
     "cancel": "Cancel",
     "soldToast": "Sold — {amount} credited",
@@ -662,8 +662,8 @@
     }
   },
   "actions": {
-    "sellBack": "Instant Sell-Back",
-    "claimShipping": "Claim Shipping",
+    "sellBack": "Cash out 95%",
+    "claimShipping": "Ship to me",
     "provablyFair": "Provably Fair"
   },
   "legal": {

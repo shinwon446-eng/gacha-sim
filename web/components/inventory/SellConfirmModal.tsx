@@ -53,7 +53,7 @@ export function SellConfirmModal({ open, count, amountUsdt, refundRate, onClose,
               <Wallet className="h-5 w-5 text-gold-champagne" strokeWidth={2.2} />
               <h2 className="font-display text-xl font-bold uppercase tracking-tight text-white">{t("sellTitle")}</h2>
             </div>
-            <p className="mt-3 text-sm leading-relaxed text-secondary">
+            <p className="mt-3 break-keep text-sm leading-relaxed text-secondary">
               {count > 1 ? t("sellBodyMulti", { n: count, rate, amount: fmt(amountUsdt) }) : t("sellBody", { rate, amount: fmt(amountUsdt) })}
             </p>
             <div className="text-gold-gradient mt-4 text-center font-display text-3xl font-bold tabular-nums">{fmt(amountUsdt)}</div>
