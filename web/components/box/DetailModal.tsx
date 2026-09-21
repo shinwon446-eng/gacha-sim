@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
-import { X, Play, Percent } from "lucide-react";
+import { X, Play, Percent, Minus, Plus, RefreshCw } from "lucide-react";
 import {
   formatRate,
   dropTable,
@@ -29,6 +30,8 @@ import {
   type Tier,
 } from "@/lib/tiers";
 import { GameTierBar, TierBadge, TierLegend, TierStrip } from "@/components/box/TierStrip";
+import { AutoplaySettingsModal } from "@/components/unboxing/AutoplaySettingsModal";
+import { AUTOPLAY_SPINS, BULK_THRESHOLD, DEFAULT_AUTOPLAY, OPEN_PRESETS, type AutoplayConfig } from "@/lib/autoplay";
 import { Link } from "@/i18n/navigation";
 import { ProductArt } from "@/components/box/ProductArt";
 
@@ -36,6 +39,8 @@ export interface DetailModalProps {
   box: ProductBox | null;
   onClose: () => void;
   onOpen?: (box: ProductBox, count?: number) => void;
+  /** 오토플레이 시작 — 설정 모달에서 확정된 구성으로 */
+  onAutoplay?: (box: ProductBox, config: AutoplayConfig) => void;
 }
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -120,10 +125,21 @@ function Stat({ label, value, tone = "#FFFFFF" }: { label: string; value: string
  *   하단  에피소드 목록 자리에 "전체 당첨 가능 상품 그리드"
  *         → 등급 색 보더 + 실판매가 + 확률
  */
-export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
+export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalProps) {
   const t = useTranslations();
   const { fmt } = useCurrency();
   const { boxTitle, boxBadge, itemName } = useProductText();
+  // 수량 프리셋 [1x][5x][10x][50x][100x] · 오토플레이 [−][🔄 N회][+]
+  const [qty, setQty] = useState<number>(1);
+  const [autoIdx, setAutoIdx] = useState(0);
+  const [autoOpen, setAutoOpen] = useState(false);
+  const [autoCfg, setAutoCfg] = useState<AutoplayConfig>(DEFAULT_AUTOPLAY);
+  useEffect(() => {
+    if (!box) return;
+    setQty(1);
+    setAutoOpen(false);
+  }, [box]);
+  const autoSpins = AUTOPLAY_SPINS[autoIdx];
   const panelRef = useRef<HTMLDivElement>(null);
 
   // ESC 닫기 + 배경 스크롤 잠금
@@ -259,22 +275,48 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
                   {box.title}
                 </h2>
 
-                <div className="mt-4 flex flex-wrap items-center gap-2.5">
+                {/* 수량 프리셋 */}
+                <div className="mt-4 inline-flex items-center gap-1 rounded-md border border-white/15 bg-obsidian/70 p-1" role="radiogroup" aria-label={t("unbox.qty")}>
+                  {OPEN_PRESETS.map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      role="radio"
+                      aria-checked={qty === n}
+                      onClick={() => setQty(n)}
+                      className={cn("h-8 min-w-[2.75rem] rounded-sm px-2 font-mono text-[12px] font-bold transition-colors", qty === n ? "bg-gold-champagne text-obsidian" : "text-secondary hover:bg-white/10 hover:text-white")}
+                    >
+                      {n}x
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-3 flex flex-wrap items-center gap-2.5">
                   <button
                     type="button"
-                    onClick={() => onOpen?.(box, 1)}
+                    onClick={() => onOpen?.(box, qty)}
                     className="flex h-11 items-center gap-2 rounded-sm bg-crimson px-5 text-[14px] font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors duration-200 hover:bg-red-600"
                   >
                     <Play className="h-4 w-4 fill-current" strokeWidth={0} />
-                    {t("unbox.open1")} · {fmt(box.price)}
+                    {qty >= BULK_THRESHOLD ? t("unbox.openBulk", { n: qty }) : qty > 1 ? t("unbox.openN", { n: qty }) : t("unbox.open1")} · {fmt(box.price * qty)}
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => onOpen?.(box, 5)}
-                    className="border-metallic-gold flex h-11 items-center gap-2 rounded-sm bg-obsidian/70 px-4 text-[13px] font-bold text-gold-champagne transition-colors duration-200 hover:bg-gold-champagne/10"
-                  >
-                    {t("unbox.open5")} · {fmt(box.price * 5)}
-                  </button>
+
+                  {/* 프라그마틱 스타일 오토플레이 [−] [🔄 N회] [+] */}
+                  {onAutoplay && (
+                    <div className="flex h-11 items-center overflow-hidden rounded-sm border border-gold-champagne/50 bg-obsidian/70">
+                      <button type="button" aria-label="−" onClick={() => setAutoIdx((i) => Math.max(0, i - 1))} className="flex h-full w-9 items-center justify-center text-gold-champagne hover:bg-gold-champagne/10">
+                        <Minus className="h-4 w-4" strokeWidth={2.4} />
+                      </button>
+                      <button type="button" onClick={() => setAutoOpen(true)} className="flex h-full items-center gap-1.5 border-x border-gold-champagne/30 px-3 text-[13px] font-bold text-gold-champagne hover:bg-gold-champagne/10">
+                        <RefreshCw className="h-4 w-4" strokeWidth={2.4} />
+                        {t("autoplay.button", { n: Number.isFinite(autoSpins) ? String(autoSpins) : "∞" })}
+                      </button>
+                      <button type="button" aria-label="+" onClick={() => setAutoIdx((i) => Math.min(AUTOPLAY_SPINS.length - 1, i + 1))} className="flex h-full w-9 items-center justify-center text-gold-champagne hover:bg-gold-champagne/10">
+                        <Plus className="h-4 w-4" strokeWidth={2.4} />
+                      </button>
+                    </div>
+                  )}
+
                   <a
                     href="#provably-fair"
                     className="flex h-11 items-center gap-2 rounded-sm border border-white/25 bg-[#282828]/80 px-4 text-[13px] font-semibold text-white transition-colors duration-200 hover:border-white hover:bg-[#333333]"
@@ -409,6 +451,16 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
               </footer>
             )}
           </motion.div>
+          <AutoplaySettingsModal
+            box={autoOpen ? box : null}
+            initial={{ ...autoCfg, spins: autoSpins }}
+            onClose={() => setAutoOpen(false)}
+            onStart={(cfg) => {
+              setAutoCfg(cfg);
+              setAutoOpen(false);
+              onAutoplay?.(box, cfg);
+            }}
+          />
         </motion.div>
       )}
     </AnimatePresence>

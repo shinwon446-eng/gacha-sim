@@ -199,6 +199,21 @@
   "unbox": {
     "open1": "Open ×1",
     "open5": "Open ×5",
+    "openN": "Open ×{n}",
+    "openBulk": "Fast-open {n}",
+    "qty": "Quantity",
+    "autoStop": "⏹ Stop ({n} left)",
+    "autoSpent": "Spent",
+    "autoWon": "Won",
+    "autoNet": "Net",
+    "autoStopped": {
+      "spins": "Autoplay finished",
+      "jackpot": "👑 Jackpot hit — auto-stopped",
+      "multiple": "Target multiple reached — auto-stopped",
+      "stopLoss": "Stop-loss reached — auto-stopped",
+      "balance": "Insufficient balance — stopped",
+      "manual": "Stopped manually"
+    },
     "trialLabel": "Free try",
     "trialCongrats": "Nice hit — {item} ({n}) on your free try!",
     "trialBody": "Open real boxes with your {bonus} welcome bonus!",
@@ -208,7 +223,7 @@
     "spinning": "Opening…",
     "landing": "Result locked",
     "result": "You won",
-    "results": "5 results",
+    "results": "{n} results",
     "total": "Total value",
     "paid": "Paid {price}",
     "sellBack": "Cash out 95% · {amount}",
@@ -469,6 +484,38 @@
     "empty": "No reviews yet. Received your item? Post the first review and take the 10 USDT bonus.",
     "emptyCta": "Open a box",
     "close": "Close"
+  },
+  "splash": {
+    "slogan": "THE ULTRA-LUXURY PROVABLY FAIR VAULT",
+    "skip": "SKIP"
+  },
+  "autoplay": {
+    "eyebrow": "Autoplay",
+    "title": "Autoplay settings",
+    "close": "Close",
+    "perSpin": "spin",
+    "spins": "Number of spins",
+    "times": "{n}",
+    "budget": "Max stake {amount}",
+    "autoSell": "⚡ Auto cash out every win at 95% USDT (balance auto-refills)",
+    "autoSellBody": "Physical items and gift cards are cashed out at 95% of market value right away. USDT cashback is credited 100% as always.",
+    "smartStop": "Smart stop",
+    "stopJackpot": "👑 Stop on Epic / Legendary (jackpot) win",
+    "stopMultiple": "Stop on a single win of N× or more",
+    "multipleUnit": "× or more",
+    "stopLoss": "Stop when the loss limit is reached",
+    "stopLossUnit": "net loss",
+    "start": "🔄 Start autoplay · {n}",
+    "button": "🔄 Autoplay {n}"
+  },
+  "bulk": {
+    "eyebrow": "Bulk open · {n}",
+    "opening": "Fast-opening…",
+    "spent": "Total stake",
+    "won": "Total value won",
+    "net": "Net",
+    "sellAll": "⚡ Cash out {n} at 95%",
+    "keep": "Keep in vault"
   },
   "ticker": {
     "label": "Live drops",

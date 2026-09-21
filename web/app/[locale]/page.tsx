@@ -39,6 +39,8 @@ import { Link } from "@/i18n/navigation";
 import { Wallet, ArrowUpRight } from "lucide-react";
 import { useWalletStore, WELCOME_BONUS_USDT } from "@/stores/walletStore";
 import { UnboxingRoulette, type UnboxResult } from "@/components/unboxing/UnboxingRoulette";
+import { BulkOpenModal } from "@/components/unboxing/BulkOpenModal";
+import { BULK_THRESHOLD, type AutoplayConfig } from "@/lib/autoplay";
 import { DepositModal } from "@/components/wallet/DepositModal";
 import { WithdrawalModal } from "@/components/wallet/WithdrawalModal";
 import { Money } from "@/components/ui/Money";
@@ -60,7 +62,8 @@ export default function BoxesPage() {
   const [category, setCategory] = useState<BoxCategory | "all">("all");
   const [sort, setSort] = useState<SortKey>("featured");
   const [shown, setShown] = useState(PAGE_SIZE);
-  const [unbox, setUnbox] = useState<{ box: ProductBox; count: number; demo?: { itemId: string } } | null>(null);
+  const [unbox, setUnbox] = useState<{ box: ProductBox; count: number; demo?: { itemId: string }; auto?: AutoplayConfig } | null>(null);
+  const [bulk, setBulk] = useState<{ box: ProductBox; count: number } | null>(null);
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [dailyOpen, setDailyOpen] = useState(false);
@@ -88,7 +91,8 @@ export default function BoxesPage() {
       }
       addTransaction({ type: "open", amountUsdt: -cost, ref: `${box.slug}x${count}` });
       setDetail(null);
-      setUnbox({ box, count });
+      if (count >= BULK_THRESHOLD) setBulk({ box, count });
+      else setUnbox({ box, count });
     },
     [debit, addTransaction, pushToast, t, fmt],
   );
@@ -319,7 +323,8 @@ export default function BoxesPage() {
         <ProofFeed limit={4} showReserve={false} />
       </section>
 
-      <DetailModal box={detail} onClose={() => setDetail(null)} onOpen={openBox} />
+      <DetailModal box={detail} onClose={() => setDetail(null)} onOpen={openBox} onAutoplay={(b, cfg) => { setDetail(null); setUnbox({ box: b, count: 1, auto: cfg }); }} />
+      <BulkOpenModal box={bulk?.box ?? null} count={bulk?.count ?? 0} onClose={() => setBulk(null)} onSellBack={(ids, amount) => { credit(amount); addTransaction({ type: "sellback", amountUsdt: amount, ref: ids.join(",") }); pushToast({ title: t("unbox.sold", { amount: fmt(amount) }), tone: "#E6CA65" }); }} />
 
       <DepositModal
         open={depositOpen}
@@ -333,7 +338,7 @@ export default function BoxesPage() {
 
       <WithdrawalModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onRequested={(amount) => pushToast({ title: t("withdraw.requestedToast", { amount: fmt(amount) }), tone: "#E6CA65" })} />
 
-      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} demo={unbox?.demo} onDemoConvert={convertDemo} welcomeClaimed={welcomeClaimed} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} onRespin={(b) => { setUnbox(null); setTimeout(() => openBox(b, 1), 60); }} />
+      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} demo={unbox?.demo} onDemoConvert={convertDemo} welcomeClaimed={welcomeClaimed} auto={unbox?.auto} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} onRespin={(b) => { setUnbox(null); setTimeout(() => openBox(b, 1), 60); }} />
 
       {/* 토스트 */}
       <div className="pointer-events-none fixed bottom-4 right-4 z-[120] flex w-80 max-w-full flex-col gap-2">

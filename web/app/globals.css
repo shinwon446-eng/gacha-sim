@@ -360,3 +360,19 @@ body {
   border-radius: 1px;
   animation: confetti-fall var(--dur, 2.6s) ease-in var(--delay, 0s) 1 both;
 }
+
+/* ── 대량 개봉: 최고 등급 카드 3D 플로팅 + 골드 스파크 ───── */
+@keyframes bulk-float {
+  0%, 100% { transform: perspective(700px) rotateX(4deg) translateY(0); }
+  50% { transform: perspective(700px) rotateX(-3deg) translateY(-6px); }
+}
+.bulk-top {
+  animation: bulk-float 3.2s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+.bulk-spark {
+  background: linear-gradient(120deg, transparent 0%, rgba(255,247,214,0) 40%, rgba(255,247,214,0.55) 50%, rgba(230,202,101,0) 60%, transparent 100%);
+  background-size: 250% 100%;
+  animation: spark-sweep 1.4s linear infinite;
+  mix-blend-mode: screen;
+}

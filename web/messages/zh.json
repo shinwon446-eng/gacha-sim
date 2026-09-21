@@ -199,6 +199,21 @@
   "unbox": {
     "open1": "开启 ×1",
     "open5": "连续开启 ×5",
+    "openN": "连续开启 ×{n}",
+    "openBulk": "极速开启 {n} 个",
+    "qty": "开启数量",
+    "autoStop": "⏹ 停止（剩余 {n} 次）",
+    "autoSpent": "投入",
+    "autoWon": "获得",
+    "autoNet": "净损益",
+    "autoStopped": {
+      "spins": "自动旋转完成",
+      "jackpot": "👑 命中头奖 — 自动停止",
+      "multiple": "达到目标倍数 — 自动停止",
+      "stopLoss": "达到止损 — 自动停止",
+      "balance": "余额不足 — 停止",
+      "manual": "手动停止"
+    },
     "trialLabel": "免费过把瘾",
     "trialCongrats": "手感不错！免费试玩抽中 {item}（{n}）",
     "trialBody": "用 {bonus} 新人奖励开启真实盲盒吧！",
@@ -208,7 +223,7 @@
     "spinning": "开启中…",
     "landing": "结果已锁定",
     "result": "获得",
-    "results": "5 次结果",
+    "results": "{n} 次结果",
     "total": "总价值",
     "paid": "已支付 {price}",
     "sellBack": "95% 立即折现 · {amount}",
@@ -469,6 +484,38 @@
     "empty": "还没有晒单。收到实物了？发第一条晒单领取 10 USDT 奖励。",
     "emptyCta": "去开盲盒",
     "close": "关闭"
+  },
+  "splash": {
+    "slogan": "THE ULTRA-LUXURY PROVABLY FAIR VAULT",
+    "skip": "SKIP"
+  },
+  "autoplay": {
+    "eyebrow": "Autoplay",
+    "title": "自动旋转设置",
+    "close": "关闭",
+    "perSpin": "次",
+    "spins": "旋转次数",
+    "times": "{n} 次",
+    "budget": "最多投入 {amount}",
+    "autoSell": "⚡ 所有中奖品 95% USDT 即时自动折现（余额自动补充）",
+    "autoSellBody": "实物与礼品卡按市场价 95% 立即折现补充余额。USDT 返现一如既往 100% 即时计入。",
+    "smartStop": "智能停止条件",
+    "stopJackpot": "👑 命中史诗/传说（头奖）时立即停止",
+    "stopMultiple": "单次赢得 N 倍以上时停止",
+    "multipleUnit": "倍以上",
+    "stopLoss": "达到止损额度时停止",
+    "stopLossUnit": "累计亏损",
+    "start": "🔄 开始自动旋转 · {n} 次",
+    "button": "🔄 自动旋转 {n} 次"
+  },
+  "bulk": {
+    "eyebrow": "批量开启 · {n} 个",
+    "opening": "极速开启中…",
+    "spent": "总投入",
+    "won": "总获得价值",
+    "net": "净损益",
+    "sellAll": "⚡ {n} 件 95% 即时折现",
+    "keep": "留在仓库"
   },
   "ticker": {
     "label": "实时开箱动态",

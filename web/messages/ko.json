@@ -199,6 +199,21 @@
   "unbox": {
     "open1": "1회 오픈",
     "open5": "5회 연속 오픈",
+    "openN": "{n}회 연속 오픈",
+    "openBulk": "{n}개 고속 개봉",
+    "qty": "개봉 수량",
+    "autoStop": "⏹ 정지 (남은 {n}회)",
+    "autoSpent": "투입",
+    "autoWon": "획득",
+    "autoNet": "순손익",
+    "autoStopped": {
+      "spins": "오토플레이 완료",
+      "jackpot": "👑 잭팟 당첨 — 자동 정지",
+      "multiple": "목표 배수 달성 — 자동 정지",
+      "stopLoss": "손실 한도 도달 — 자동 정지",
+      "balance": "잔고 부족 — 정지",
+      "manual": "수동 정지"
+    },
     "trialLabel": "손맛 보기 · 무료 체험",
     "trialCongrats": "{item} ({n}) 손맛 적중!",
     "trialBody": "웰컴 보너스 {bonus} 받고 진짜로 열어보세요.",
@@ -208,7 +223,7 @@
     "spinning": "개봉 중…",
     "landing": "결과 확정",
     "result": "당첨",
-    "results": "5회 결과",
+    "results": "{n}회 결과",
     "total": "합계 가치",
     "paid": "지불 {price}",
     "sellBack": "95% 즉시 회수 · {amount}",
@@ -469,6 +484,38 @@
     "empty": "아직 게시된 후기가 없습니다. 실물을 받으셨다면 첫 후기를 남기고 10 USDT를 받아가세요.",
     "emptyCta": "박스 열러 가기",
     "close": "닫기"
+  },
+  "splash": {
+    "slogan": "THE ULTRA-LUXURY PROVABLY FAIR VAULT",
+    "skip": "SKIP"
+  },
+  "autoplay": {
+    "eyebrow": "Autoplay",
+    "title": "오토플레이 설정",
+    "close": "닫기",
+    "perSpin": "회",
+    "spins": "회전 수",
+    "times": "{n}회",
+    "budget": "최대 투입 {amount}",
+    "autoSell": "⚡ 모든 당첨품 95% USDT 즉시 자동 환전 (잔고 자동 재충전)",
+    "autoSellBody": "실물·기프트카드는 실판매가의 95%로 바로 회수해 잔고를 채웁니다. USDT 캐시백은 원래 100% 즉시 적립.",
+    "smartStop": "스마트 정지 조건",
+    "stopJackpot": "👑 에픽/레전더리(잭팟) 당첨 시 즉시 회전 멈춤",
+    "stopMultiple": "단일 승리 N배 이상 시 중단",
+    "multipleUnit": "배 이상",
+    "stopLoss": "손실 한도(Stop Loss) 도달 시 중단",
+    "stopLossUnit": "누적 손실",
+    "start": "🔄 오토플레이 시작 · {n}회",
+    "button": "🔄 오토플레이 {n}회"
+  },
+  "bulk": {
+    "eyebrow": "대량 개봉 · {n}개",
+    "opening": "고속 개봉 중…",
+    "spent": "총 투입 비용",
+    "won": "총 획득 가치",
+    "net": "순손익",
+    "sellAll": "⚡ {n}개 95% 즉시 회수",
+    "keep": "보관함에 두기"
   },
   "ticker": {
     "label": "실시간 라이브 드랍",

@@ -20,6 +20,8 @@ import { playChime } from "@/lib/audio";
 import { ProductArt } from "@/components/box/ProductArt";
 import { DetailModal } from "@/components/box/DetailModal";
 import { UnboxingRoulette, type UnboxResult } from "@/components/unboxing/UnboxingRoulette";
+import { BulkOpenModal } from "@/components/unboxing/BulkOpenModal";
+import { BULK_THRESHOLD, type AutoplayConfig } from "@/lib/autoplay";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import { CurrencySelector } from "@/components/layout/CurrencySelector";
 import { Money } from "@/components/ui/Money";
@@ -73,7 +75,8 @@ export default function InventoryPage() {
   const [track, setTrack] = useState<OwnedItem | null>(null);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [detail, setDetail] = useState<ProductBox | null>(null);
-  const [unbox, setUnbox] = useState<{ box: ProductBox; count: number } | null>(null);
+  const [unbox, setUnbox] = useState<{ box: ProductBox; count: number; auto?: AutoplayConfig } | null>(null);
+  const [bulk, setBulk] = useState<{ box: ProductBox; count: number } | null>(null);
   const [toast, setToast] = useState<{ id: number; text: string; tone: string } | null>(null);
 
   const summary = useMemo(() => summarize(items), [items]);
@@ -159,7 +162,8 @@ export default function InventoryPage() {
       }
       addTransaction({ type: "open", amountUsdt: -cost, ref: `${box.slug}x${count}` });
       setDetail(null);
-      setUnbox({ box, count });
+      if (count >= BULK_THRESHOLD) setBulk({ box, count });
+      else setUnbox({ box, count });
     },
     [debit, addTransaction, say, t, fmt],
   );
@@ -464,8 +468,9 @@ export default function InventoryPage() {
       <TrackingModal item={track} onClose={() => setTrack(null)} />
       <WithdrawalModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onRequested={(amount) => say(t("withdraw.requestedToast", { amount: fmt(amount) }), "#E6CA65")} />
       <VisualVerifyModal item={verify} onClose={() => setVerify(null)} />
-      <DetailModal box={detail} onClose={() => setDetail(null)} onOpen={openBox} />
-      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={() => say(t("inventory.shipRequestedToast"), "#93C5FD")} onRespin={(b) => { setUnbox(null); setTimeout(() => openBox(b, 1), 60); }} />
+      <DetailModal box={detail} onClose={() => setDetail(null)} onOpen={openBox} onAutoplay={(b, cfg) => { setDetail(null); setUnbox({ box: b, count: 1, auto: cfg }); }} />
+      <BulkOpenModal box={bulk?.box ?? null} count={bulk?.count ?? 0} onClose={() => setBulk(null)} onSellBack={(ids, amount) => { credit(amount); addTransaction({ type: "sellback", amountUsdt: amount, ref: ids.join(",") }); say(t("inventory.soldToast", { amount: fmt(amount) }), "#E6CA65"); }} />
+      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} auto={unbox?.auto} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={() => say(t("inventory.shipRequestedToast"), "#93C5FD")} onRespin={(b) => { setUnbox(null); setTimeout(() => openBox(b, 1), 60); }} />
 
       <AnimatePresence>
         {toast && (

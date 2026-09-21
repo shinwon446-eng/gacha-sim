@@ -4,6 +4,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { routing, type Locale } from "@/i18n/routing";
 import { LocaleHtmlLang } from "@/components/layout/LocaleHtmlLang";
 import { Footer } from "@/components/layout/Footer";
+import { SplashScreen } from "@/components/layout/SplashScreen";
 
 /** 정적 export — 세 로케일을 전부 미리 생성한다. 목록 밖 로케일은 404. */
 export function generateStaticParams() {
@@ -25,6 +26,7 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <LocaleHtmlLang locale={locale as Locale} />
+      <SplashScreen />
       {children}
       <Footer />
     </NextIntlClientProvider>

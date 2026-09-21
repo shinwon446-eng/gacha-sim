@@ -4,12 +4,13 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { AnimatePresence, animate, motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { MegaWinFX } from "@/components/unboxing/MegaWinFX";
 import { useTranslations } from "next-intl";
-import { Wallet, Truck, ShieldCheck, X, Volume2, VolumeX, Play } from "lucide-react";
+import { Wallet, Truck, ShieldCheck, X, Volume2, VolumeX, Play, Square } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
 import { dropTable, sellValueOf, REFUND_RATE, type ProductBox, type ProductItem } from "@/lib/products";
 import { formatMultiple, glow, tierOf, type Tier } from "@/lib/tiers";
+import { canAfford, netOf, remainingSpins, stopReasonAfter, type AutoplayConfig, type AutoplayState, type StopReason } from "@/lib/autoplay";
 import { calculateRollResult, determineItem } from "@/lib/fairness";
 import { REEL_DURATION_MULTI_S, REEL_DURATION_S, REEL_EASE, REEL_TARGET_INDEX, buildStrip, offsetForTarget, unitRandom } from "@/lib/reel";
 import { useFairStore } from "@/stores/fairStore";
@@ -29,6 +30,8 @@ export interface UnboxResult {
   ownedId?: string;
   /** USDT 캐시백·인스턴트 드롭 — 개봉 즉시 100% 잔액에 적립돼 회수·배송 대상이 아니다 */
   settled?: boolean;
+  /** 오토플레이 자동 환전액(USDT) — 있으면 이미 잔액에 반영됨 */
+  autoSold?: number;
   item: ProductItem;
   tier: Tier;
   roll: number;
@@ -50,6 +53,8 @@ export interface UnboxingRouletteProps {
   onShip: (results: UnboxResult[]) => void;
   /** 결과가 전부 USDT 캐시백일 때 [다시 돌리기] — 호출측이 같은 박스를 다시 연다 */
   onRespin?: (box: ProductBox) => void;
+  /** 오토플레이 — 스핀마다 가격을 차감하고 규칙(lib/autoplay)에 따라 멈춘다. count 는 무시된다 */
+  auto?: AutoplayConfig;
   /**
    * 무료 체험 모드 (CLAUDE.md §4-A). 지정 항목으로 결과를 고정하고 잔액·보관함·공정성 nonce 를 건드리지 않는다.
    * 결과 팝업은 전환 CTA(웰컴 보너스) 하나만 보여준다.
@@ -76,7 +81,7 @@ const GAP = 10;
  *   4. 정지: 등급색 플래시 + 승리 징글 → 결과 팝업(사진·등급·가치·시드·nonce)
  * 연출(3)은 결과(1)를 바꿀 수 없다. 5연속은 1~3 을 짧게 반복하고 마지막에 목록으로 보여준다.
  */
-export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRespin, demo, onDemoConvert, welcomeClaimed }: UnboxingRouletteProps) {
+export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRespin, auto, demo, onDemoConvert, welcomeClaimed }: UnboxingRouletteProps) {
   const t = useTranslations("unbox");
   const tr = useTranslations();
   const { fmt } = useCurrency();
@@ -92,6 +97,10 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
   const stripRef = useRef<ProductItem[]>([]);
   const [tension, setTension] = useState(false);
   const [mega, setMega] = useState<string | null>(null);
+  // 오토플레이 진행 상태 — 남은 회전 · 누적 투입/획득 · 정지 사유
+  const [autoState, setAutoState] = useState<AutoplayState>({ done: 0, spent: 0, won: 0 });
+  const [autoStop, setAutoStop] = useState<StopReason>(null);
+  const stopRef = useRef(false);
   const viewportRef = useRef<HTMLDivElement>(null);
   const viewportW = useRef(0);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -269,6 +278,41 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       if (cancelled.current) return;
       if (!muted) playTaDum();
       const out: UnboxResult[] = [];
+      if (auto) {
+        // ── 오토플레이: 스핀마다 차감 → 스핀 → (자동 환전) → 정지 규칙 ──
+        stopRef.current = false;
+        const st: AutoplayState = { done: 0, spent: 0, won: 0 };
+        setAutoState({ ...st });
+        setAutoStop(null);
+        let reason: StopReason = null;
+        while (!cancelled.current) {
+          if (stopRef.current) { reason = "manual"; break; }
+          if (!canAfford(useWalletStore.getState().balance, box.price)) { reason = "balance"; break; }
+          if (!debit(box.price)) { reason = "balance"; break; }
+          addTransaction({ type: "open", amountUsdt: -box.price, ref: `${box.slug}x1:auto` });
+          st.spent = +(st.spent + box.price).toFixed(2);
+          const r = await spinOnce(REEL_DURATION_MULTI_S);
+          if (cancelled.current) return;
+          st.done += 1;
+          st.won = +(st.won + r.item.value).toFixed(2);
+          if (auto.autoSell && !r.settled && r.ownedId) {
+            const { totalUsdt } = sellOwned([r.ownedId], REFUND_RATE);
+            credit(totalUsdt);
+            addTransaction({ type: "sellback", amountUsdt: totalUsdt, ref: `${r.item.id}:auto` });
+            r.settled = true;
+            r.autoSold = totalUsdt;
+          }
+          out.push(r);
+          setResults([...out]);
+          setAutoState({ ...st });
+          reason = stopReasonAfter(auto, st, { tier: r.tier.key, value: r.item.value }, box.price);
+          if (reason) break;
+          await new Promise((res) => setTimeout(res, 550));
+        }
+        setAutoStop(reason ?? "manual");
+        setPhase("results");
+        return;
+      }
       const n = Math.max(1, count);
       for (let i = 0; i < n; i++) {
         if (cancelled.current) return;
@@ -414,8 +458,28 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
             </motion.ul>
           </div>
 
+          {auto && phase !== "results" && (
+            <div className="mt-4 flex flex-col items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  stopRef.current = true;
+                }}
+                disabled={stopRef.current}
+                className="flex h-12 items-center gap-2 rounded-lg border border-crimson/60 bg-crimson/15 px-6 text-sm font-bold text-white shadow-[0_0_18px_rgba(229,9,20,0.3)] transition-colors hover:bg-crimson/30 disabled:opacity-60"
+              >
+                <Square className="h-4 w-4 fill-current" strokeWidth={0} />
+                {t("autoStop", { n: Number.isFinite(remainingSpins(auto, autoState.done)) ? String(remainingSpins(auto, autoState.done)) : "∞" })}
+              </button>
+              <div className="flex items-center gap-3 font-mono text-[11px] tabular-nums text-muted">
+                <span>{t("autoSpent")} <span className="text-white">{fmt(autoState.spent)}</span></span>
+                <span>{t("autoWon")} <span className="text-gold-champagne">{fmt(autoState.won)}</span></span>
+                <span className={netOf(autoState) >= 0 ? "text-tier-prestige" : "text-crimson"}>{netOf(autoState) >= 0 ? "+" : ""}{fmt(netOf(autoState))}</span>
+              </div>
+            </div>
+          )}
           <div className="mt-4 h-5 text-xs text-muted">
-            {phase === "spinning" && t("spinning")}
+            {phase === "spinning" && !auto && t("spinning")}
             {phase === "landed" && last && (
               <span style={{ color: last.tier.accent }} className="font-semibold">
                 {t("landing")} — {itemName(last.item)}
@@ -469,7 +533,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                   </div>
                 ) : (
                   <div className="relative">
-                    <div className="caption-luxury">{t("results")}</div>
+                    <div className="caption-luxury">{t("results", { n: results.length })}</div>
                     <ul className="mt-3 max-h-64 space-y-1.5 overflow-y-auto pr-1">
                       {results.map((r, i) => (
                         <li key={i} className="border-metallic-subtle flex items-center gap-3 rounded-md bg-surface p-2">
@@ -494,6 +558,12 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                       <Money value={totalValue} size="md" numberClassName="text-gold-gradient" />
                     </div>
                     <div className="text-right text-xs text-faint">{t("paid", { price: fmt(box.price * results.length) })}</div>
+                    {auto && (
+                      <div className={cn("mt-2 flex items-center justify-between rounded-md border px-3 py-2 text-xs", netOf(autoState) >= 0 ? "border-tier-prestige/40 bg-tier-prestige/10 text-tier-prestige" : "border-crimson/40 bg-crimson/10 text-crimson")}>
+                        <span className="font-semibold">{t(`autoStopped.${autoStop ?? "manual"}`)}</span>
+                        <span className="font-mono font-bold tabular-nums">{t("autoNet")} {netOf(autoState) >= 0 ? "+" : ""}{fmt(netOf(autoState))}</span>
+                      </div>
+                    )}
                   </div>
                 )}
 
