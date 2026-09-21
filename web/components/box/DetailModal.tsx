@@ -59,7 +59,7 @@ function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
       />
 
       <div className="relative aspect-[16/10] w-full overflow-hidden">
-        <ProductArt image={item.image} alt={itemName(item)} accent={tier.accent} glowStrength={0.28} fallbackSize="sm" />
+        <ProductArt image={item.image} alt={itemName(item)} accent={tier.accent} glowStrength={0.28} fallbackSize="sm" kind={item.kind} />
         <span className="absolute left-1.5 top-1.5">
           <TierBadge tier={tier} size="xs" />
         </span>
@@ -198,6 +198,7 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
                 accent={meta.top.accent}
                 glowStrength={0.2}
                 fallbackSize="lg"
+                bordered={false}
                 priority
                 className="absolute inset-0"
               />
@@ -294,8 +295,19 @@ export function DetailModal({ box, onClose, onOpen }: DetailModalProps) {
               <Stat label={t("modal.topMultiple")} value={t("tiers.multiple", { n: formatMultiple(meta.mult) })} tone={meta.top.accent} />
             </section>
 
-            {/* ── 등급 분포 ── */}
+            {/* ── ⚡ 전 품목 1클릭 95% USDT 즉시 정산 · 개인지갑 출금 보장 ── */}
             <section className="px-5 pt-5 md:px-9">
+              <div className="flex items-start gap-3 rounded-lg border border-gold-champagne/50 bg-gold-champagne/[0.07] px-4 py-3 shadow-[0_0_16px_rgba(230,202,101,0.18)]">
+                <span aria-hidden className="text-lg leading-none">⚡</span>
+                <div className="min-w-0">
+                  <div className="break-keep text-[13px] font-bold leading-snug text-gold-champagne">{t("modal.settleBadge")}</div>
+                  <div className="mt-0.5 break-keep text-[11px] leading-relaxed text-secondary">{t("modal.settleBody")}</div>
+                </div>
+              </div>
+            </section>
+
+            {/* ── 등급 분포 ── */}
+            <section className="px-5 md:px-9">
               <div className="flex items-baseline justify-between gap-3">
                 <h3 className="text-[13px] font-bold text-white">{t("modal.tierOdds")}</h3>
                 <span className="text-[11px] text-[#AAAAAA]">

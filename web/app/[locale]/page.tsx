@@ -333,7 +333,7 @@ export default function BoxesPage() {
 
       <WithdrawalModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onRequested={(amount) => pushToast({ title: t("withdraw.requestedToast", { amount: fmt(amount) }), tone: "#E6CA65" })} />
 
-      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} demo={unbox?.demo} onDemoConvert={convertDemo} welcomeClaimed={welcomeClaimed} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} />
+      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} demo={unbox?.demo} onDemoConvert={convertDemo} welcomeClaimed={welcomeClaimed} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} onRespin={(b) => { setUnbox(null); setTimeout(() => openBox(b, 1), 60); }} />
 
       {/* 토스트 */}
       <div className="pointer-events-none fixed bottom-4 right-4 z-[120] flex w-80 max-w-full flex-col gap-2">

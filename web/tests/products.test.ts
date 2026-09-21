@@ -27,8 +27,7 @@ import {
   RETAIL_RTP_MIN,
   RETAIL_RTP_MAX,
   FLOOR_CASH_MIN,
-  FLOOR_CASH_MAX,
-} from "../lib/products";
+  FLOOR_CASH_MAX, sellValueOf } from "../lib/products";
 import { formatCurrency } from "../lib/formatCurrency";
 
 test("박스 12종 이상, slug 고유", () => {
@@ -38,10 +37,27 @@ test("박스 12종 이상, slug 고유", () => {
   assert.equal(Object.keys(BOX_BY_SLUG).length, BOXES.length);
 });
 
-test("박스마다 항목 7종 이상, item id 전역 고유", () => {
-  for (const b of BOXES) assert.ok(b.items.length >= 7, `${b.slug}: 항목 ${b.items.length}종`);
-  const ids = BOXES.flatMap((b) => b.items.map((i) => i.id));
-  assert.equal(new Set(ids).size, ids.length, "item id 중복");
+test("박스마다 항목 7종 이상, item id 는 박스 안에서 고유 (기프트카드·캐시백은 박스 간 공유)", () => {
+  for (const b of BOXES) {
+    assert.ok(b.items.length >= 7, `${b.slug}: 항목 ${b.items.length}종`);
+    const ids = b.items.map((i) => i.id);
+    assert.equal(new Set(ids).size, ids.length, `${b.slug}: item id 중복`);
+  }
+});
+
+test("하이브리드 리워드: 바닥은 USDT 캐시백(100% 적립), 조잡한 저가 실물 꽝 없음, 중위권에 디지털 자산", () => {
+  const junk = /스티커|케이블 타이|키캡|필름|스탠드|NATO|파우치|워치 롤|다이캐스트|모델카|굿즈/;
+  for (const b of BOXES) {
+    const floor = b.items.reduce((m, i) => (i.value < m.value ? i : m), b.items[0]);
+    assert.equal(floor.kind, "cash", `${b.slug}: 바닥 ${floor.id}`);
+    assert.equal(sellValueOf(floor), floor.value, `${b.slug}: 캐시백은 100%`);
+    for (const i of b.items) assert.ok(!junk.test(i.name), `${b.slug}: 저가 실물 꽝 ${i.name}`);
+    for (const i of b.items.filter((x) => x.kind !== "cash")) assert.equal(sellValueOf(i), +(i.value * REFUND_RATE).toFixed(2), i.id);
+  }
+  const digital = new Set(BOXES.flatMap((b) => b.items.filter((i) => i.kind === "digital").map((i) => i.id)));
+  for (const id of ["gc-apple100", "gc-apple500", "gc-amazon100", "gc-steam50"]) assert.ok(digital.has(id), id);
+  const drops = new Set(BOXES.flatMap((b) => b.items.filter((i) => i.kind === "cash" && i.value >= 50).map((i) => i.id)));
+  for (const id of ["usdt-50", "usdt-100"]) assert.ok(drops.has(id), id);
 });
 
 test("드롭 확률 합계는 박스마다 정확히 100", () => {
@@ -104,7 +120,7 @@ test("바닥 보장: 최저 구성 즉시 환전액이 가격의 80~96%", () => 
   for (const b of BOXES) {
     const r = floorRatio(b);
     assert.ok(r >= FLOOR_CASH_MIN && r <= FLOOR_CASH_MAX, `${b.slug}: 바닥 ${(r * 100).toFixed(1)}%`);
-    assert.equal(floorCash(b), +(b.guaranteedMin * REFUND_RATE).toFixed(2));
+    assert.equal(floorCash(b), +b.guaranteedMin.toFixed(2)); // 바닥은 USDT 캐시백 — 100% 적립
     assert.ok(isValueGuaranteed(b), b.slug);
   }
   // 스펙 예시: 1달러 박스 0.85 USDT, 100달러 잭팟 95 USDT

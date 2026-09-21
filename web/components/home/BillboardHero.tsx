@@ -79,7 +79,7 @@ export function BillboardHero({ boxes, onOpen, onInspect, onDemo, intervalMs = 9
           >
             {/* 플로팅 — 페데스탈 위 부유 */}
             <motion.div className="absolute inset-0" animate={{ y: [0, -10, 0] }} transition={{ duration: 6, ease: "easeInOut", repeat: Infinity }}>
-              <ProductArt image={box.image} alt={boxTitle(box)} accent={top.accent} glowStrength={0.3} fallbackSize="lg" priority />
+              <ProductArt image={box.image} alt={boxTitle(box)} accent={top.accent} glowStrength={0.3} fallbackSize="lg" bordered={false} priority />
             </motion.div>
           </motion.div>
         </AnimatePresence>

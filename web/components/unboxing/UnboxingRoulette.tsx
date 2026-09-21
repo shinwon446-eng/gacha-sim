@@ -7,7 +7,7 @@ import { Wallet, Truck, ShieldCheck, X, Volume2, VolumeX, Play } from "lucide-re
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
-import { dropTable, REFUND_RATE, type ProductBox, type ProductItem } from "@/lib/products";
+import { dropTable, sellValueOf, REFUND_RATE, type ProductBox, type ProductItem } from "@/lib/products";
 import { formatMultiple, glow, tierOf, type Tier } from "@/lib/tiers";
 import { calculateRollResult, determineItem } from "@/lib/fairness";
 import { REEL_DURATION_MULTI_S, REEL_DURATION_S, REEL_EASE, REEL_TARGET_INDEX, buildStrip, offsetForTarget, unitRandom } from "@/lib/reel";
@@ -26,6 +26,8 @@ import { Link } from "@/i18n/navigation";
 export interface UnboxResult {
   /** 보관함 레코드 id — 결과 확정 시 부여 */
   ownedId?: string;
+  /** USDT 캐시백·인스턴트 드롭 — 개봉 즉시 100% 잔액에 적립돼 회수·배송 대상이 아니다 */
+  settled?: boolean;
   item: ProductItem;
   tier: Tier;
   roll: number;
@@ -45,6 +47,8 @@ export interface UnboxingRouletteProps {
   onSellBack: (results: UnboxResult[], amountUsdt: number) => void;
   /** 배송 신청 완료 — 호출측이 토스트를 띄운다 (배송비 차감·상태 전환은 여기서) */
   onShip: (results: UnboxResult[]) => void;
+  /** 결과가 전부 USDT 캐시백일 때 [다시 돌리기] — 호출측이 같은 박스를 다시 연다 */
+  onRespin?: (box: ProductBox) => void;
   /**
    * 무료 체험 모드 (CLAUDE.md §4-A). 지정 항목으로 결과를 고정하고 잔액·보관함·공정성 nonce 를 건드리지 않는다.
    * 결과 팝업은 전환 CTA(웰컴 보너스) 하나만 보여준다.
@@ -71,7 +75,7 @@ const GAP = 10;
  *   4. 정지: 등급색 플래시 + 승리 징글 → 결과 팝업(사진·등급·가치·시드·nonce)
  * 연출(3)은 결과(1)를 바꿀 수 없다. 5연속은 1~3 을 짧게 반복하고 마지막에 목록으로 보여준다.
  */
-export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo, onDemoConvert, welcomeClaimed }: UnboxingRouletteProps) {
+export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRespin, demo, onDemoConvert, welcomeClaimed }: UnboxingRouletteProps) {
   const t = useTranslations("unbox");
   const tr = useTranslations();
   const { fmt } = useCurrency();
@@ -99,6 +103,8 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
   const requestShipping = useInventoryStore((s) => s.requestShipping);
   const balance = useWalletStore((s) => s.balance);
   const debit = useWalletStore((s) => s.debit);
+  const credit = useWalletStore((s) => s.credit);
+  const addTransaction = useWalletStore((s) => s.addTransaction);
   const tickIndex = useRef(-1);
   const rafRef = useRef<number | null>(null);
   const cancelled = useRef(false);
@@ -165,6 +171,13 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
           fair: { serverSeedHash, serverSeed, clientSeed, nonce, roll: r.roll },
         };
         res.ownedId = addOwned([rec])[0].id;
+        if (item.kind === "cash") {
+          // USDT 캐시백·인스턴트 드롭: 보관함 레코드는 공정성 기록용으로 남기고(환전 완료 상태) 금액은 100% 즉시 잔액에
+          const { totalUsdt } = sellOwned([res.ownedId], 1);
+          credit(totalUsdt);
+          addTransaction({ type: "sellback", amountUsdt: totalUsdt, ref: `${box.slug}:${item.id}:cashback` });
+          res.settled = true;
+        }
       }
 
       // 2. 스트립
@@ -189,7 +202,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
       setTimeout(() => setFlash(null), 600);
       return res;
     },
-    [box, items, fair, controls, startTicks, addOwned, demo],
+    [box, items, fair, controls, startTicks, addOwned, sellOwned, credit, addTransaction, demo],
   );
 
   // 오픈 시작 — box 가 들어오면 한 번. 리사이즈는 스핀을 취소하지 않는다.
@@ -249,7 +262,10 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
   if (!box) return null;
 
   const totalValue = results.reduce((s, r) => s + r.item.value, 0);
-  const sellAmount = +(totalValue * REFUND_RATE).toFixed(2);
+  const pending = results.filter((r) => !r.settled);
+  const settledAmount = +results.filter((r) => r.settled).reduce((s, r) => s + r.item.value, 0).toFixed(2);
+  const sellAmount = +pending.reduce((s, r) => s + sellValueOf(r.item), 0).toFixed(2);
+  const allSettled = results.length > 0 && pending.length === 0;
   const last = results[results.length - 1] ?? current;
 
   return (
@@ -327,7 +343,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
                   >
                     <span aria-hidden className="absolute inset-x-0 top-0 z-10 h-0.5" style={{ background: tier.accent, boxShadow: `0 0 8px ${glow(tier.accent, 0.6)}` }} />
                     <div className="relative" style={{ height: TILE_W - 24 }}>
-                      <ProductArt image={it.image} alt="" accent={tier.accent} glowStrength={0.22} fallbackSize="sm" />
+                      <ProductArt image={it.image} alt="" accent={tier.accent} glowStrength={0.22} fallbackSize="sm" kind={it.kind} />
                     </div>
                     <div className="px-2 py-1.5">
                       <div className="truncate text-[10px] leading-tight text-white">{itemName(it)}</div>
@@ -375,13 +391,18 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
                       {last.tier.label} · {t("result")}
                     </div>
                     <div className="relative mx-auto mt-3 overflow-hidden rounded-xl" style={{ width: 240, height: 200 }}>
-                      <ProductArt image={last.item.image} alt={itemName(last.item)} accent={last.tier.accent} glowStrength={0.4} fallbackSize="md" priority />
+                      <ProductArt image={last.item.image} alt={itemName(last.item)} accent={last.tier.accent} kind={last.item.kind} glowStrength={0.4} fallbackSize="md" priority />
                     </div>
                     <h2 className="mt-4 text-2xl font-bold text-white">{itemName(last.item)}</h2>
                     <div className="mt-1">
                       <Money value={last.item.value} size="lg" numberClassName="text-gold-gradient" />
                     </div>
                     {!demo && <div className="mt-1 text-xs text-faint">{t("paid", { price: fmt(box.price) })}</div>}
+                    {last.settled && (
+                      <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-gold-champagne/50 bg-gold-champagne/10 px-3 py-1 text-xs font-bold text-gold-champagne">
+                        ⚡ {t("cashCredited", { amount: fmt(last.item.value) })}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="relative">
@@ -390,7 +411,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
                       {results.map((r, i) => (
                         <li key={i} className="border-metallic-subtle flex items-center gap-3 rounded-md bg-surface p-2">
                           <div className="relative h-12 w-14 flex-none overflow-hidden rounded">
-                            <ProductArt image={r.item.image} alt="" accent={r.tier.accent} glowStrength={0.25} fallbackSize="sm" />
+                            <ProductArt image={r.item.image} alt="" accent={r.tier.accent} glowStrength={0.25} kind={r.item.kind} fallbackSize="sm" />
                           </div>
                           <span className="caption-luxury w-20 flex-none" style={{ color: r.tier.accent }}>
                             {r.tier.label}
@@ -429,33 +450,58 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
                   </div>
                 ) : (
                 <>
-                {/* 액션 */}
+                {/* 액션 — 즉시 회수와 집으로 배송을 같은 비중으로 */}
                 <div className="relative mt-5 grid gap-2">
-                  <button
-                    type="button"
-                    disabled={sold || shipped}
-                    onClick={() => {
-                      setSold(true);
-                      const ids = results.map((r) => r.ownedId).filter((x): x is string => !!x);
-                      const { totalUsdt } = sellOwned(ids, REFUND_RATE);
-                      onSellBack(results, totalUsdt || sellAmount);
-                    }}
-                    className="flex h-12 items-center justify-center gap-2 rounded-lg bg-gold-champagne text-sm font-bold text-obsidian transition-colors hover:bg-gold-metallic disabled:opacity-50"
-                  >
-                    <Wallet className="h-4 w-4" strokeWidth={2.2} />
-                    {results.length === 1 ? t("sellBack", { amount: fmt(sellAmount) }) : t("sellBackAll", { amount: fmt(sellAmount) })}
+                  {settledAmount > 0 && results.length > 1 && (
+                    <p className="break-keep text-center text-[11px] font-semibold text-gold-champagne">⚡ {t("cashCredited", { amount: fmt(settledAmount) })}</p>
+                  )}
+                  {allSettled ? (
+                    <button
+                      type="button"
+                      onClick={() => onRespin?.(box)}
+                      disabled={!onRespin}
+                      className="flex h-12 items-center justify-center gap-2 rounded-lg bg-crimson text-sm font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600 disabled:opacity-50"
+                    >
+                      <Play className="h-4 w-4 fill-current" strokeWidth={0} />
+                      {t("respin", { price: fmt(box.price) })}
+                    </button>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        disabled={sold || shipped}
+                        onClick={() => {
+                          setSold(true);
+                          const ids = pending.map((r) => r.ownedId).filter((x): x is string => !!x);
+                          const { totalUsdt } = sellOwned(ids, REFUND_RATE);
+                          onSellBack(pending, totalUsdt || sellAmount);
+                        }}
+                        className="flex h-14 flex-col items-center justify-center rounded-lg bg-gold-champagne px-2 text-obsidian transition-colors hover:bg-gold-metallic disabled:opacity-50"
+                      >
+                        <span className="flex items-center gap-1.5 text-sm font-bold leading-none">
+                          <Wallet className="h-4 w-4" strokeWidth={2.2} />
+                          {t("cashoutCta")}
+                        </span>
+                        <span className="mt-1 font-mono text-[11px] font-bold leading-none tabular-nums">{fmt(sellAmount)} · {t("noFee")}</span>
+                      </button>
+                      <button
+                        type="button"
+                        disabled={sold || shipped}
+                        onClick={() => setShipOpen(true)}
+                        className="glass flex h-14 flex-col items-center justify-center rounded-lg px-2 text-white hover:bg-white/15 disabled:opacity-50"
+                      >
+                        <span className="flex items-center gap-1.5 text-sm font-bold leading-none">
+                          <Truck className="h-4 w-4" strokeWidth={2} />
+                          {t("claimShipping")}
+                        </span>
+                        <span className="mt-1 text-[11px] leading-none text-secondary">{t("shipSub")}</span>
+                      </button>
+                    </div>
+                  )}
+                  <button type="button" disabled={!last?.ownedId} onClick={() => last?.ownedId && setVerifyId(last.ownedId)} className="glass-dark flex h-10 items-center justify-center gap-2 rounded-lg text-xs font-semibold text-gold-champagne hover:border-gold-champagne disabled:opacity-50">
+                    <ShieldCheck className="h-4 w-4" strokeWidth={2.2} />
+                    {t("verify")}
                   </button>
-                  <p className="text-center text-[10px] text-faint">{t("sellBackNote", { rate: `${Math.round(REFUND_RATE * 100)}%` })}</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button type="button" disabled={sold || shipped} onClick={() => setShipOpen(true)} className="glass flex h-11 items-center justify-center gap-2 rounded-lg text-sm font-semibold text-white hover:bg-white/15 disabled:opacity-50">
-                      <Truck className="h-4 w-4" strokeWidth={2} />
-                      {t("claimShipping")}
-                    </button>
-                    <button type="button" disabled={!last?.ownedId} onClick={() => last?.ownedId && setVerifyId(last.ownedId)} className="glass-dark flex h-11 items-center justify-center gap-2 rounded-lg text-sm font-semibold text-gold-champagne hover:border-gold-champagne disabled:opacity-50">
-                      <ShieldCheck className="h-4 w-4" strokeWidth={2.2} />
-                      {t("verify")}
-                    </button>
-                  </div>
                 </div>
 
                 {/* 공정성 메타 */}

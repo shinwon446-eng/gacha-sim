@@ -5,7 +5,8 @@
  *   · 가격은 스펙에 명시한다(1 / 3 / 5 / 20 / 25 / 30 / 50 / 100 USDT). 확률표에서 EV 를 계산해 빌더가 밴드를 검증한다.
  *   · 정가 기준 환원율 retailRTP = EV / price ∈ [0.93, 1/REFUND_RATE) — 스펙 94~96%, 바닥이 가격에 붙은 잭팟 박스는 100% 를 조금 넘는다.
  *     상한이 1/0.95 미만이므로 현금 환산(× REFUND_RATE)은 항상 price 미만 — 무위험 차익 없음. 하우스 엣지(현금 기준) ≈ 4~12%.
- *   · 바닥 가치 보장: 최저 구성의 즉시 환전액(guaranteedMin × 0.95)이 가격의 80~96% 사이. "꽝이어도 N USDT 는 돌아온다"가 참이 되는 조건.
+ *   · 바닥 가치 보장: 모든 박스의 바닥 등급은 "N USDT 즉시 캐시백"(kind=cash, 100% 적립)이며 가격의 80~96%. "꽝이어도 N USDT 는 돌아온다"가 참이 되는 조건.
+ *   · 하이브리드 리워드: 상위는 실물, 중위는 배송·관세 없는 글로벌 디지털 자산(기프트카드 · USDT 인스턴트 드롭), 바닥은 USDT 캐시백. 조잡한 저가 실물 꽝은 없다.
  *   · 금액은 USDT 소수 둘째 자리까지. 표기는 lib/formatCurrency 만 통과한다.
  *
  * 이미지 — 이 파일에 URL 을 쓰지 않는다. lib/productImages.ts 가 유일한 경로 원천이다.
@@ -39,11 +40,19 @@ export const SORTS: { key: SortKey; label: string }[] = [
   { key: "popularity", label: "인기순" },
 ];
 
+/**
+ * physical — 실물(배송 또는 95% 즉시 회수)
+ * digital  — 글로벌 디지털 자산(기프트카드 코드 발송 또는 95% 즉시 회수, 배송·관세 없음)
+ * cash     — USDT 즉시 캐시백. 개봉 즉시 100% 잔액에 적립된다(보관함을 거치지 않음)
+ */
+export type ItemKind = "physical" | "digital" | "cash";
+
 export interface ProductItem {
   id: string;
   name: string;
   nameEn: string;
-  /** 실판매가(USDT, 소수 둘째 자리까지) */
+  kind: ItemKind;
+  /** 실판매가(USDT, 소수 둘째 자리까지). cash 는 적립 금액 그 자체 */
   value: number;
   /** 드롭 확률(%). 박스 내 합계 100 */
   dropRate: number;
@@ -85,7 +94,7 @@ const T = {
 /** 마지막 항목에 지정하면 잔여 확률을 자동으로 흡수한다. */
 const REST = -1;
 
-type ItemSpec = [id: string, name: string, nameEn: string, value: number, dropRate: number, code: string, tone: string];
+type ItemSpec = [id: string, name: string, nameEn: string, value: number, dropRate: number, code: string, tone: string, kind?: ItemKind];
 
 interface BoxSpec {
   slug: string;
@@ -111,6 +120,10 @@ export const RETAIL_RTP_MAX = 1 / REFUND_RATE;
 export const FLOOR_CASH_MIN = 0.8;
 export const FLOOR_CASH_MAX = 0.96;
 
+/** 즉시 회수액(USDT) — 실물·디지털은 실판매가의 95%, USDT 캐시백은 100% */
+export const sellValueOf = (item: Pick<ProductItem, "kind" | "value">): number => +(item.kind === "cash" ? item.value : item.value * REFUND_RATE).toFixed(2);
+export const isCashItem = (item: Pick<ProductItem, "kind">): boolean => item.kind === "cash";
+
 const violations: string[] = [];
 const cents = (n: number) => Math.abs(n * 100 - Math.round(n * 100)) < 1e-9;
 
@@ -124,22 +137,25 @@ function buildBox(spec: BoxSpec): ProductBox {
   if (restCount === 0 && Math.abs(sum - 100) > 1e-9) throw new Error(`${spec.slug}: 확률 합 ${sum}`);
   if (!cents(spec.price)) throw new Error(`${spec.slug}: price 는 소수 둘째 자리까지 (${spec.price})`);
 
-  const items: ProductItem[] = spec.items.map(([id, name, nameEn, value, dropRate, code, tone]) => {
+  const items: ProductItem[] = spec.items.map(([id, name, nameEn, value, dropRate, code, tone, kind = "physical"]) => {
     if (!cents(value)) throw new Error(`${id}: value 는 소수 둘째 자리까지 (${value})`);
     const image = imageFor(id);
-    return { id, name, nameEn, value, dropRate: dropRate === REST ? rest : dropRate, code, tone, image, imageUrl: image.src };
+    return { id, name, nameEn, kind, value, dropRate: dropRate === REST ? rest : dropRate, code, tone, image, imageUrl: image.src };
   });
+  const floor = items.reduce((m, i) => (i.value < m.value ? i : m), items[0]);
+  if (floor.kind !== "cash") throw new Error(`${spec.slug}: 바닥 등급은 USDT 즉시 캐시백이어야 한다 (${floor.id})`);
 
   const ev = items.reduce((s, i) => s + (i.value * i.dropRate) / 100, 0);
-  const guaranteedMin = Math.min(...items.map((i) => i.value));
+  const cashEv = items.reduce((s, i) => s + (sellValueOf(i) * i.dropRate) / 100, 0);
+  const guaranteedMin = floor.value;
   const price = spec.price;
   const retailRtp = ev / price;
-  const floorCash = (guaranteedMin * REFUND_RATE) / price;
+  const floorCash = sellValueOf(floor) / price;
 
   if (retailRtp < RETAIL_RTP_MIN || retailRtp >= RETAIL_RTP_MAX) {
     violations.push(`${spec.slug}: 정가 환원율 ${(retailRtp * 100).toFixed(2)}% 가 밴드[${RETAIL_RTP_MIN * 100}, ${(RETAIL_RTP_MAX * 100).toFixed(2)}) 밖 (EV ${ev.toFixed(4)})`);
   }
-  if (ev * REFUND_RATE >= price) violations.push(`${spec.slug}: 현금 기대값 ${(ev * REFUND_RATE).toFixed(2)} >= 가격 ${price} — 무위험 차익`);
+  if (cashEv >= price) violations.push(`${spec.slug}: 현금 기대값 ${cashEv.toFixed(2)} >= 가격 ${price} — 무위험 차익`);
   if (floorCash < FLOOR_CASH_MIN || floorCash > FLOOR_CASH_MAX) {
     violations.push(`${spec.slug}: 바닥 환전액 ${(floorCash * 100).toFixed(1)}% 가 밴드[${FLOOR_CASH_MIN * 100}, ${FLOOR_CASH_MAX * 100}] 밖 (최저 ${guaranteedMin})`);
   }
@@ -175,7 +191,7 @@ const SPECS: BoxSpec[] = [
     code: "DAP",
     tone: T.graphite,
     badge: "1달러",
-    tagline: "1달러로 아이폰 16 프로. 꽝이면 0.85 USDT 환급.",
+    tagline: "1달러로 아이폰 16 프로. 꽝이면 0.85 USDT 즉시 캐시백.",
     price: 1,
     trendingRank: 1,
     releasedAt: "2026-09-18",
@@ -184,10 +200,10 @@ const SPECS: BoxSpec[] = [
       ["da-iphone16", "아이폰 16 프로 256GB", "iPhone 16 Pro 256GB", 1000, 0.0005, "IP16P", T.graphite],
       ["aud-airpods", "에어팟 맥스 USB-C", "AirPods Max USB-C", 549, 0.001, "APMX", T.slate],
       ["da-watchse", "애플워치 SE 3", "Apple Watch SE 3", 249, 0.002, "AWSE", T.slate],
-      ["da-airpods4", "에어팟 4 ANC", "AirPods 4 ANC", 129, 0.01, "APD4", T.slate],
-      ["da-magsafe", "맥세이프 충전기 25W", "MagSafe Charger 25W", 39, 0.02, "MGSF", T.coal],
-      ["da-cable", "애플 USB-C 충전 케이블 1m", "Apple USB-C Cable 1m", 19, 0.05, "APCB", T.coal],
-      ["da-sticker", "애플 스티커 팩 + 케이블 타이", "Apple Sticker Pack + Cable Tie", 0.9, REST, "STKR", T.coal],
+      ["da-airpods4", "에어팟 4 ANC", "AirPods 4 ANC", 129, 0.012, "APD4", T.slate],
+      ["gc-apple100", "애플 기프트카드 $100", "Apple Gift Card $100", 100, 0.035, "AGC1", T.coal, "digital"],
+      ["usdt-50", "50 USDT 인스턴트 드롭", "50 USDT Instant Drop", 50, 0.05, "U50", T.coal, "cash"],
+      ["cb-085", "0.85 USDT 즉시 캐시백", "0.85 USDT Instant Cashback", 0.85, REST, "CB85", T.coal, "cash"],
     ],
   },
   {
@@ -198,7 +214,7 @@ const SPECS: BoxSpec[] = [
     code: "DGX",
     tone: T.graphite,
     badge: "1달러",
-    tagline: "1달러로 갤럭시 Z 폴드8. 꽝이면 0.85 USDT 환급.",
+    tagline: "1달러로 갤럭시 Z 폴드8. 꽝이면 0.85 USDT 즉시 캐시백.",
     price: 1,
     trendingRank: 8,
     releasedAt: "2026-09-18",
@@ -206,11 +222,11 @@ const SPECS: BoxSpec[] = [
     items: [
       ["flg-fold", "갤럭시 Z 폴드8 1TB", "Galaxy Z Fold8 1TB", 2000, 0.0002, "ZF8", T.graphite],
       ["flg-flip", "갤럭시 Z 플립8", "Galaxy Z Flip8", 1100, 0.0005, "ZFL8", T.graphite],
-      ["da-buds", "갤럭시 버즈4 프로", "Galaxy Buds4 Pro", 199, 0.005, "GB4P", T.slate],
+      ["da-buds", "갤럭시 버즈4 프로", "Galaxy Buds4 Pro", 199, 0.008, "GB4P", T.slate],
+      ["gc-amazon100", "아마존 글로벌 기프트카드 $100", "Amazon Global Gift Card $100", 100, 0.035, "AMZ1", T.coal, "digital"],
       ["da-charger", "삼성 45W 초고속 충전기", "Samsung 45W Charger", 39, 0.02, "S45W", T.coal],
-      ["da-tag", "갤럭시 스마트태그2", "Galaxy SmartTag2", 29, 0.02, "STG2", T.coal],
-      ["da-strap", "갤럭시워치 스포츠 스트랩", "Galaxy Watch Sport Band", 15, 0.05, "GWSB", T.coal],
-      ["da-sticker2", "갤럭시 스티커 팩 + 케이블 타이", "Galaxy Sticker Pack + Cable Tie", 0.9, REST, "STK2", T.coal],
+      ["usdt-50", "50 USDT 인스턴트 드롭", "50 USDT Instant Drop", 50, 0.05, "U50", T.coal, "cash"],
+      ["cb-085", "0.85 USDT 즉시 캐시백", "0.85 USDT Instant Cashback", 0.85, REST, "CB85", T.coal, "cash"],
     ],
   },
   {
@@ -221,7 +237,7 @@ const SPECS: BoxSpec[] = [
     code: "DGM",
     tone: T.graphite,
     badge: "1달러",
-    tagline: "1달러로 RTX 5090·스위치 2. 꽝이면 0.85 USDT 환급.",
+    tagline: "1달러로 RTX 5090·스위치 2. 꽝이면 0.85 USDT 즉시 캐시백.",
     price: 1,
     trendingRank: 3,
     releasedAt: "2026-09-18",
@@ -231,9 +247,9 @@ const SPECS: BoxSpec[] = [
       ["dg-ps5", "플레이스테이션 5 슬림", "PlayStation 5 Slim", 499, 0.001, "PS5S", T.slate],
       ["dg-switch2", "닌텐도 스위치 2", "Nintendo Switch 2", 449, 0.001, "NSW2", T.slate],
       ["gpu-kb", "웃키 HE65 자석축 키보드", "Wooting HE65", 199, 0.003, "HE65", T.slate],
-      ["gpu-mouse", "레이저 바실리스크 V4 프로", "Razer Basilisk V4 Pro", 159, 0.005, "BSK4", T.coal],
-      ["dg-gift", "스팀 기프트카드 10 USDT", "Steam Gift Card 10 USDT", 10, 0.1, "STMG", T.coal],
-      ["dg-keycap", "아티산 키캡 1개", "Artisan Keycap", 0.9, REST, "KCAP", T.coal],
+      ["gc-steam50", "스팀 월렛 $50", "Steam Wallet $50", 50, 0.1, "STM5", T.coal, "digital"],
+      ["usdt-50", "50 USDT 인스턴트 드롭", "50 USDT Instant Drop", 50, 0.05, "U50", T.coal, "cash"],
+      ["cb-085", "0.85 USDT 즉시 캐시백", "0.85 USDT Instant Cashback", 0.85, REST, "CB85", T.coal, "cash"],
     ],
   },
   // ── ⚡ 커피&버거 스타터 (3 ~ 5 USDT) ────────────────────────
@@ -245,7 +261,7 @@ const SPECS: BoxSpec[] = [
     code: "SPS",
     tone: T.slate,
     badge: "테크",
-    tagline: "3달러로 PS5 프로. 꽝이면 2.5 USDT 환급.",
+    tagline: "3달러로 PS5 프로. 꽝이면 2.65 USDT 즉시 캐시백.",
     price: 3,
     trendingRank: 6,
     releasedAt: "2026-09-18",
@@ -255,9 +271,9 @@ const SPECS: BoxSpec[] = [
       ["sp-switch2", "닌텐도 스위치 2", "Nintendo Switch 2", 449, 0.004, "SW2B", T.slate],
       ["sp-headset", "소니 인존 H9 헤드셋", "Sony INZONE H9", 299, 0.006, "INZ9", T.slate],
       ["sp-dualsense", "듀얼센스 엣지 컨트롤러", "DualSense Edge", 199, 0.015, "DSEG", T.coal],
-      ["sp-game", "최신 타이틀 1종 (디지털)", "Latest Title (Digital)", 69, 0.06, "GAME", T.coal],
-      ["sp-gift", "PSN 기프트카드 10 USDT", "PSN Gift Card 10 USDT", 10, 0.5, "PSNG", T.coal],
-      ["sp-cable", "USB-C 게이밍 케이블 2m", "USB-C Gaming Cable 2m", 2.65, REST, "USBC", T.coal],
+      ["gc-steam50", "스팀 월렛 $50", "Steam Wallet $50", 50, 0.22, "STM5", T.coal, "digital"],
+      ["sp-gift", "PSN 기프트카드 10 USDT", "PSN Gift Card 10 USDT", 10, 0.5, "PSNG", T.coal, "digital"],
+      ["cb-265", "2.65 USDT 즉시 캐시백", "2.65 USDT Instant Cashback", 2.65, REST, "CB265", T.coal, "cash"],
     ],
   },
   {
@@ -268,7 +284,7 @@ const SPECS: BoxSpec[] = [
     code: "SMB",
     tone: T.slate,
     badge: "테크",
-    tagline: "5달러로 맥북 프로 M4 맥스. 꽝이면 4.2 USDT 환급.",
+    tagline: "5달러로 맥북 프로 M4 맥스. 꽝이면 4.4 USDT 즉시 캐시백.",
     price: 5,
     trendingRank: 2,
     releasedAt: "2026-09-18",
@@ -277,10 +293,10 @@ const SPECS: BoxSpec[] = [
       ["apx-mbp", "맥북 프로 16 M4 맥스", "MacBook Pro 16 M4 Max", 5720, 0.0015, "MBP16", T.slate],
       ["gtc-ipadpro", "아이패드 프로 11 M5", "iPad Pro 11 M5", 1300, 0.004, "IPP11", T.graphite],
       ["gtc-mba", "맥북 에어 13 M4", "MacBook Air 13 M4", 1220, 0.005, "MBA13", T.graphite],
-      ["apx-mx", "로지텍 MX 마스터 4 + MX 키보드", "Logitech MX Master 4 Set", 340, 0.01, "MXS", T.coal],
+      ["gc-apple500", "애플 기프트카드 $500", "Apple Gift Card $500", 500, 0.01, "AGC5", T.coal, "digital"],
       ["flg-buds", "에어팟 프로 3", "AirPods Pro 3", 249, 0.02, "APP3", T.slate],
-      ["sm-gift", "애플 기프트카드 10 USDT", "Apple Gift Card 10 USDT", 10, 0.5, "APGC", T.coal],
-      ["sm-stand", "알루미늄 노트북 스탠드", "Aluminum Laptop Stand", 4.4, REST, "STND", T.coal],
+      ["gc-apple100", "애플 기프트카드 $100", "Apple Gift Card $100", 100, 0.1, "AGC1", T.coal, "digital"],
+      ["cb-440", "4.4 USDT 즉시 캐시백", "4.4 USDT Instant Cashback", 4.4, REST, "CB440", T.coal, "cash"],
     ],
   },
   {
@@ -291,7 +307,7 @@ const SPECS: BoxSpec[] = [
     code: "SPH",
     tone: T.slate,
     badge: "테크",
-    tagline: "5달러로 아이폰 17 프로 맥스. 꽝이면 4.2 USDT 환급.",
+    tagline: "5달러로 아이폰 17 프로 맥스. 꽝이면 4.4 USDT 즉시 캐시백.",
     price: 5,
     trendingRank: 9,
     releasedAt: "2026-09-18",
@@ -301,9 +317,9 @@ const SPECS: BoxSpec[] = [
       ["flg-pixel", "픽셀 10 프로 XL", "Pixel 10 Pro XL", 1100, 0.004, "PX10", T.graphite],
       ["flg-watch", "애플워치 울트라 3", "Apple Watch Ultra 3", 799, 0.005, "AWU3", T.slate],
       ["sp2-airpods", "에어팟 4", "AirPods 4", 129, 0.02, "AP4", T.slate],
-      ["flg-charger", "앤커 맥고 3-in-1 충전 스탠드", "Anker MagGo 3-in-1", 89, 0.05, "MGGO", T.coal],
-      ["sp2-gift", "애플 기프트카드 10 USDT", "Apple Gift Card 10 USDT", 10, 0.8, "APG2", T.coal],
-      ["flg-film", "강화유리 필름 2매 세트", "Tempered Glass 2-Pack", 4.4, REST, "FILM", T.coal],
+      ["gc-amazon100", "아마존 글로벌 기프트카드 $100", "Amazon Global Gift Card $100", 100, 0.1, "AMZ1", T.coal, "digital"],
+      ["usdt-50", "50 USDT 인스턴트 드롭", "50 USDT Instant Drop", 50, 0.1, "U50", T.coal, "cash"],
+      ["cb-440", "4.4 USDT 즉시 캐시백", "4.4 USDT Instant Cashback", 4.4, REST, "CB440", T.coal, "cash"],
     ],
   },
   // ── 👑 럭셔리 볼트 (20 ~ 50 USDT) ───────────────────────────
@@ -315,7 +331,7 @@ const SPECS: BoxSpec[] = [
     code: "VSB",
     tone: T.steel,
     badge: "워치",
-    tagline: "20달러로 롤렉스 서브마리너. 꽝이면 17.5 USDT 환급.",
+    tagline: "20달러로 롤렉스 서브마리너. 꽝이면 18.5 USDT 즉시 캐시백.",
     price: 20,
     trendingRank: 4,
     releasedAt: "2026-09-18",
@@ -326,8 +342,8 @@ const SPECS: BoxSpec[] = [
       ["rlx-tudor", "튜더 블랙베이 58", "Tudor Black Bay 58", 3830, 0.004, "BB58", T.graphite],
       ["rlx-seiko", "세이코 프로스펙스 마린마스터", "Seiko Prospex Marinemaster", 935, 0.005, "PRSX", T.slate],
       ["rlx-hamilton", "해밀턴 카키 필드 메카니컬", "Hamilton Khaki Field Mech", 500, 0.01, "HMLT", T.slate],
-      ["rlx-strap", "정품 가죽 스트랩 + 툴 세트", "Leather Strap + Tool Set", 93, 0.05, "STRP", T.coal],
-      ["vs-nato", "NATO 스트랩 2종 세트", "NATO Strap 2-Pack", 18.5, REST, "NATO", T.coal],
+      ["usdt-100", "100 USDT 인스턴트 드롭", "100 USDT Instant Drop", 100, 0.2, "U100", T.coal, "cash"],
+      ["cb-1850", "18.5 USDT 즉시 캐시백", "18.5 USDT Instant Cashback", 18.5, REST, "CB185", T.coal, "cash"],
     ],
   },
   {
@@ -338,7 +354,7 @@ const SPECS: BoxSpec[] = [
     code: "VOM",
     tone: T.steel,
     badge: "워치",
-    tagline: "25달러로 오메가·튜더·티쏘. 꽝이면 21.8 USDT 환급.",
+    tagline: "25달러로 오메가·튜더·티쏘. 꽝이면 23 USDT 즉시 캐시백.",
     price: 25,
     releasedAt: "2026-09-18",
     popularity: 74800,
@@ -348,8 +364,8 @@ const SPECS: BoxSpec[] = [
       ["sws-longines", "론진 스피릿 줄루 5", "Longines Spirit Zulu 5", 2300, 0.005, "LGZ5", T.graphite],
       ["sws-oris", "오리스 아퀴스 데이트", "Oris Aquis Date", 2100, 0.005, "ORIS", T.slate],
       ["sws-tissot", "티쏘 PRX 파워매틱 80", "Tissot PRX Powermatic 80", 650, 0.02, "PRX", T.slate],
-      ["sws-strap", "스위스 러버 스트랩 2종", "Swiss Rubber Strap x2", 60, 0.2, "RUBR", T.coal],
-      ["sws-box", "월넛 워치 박스 6구", "Walnut Watch Box 6", 23, REST, "WBOX", T.coal],
+      ["usdt-100", "100 USDT 인스턴트 드롭", "100 USDT Instant Drop", 100, 0.4, "U100", T.coal, "cash"],
+      ["cb-2300", "23 USDT 즉시 캐시백", "23 USDT Instant Cashback", 23, REST, "CB230", T.coal, "cash"],
     ],
   },
   {
@@ -360,7 +376,7 @@ const SPECS: BoxSpec[] = [
     code: "VHB",
     tone: T.steel,
     badge: "럭셔리",
-    tagline: "30달러로 에르메스 버킨. 꽝이면 26 USDT 환급.",
+    tagline: "30달러로 에르메스 버킨. 꽝이면 27.5 USDT 즉시 캐시백.",
     price: 30,
     trendingRank: 10,
     releasedAt: "2026-09-18",
@@ -371,8 +387,8 @@ const SPECS: BoxSpec[] = [
       ["grl-dior", "디올 레이디 디올 미디움", "Dior Lady Dior Medium", 4500, 0.003, "LDDR", T.graphite],
       ["grl-polene", "폴렌 넘버원 나노", "Polène Numéro Un Nano", 380, 0.03, "PLN1", T.slate],
       ["glx-scarf", "에르메스 트윌리 스카프", "Hermès Twilly Scarf", 305, 0.05, "TWLY", T.slate],
-      ["glx-key", "델보 레더 키홀더", "Delvaux Leather Key Holder", 285, 0.05, "DLVX", T.coal],
-      ["vh-pouch", "레더 파우치 + 더스트백", "Leather Pouch + Dust Bag", 27.5, REST, "POUC", T.coal],
+      ["usdt-100", "100 USDT 인스턴트 드롭", "100 USDT Instant Drop", 100, 0.5, "U100", T.coal, "cash"],
+      ["cb-2750", "27.5 USDT 즉시 캐시백", "27.5 USDT Instant Cashback", 27.5, REST, "CB275", T.coal, "cash"],
     ],
   },
   // ── 🚀 슈퍼카 & 골드바 잭팟 ─────────────────────────────────
@@ -384,7 +400,7 @@ const SPECS: BoxSpec[] = [
     code: "VGD",
     tone: T.steel,
     badge: "골드",
-    tagline: "50달러로 골드바 1kg. 꽝이면 43.7 USDT 환급.",
+    tagline: "50달러로 골드바 1kg. 꽝이면 46 USDT 즉시 캐시백.",
     price: 50,
     trendingRank: 7,
     releasedAt: "2026-09-18",
@@ -396,7 +412,7 @@ const SPECS: BoxSpec[] = [
       ["vg-gold10g", "골드바 10g", "Gold Bar 10g", 1000, 0.01, "AU10", T.graphite],
       ["vg-coin", "골드 코인 1/10oz", "Gold Coin 1/10 oz", 320, 0.05, "AUCN", T.slate],
       ["vg-silver", "실버바 100g", "Silver Bar 100g", 120, 0.2, "AG100", T.slate],
-      ["rlx-roll", "워치 롤 케이스", "Watch Roll Case", 46, REST, "WROL", T.coal],
+      ["cb-4600", "46 USDT 즉시 캐시백", "46 USDT Instant Cashback", 46, REST, "CB460", T.coal, "cash"],
     ],
   },
   {
@@ -407,7 +423,7 @@ const SPECS: BoxSpec[] = [
     code: "JCT",
     tone: T.steel,
     badge: "드림 박스",
-    tagline: "100달러로 사이버트럭. 꽝이면 95 USDT 환급.",
+    tagline: "100달러로 사이버트럭. 꽝이면 95 USDT 즉시 캐시백.",
     price: 100,
     trendingRank: 5,
     releasedAt: "2026-09-18",
@@ -419,7 +435,7 @@ const SPECS: BoxSpec[] = [
       ["ctd-segway", "세그웨이 GT3 프로 전동 스쿠터", "Segway GT3 Pro", 2900, 0.005, "GT3P", T.graphite],
       ["ctd-dji", "DJI 에어 3S 플라이 모어", "DJI Air 3S Fly More", 1350, 0.01, "AIR3", T.slate],
       ["ctd-helmet", "슈베르트 C5 헬멧", "Schuberth C5 Helmet", 650, 0.02, "C5", T.slate],
-      ["jc-diecast", "사이버트럭 다이캐스트 1:18 + 굿즈 세트", "Cybertruck 1:18 Diecast + Merch Set", 100, REST, "DCST", T.coal],
+      ["cb-9500", "95 USDT 즉시 캐시백", "95 USDT Instant Cashback", 95, REST, "CB950", T.coal, "cash"],
     ],
   },
   {
@@ -430,7 +446,7 @@ const SPECS: BoxSpec[] = [
     code: "JSC",
     tone: T.steel,
     badge: "드림 박스",
-    tagline: "100달러로 포르쉐 911. 꽝이면 95 USDT 환급.",
+    tagline: "100달러로 포르쉐 911. 꽝이면 95 USDT 즉시 캐시백.",
     price: 100,
     releasedAt: "2026-09-18",
     popularity: 88600,
@@ -441,7 +457,7 @@ const SPECS: BoxSpec[] = [
       ["urb-vanmoof", "반무프 S5 전기자전거", "VanMoof S5", 3200, 0.005, "VMS5", T.graphite],
       ["ctd-brompton", "브롬톤 P라인 어반", "Brompton P Line Urban", 2200, 0.005, "BRMP", T.slate],
       ["urb-garmin", "가민 엣지 1050 사이클링 컴퓨터", "Garmin Edge 1050", 700, 0.02, "EDGE", T.slate],
-      ["js-model", "포르쉐 911 1:18 모델카 + 굿즈 세트", "Porsche 911 1:18 Model + Merch Set", 100, REST, "MDLC", T.coal],
+      ["cb-9500", "95 USDT 즉시 캐시백", "95 USDT Instant Cashback", 95, REST, "CB950", T.coal, "cash"],
     ],
   },
 ];
@@ -462,9 +478,9 @@ export const expectedValue = (box: ProductBox): number => box.items.reduce((s, i
 /** 정가 기준 환원율 */
 export const retailReturn = (box: ProductBox): number => expectedValue(box) / box.price;
 /** 현금 환급 기준 환원율 — 항상 1 미만. 하우스 엣지 = 1 − 이 값 */
-export const cashReturn = (box: ProductBox): number => (expectedValue(box) * REFUND_RATE) / box.price;
-/** 바닥 즉시 환전액(USDT) — "꽝이어도 이만큼은 돌아온다" */
-export const floorCash = (box: ProductBox): number => +(box.guaranteedMin * REFUND_RATE).toFixed(2);
+export const cashReturn = (box: ProductBox): number => box.items.reduce((s, i) => s + (sellValueOf(i) * i.dropRate) / 100, 0) / box.price;
+/** 바닥 즉시 환전액(USDT) — 바닥 등급은 USDT 캐시백이라 100% 적립. "꽝이어도 이만큼은 돌아온다" */
+export const floorCash = (box: ProductBox): number => +box.guaranteedMin.toFixed(2);
 /** 바닥 환전액 / 가격 */
 export const floorRatio = (box: ProductBox): number => floorCash(box) / box.price;
 /** 바닥 보장 — 모든 박스가 참(빌더가 밴드를 강제). 표기 조건용으로 남긴다. */

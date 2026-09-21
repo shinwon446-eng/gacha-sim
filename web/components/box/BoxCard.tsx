@@ -42,7 +42,7 @@ function GrailThumb({ item, box }: { item: ProductItem; box: ProductBox }) {
   return (
     <li className="min-w-0 flex-1" title={`${itemName(item)} · ${fmt(item.value)}`}>
       <div className="relative aspect-square w-full overflow-hidden rounded-sm" style={{ boxShadow: `inset 0 0 0 1px ${glow(t.accent, 0.45)}` }}>
-        <ProductArt image={item.image} alt={itemName(item)} accent={t.accent} glowStrength={0.28} fallbackSize="sm" />
+        <ProductArt image={item.image} alt={itemName(item)} accent={t.accent} glowStrength={0.28} fallbackSize="sm" kind={item.kind} />
       </div>
       <div className="mt-1 truncate text-center text-[10px] leading-none text-muted">{itemName(item)}</div>
       <div className="mt-0.5 truncate text-center font-mono text-[10px] font-bold leading-none tabular-nums" style={{ color: t.accent }}>
@@ -187,14 +187,14 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
               decoding="async"
               referrerPolicy="no-referrer"
               onError={() => setImgFailed(true)}
-              className={cn("h-full w-full object-cover transition-all duration-500", hovered ? "scale-105 opacity-100" : "opacity-80")}
+              className={cn("h-full w-full object-cover transition-transform duration-500", hovered && "scale-105")}
             />
           ) : (
             <ProductArt image={{ src: null }} alt={boxTitle(box)} accent={accent} fallbackSize="md" />
           )}
-          {/* 페데스탈 림라이트 + 하단 페이드 */}
-          <span aria-hidden className="pedestal-glow pointer-events-none absolute inset-0" />
-          <span aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
+          {/* 쇼케이스 핀조명 — 딤 없이 중앙을 밝히고 가장자리만 살짝 누른다 + 하단 페이드 */}
+          <span aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(70% 60% at 50% 42%, rgba(230,202,101,0.10) 0%, transparent 55%, rgba(0,0,0,0.38) 100%)" }} />
+          <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-surface to-transparent" />
 
           {/* 100% 꽝 없음 · 최소 보장 뱃지 — 고대비 (CLAUDE.md §4-C) */}
           <span
@@ -205,6 +205,10 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
           >
             {tr("card.noBlankBadge", { value: fmt(box.guaranteedMin) })}
             {meta.guaranteed ? ` · ${tr("hero.aboveOpenPrice")}` : ""}
+          </span>
+          {/* ⚡ 전 품목 1클릭 95% USDT 즉시 정산 · 개인지갑 출금 보장 */}
+          <span className="absolute bottom-2 left-2 z-10 flex items-center gap-1 rounded-sm border border-gold-champagne/50 bg-obsidian/85 px-1.5 py-0.5 text-[9px] font-bold leading-none text-gold-champagne shadow-[0_0_8px_rgba(230,202,101,0.25)] backdrop-blur-sm">
+            ⚡ {tr("card.settleBadge")}
           </span>
 
           {/* 호버: 3px 등급 확률 바 */}

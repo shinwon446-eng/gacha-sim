@@ -320,7 +320,7 @@ export default function InventoryPage() {
                     onKeyDown={shipping ? (e) => (e.key === "Enter" || e.key === " ") && setTrack(o) : undefined}
                     className={cn("relative h-36 w-full overflow-hidden bg-obsidian md:h-40", shipping && "cursor-pointer")}
                   >
-                    {item ? <ProductArt image={item.image} alt={itemName(item)} accent={tierMeta.accent} glowStrength={0.22} fallbackSize="md" /> : <ProductArt image={{ src: null }} alt="" accent={tierMeta.accent} />}
+                    {item ? <ProductArt image={item.image} alt={itemName(item)} accent={tierMeta.accent} kind={item.kind} glowStrength={0.22} fallbackSize="md" /> : <ProductArt image={{ src: null }} alt="" accent={tierMeta.accent} />}
                     <div className="absolute left-2 top-2 z-10 flex items-center gap-1.5">
                       {stored && (
                         <button type="button" onClick={() => toggle(o.id)} aria-label={t("inventory.select")} aria-pressed={isSel} className="flex h-6 w-6 items-center justify-center rounded-sm bg-obsidian/85 text-secondary hover:text-white">
@@ -363,7 +363,7 @@ export default function InventoryPage() {
                     <div className="mt-3 grid grid-cols-[1fr_auto] gap-1.5">
                       <button type="button" disabled={!stored} onClick={() => setSellTarget([o.id])} className="flex h-8 items-center justify-center gap-1 rounded-sm bg-gold-champagne text-[11px] font-bold text-obsidian hover:bg-gold-metallic disabled:opacity-30">
                         <Wallet className="h-3 w-3" strokeWidth={2.4} />
-                        {t("inventory.sell")}
+                        {t("inventory.sell")} · {t("inventory.noFee")}
                       </button>
                       <button type="button" onClick={() => setVerify(o)} aria-label={t("inventory.verify")} title={t("inventory.verify")} className="glass-dark row-span-2 flex h-full w-8 items-center justify-center rounded-sm text-gold-champagne hover:border-gold-champagne">
                         <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2.2} />
@@ -421,7 +421,7 @@ export default function InventoryPage() {
       <WithdrawalModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onRequested={(amount) => say(t("withdraw.requestedToast", { amount: fmt(amount) }), "#E6CA65")} />
       <VisualVerifyModal item={verify} onClose={() => setVerify(null)} />
       <DetailModal box={detail} onClose={() => setDetail(null)} onOpen={openBox} />
-      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={() => say(t("inventory.shipRequestedToast"), "#93C5FD")} />
+      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={() => say(t("inventory.shipRequestedToast"), "#93C5FD")} onRespin={(b) => { setUnbox(null); setTimeout(() => openBox(b, 1), 60); }} />
 
       <AnimatePresence>
         {toast && (

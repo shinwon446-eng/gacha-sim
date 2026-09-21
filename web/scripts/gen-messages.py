@@ -24,7 +24,7 @@ UI = {
       "openNow": "지금 오픈하기", "viewContents": "뭐 들었나 보기", "billboardPicker": "빌보드 선택", "billboardOf": "{title} 빌보드",
       "headline": "1달러로 롤렉스 & 아이폰, 긁어보세요.", "sub": "터지면 100% 내 것. 안 떠도 95% 즉시 환전해 드립니다.", "freeTry": "손맛 보기 (무료)", "openFor": "🔥 {price}로 돌려보기", "badge": "1달러부터 명품 잭팟", "nowShowing": "지금 상영 중", "topMultipleShort": "최고 {n}"
     },
-    "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "guaranteed": "보장", "openNow": "바로 열기", "contents": "상세 정보", "details": "{title} 상세 정보", "expand": "확대"},
+    "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "settleBadge": "전 품목 95% USDT 즉시 정산", "guaranteed": "보장", "openNow": "바로 열기", "contents": "상세 정보", "details": "{title} 상세 정보", "expand": "확대"},
     "rows": {"trending": "🔥 지금 가장 많이 열리는 박스 TOP 10", "dollar": "🔥 1달러의 행복", "techMobility": "⚡ 애플&테크", "luxuryWatch": "👑 명품&시계", "guaranteed": "🚗 슈퍼카&골드바", "prev": "이전", "next": "다음"},
     "grid": {"title": "전체 박스", "sort": "정렬", "loadMore": "더 보기 ({n}개)"},
     "categories": {"all": "전체", "dollar": "🔥 1달러의 행복", "tech": "⚡ 애플&테크", "luxury": "👑 명품&시계", "jackpot": "🚗 슈퍼카&골드바"},
@@ -40,8 +40,10 @@ UI = {
       "openPrice": "오픈 가격", "guaranteedMin": "최소 보장 금액", "topPrize": "최고 당첨", "topMultiple": "최고 배수",
       "tierOdds": "등급별 당첨 확률", "breakEven": "본전({price}) 이상 {rate}",
       "explain": "등급은 저장값이 아니라 실판매가 ÷ 오픈 가격 배수에서 파생됩니다. 기대 수령 실판매가 {ev} — 오픈 가격의 {retail}입니다. 다만 받은 실물을 즉시 판매하면 실판매가의 {refund}만 지급되므로, 현금 기준 회수율은 {cash}로 오픈 가격보다 낮습니다.",
-      "guaranteedYes": "이 박스는 최저 구성의 실판매가({min})가 오픈 가격 이상입니다.",
-      "guaranteedNo": "이 박스의 최저 구성 실판매가는 {min}이며 오픈 가격보다 낮습니다.",
+      "guaranteedYes": "이 박스의 바닥 등급은 {min} 즉시 캐시백 — 개봉 즉시 100% 잔액에 적립됩니다.",
+      "guaranteedNo": "이 박스의 바닥 등급은 {min} 즉시 캐시백입니다 — 개봉 즉시 100% 잔액에 적립됩니다.",
+      "settleBadge": "⚡ 전 품목 1클릭 95% USDT 즉시 정산 및 개인지갑 출금 보장",
+      "settleBody": "실물·기프트카드는 실판매가의 95%를 1클릭에 USDT로, USDT 캐시백·인스턴트 드롭은 100%를 개봉 즉시 잔액에. 잔액은 TRC-20/BEP-20 개인지갑으로 출금됩니다.",
       
       "allPrizes": "전체 당첨 가능 상품", "count": "{n}종", "sortedByValue": "실판매가 내림차순",
       "marketValue": "실판매가", "odds": "확률", "imageCredits": "이미지 출처"
@@ -77,7 +79,7 @@ UI = {
     "unbox": {
       "open1": "1회 오픈", "open5": "5회 연속 오픈", "trialLabel": "손맛 보기 · 무료 체험", "trialCongrats": "{item} ({n}) 손맛 적중!", "trialBody": "웰컴 보너스 {bonus} 받고 진짜로 열어보세요.", "trialCta": "보너스 받고 진짜 열기", "trialCtaClaimed": "실제 박스 열기", "trialNote": "무료 체험 결과는 배송·환전 대상이 아닙니다. 진짜 오픈은 위 버튼으로.", "spinning": "개봉 중…", "landing": "결과 확정",
       "result": "당첨", "results": "5회 결과", "total": "합계 가치", "paid": "지불 {price}",
-      "sellBack": "95% 즉시 회수 · {amount}", "sellBackAll": "전부 95% 회수 · {amount}", "sellBackNote": "실판매가의 {rate}가 잔액으로 즉시 반영됩니다",
+      "sellBack": "95% 즉시 회수 · {amount}", "sellBackAll": "전부 95% 회수 · {amount}", "cashoutCta": "⚡ 95% USDT 즉시 회수", "noFee": "수수료 0%", "shipSub": "실물 · 무료 배송", "cashCredited": "{amount} 잔액에 즉시 적립됨", "respin": "🔥 {price}로 다시 돌리기", "sellBackNote": "실판매가의 {rate}가 잔액으로 즉시 반영됩니다",
       "sold": "회수 완료 — {amount} 잔액 반영", "claimShipping": "집으로 배송",
       "shippingNotice": "국제 배송비 및 세관 수수료 안내", "shippingBody": "수취국 관세·부가세와 국제 배송비(DHL/FedEx 실비)가 별도 청구됩니다.",
       "verify": "공정성 1초 검증", "close": "닫기", "keep": "보관함으로", "kept": "보관함에 저장됐습니다 — 팝업을 닫아도 유지됩니다",
@@ -115,7 +117,7 @@ UI = {
       "filterStatus": "상태", "filterTier": "등급", "all": "전체",
       "status": {"IN_STORAGE": "보관 중", "SHIPPING_REQUESTED": "배송 준비 중", "SHIPPING": "배송 중", "SOLD": "환전 완료"},
       "acquired": "획득 {date}", "from": "{box}", "soldFor": "환급 {amount}", "tracking": "운송장", "trackingPending": "운송장 발급 대기",
-      "sell": "95% 즉시 회수", "ship": "집으로 배송", "verify": "공정성 1초 검증", "select": "선택", "selected": "{n}개 선택", "selectAll": "전체 선택", "clearSelection": "선택 해제",
+      "sell": "⚡ 95% USDT 즉시 회수", "noFee": "수수료 0%", "ship": "집으로 배송", "verify": "공정성 1초 검증", "select": "선택", "selected": "{n}개 선택", "selectAll": "전체 선택", "clearSelection": "선택 해제",
       "sellSelected": "선택 {rate} 회수", "selectedValue": "총 가치:", "soldForLabel": "환급",
       "totalValue": "총 보관 자산", "sellAll": "전부 95% 회수", "sort": "정렬", "sorts": {"newest": "최신순", "valueDesc": "높은 가치순", "valueAsc": "낮은 가치순"},
       "emptyFiltered": "조건에 맞는 아이템이 없습니다.", "hotTitle": "지금 가장 핫한 박스 TOP 3", "hotTop": "최고 배수",
@@ -229,7 +231,7 @@ UI = {
       "openNow": "Open Now", "viewContents": "What's inside", "billboardPicker": "Billboard picker", "billboardOf": "{title} billboard",
       "headline": "$1. A shot at a Rolex & an iPhone.", "sub": "Hit, it's 100% yours. Miss, 95% cashed out instantly.", "freeTry": "Try free", "openFor": "🔥 Spin for {price}", "badge": "Luxury jackpots from $1", "nowShowing": "Now Showing", "topMultipleShort": "up to {n}"
     },
-    "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "guaranteed": "guaranteed", "openNow": "Open now", "contents": "Details", "details": "{title} details", "expand": "Expand"},
+    "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "settleBadge": "Every item cashes out 95% in USDT", "guaranteed": "guaranteed", "openNow": "Open now", "contents": "Details", "details": "{title} details", "expand": "Expand"},
     "rows": {"trending": "🔥 Most Opened Boxes TOP 10", "dollar": "🔥 $1 Boxes", "techMobility": "⚡ Apple & Tech", "luxuryWatch": "👑 Luxury & Watches", "guaranteed": "🚗 Supercars & Gold", "prev": "Previous", "next": "Next"},
     "grid": {"title": "All Boxes", "sort": "Sort", "loadMore": "Load more ({n})"},
     "categories": {"all": "All", "dollar": "🔥 $1 Boxes", "tech": "⚡ Apple & Tech", "luxury": "👑 Luxury & Watches", "jackpot": "🚗 Supercars & Gold"},
@@ -245,8 +247,10 @@ UI = {
       "openPrice": "Open Price", "guaranteedMin": "Guaranteed Minimum", "topPrize": "Top Prize", "topMultiple": "Top Multiple",
       "tierOdds": "Odds by tier", "breakEven": "At or above {price}: {rate}",
       "explain": "Tiers are not stored values — they derive from market value ÷ open price. Expected market value per open is {ev}, which is {retail} of the open price. Instant sell-back pays {refund} of market value, so the cash-basis return is {cash}, below the open price.",
-      "guaranteedYes": "This box's lowest item ({min}) is worth at least the open price.",
-      "guaranteedNo": "This box's lowest item is worth {min}, below the open price.",
+      "guaranteedYes": "This box's floor tier is a {min} instant cashback — credited 100% the moment you open.",
+      "guaranteedNo": "This box's floor tier is a {min} instant cashback — credited 100% to your balance the moment you open.",
+      "settleBadge": "⚡ Every item settles to USDT in 1 click at 95% — withdraw to your own wallet, guaranteed",
+      "settleBody": "Physical items and gift cards cash out at 95% of market value in one click; USDT cashback and instant drops are credited at 100% on open. Balance withdraws to your TRC-20 / BEP-20 wallet.",
       
       "allPrizes": "All possible prizes", "count": "{n} items", "sortedByValue": "By market value, descending",
       "marketValue": "Market value", "odds": "Odds", "imageCredits": "Image credits"
@@ -282,7 +286,7 @@ UI = {
     "unbox": {
       "open1": "Open ×1", "open5": "Open ×5", "trialLabel": "Free try", "trialCongrats": "Nice hit — {item} ({n}) on your free try!", "trialBody": "Open real boxes with your {bonus} welcome bonus!", "trialCta": "Claim & Open Real Box", "trialCtaClaimed": "Open Real Box", "trialNote": "Free-try results aren't shipped or cashed out. Use the button above for the real thing.", "spinning": "Opening…", "landing": "Result locked",
       "result": "You won", "results": "5 results", "total": "Total value", "paid": "Paid {price}",
-      "sellBack": "Cash out 95% · {amount}", "sellBackAll": "Cash out all · {amount}", "sellBackNote": "{rate} of market value is credited to your balance instantly",
+      "sellBack": "Cash out 95% · {amount}", "sellBackAll": "Cash out all · {amount}", "cashoutCta": "⚡ Cash out 95% in USDT", "noFee": "0% fee", "shipSub": "Physical · free shipping", "cashCredited": "{amount} credited to your balance", "respin": "🔥 Spin again for {price}", "sellBackNote": "{rate} of market value is credited to your balance instantly",
       "sold": "Cashed out — {amount} credited", "claimShipping": "Ship to me",
       "shippingNotice": "International shipping & customs notice", "shippingBody": "Destination duties/VAT and international shipping (DHL/FedEx at cost) are billed separately.",
       "verify": "1-second fairness check", "close": "Close", "keep": "Keep in inventory", "kept": "Saved to your vault — it stays after you close this",
@@ -320,7 +324,7 @@ UI = {
       "filterStatus": "Status", "filterTier": "Tier", "all": "All",
       "status": {"IN_STORAGE": "In Vault", "SHIPPING_REQUESTED": "Preparing shipment", "SHIPPING": "Shipping", "SOLD": "Sold"},
       "acquired": "Acquired {date}", "from": "{box}", "soldFor": "Refunded {amount}", "tracking": "Tracking", "trackingPending": "Awaiting tracking number",
-      "sell": "Cash out 95%", "ship": "Ship to me", "verify": "1-second fairness check", "select": "Select", "selected": "{n} selected", "selectAll": "Select all", "clearSelection": "Clear",
+      "sell": "⚡ Cash out 95% USDT", "noFee": "0% fee", "ship": "Ship to me", "verify": "1-second fairness check", "select": "Select", "selected": "{n} selected", "selectAll": "Select all", "clearSelection": "Clear",
       "sellSelected": "Cash out selected · {rate}", "selectedValue": "Total value:", "soldForLabel": "Refunded",
       "totalValue": "Total vault value", "sellAll": "Cash out all", "sort": "Sort", "sorts": {"newest": "Newest", "valueDesc": "Highest value", "valueAsc": "Lowest value"},
       "emptyFiltered": "No items match these filters.", "hotTitle": "Hottest boxes right now — TOP 3", "hotTop": "top multiplier",
@@ -434,7 +438,7 @@ UI = {
       "openNow": "立即开启", "viewContents": "看看里面", "billboardPicker": "选择展示", "billboardOf": "{title} 展示",
       "headline": "1 美元，博劳力士和 iPhone。", "sub": "中了 100% 归你，没中也立即折现 95%。", "freeTry": "免费试玩", "openFor": "🔥 {price} 开一发", "badge": "1 美元起的奢品头奖", "nowShowing": "正在上映", "topMultipleShort": "最高 {n}"
     },
-    "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "guaranteed": "保底", "openNow": "立即开", "contents": "详情", "details": "{title} 详情", "expand": "展开"},
+    "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "settleBadge": "全品类 95% USDT 即时结算", "guaranteed": "保底", "openNow": "立即开", "contents": "详情", "details": "{title} 详情", "expand": "展开"},
     "rows": {"trending": "🔥 开启最多的盲盒 TOP 10", "dollar": "🔥 1 美元盲盒", "techMobility": "⚡ 苹果与科技", "luxuryWatch": "👑 奢品与腕表", "guaranteed": "🚗 超跑与金条", "prev": "上一页", "next": "下一页"},
     "grid": {"title": "全部盲盒", "sort": "排序", "loadMore": "加载更多（{n}）"},
     "categories": {"all": "全部", "dollar": "🔥 1 美元盲盒", "tech": "⚡ 苹果与科技", "luxury": "👑 奢品与腕表", "jackpot": "🚗 超跑与金条"},
@@ -450,8 +454,10 @@ UI = {
       "openPrice": "开启价", "guaranteedMin": "保底价值", "topPrize": "最高奖品", "topMultiple": "最高倍数",
       "tierOdds": "各等级中奖概率", "breakEven": "不低于 {price} 的概率 {rate}",
       "explain": "等级并非存储值，而是由市场价 ÷ 开启价的倍数推导。每次开启的期望市场价为 {ev}，相当于开启价的 {retail}。若即时回收，仅按市场价的 {refund} 支付，因此按现金计算的回收率为 {cash}，低于开启价。",
-      "guaranteedYes": "本盲盒最低档商品的市场价（{min}）不低于开启价。",
-      "guaranteedNo": "本盲盒最低档商品的市场价为 {min}，低于开启价。",
+      "guaranteedYes": "本盲盒的保底档为 {min} 即时返现——开箱即刻 100% 计入余额。",
+      "guaranteedNo": "本盲盒的保底档为 {min} 即时返现——开箱即刻 100% 计入余额。",
+      "settleBadge": "⚡ 全品类一键 95% USDT 即时结算，可提现至个人钱包",
+      "settleBody": "实物与礼品卡可一键按市场价 95% 折现为 USDT；USDT 返现与即时到账在开箱时 100% 计入余额。余额可提现至 TRC-20 / BEP-20 个人钱包。",
       
       "allPrizes": "全部可得商品", "count": "{n} 件", "sortedByValue": "按市场价降序",
       "marketValue": "市场价", "odds": "概率", "imageCredits": "图片来源"
@@ -487,7 +493,7 @@ UI = {
     "unbox": {
       "open1": "开启 ×1", "open5": "连续开启 ×5", "trialLabel": "免费过把瘾", "trialCongrats": "手感不错！免费试玩抽中 {item}（{n}）", "trialBody": "用 {bonus} 新人奖励开启真实盲盒吧！", "trialCta": "领取奖励并开启真实盲盒", "trialCtaClaimed": "开启真实盲盒", "trialNote": "免费试玩结果不参与配送与折现。真正开箱请点上方按钮。", "spinning": "开启中…", "landing": "结果已锁定",
       "result": "获得", "results": "5 次结果", "total": "总价值", "paid": "已支付 {price}",
-      "sellBack": "95% 立即折现 · {amount}", "sellBackAll": "全部 95% 立即折现 · {amount}", "sellBackNote": "按市场价的 {rate} 即时计入余额",
+      "sellBack": "95% 立即折现 · {amount}", "sellBackAll": "全部 95% 立即折现 · {amount}", "cashoutCta": "⚡ 95% USDT 即时折现", "noFee": "0 手续费", "shipSub": "实物 · 免费配送", "cashCredited": "{amount} 已即时计入余额", "respin": "🔥 {price} 再来一发", "sellBackNote": "按市场价的 {rate} 即时计入余额",
       "sold": "已折现 — 余额 +{amount}", "claimShipping": "寄到家",
       "shippingNotice": "国际运费与关税说明", "shippingBody": "目的地关税/增值税及国际运费（DHL/FedEx 实付）另行收取。",
       "verify": "1 秒公平性验证", "close": "关闭", "keep": "存入仓库", "kept": "已存入仓库 — 关闭后仍会保留",
@@ -525,7 +531,7 @@ UI = {
       "filterStatus": "状态", "filterTier": "等级", "all": "全部",
       "status": {"IN_STORAGE": "保管中", "SHIPPING_REQUESTED": "备货中", "SHIPPING": "运输中", "SOLD": "已回收"},
       "acquired": "获得于 {date}", "from": "{box}", "soldFor": "已退回 {amount}", "tracking": "运单号", "trackingPending": "等待运单号",
-      "sell": "95% 立即折现", "ship": "寄到家", "verify": "1 秒公平性验证", "select": "选择", "selected": "已选 {n} 件", "selectAll": "全选", "clearSelection": "取消选择",
+      "sell": "⚡ 95% USDT 即时折现", "noFee": "0 手续费", "ship": "寄到家", "verify": "1 秒公平性验证", "select": "选择", "selected": "已选 {n} 件", "selectAll": "全选", "clearSelection": "取消选择",
       "sellSelected": "所选按 {rate} 批量折现", "selectedValue": "总价值：", "soldForLabel": "已退回",
       "totalValue": "仓库总资产", "sellAll": "全部 95% 折现", "sort": "排序", "sorts": {"newest": "最新", "valueDesc": "价值从高到低", "valueAsc": "价值从低到高"},
       "emptyFiltered": "没有符合条件的商品。", "hotTitle": "当前最热盲盒 TOP 3", "hotTop": "最高倍数",
@@ -708,6 +714,10 @@ ZH_ITEM = {
   "glx-wallet": "圣罗兰 Monogram 钱包", "glx-belt": "万宝龙双面腰带", "glx-scarf": "爱马仕 Twilly 丝巾", "glx-card": "普拉达 Saffiano 卡包", "glx-key": "Delvaux 皮革钥匙包",
   "gdy-breville": "铂富 Barista Express", "gdy-lamp": "Louis Poulsen PH 5 迷你", "gdy-dyson": "戴森 Supersonic Nural", "gdy-balmuda": "BALMUDA The Toaster Pro",
   "gdy-airpods": "AirPods 4 ANC", "gdy-kettle": "BALMUDA The Pot", "gdy-towel": "Ikeuchi 有机毛巾套装", "gdy-candle": "蒂普提克 Baies 300g", "gdy-mug": "Kinto 陶瓷马克杯 4 只 + 托盘",
+  "gc-apple100": "Apple 礼品卡 $100", "gc-apple500": "Apple 礼品卡 $500", "gc-amazon100": "Amazon 全球礼品卡 $100", "gc-steam50": "Steam 钱包 $50",
+  "usdt-50": "50 USDT 即时到账", "usdt-100": "100 USDT 即时到账",
+  "cb-085": "0.85 USDT 即时返现", "cb-265": "2.65 USDT 即时返现", "cb-440": "4.4 USDT 即时返现", "cb-1850": "18.5 USDT 即时返现",
+  "cb-2300": "23 USDT 即时返现", "cb-2750": "27.5 USDT 即时返现", "cb-4600": "46 USDT 即时返现", "cb-9500": "95 USDT 即时返现",
 }
 
 
@@ -745,18 +755,18 @@ def build(locale, boxes, items):
 
 
 EN_TAGLINE = {
-  "dollar-apple": "$1 for an iPhone 16 Pro. Miss, 0.85 USDT back.",
-  "dollar-galaxy": "$1 for a Galaxy Z Fold8. Miss, 0.85 USDT back.",
-  "dollar-gaming": "$1 for RTX 5090 or Switch 2. Miss, 0.85 USDT back.",
-  "starter-ps5": "$3 for a PS5 Pro. Miss, 2.5 USDT back.",
-  "starter-macbook": "$5 for a MacBook Pro M4 Max. Miss, 4.2 USDT back.",
-  "starter-phone": "$5 for an iPhone 17 Pro Max. Miss, 4.2 USDT back.",
-  "vault-submariner": "$20 for a Rolex Submariner. Miss, 17.5 USDT back.",
-  "vault-omega": "$25 for Omega, Tudor, Tissot. Miss, 21.8 USDT back.",
-  "vault-handbag": "$30 for a Hermès Birkin. Miss, 26 USDT back.",
-  "vault-gold": "$50 for a 1kg gold bar. Miss, 43.7 USDT back.",
-  "jackpot-cybertruck": "$100 for a Cybertruck. Miss, 95 USDT back.",
-  "jackpot-supercar": "$100 for a Porsche 911. Miss, 95 USDT back.",
+  "dollar-apple": "$1 for an iPhone 16 Pro. Miss, 0.85 USDT instant cashback.",
+  "dollar-galaxy": "$1 for a Galaxy Z Fold8. Miss, 0.85 USDT instant cashback.",
+  "dollar-gaming": "$1 for RTX 5090 or Switch 2. Miss, 0.85 USDT instant cashback.",
+  "starter-ps5": "$3 for a PS5 Pro. Miss, 2.65 USDT instant cashback.",
+  "starter-macbook": "$5 for a MacBook Pro M4 Max. Miss, 4.4 USDT instant cashback.",
+  "starter-phone": "$5 for an iPhone 17 Pro Max. Miss, 4.4 USDT instant cashback.",
+  "vault-submariner": "$20 for a Rolex Submariner. Miss, 18.5 USDT instant cashback.",
+  "vault-omega": "$25 for Omega, Tudor, Tissot. Miss, 23 USDT instant cashback.",
+  "vault-handbag": "$30 for a Hermès Birkin. Miss, 27.5 USDT instant cashback.",
+  "vault-gold": "$50 for a 1kg gold bar. Miss, 46 USDT instant cashback.",
+  "jackpot-cybertruck": "$100 for a Cybertruck. Miss, 95 USDT instant cashback.",
+  "jackpot-supercar": "$100 for a Porsche 911. Miss, 95 USDT instant cashback.",
   "cybertruck-dream": "A mobility lineup topped by one Tesla Cybertruck. Even the lowest tier ships as a physical item.",
   "urban-mobility": "Built around city commuting. E-scooters and folding bikes sit at the top.",
   "apex-workstation": "A workstation lineup topped by the MacBook Pro M4 Max. Peripherals ship as physical items too.",
