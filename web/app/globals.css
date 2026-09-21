@@ -376,3 +376,47 @@ body {
   animation: spark-sweep 1.4s linear infinite;
   mix-blend-mode: screen;
 }
+
+/* ── 니어미스 텐션 셰이크 — 인디케이터 1px 미세 진동 ─────── */
+@keyframes marker-shake {
+  0%, 100% { transform: translateX(-50%); }
+  10% { transform: translateX(calc(-50% - 1px)); }
+  20% { transform: translateX(calc(-50% + 1px)); }
+  30% { transform: translateX(calc(-50% - 1px)); }
+  40% { transform: translateX(calc(-50% + 1.5px)); }
+  50% { transform: translateX(calc(-50% - 1px)); }
+  60% { transform: translateX(calc(-50% + 1px)); }
+  70% { transform: translateX(calc(-50% - 0.5px)); }
+  80% { transform: translateX(calc(-50% + 1px)); }
+  90% { transform: translateX(calc(-50% - 1px)); }
+}
+.marker-shake {
+  animation: marker-shake 0.4s linear 1;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
+}
+
+/* ── 승급 반전: 노이즈 글리치 + 화면 갈라짐 ───────────── */
+@keyframes fx-glitch-shift {
+  0% { clip-path: inset(0 0 92% 0); transform: translateX(-6px); }
+  15% { clip-path: inset(30% 0 55% 0); transform: translateX(8px); }
+  30% { clip-path: inset(60% 0 20% 0); transform: translateX(-10px); }
+  45% { clip-path: inset(10% 0 80% 0); transform: translateX(6px); }
+  60% { clip-path: inset(75% 0 5% 0); transform: translateX(-4px); }
+  75% { clip-path: inset(40% 0 40% 0); transform: translateX(9px); }
+  100% { clip-path: inset(0 0 0 0); transform: translateX(0); opacity: 0; }
+}
+.fx-glitch {
+  background: repeating-linear-gradient(0deg, rgba(255,255,255,0.09) 0 2px, transparent 2px 5px), linear-gradient(90deg, rgba(139,92,246,0.25), rgba(230,202,101,0.2));
+  mix-blend-mode: screen;
+  animation: fx-glitch-shift 0.5s steps(6, end) 1 both;
+}
+@keyframes fx-crack-in {
+  0% { opacity: 0; stroke-dashoffset: 300; }
+  30% { opacity: 1; }
+  100% { opacity: 0; stroke-dashoffset: 0; }
+}
+.fx-crack path {
+  stroke-dasharray: 300;
+  animation: fx-crack-in 0.9s ease-out 1 both;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,0.9));
+}

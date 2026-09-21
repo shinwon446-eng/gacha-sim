@@ -2,7 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { BOXES, dropTable } from "../lib/products";
-import { REEL_EASE, REEL_LENGTH, REEL_TARGET_INDEX, buildStrip, indexUnderMarker, offsetForTarget } from "../lib/reel";
+import { JITTER_MAX, NEAR_MISS_JITTER, NEAR_MISS_RATE, REEL_EASE, REEL_LENGTH, REEL_TARGET_INDEX, applyNearMiss, buildStrip, indexUnderMarker, offsetForTarget } from "../lib/reel";
 
 test("스펙 상수: 80~100칸, cubic-bezier 감속, target 이 끝에서 떨어져 있다", () => {
   assert.ok(REEL_LENGTH >= 80 && REEL_LENGTH <= 100);
@@ -35,7 +35,7 @@ test("쇼케이스 타일은 감속 구간에만 심기고 결과 칸은 그대�
   const strip = buildStrip(result, items, rand, undefined, undefined, high);
   assert.equal(strip[REEL_TARGET_INDEX].id, result.id);
   for (const off of SHOWCASE_OFFSETS) assert.ok(high.some((h) => h.id === strip[REEL_TARGET_INDEX - off].id), `offset ${off}`);
-  assert.ok(SHOWCASE_OFFSETS.every((o) => o >= 6 && o <= 40));
+  assert.ok(SHOWCASE_OFFSETS.every((o) => o >= 6 && o <= 40) && SHOWCASE_OFFSETS.length >= 2);
 });
 
 test("정지 오프셋에서 인디케이터 아래 칸은 항상 target (뷰포트·지터 무관)", () => {
@@ -46,5 +46,28 @@ test("정지 오프셋에서 인디케이터 아래 칸은 항상 target (뷰포
       assert.ok(x < 0);
       assert.equal(indexUnderMarker(layout, x), REEL_TARGET_INDEX, `vw=${viewportWidth} jitter=${jitter}`);
     }
+  }
+});
+
+test("니어미스: 잭팟을 결과 바로 앞/뒤에 심어도 인디케이터 아래 칸은 결과(target)이고 경계 1~3px 안쪽에 선다", () => {
+  assert.equal(NEAR_MISS_RATE, 0.5);
+  assert.ok(NEAR_MISS_JITTER <= JITTER_MAX);
+  const b = BOXES[0];
+  const items = dropTable(b);
+  const result = items[items.length - 1];
+  const jackpot = items[0];
+  let x = 0.2;
+  const rand = () => (x = (x + 0.6180339887) % 1);
+  for (const side of ["left", "right"] as const) {
+    const strip = buildStrip(result, items, rand);
+    const jitter = applyNearMiss(strip, jackpot, side);
+    assert.equal(strip[REEL_TARGET_INDEX].id, result.id);
+    assert.equal(strip[REEL_TARGET_INDEX + (side === "left" ? -1 : 1)].id, jackpot.id);
+    const layout = { tileWidth: 148, gap: 10, viewportWidth: 1280 };
+    const tx = offsetForTarget(layout, REEL_TARGET_INDEX, jitter);
+    assert.equal(indexUnderMarker(layout, tx), REEL_TARGET_INDEX, side);
+    // 경계까지 남은 픽셀 — 1~3px
+    const edgePx = (0.5 - Math.abs(jitter)) * layout.tileWidth;
+    assert.ok(edgePx >= 1 && edgePx <= 3, `edge ${edgePx}`);
   }
 });

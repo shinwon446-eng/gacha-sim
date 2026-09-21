@@ -200,6 +200,7 @@
     "open1": "Open ×1",
     "open5": "Open ×5",
     "openN": "Open ×{n}",
+    "upgrade": "UPGRADE!",
     "openBulk": "Fast-open {n}",
     "qty": "Quantity",
     "autoStop": "⏹ Stop ({n} left)",
@@ -484,6 +485,10 @@
     "empty": "No reviews yet. Received your item? Post the first review and take the 10 USDT bonus.",
     "emptyCta": "Open a box",
     "close": "Close"
+  },
+  "gate": {
+    "stage1": "Unlocking the vault wheel",
+    "stage2": "Breaking the seal"
   },
   "splash": {
     "slogan": "THE ULTRA-LUXURY PROVABLY FAIR VAULT",

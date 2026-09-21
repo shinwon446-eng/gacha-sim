@@ -200,6 +200,7 @@
     "open1": "开启 ×1",
     "open5": "连续开启 ×5",
     "openN": "连续开启 ×{n}",
+    "upgrade": "UPGRADE!",
     "openBulk": "极速开启 {n} 个",
     "qty": "开启数量",
     "autoStop": "⏹ 停止（剩余 {n} 次）",
@@ -484,6 +485,10 @@
     "empty": "还没有晒单。收到实物了？发第一条晒单领取 10 USDT 奖励。",
     "emptyCta": "去开盲盒",
     "close": "关闭"
+  },
+  "gate": {
+    "stage1": "解锁金库转轮",
+    "stage2": "正在解除封印"
   },
   "splash": {
     "slogan": "THE ULTRA-LUXURY PROVABLY FAIR VAULT",

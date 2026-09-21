@@ -200,6 +200,7 @@
     "open1": "1회 오픈",
     "open5": "5회 연속 오픈",
     "openN": "{n}회 연속 오픈",
+    "upgrade": "UPGRADE!",
     "openBulk": "{n}개 고속 개봉",
     "qty": "개봉 수량",
     "autoStop": "⏹ 정지 (남은 {n}회)",
@@ -484,6 +485,10 @@
     "empty": "아직 게시된 후기가 없습니다. 실물을 받으셨다면 첫 후기를 남기고 10 USDT를 받아가세요.",
     "emptyCta": "박스 열러 가기",
     "close": "닫기"
+  },
+  "gate": {
+    "stage1": "금고 휠 잠금 해제",
+    "stage2": "봉인 해제 중"
   },
   "splash": {
     "slogan": "THE ULTRA-LUXURY PROVABLY FAIR VAULT",

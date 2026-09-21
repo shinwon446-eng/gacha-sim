@@ -112,6 +112,11 @@ v5 본문이 다루지 않는 항목은 이전 규범을 유지한다. 코드가
 - **홈 계층** 티커 → 히어로 → 퀵 탭 → TOP 10 → 데일리 프리 박스 → 3-Step + 지표 → 보조 캐러셀 → 그리드 → 인증 피드 → 푸터. **카드** 16:9 콤팩트, 호버 1.15x 확장.
 - **확률 노출 정책 (2026-09-21)** 카드·호버·상세 모달 본문에는 소수점 확률을 쓰지 않는다. 대신 [최고 N배 잭팟] · [환수율 RTP x%] · [최소 y% 환급 보장] 3수치와 게임형 등급 바(`Tier.gameLabel`: LEGENDARY=ROYAL / EPIC=PRESTIGE / RARE=EXECUTIVE / CASHBACK=CURATED — 색은 위 등급색 그대로)만 보인다. 정밀 확률표는 상세 모달의 접힌 "정밀 확률표 · Provably Fair" 섹션과 `/fairness` 에서만 연다(공개 자체는 유지).
 - **룰렛 3단계 연출** Phase 1 속도 기반 모션 블러(≤14px) → Phase 2 감속 구간(55~96%)에서 ROYAL/PRESTIGE 타일 근처 0.3배속 + 골드 스파크 보더(`.reel-tension`) → Phase 3 ROYAL/PRESTIGE 적중 시 `MegaWinFX`(화이트→골드 플래시 · 충격파 · 코인 샤워 · 컨페티) + 결과 카드 3D 줌인. 감속 구간에는 `SHOWCASE_OFFSETS` 자리에 고등급 타일을 심는다 — 결과 칸은 Provably Fair 로 먼저 확정되며 연출이 바꾸지 않는다.
+- **가챠 3대 연출 엔진 (2026-09-21)** 전부 연출이며 결과는 스핀 전 Provably Fair 로 확정된다(연출이 결과·확률을 바꾸지 않는다 — `tests/reel.test.ts`).
+  ① 니어미스 `NEAR_MISS_RATE=0.5`: 저등급 결과일 때 2번에 1번 최상위 잭팟을 target±1 에 심고(`applyNearMiss`) 경계 1.5px 안쪽에 정지 → 마지막 0.4% 구간 0.3배속 + 인디케이터 0.4초 셰이크(`.marker-shake`) + 릴 ±1.5px 멈칫.
+  ② 승급 반전 `FAKEOUT_RATE=0.5`(단건 수동 오픈·잭팟일 때): 0.5초 바닥 캐시백으로 위장(회색 플래시) → `UpgradeFX`(노이즈 글리치·화면 갈라짐·골드/보라 번개·UPGRADE! 네온) → 진짜 결과 + MegaWinFX.
+  ③ 3단계 문지기 `VaultGateFX`(수동 오픈에만, 데모·오토플레이 제외): 금고 휠 잠금 해제(0.9s, 찰칵) → 문틈 아우라 블루→바이올렛→골드(0.8s) → 암전 + 심장 박동(0.42s) → 릴.
+  기본 스핀 4.2s + 문지기 2.1s ≈ 7.2s, 니어미스 ≈ 8.5s.
 - **시네마틱 인트로** `components/layout/SplashScreen.tsx` — 세션당 1회(`sessionStorage.hasSeenIntro`), 1.8초 골드 레이저 스위프 + 메탈릭 로고 + 슬로건 → 0.6초 디졸브, 우상단 SKIP.
 - **개봉 수량 프리셋** 상세 모달 [1x][5x][10x][50x][100x]. `BULK_THRESHOLD=50` 이상은 릴 없이 `BulkOpenModal`(HMAC 병렬 확정 → 보관함 1회 일괄 저장 → 1.5초 고속 카운터 → 요약 그리드: 총 투입 vs 총 획득 · 순손익 카운트업, 잭팟 카드 골드 스파크 + 3D 플로팅, MegaWinFX).
 - **오토플레이** 상세 모달 [−][🔄 오토플레이 N회][+] → `AutoplaySettingsModal`(10/25/50/100/∞ · ⚡ 자동 환전 · 스마트 정지: 잭팟(기본 켬)/단일 N배/손실 한도). 규칙은 `lib/autoplay.ts` 순수 함수(`stopReasonAfter`)로 테스트된다. 실행 중 릴 아래 [⏹ 정지 (남은 N회)]와 투입/획득/순손익 카운터, 스핀마다 가격 차감·잔고 부족 시 정지.

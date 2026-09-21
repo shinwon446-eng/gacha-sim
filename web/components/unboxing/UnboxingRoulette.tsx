@@ -12,10 +12,12 @@ import { dropTable, sellValueOf, REFUND_RATE, type ProductBox, type ProductItem 
 import { formatMultiple, glow, tierOf, type Tier } from "@/lib/tiers";
 import { canAfford, netOf, remainingSpins, stopReasonAfter, type AutoplayConfig, type AutoplayState, type StopReason } from "@/lib/autoplay";
 import { calculateRollResult, determineItem } from "@/lib/fairness";
-import { REEL_DURATION_MULTI_S, REEL_DURATION_S, REEL_EASE, REEL_TARGET_INDEX, buildStrip, offsetForTarget, unitRandom } from "@/lib/reel";
+import { NEAR_MISS_RATE, REEL_DURATION_MULTI_S, REEL_DURATION_S, REEL_EASE, REEL_TARGET_INDEX, applyNearMiss, buildStrip, offsetForTarget, unitRandom, type NearMissSide } from "@/lib/reel";
 import { useFairStore } from "@/stores/fairStore";
 import { useSettingsStore } from "@/stores/settingsStore";
-import { playTick, playWin, playTaDum } from "@/lib/audio";
+import { playTick, playWin, playTaDum, playTension, playGlitch } from "@/lib/audio";
+import { VaultGateFX, GATE_TOTAL_MS } from "@/components/unboxing/VaultGateFX";
+import { UpgradeFX, UPGRADE_FX_MS } from "@/components/unboxing/UpgradeFX";
 import { ProductArt } from "@/components/box/ProductArt";
 import { Money } from "@/components/ui/Money";
 import { VisualVerifyModal } from "@/components/fairness/VisualVerifyModal";
@@ -66,7 +68,12 @@ export interface UnboxingRouletteProps {
   welcomeClaimed?: boolean;
 }
 
-type Phase = "idle" | "spinning" | "landed" | "results";
+type Phase = "idle" | "gate" | "spinning" | "landed" | "results";
+/** 승급 반전(잭팟을 0.5초 꽝처럼 보여준 뒤 각성) 빈도 */
+const FAKEOUT_RATE = 0.5;
+const FAKEOUT_DISGUISE_MS = 500;
+/** 니어미스 텐션 셰이크 길이 */
+const SHAKE_MS = 400;
 
 const TILE_W = 148;
 const GAP = 10;
@@ -99,6 +106,11 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
   const [mega, setMega] = useState<string | null>(null);
   // 오토플레이 진행 상태 — 남은 회전 · 누적 투입/획득 · 정지 사유
   const [autoState, setAutoState] = useState<AutoplayState>({ done: 0, spent: 0, won: 0 });
+  // 도파민 엔진: 니어미스 셰이크 · 승급 반전 · 문지기 컷인
+  const [shake, setShake] = useState(false);
+  const nearMissRef = useRef<NearMissSide | null>(null);
+  const [disguise, setDisguise] = useState<ProductItem | null>(null);
+  const [upgradeFx, setUpgradeFx] = useState<string | null>(null);
   const [autoStop, setAutoStop] = useState<StopReason>(null);
   const stopRef = useRef(false);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -203,6 +215,16 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
         return k === "royal" || k === "prestige";
       });
       const built = buildStrip(item, items, unitRandom, undefined, undefined, showcase);
+      // 니어미스: 결과가 저등급이면 2번에 1번, 최상위 잭팟을 바로 앞/뒤 칸에 심고 경계 1~3px 안쪽에 세운다
+      const resultTier = tierOf(item.value, box.price).key;
+      const lowTier = resultTier === "curated" || resultTier === "executive";
+      let jitter = unitRandom() - 0.5;
+      nearMissRef.current = null;
+      if (lowTier && items[0] && items[0].id !== item.id && Math.random() < NEAR_MISS_RATE) {
+        const side: NearMissSide = Math.random() < 0.5 ? "left" : "right";
+        jitter = applyNearMiss(built, items[0], side);
+        nearMissRef.current = side;
+      }
       stripRef.current = built;
       setStrip(built);
       setCurrent(null);
@@ -213,7 +235,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       await new Promise((r) => requestAnimationFrame(() => r(null)));
 
       // 3. 감속
-      const target = offsetForTarget({ tileWidth: TILE_W, gap: GAP, viewportWidth: viewportW.current }, REEL_TARGET_INDEX, unitRandom() - 0.5);
+      const target = offsetForTarget({ tileWidth: TILE_W, gap: GAP, viewportWidth: viewportW.current }, REEL_TARGET_INDEX, jitter);
       const track = viewportRef.current?.querySelector<HTMLElement>("[data-reel]");
       if (track) startTicks(track);
       // Phase 1 초광속(속도 → 모션 블러) · Phase 2 안티시페이션(고등급 근처 0.3배속 + 스파크)
@@ -239,7 +261,11 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
           blurMv.set(Math.min(14, Math.max(0, (vel - 1200) / 550)));
           const progress = target === 0 ? 1 : v / target;
           const idx = Math.floor((-v + viewportW.current / 2) / step);
-          const near = progress > 0.55 && progress < 0.965 && idx < REEL_TARGET_INDEX - 1 && (isHigh(idx) || isHigh(idx + 1));
+          const nm = nearMissRef.current !== null;
+          // 쇼케이스 타일 근처(55~96.5%)는 0.3배속. 니어미스는 경계 직전(92% 이후)만 슬로우 모션 — 전체가 늘어지지 않게
+          const showcaseNear = progress > 0.7 && progress < 0.965 && idx < REEL_TARGET_INDEX - 1 && (isHigh(idx) || isHigh(idx + 1));
+          const nearMissNear = nm && progress > 0.996 && progress < 0.9995 && idx >= REEL_TARGET_INDEX - 1 && idx <= REEL_TARGET_INDEX;
+          const near = showcaseNear || nearMissNear;
           if (near !== tense) {
             tense = near;
             anim.speed = near ? 0.3 : 1;
@@ -251,11 +277,42 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       blurMv.set(0);
       setTension(false);
       stopTicks();
+      // 니어미스 텐션 셰이크: 인디케이터 0.4초 미세 진동 + 릴 ±1.5px 멈칫 (경계는 넘지 않는다)
+      if (nearMissRef.current) {
+        setShake(true);
+        if (!useSettingsStore.getState().muted) playTension();
+        const dir = nearMissRef.current === "left" ? 1 : -1;
+        await animate(x, [target, target + dir * 1.5, target - dir * 1, target + dir * 1.2, target], { duration: SHAKE_MS / 1000, ease: "easeInOut" });
+        setShake(false);
+      }
 
       // 4. 정지
       setCurrent(res);
       setPhase("landed");
       const big = res.tier.key === "royal" || res.tier.key === "prestige";
+      const fakeout = big && !demo && !auto && count === 1 && Math.random() < FAKEOUT_RATE;
+      if (fakeout) {
+        // 승급 반전: 바닥(캐시백)으로 위장한 채 회색 플래시 → 0.5초 뒤 글리치·번개 → 진짜 결과 각성
+        const floor = items[items.length - 1];
+        setDisguise(floor);
+        setFlash("#94A3B8");
+        if (!useSettingsStore.getState().muted) playWin("start");
+        setTimeout(() => setFlash(null), 400);
+        setTimeout(() => {
+          setUpgradeFx(res.tier.accent);
+          if (!useSettingsStore.getState().muted) playGlitch();
+          setTimeout(() => {
+            setDisguise(null);
+            setFlash(res.tier.accent);
+            setMega(res.tier.accent);
+            if (!useSettingsStore.getState().muted) playWin("jackpot");
+            setTimeout(() => setFlash(null), 600);
+            setTimeout(() => setMega(null), 3200);
+          }, 550);
+          setTimeout(() => setUpgradeFx(null), UPGRADE_FX_MS);
+        }, FAKEOUT_DISGUISE_MS);
+        return res;
+      }
       setFlash(big ? res.tier.accent : "#E50914");
       if (big) {
         setMega(res.tier.accent);
@@ -265,7 +322,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       setTimeout(() => setFlash(null), 600);
       return res;
     },
-    [box, items, fair, x, blurMv, startTicks, addOwned, sellOwned, credit, addTransaction, demo],
+    [box, items, fair, x, blurMv, startTicks, addOwned, sellOwned, credit, addTransaction, demo, auto, count],
   );
 
   // 오픈 시작 — box 가 들어오면 한 번. 리사이즈는 스핀을 취소하지 않는다.
@@ -276,6 +333,12 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       // 뷰포트 폭이 측정될 때까지 한두 프레임 기다린다
       for (let i = 0; i < 20 && viewportW.current === 0; i++) await new Promise((r) => requestAnimationFrame(() => r(null)));
       if (cancelled.current) return;
+      if (!demo && !auto) {
+        // 3단계 문지기 컷인 — 휠 잠금 해제 → 틈새 아우라 → 암전·심장 박동
+        setPhase("gate");
+        await new Promise((r) => setTimeout(r, GATE_TOTAL_MS));
+        if (cancelled.current) return;
+      }
       if (!muted) playTaDum();
       const out: UnboxResult[] = [];
       if (auto) {
@@ -341,6 +404,10 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
     setSold(false);
     setShipped(false);
     setShipOpen(false);
+    setShake(false);
+    setDisguise(null);
+    setUpgradeFx(null);
+    nearMissRef.current = null;
   }, [box]);
 
   useEffect(() => {
@@ -365,6 +432,10 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
   const sellAmount = +pending.reduce((s, r) => s + sellValueOf(r.item), 0).toFixed(2);
   const allSettled = results.length > 0 && pending.length === 0;
   const last = results[results.length - 1] ?? current;
+  // 승급 반전 중에는 바닥 아이템으로 위장해 보여준다
+  const shownItem = disguise ?? last?.item ?? null;
+  const shownTier = disguise && box ? tierOf(disguise.value, box.price) : (last?.tier ?? null);
+  const shownSettled = disguise ? true : !!last?.settled;
 
   return (
     <AnimatePresence>
@@ -389,14 +460,16 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
             <button type="button" onClick={toggleMuted} aria-label={muted ? t("unmute") : t("mute")} className="glass-dark flex h-9 w-9 items-center justify-center rounded-md text-muted hover:text-white">
               {muted ? <VolumeX className="h-4 w-4" strokeWidth={2} /> : <Volume2 className="h-4 w-4" strokeWidth={2} />}
             </button>
-            <button type="button" onClick={onClose} disabled={phase === "spinning"} aria-label={t("close")} className="glass-dark flex h-9 w-9 items-center justify-center rounded-md text-muted hover:text-white disabled:opacity-40">
+            <button type="button" onClick={onClose} disabled={phase === "spinning" || phase === "gate"} aria-label={t("close")} className="glass-dark flex h-9 w-9 items-center justify-center rounded-md text-muted hover:text-white disabled:opacity-40">
               <X className="h-4 w-4" strokeWidth={2} />
             </button>
           </div>
         </header>
 
-        {/* ── Phase 3: 메가 윈 폭발 축제 ── */}
+        {/* ── Phase 3: 메가 윈 폭발 축제 · 승급 반전 번개 · 문지기 컷인 ── */}
         <AnimatePresence>{mega && <MegaWinFX key="mega" accent={mega} />}</AnimatePresence>
+        <AnimatePresence>{upgradeFx && <UpgradeFX key="upgrade" accent={upgradeFx} />}</AnimatePresence>
+        <AnimatePresence>{phase === "gate" && <VaultGateFX key="gate" />}</AnimatePresence>
 
         {/* ── 룰렛 스트립 ── */}
         <div className="relative flex flex-1 flex-col items-center justify-center px-0">
@@ -413,7 +486,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
             <span aria-hidden className="pointer-events-none absolute inset-y-0 right-0 z-20 w-32 bg-gradient-to-l from-obsidian to-transparent" />
 
             {/* 중앙 인디케이터 — 레드/골드 */}
-            <span aria-hidden className="pointer-events-none absolute inset-y-0 left-1/2 z-30 w-0.5 -translate-x-1/2 bg-gradient-to-b from-crimson via-gold-champagne to-crimson shadow-[0_0_14px_rgba(230,202,101,0.8)]" />
+            <span aria-hidden className={cn("pointer-events-none absolute inset-y-0 left-1/2 z-30 w-0.5 -translate-x-1/2 bg-gradient-to-b from-crimson via-gold-champagne to-crimson shadow-[0_0_14px_rgba(230,202,101,0.8)]", shake && "marker-shake")} />
             <span aria-hidden className="pointer-events-none absolute left-1/2 top-0 z-30 -translate-x-1/2 border-x-8 border-t-[10px] border-x-transparent border-t-crimson" />
             <span aria-hidden className="pointer-events-none absolute bottom-0 left-1/2 z-30 -translate-x-1/2 border-x-8 border-b-[10px] border-x-transparent border-b-crimson" />
 
@@ -490,7 +563,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
 
         {/* ── 결과 팝업 ── */}
         <AnimatePresence>
-          {phase === "results" && last && (
+          {(phase === "results" || (phase === "landed" && disguise)) && last && (
             <motion.div
               className="absolute inset-0 z-50 flex items-center justify-center overflow-y-auto px-4 py-6"
               initial={{ opacity: 0 }}
@@ -499,7 +572,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
             >
               <motion.div
                 className="border-metallic-gold relative w-full max-w-lg rounded-2xl bg-canvas p-6"
-                style={{ boxShadow: `0 0 80px ${glow(last.tier.accent, 0.3)}, 0 30px 80px rgba(0,0,0,0.8)` }}
+                style={{ boxShadow: `0 0 80px ${glow((shownTier ?? last.tier).accent, 0.3)}, 0 30px 80px rgba(0,0,0,0.8)` }}
                 initial={{ opacity: 0, scale: 0.92, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
@@ -508,26 +581,26 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
 
                 {results.length === 1 ? (
                   <div className="relative text-center">
-                    <div className="caption-luxury" style={{ color: last.tier.accent }}>
-                      {last.tier.label} · {t("result")}
+                    <div className="caption-luxury" style={{ color: shownTier.accent }}>
+                      {shownTier.label} · {t("result")}
                     </div>
                     <motion.div
                       className="relative mx-auto mt-3 overflow-hidden rounded-xl"
-                      style={{ width: 240, height: 200, transformPerspective: 900, boxShadow: `0 30px 60px rgba(0,0,0,0.7), 0 0 40px ${glow(last.tier.accent, 0.35)}` }}
+                      style={{ width: 240, height: 200, transformPerspective: 900, boxShadow: `0 30px 60px rgba(0,0,0,0.7), 0 0 40px ${glow(shownTier.accent, 0.35)}` }}
                       initial={{ scale: 0.55, rotateX: 38, opacity: 0 }}
                       animate={{ scale: 1, rotateX: 0, opacity: 1 }}
                       transition={{ type: "spring", stiffness: 180, damping: 18, mass: 0.9 }}
                     >
-                      <ProductArt image={last.item.image} alt={itemName(last.item)} accent={last.tier.accent} kind={last.item.kind} glowStrength={0.4} fallbackSize="md" priority />
+                      <ProductArt image={shownItem.image} alt={itemName(shownItem)} accent={shownTier.accent} kind={shownItem.kind} glowStrength={0.4} fallbackSize="md" priority />
                     </motion.div>
-                    <h2 className="mt-4 text-2xl font-bold text-white">{itemName(last.item)}</h2>
+                    <h2 className="mt-4 text-2xl font-bold text-white">{itemName(shownItem)}</h2>
                     <div className="mt-1">
-                      <Money value={last.item.value} size="lg" numberClassName="text-gold-gradient" />
+                      <Money value={shownItem.value} size="lg" numberClassName="text-gold-gradient" />
                     </div>
                     {!demo && <div className="mt-1 text-xs text-faint">{t("paid", { price: fmt(box.price) })}</div>}
-                    {last.settled && (
+                    {shownSettled && (
                       <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-gold-champagne/50 bg-gold-champagne/10 px-3 py-1 text-xs font-bold text-gold-champagne">
-                        ⚡ {t("cashCredited", { amount: fmt(last.item.value) })}
+                        ⚡ {t("cashCredited", { amount: fmt(shownItem.value) })}
                       </div>
                     )}
                   </div>

@@ -18,7 +18,7 @@ export const REEL_LENGTH = 88;
 /** 결과 칸. 끝에서 몇 칸 앞이면 정지 후 오른쪽에도 타일이 남는다. */
 export const REEL_TARGET_INDEX = REEL_LENGTH - 9;
 /** 감속 — 정밀 cubic-bezier ease-out */
-export const REEL_DURATION_S = 5.2;
+export const REEL_DURATION_S = 4.2;
 export const REEL_DURATION_MULTI_S = 2.4;
 export const REEL_EASE: [number, number, number, number] = [0.12, 0.8, 0.33, 1];
 
@@ -26,7 +26,7 @@ export const REEL_EASE: [number, number, number, number] = [0.12, 0.8, 0.33, 1];
  * 감속 구간(진행 55~92%)에 쇼케이스 타일을 심는 위치 — target 기준 뒤쪽 칸 수.
  * 안티시페이션 텐션(0.3배속·스파크)이 걸리는 자리다. 결과 칸(target) 자체는 건드리지 않는다.
  */
-export const SHOWCASE_OFFSETS = [31, 22, 14, 7];
+export const SHOWCASE_OFFSETS = [20, 9];
 
 /**
  * 스트립 생성. target 에 result, 나머지는 확률표 가중으로 채운다.
@@ -50,12 +50,34 @@ export function buildStrip<T extends WithProbability>(result: T, items: T[], ran
   return strip;
 }
 
-/** target 칸 중심이 뷰포트 중앙에 오는 translateX(px, 음수). jitter 는 ±0.45 타일 안의 미세 오프셋. */
+/** 지터 한계 — 타일 폭의 ±0.49 (경계 안쪽 ~1.5px). 인디케이터는 언제나 target 칸 위에 선다. */
+export const JITTER_MAX = 0.49;
+
+/** target 칸 중심이 뷰포트 중앙에 오는 translateX(px, 음수). jitter 는 ±JITTER_MAX 타일 안의 미세 오프셋. */
 export function offsetForTarget(layout: ReelLayout, targetIndex = REEL_TARGET_INDEX, jitter = 0): number {
   const step = layout.tileWidth + layout.gap;
   const center = targetIndex * step + layout.tileWidth / 2;
-  const j = Math.max(-0.45, Math.min(0.45, jitter)) * layout.tileWidth;
+  const j = Math.max(-JITTER_MAX, Math.min(JITTER_MAX, jitter)) * layout.tileWidth;
   return -(center - layout.viewportWidth / 2 + j);
+}
+
+/** 니어미스 빈도 — 2번에 1번 */
+export const NEAR_MISS_RATE = 0.5;
+/** 니어미스 정지 지터 — 경계선 1~3px 안쪽 (타일 148px 기준 ≈ 1.5px) */
+export const NEAR_MISS_JITTER = JITTER_MAX;
+
+export type NearMissSide = "left" | "right";
+
+/**
+ * 니어미스 — 결과(저등급)의 바로 앞/뒤 칸에 최상위 잭팟을 심는다. 결과 칸은 그대로다.
+ * side 가 left 면 잭팟이 왼쪽(targetIndex-1)에 서고, 릴은 왼쪽 경계 쪽으로 치우쳐 멈춘다(음수 지터).
+ * 반환: 정지 지터. 연출일 뿐 확률·결과와 무관하다.
+ */
+export function applyNearMiss<T>(strip: T[], jackpot: T, side: NearMissSide, targetIndex = REEL_TARGET_INDEX): number {
+  const i = side === "left" ? targetIndex - 1 : targetIndex + 1;
+  if (i < 0 || i >= strip.length) throw new Error("니어미스 칸이 스트립 밖");
+  strip[i] = jackpot;
+  return side === "left" ? -NEAR_MISS_JITTER : NEAR_MISS_JITTER;
 }
 
 /** 정지 위치에서 인디케이터 아래 칸 — 반드시 target. 테스트용 역산. */

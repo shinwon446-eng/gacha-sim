@@ -77,7 +77,7 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "1회 오픈", "open5": "5회 연속 오픈", "openN": "{n}회 연속 오픈", "openBulk": "{n}개 고속 개봉", "qty": "개봉 수량", "autoStop": "⏹ 정지 (남은 {n}회)", "autoSpent": "투입", "autoWon": "획득", "autoNet": "순손익", "autoStopped": {"spins": "오토플레이 완료", "jackpot": "👑 잭팟 당첨 — 자동 정지", "multiple": "목표 배수 달성 — 자동 정지", "stopLoss": "손실 한도 도달 — 자동 정지", "balance": "잔고 부족 — 정지", "manual": "수동 정지"}, "trialLabel": "손맛 보기 · 무료 체험", "trialCongrats": "{item} ({n}) 손맛 적중!", "trialBody": "웰컴 보너스 {bonus} 받고 진짜로 열어보세요.", "trialCta": "보너스 받고 진짜 열기", "trialCtaClaimed": "실제 박스 열기", "trialNote": "무료 체험 결과는 배송·환전 대상이 아닙니다. 진짜 오픈은 위 버튼으로.", "spinning": "개봉 중…", "landing": "결과 확정",
+      "open1": "1회 오픈", "open5": "5회 연속 오픈", "openN": "{n}회 연속 오픈", "upgrade": "UPGRADE!", "openBulk": "{n}개 고속 개봉", "qty": "개봉 수량", "autoStop": "⏹ 정지 (남은 {n}회)", "autoSpent": "투입", "autoWon": "획득", "autoNet": "순손익", "autoStopped": {"spins": "오토플레이 완료", "jackpot": "👑 잭팟 당첨 — 자동 정지", "multiple": "목표 배수 달성 — 자동 정지", "stopLoss": "손실 한도 도달 — 자동 정지", "balance": "잔고 부족 — 정지", "manual": "수동 정지"}, "trialLabel": "손맛 보기 · 무료 체험", "trialCongrats": "{item} ({n}) 손맛 적중!", "trialBody": "웰컴 보너스 {bonus} 받고 진짜로 열어보세요.", "trialCta": "보너스 받고 진짜 열기", "trialCtaClaimed": "실제 박스 열기", "trialNote": "무료 체험 결과는 배송·환전 대상이 아닙니다. 진짜 오픈은 위 버튼으로.", "spinning": "개봉 중…", "landing": "결과 확정",
       "result": "당첨", "results": "{n}회 결과", "total": "합계 가치", "paid": "지불 {price}",
       "sellBack": "95% 즉시 회수 · {amount}", "sellBackAll": "전부 95% 회수 · {amount}", "cashoutCta": "⚡ 95% USDT 즉시 회수", "noFee": "수수료 0%", "shipSub": "실물 · 무료 배송", "cashCredited": "{amount} 잔액에 즉시 적립됨", "respin": "🔥 {price}로 다시 돌리기", "sellBackNote": "실판매가의 {rate}가 잔액으로 즉시 반영됩니다",
       "sold": "회수 완료 — {amount} 잔액 반영", "claimShipping": "집으로 배송",
@@ -155,6 +155,7 @@ UI = {
       "bonusNote": "후기 등록 즉시 {bonus} 보너스가 계정 잔액으로 입금됩니다.",
       "empty": "아직 게시된 후기가 없습니다. 실물을 받으셨다면 첫 후기를 남기고 10 USDT를 받아가세요.", "emptyCta": "박스 열러 가기", "close": "닫기"
     },
+    "gate": {"stage1": "금고 휠 잠금 해제", "stage2": "봉인 해제 중"},
     "splash": {"slogan": "THE ULTRA-LUXURY PROVABLY FAIR VAULT", "skip": "SKIP"},
     "autoplay": {"eyebrow": "Autoplay", "title": "오토플레이 설정", "close": "닫기", "perSpin": "회", "spins": "회전 수", "times": "{n}회", "budget": "최대 투입 {amount}", "autoSell": "⚡ 모든 당첨품 95% USDT 즉시 자동 환전 (잔고 자동 재충전)", "autoSellBody": "실물·기프트카드는 실판매가의 95%로 바로 회수해 잔고를 채웁니다. USDT 캐시백은 원래 100% 즉시 적립.", "smartStop": "스마트 정지 조건", "stopJackpot": "👑 에픽/레전더리(잭팟) 당첨 시 즉시 회전 멈춤", "stopMultiple": "단일 승리 N배 이상 시 중단", "multipleUnit": "배 이상", "stopLoss": "손실 한도(Stop Loss) 도달 시 중단", "stopLossUnit": "누적 손실", "start": "🔄 오토플레이 시작 · {n}회", "button": "🔄 오토플레이 {n}회"},
     "bulk": {"eyebrow": "대량 개봉 · {n}개", "opening": "고속 개봉 중…", "spent": "총 투입 비용", "won": "총 획득 가치", "net": "순손익", "sellAll": "⚡ {n}개 95% 즉시 회수", "keep": "보관함에 두기"},
@@ -287,7 +288,7 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "Open ×1", "open5": "Open ×5", "openN": "Open ×{n}", "openBulk": "Fast-open {n}", "qty": "Quantity", "autoStop": "⏹ Stop ({n} left)", "autoSpent": "Spent", "autoWon": "Won", "autoNet": "Net", "autoStopped": {"spins": "Autoplay finished", "jackpot": "👑 Jackpot hit — auto-stopped", "multiple": "Target multiple reached — auto-stopped", "stopLoss": "Stop-loss reached — auto-stopped", "balance": "Insufficient balance — stopped", "manual": "Stopped manually"}, "trialLabel": "Free try", "trialCongrats": "Nice hit — {item} ({n}) on your free try!", "trialBody": "Open real boxes with your {bonus} welcome bonus!", "trialCta": "Claim & Open Real Box", "trialCtaClaimed": "Open Real Box", "trialNote": "Free-try results aren't shipped or cashed out. Use the button above for the real thing.", "spinning": "Opening…", "landing": "Result locked",
+      "open1": "Open ×1", "open5": "Open ×5", "openN": "Open ×{n}", "upgrade": "UPGRADE!", "openBulk": "Fast-open {n}", "qty": "Quantity", "autoStop": "⏹ Stop ({n} left)", "autoSpent": "Spent", "autoWon": "Won", "autoNet": "Net", "autoStopped": {"spins": "Autoplay finished", "jackpot": "👑 Jackpot hit — auto-stopped", "multiple": "Target multiple reached — auto-stopped", "stopLoss": "Stop-loss reached — auto-stopped", "balance": "Insufficient balance — stopped", "manual": "Stopped manually"}, "trialLabel": "Free try", "trialCongrats": "Nice hit — {item} ({n}) on your free try!", "trialBody": "Open real boxes with your {bonus} welcome bonus!", "trialCta": "Claim & Open Real Box", "trialCtaClaimed": "Open Real Box", "trialNote": "Free-try results aren't shipped or cashed out. Use the button above for the real thing.", "spinning": "Opening…", "landing": "Result locked",
       "result": "You won", "results": "{n} results", "total": "Total value", "paid": "Paid {price}",
       "sellBack": "Cash out 95% · {amount}", "sellBackAll": "Cash out all · {amount}", "cashoutCta": "⚡ Cash out 95% in USDT", "noFee": "0% fee", "shipSub": "Physical · free shipping", "cashCredited": "{amount} credited to your balance", "respin": "🔥 Spin again for {price}", "sellBackNote": "{rate} of market value is credited to your balance instantly",
       "sold": "Cashed out — {amount} credited", "claimShipping": "Ship to me",
@@ -365,6 +366,7 @@ UI = {
       "bonusNote": "The {bonus} bonus is credited to your account the moment your review is posted.",
       "empty": "No reviews yet. Received your item? Post the first review and take the 10 USDT bonus.", "emptyCta": "Open a box", "close": "Close"
     },
+    "gate": {"stage1": "Unlocking the vault wheel", "stage2": "Breaking the seal"},
     "splash": {"slogan": "THE ULTRA-LUXURY PROVABLY FAIR VAULT", "skip": "SKIP"},
     "autoplay": {"eyebrow": "Autoplay", "title": "Autoplay settings", "close": "Close", "perSpin": "spin", "spins": "Number of spins", "times": "{n}", "budget": "Max stake {amount}", "autoSell": "⚡ Auto cash out every win at 95% USDT (balance auto-refills)", "autoSellBody": "Physical items and gift cards are cashed out at 95% of market value right away. USDT cashback is credited 100% as always.", "smartStop": "Smart stop", "stopJackpot": "👑 Stop on Epic / Legendary (jackpot) win", "stopMultiple": "Stop on a single win of N× or more", "multipleUnit": "× or more", "stopLoss": "Stop when the loss limit is reached", "stopLossUnit": "net loss", "start": "🔄 Start autoplay · {n}", "button": "🔄 Autoplay {n}"},
     "bulk": {"eyebrow": "Bulk open · {n}", "opening": "Fast-opening…", "spent": "Total stake", "won": "Total value won", "net": "Net", "sellAll": "⚡ Cash out {n} at 95%", "keep": "Keep in vault"},
@@ -497,7 +499,7 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "开启 ×1", "open5": "连续开启 ×5", "openN": "连续开启 ×{n}", "openBulk": "极速开启 {n} 个", "qty": "开启数量", "autoStop": "⏹ 停止（剩余 {n} 次）", "autoSpent": "投入", "autoWon": "获得", "autoNet": "净损益", "autoStopped": {"spins": "自动旋转完成", "jackpot": "👑 命中头奖 — 自动停止", "multiple": "达到目标倍数 — 自动停止", "stopLoss": "达到止损 — 自动停止", "balance": "余额不足 — 停止", "manual": "手动停止"}, "trialLabel": "免费过把瘾", "trialCongrats": "手感不错！免费试玩抽中 {item}（{n}）", "trialBody": "用 {bonus} 新人奖励开启真实盲盒吧！", "trialCta": "领取奖励并开启真实盲盒", "trialCtaClaimed": "开启真实盲盒", "trialNote": "免费试玩结果不参与配送与折现。真正开箱请点上方按钮。", "spinning": "开启中…", "landing": "结果已锁定",
+      "open1": "开启 ×1", "open5": "连续开启 ×5", "openN": "连续开启 ×{n}", "upgrade": "UPGRADE!", "openBulk": "极速开启 {n} 个", "qty": "开启数量", "autoStop": "⏹ 停止（剩余 {n} 次）", "autoSpent": "投入", "autoWon": "获得", "autoNet": "净损益", "autoStopped": {"spins": "自动旋转完成", "jackpot": "👑 命中头奖 — 自动停止", "multiple": "达到目标倍数 — 自动停止", "stopLoss": "达到止损 — 自动停止", "balance": "余额不足 — 停止", "manual": "手动停止"}, "trialLabel": "免费过把瘾", "trialCongrats": "手感不错！免费试玩抽中 {item}（{n}）", "trialBody": "用 {bonus} 新人奖励开启真实盲盒吧！", "trialCta": "领取奖励并开启真实盲盒", "trialCtaClaimed": "开启真实盲盒", "trialNote": "免费试玩结果不参与配送与折现。真正开箱请点上方按钮。", "spinning": "开启中…", "landing": "结果已锁定",
       "result": "获得", "results": "{n} 次结果", "total": "总价值", "paid": "已支付 {price}",
       "sellBack": "95% 立即折现 · {amount}", "sellBackAll": "全部 95% 立即折现 · {amount}", "cashoutCta": "⚡ 95% USDT 即时折现", "noFee": "0 手续费", "shipSub": "实物 · 免费配送", "cashCredited": "{amount} 已即时计入余额", "respin": "🔥 {price} 再来一发", "sellBackNote": "按市场价的 {rate} 即时计入余额",
       "sold": "已折现 — 余额 +{amount}", "claimShipping": "寄到家",
@@ -575,6 +577,7 @@ UI = {
       "bonusNote": "晒单发布后，{bonus} 奖励立即计入您的账户余额。",
       "empty": "还没有晒单。收到实物了？发第一条晒单领取 10 USDT 奖励。", "emptyCta": "去开盲盒", "close": "关闭"
     },
+    "gate": {"stage1": "解锁金库转轮", "stage2": "正在解除封印"},
     "splash": {"slogan": "THE ULTRA-LUXURY PROVABLY FAIR VAULT", "skip": "SKIP"},
     "autoplay": {"eyebrow": "Autoplay", "title": "自动旋转设置", "close": "关闭", "perSpin": "次", "spins": "旋转次数", "times": "{n} 次", "budget": "最多投入 {amount}", "autoSell": "⚡ 所有中奖品 95% USDT 即时自动折现（余额自动补充）", "autoSellBody": "实物与礼品卡按市场价 95% 立即折现补充余额。USDT 返现一如既往 100% 即时计入。", "smartStop": "智能停止条件", "stopJackpot": "👑 命中史诗/传说（头奖）时立即停止", "stopMultiple": "单次赢得 N 倍以上时停止", "multipleUnit": "倍以上", "stopLoss": "达到止损额度时停止", "stopLossUnit": "累计亏损", "start": "🔄 开始自动旋转 · {n} 次", "button": "🔄 自动旋转 {n} 次"},
     "bulk": {"eyebrow": "批量开启 · {n} 个", "opening": "极速开启中…", "spent": "总投入", "won": "总获得价值", "net": "净损益", "sellAll": "⚡ {n} 件 95% 即时折现", "keep": "留在仓库"},
