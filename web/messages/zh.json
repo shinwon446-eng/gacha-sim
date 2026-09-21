@@ -336,6 +336,8 @@
     "sell": "⚡ 95% USDT 即时折现",
     "noFee": "0 手续费",
     "ship": "📦 寄到我家",
+    "sellShort": "⚡ 95% 即时折现",
+    "shipShort": "📦 寄到家",
     "verify": "1 秒公平性验证",
     "select": "选择",
     "selected": "已选 {n} 件",

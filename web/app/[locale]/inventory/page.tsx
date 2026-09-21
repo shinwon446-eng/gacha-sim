@@ -178,7 +178,7 @@ export default function InventoryPage() {
         <Link href="/" className="font-display text-xl font-bold uppercase leading-none tracking-tight text-crimson">
           Gachaflix
         </Link>
-        <nav className="flex flex-none items-center gap-3 whitespace-nowrap text-[11px] text-muted sm:gap-4 sm:text-xs">
+        <nav className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap text-[11px] text-muted [scrollbar-width:none] sm:gap-4 sm:text-xs">
           <Link href="/" className="hidden hover:text-white sm:inline">
             {t("nav.boxes")}
           </Link>
@@ -359,7 +359,15 @@ export default function InventoryPage() {
                         {tierMeta.label}
                       </span>
                     </div>
-                    <span className={cn("absolute right-2 top-2 z-10 flex items-center gap-1 rounded-sm px-1.5 py-1 text-[10px] font-bold", stored ? "bg-obsidian/80 text-secondary" : o.status === "SOLD" ? "border border-gold-champagne/40 bg-obsidian/85 text-gold-champagne" : "bg-tier-prestige/15 text-tier-prestige")}>
+                    <span
+                      className={cn(
+                        "z-10 flex items-center gap-1 text-[10px] font-bold",
+                        stored
+                          ? "absolute right-2 top-2 rounded-sm bg-obsidian/80 px-1.5 py-1 text-secondary"
+                          : "absolute inset-x-0 bottom-0 justify-center whitespace-nowrap bg-obsidian/85 px-2 py-1.5 backdrop-blur-sm",
+                        !stored && (o.status === "SOLD" ? "border-t border-gold-champagne/40 text-gold-champagne" : "border-t border-tier-prestige/40 text-tier-prestige"),
+                      )}
+                    >
                       {stored
                         ? t("inventory.status.IN_STORAGE")
                         : o.status === "SOLD"
@@ -368,19 +376,13 @@ export default function InventoryPage() {
                             ? `🚚 ${t("inventory.doneShipping")}`
                             : `📦 ${t("inventory.donePreparing")}`}
                     </span>
-                    {shipping && (
-                      <span className="absolute bottom-2 right-2 z-10 flex items-center gap-1 rounded-sm bg-obsidian/85 px-1.5 py-1 text-[10px] font-semibold text-tier-prestige">
-                        <Truck className="h-3 w-3" strokeWidth={2.2} />
-                        {t("inventory.track")}
-                      </span>
-                    )}
                   </div>
 
                   <div className="p-3">
                     <div className="truncate text-sm font-bold text-white">{item ? itemName(item) : o.itemId}</div>
                     <div className="truncate text-[10px] text-faint">{box ? boxTitle(box) : o.boxSlug}</div>
                     <div className="mt-1.5 flex items-baseline justify-between gap-2">
-                      <Money value={o.valueUsdt} size="md" className="min-w-0 max-w-full overflow-hidden" numberClassName="truncate" style={{ color: tierMeta.accent }} />
+                      <Money value={o.valueUsdt} size="sm" className="min-w-0 max-w-full overflow-hidden" numberClassName="truncate" style={{ color: tierMeta.accent }} />
                       <span className="flex-none text-[10px] text-faint">{new Date(o.acquiredAt).toLocaleDateString(locale)}</span>
                     </div>
                     {o.status === "SOLD" && o.soldForUsdt !== undefined && (
@@ -396,16 +398,15 @@ export default function InventoryPage() {
                     )}
                     {stored ? (
                       <div className="mt-3 grid grid-cols-[1fr_auto] gap-1.5">
-                        <button type="button" onClick={() => setSellTarget([o.id])} className="flex h-8 items-center justify-center gap-1 rounded-sm bg-gold-champagne text-[11px] font-bold text-obsidian hover:bg-gold-metallic">
-                          <Wallet className="h-3 w-3" strokeWidth={2.4} />
-                          {t("inventory.sell")} · {t("inventory.noFee")}
+                        <button type="button" onClick={() => setSellTarget([o.id])} className="flex h-8 min-w-0 items-center justify-center gap-1 whitespace-nowrap rounded-sm bg-gold-champagne px-1 text-[10px] font-bold text-obsidian hover:bg-gold-metallic md:text-[11px]">
+                          <span className="truncate">{t("inventory.sellShort")}<span className="hidden xl:inline"> · {t("inventory.noFee")}</span></span>
                         </button>
                         <button type="button" onClick={() => setVerify(o)} aria-label={t("inventory.verify")} title={t("inventory.verify")} className="glass-dark row-span-2 flex h-full w-8 items-center justify-center rounded-sm text-gold-champagne hover:border-gold-champagne">
                           <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2.2} />
                         </button>
-                        <button type="button" onClick={() => setShipTarget([o.id])} className="flex h-8 items-center justify-center gap-1 rounded-sm border border-white/25 bg-transparent text-[11px] font-semibold text-white transition-colors hover:border-gold-champagne hover:text-gold-champagne">
-                          <Truck className="h-3 w-3" strokeWidth={2.2} />
-                          {t("inventory.ship")}
+                        <button type="button" onClick={() => setShipTarget([o.id])} className="flex h-8 min-w-0 items-center justify-center gap-1 whitespace-nowrap rounded-sm border border-white/25 bg-transparent px-1 text-[10px] font-semibold text-white transition-colors hover:border-gold-champagne hover:text-gold-champagne md:text-[11px]">
+                          <Truck className="h-3 w-3 flex-none" strokeWidth={2.2} />
+                          <span className="truncate">{t("inventory.shipShort")}</span>
                         </button>
                       </div>
                     ) : (

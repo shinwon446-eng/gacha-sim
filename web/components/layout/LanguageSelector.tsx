@@ -56,7 +56,7 @@ export function LanguageSelector({ className }: { className?: string }) {
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={LOCALE_LABEL[locale]}
-        className="glass-dark flex h-9 items-center gap-1.5 rounded-md px-3 text-xs font-semibold text-white transition-colors hover:border-gold-champagne"
+        className="glass-dark flex h-9 items-center gap-1.5 rounded-md px-2 text-xs font-semibold text-white transition-colors hover:border-gold-champagne sm:px-3"
       >
         <Globe className="h-3.5 w-3.5 text-gold-champagne" strokeWidth={2} />
         <span className="tracking-wide">{LOCALE_SHORT[locale]}</span>

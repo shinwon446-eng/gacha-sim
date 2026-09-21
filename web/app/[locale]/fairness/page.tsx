@@ -18,7 +18,7 @@ export default function FairnessPage() {
         <Link href="/" className="font-display text-xl font-bold uppercase leading-none tracking-tight text-crimson">
           Gachaflix
         </Link>
-        <nav className="flex items-center gap-4 whitespace-nowrap text-xs text-muted">
+        <nav className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap text-[11px] text-muted [scrollbar-width:none] sm:gap-4 sm:text-xs">
           <Link href="/" className="transition-colors hover:text-white">
             {t("nav.boxes")}
           </Link>

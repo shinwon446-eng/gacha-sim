@@ -336,6 +336,8 @@
     "sell": "⚡ Cash out 95% USDT",
     "noFee": "0% fee",
     "ship": "📦 Ship to my door",
+    "sellShort": "⚡ Cash out 95%",
+    "shipShort": "📦 Ship home",
     "verify": "1-second fairness check",
     "select": "Select",
     "selected": "{n} selected",

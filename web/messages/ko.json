@@ -336,6 +336,8 @@
     "sell": "⚡ 95% USDT 즉시 회수",
     "noFee": "수수료 0%",
     "ship": "📦 우리 집으로 배송",
+    "sellShort": "⚡ 95% 즉시 회수",
+    "shipShort": "📦 집으로 배송",
     "verify": "공정성 1초 검증",
     "select": "선택",
     "selected": "{n}개 선택",

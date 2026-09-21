@@ -134,11 +134,11 @@ export default function BoxesPage() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-canvas pb-24">
       {/* 상단 바 */}
-      <header className="sticky top-0 z-[60] flex items-center gap-5 border-b border-hairline bg-obsidian/90 px-[4%] py-3 backdrop-blur-md">
+      <header className="sticky top-0 z-[60] flex items-center gap-3 border-b border-hairline bg-obsidian/90 px-[4%] py-3 backdrop-blur-md sm:gap-5">
         <span className="font-display text-[22px] font-bold uppercase leading-none tracking-tight text-crimson">
           Gachaflix
         </span>
-        <nav className="flex items-center gap-4 whitespace-nowrap text-[12px] text-muted">
+        <nav className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap text-[12px] text-muted [scrollbar-width:none] sm:gap-4">
           <span className="font-semibold text-white">{t("nav.boxes")}</span>
           <span className="cursor-default opacity-60">{t("nav.battles")}</span>
           <Link href="/inventory" className="transition-colors hover:text-white">
@@ -151,11 +151,11 @@ export default function BoxesPage() {
             {t("nav.community")}
           </Link>
         </nav>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex flex-none items-center gap-1.5 sm:gap-2">
           <DailyFreeBoxPill onOpen={() => setDailyOpen(true)} className="hidden lg:flex" />
           {/* 잔액 — 데모 고정값. 선택 통화로만 표기된다. */}
-          <div className="glass-dark flex h-9 flex-none items-center gap-2 whitespace-nowrap rounded-md px-3">
-            <Wallet className="h-3.5 w-3.5 text-muted" strokeWidth={2} />
+          <div className="glass-dark flex h-9 flex-none items-center gap-2 whitespace-nowrap rounded-md px-2 sm:px-3">
+            <Wallet className="hidden h-3.5 w-3.5 text-muted sm:block" strokeWidth={2} />
             <span className="caption-luxury hidden sm:inline">{t("header.balance")}</span>
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.span key={balance} className="inline-flex" initial={{ y: -6, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 6, opacity: 0 }} transition={{ duration: 0.2 }}>
@@ -166,10 +166,10 @@ export default function BoxesPage() {
           <button
             type="button"
             onClick={() => setDepositOpen(true)}
-            className="flex h-9 flex-none items-center gap-1.5 whitespace-nowrap rounded-md bg-crimson px-3 text-xs font-bold text-white shadow-[0_0_18px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600"
+            className="flex h-9 flex-none items-center gap-1.5 whitespace-nowrap rounded-md bg-crimson px-2.5 text-xs font-bold text-white shadow-[0_0_18px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600 sm:px-3"
           >
             <Wallet className="h-3.5 w-3.5" strokeWidth={2.2} />
-            {t("header.deposit")}
+            <span className="hidden sm:inline">{t("header.deposit")}</span>
           </button>
           <button
             type="button"

@@ -69,7 +69,7 @@ export default function CommunityPage() {
         <Link href="/" className="font-display text-xl font-bold uppercase leading-none tracking-tight text-crimson">
           Gachaflix
         </Link>
-        <nav className="flex flex-none items-center gap-3 whitespace-nowrap text-[11px] text-muted sm:gap-4 sm:text-xs">
+        <nav className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap text-[11px] text-muted [scrollbar-width:none] sm:gap-4 sm:text-xs">
           <Link href="/" className="hidden hover:text-white sm:inline">
             {t("nav.boxes")}
           </Link>
