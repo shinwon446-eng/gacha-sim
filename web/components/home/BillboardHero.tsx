@@ -145,7 +145,7 @@ export function BillboardHero({ boxes, onOpen, onInspect, onDemo, intervalMs = 9
                 className="border-gold-gradient flex h-12 items-center gap-2 rounded-sm bg-obsidian/60 px-6 text-base font-bold text-gold-champagne backdrop-blur-md transition-all duration-200 hover:scale-[1.03] hover:bg-gold-champagne/10"
               >
                 <Sparkles className="h-5 w-5" strokeWidth={2} />
-                {t("hero.freeDemo")}
+                {t("hero.freeTry")}
               </button>
             </div>
           </motion.div>

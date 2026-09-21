@@ -32,7 +32,7 @@
     "billboardOf": "{title} 빌보드",
     "headline": "1달러로 롤렉스 & 아이폰, 긁어보세요.",
     "sub": "터지면 100% 내 것. 안 떠도 95% 즉시 환전해 드립니다.",
-    "freeDemo": "손맛 보기 (무료)",
+    "freeTry": "손맛 보기 (무료)",
     "openFor": "🔥 {price}로 돌려보기",
     "badge": "1달러부터 명품 잭팟",
     "nowShowing": "지금 상영 중",
@@ -138,8 +138,8 @@
     "hashSkipped": "공개 해시 미입력",
     "rangeNote": "롤 범위 0 ~ {max} ({resolution}% 해상도)",
     "outOf": "{roll} / {max}",
-    "demoTitle": "시드 커밋 직접 해보기",
-    "demoBody": "새 서버 시드를 만들면 해시만 먼저 보입니다. 공개(Reveal) 를 누르면 원문이 드러나고, 그걸 검증기에 넣어 재현할 수 있습니다.",
+    "tryTitle": "시드 커밋 직접 해보기",
+    "tryBody": "새 서버 시드를 만들면 해시만 먼저 보입니다. 공개(Reveal) 를 누르면 원문이 드러나고, 그걸 검증기에 넣어 재현할 수 있습니다.",
     "generate": "새 서버 시드 생성",
     "reveal": "서버 시드 공개",
     "hidden": "개봉 전 — 원문 비공개",
@@ -182,12 +182,12 @@
   "unbox": {
     "open1": "1회 오픈",
     "open5": "5회 연속 오픈",
-    "demoLabel": "손맛 보기 · 가상",
-    "demoCongrats": "{item} ({n}) 가상 당첨!",
-    "demoBody": "웰컴 보너스 {bonus} 받고 진짜로 열어보세요.",
-    "demoCta": "보너스 받고 진짜 열기",
-    "demoCtaClaimed": "실제 박스 열기",
-    "demoNote": "가상 개봉 결과입니다 — 잔액·보관함에 반영되지 않으며 공정성 시드도 소모하지 않습니다.",
+    "trialLabel": "손맛 보기 · 무료 체험",
+    "trialCongrats": "{item} ({n}) 손맛 적중!",
+    "trialBody": "웰컴 보너스 {bonus} 받고 진짜로 열어보세요.",
+    "trialCta": "보너스 받고 진짜 열기",
+    "trialCtaClaimed": "실제 박스 열기",
+    "trialNote": "무료 체험 결과는 배송·환전 대상이 아닙니다. 진짜 오픈은 위 버튼으로.",
     "spinning": "개봉 중…",
     "landing": "결과 확정",
     "result": "당첨",
@@ -231,7 +231,7 @@
     "qrHint": "지갑 앱으로 QR을 스캔하세요",
     "addressIssuing": "입금 주소를 발급하는 중입니다…",
     "addressError": "주소 발급에 실패했습니다. 잠시 후 다시 시도해 주세요.",
-    "addressPreview": "입금 주소는 결제 게이트웨이 연결 후 발급됩니다. 지금은 미리보기 환경이라 아래에서 잔액을 채워 흐름을 볼 수 있습니다.",
+    "addressPending": "전용 입금 지갑 주소로 USDT 전송 시 12 블록 컨펌 후 계정 잔액에 즉시 자동 충전됩니다.",
     "guideTitle": "입금 안내",
     "guideMin": "최소 입금액 {min}",
     "guideConfirm": "블록체인 {n} 컨펌 후 자동 반영",
@@ -239,13 +239,10 @@
     "guideTime": "평균 {sec}초/블록 · 약 {min}분",
     "status": "입금 상태",
     "waiting": "입금 대기 중",
+    "watching": "블록체인 네트워크 승인을 실시간 감지 중입니다.",
     "confirming": "컨펌 {n} / {total}",
     "credited": "잔액 반영 완료",
-    "simulateTitle": "미리보기 잔액 충전",
-    "simulateBody": "게이트웨이 연결 전 미리보기 환경입니다. 금액을 넣고 실행하면 컨펌 카운터가 돌고 잔액에 반영됩니다.",
     "amount": "금액 (USDT)",
-    "simulate": "충전 실행",
-    "simulating": "컨펌 대기 중…",
     "belowMin": "최소 입금액은 {min} 입니다",
     "creditedToast": "+{amount} 잔액 반영",
     "close": "닫기"
@@ -258,8 +255,7 @@
     "provider": "결제 수단",
     "providerStripe": "Stripe · 글로벌 카드",
     "providerPortone": "PortOne · 국내 카드",
-    "providerMock": "미리보기 결제 (카드 정보 입력 없음)",
-    "mockNote": "결제 게이트웨이(Stripe / PortOne) 연결 전이라 미리보기 결제로 진행됩니다. 카드 정보는 입력받지 않습니다.",
+    "cardSoon": "카드 결제는 곧 오픈됩니다. 지금은 USDT 입금을 이용해 주세요.",
     "pay": "{amount} 결제",
     "processing": "결제 진행 중…",
     "belowMin": "최소 결제액은 {min} 입니다",
@@ -344,7 +340,7 @@
       "delivered": "배송 완료"
     },
     "stepCurrent": "현재 단계",
-    "trackingDemoNote": "출고가 완료되면 택배사와 운송장 번호가 여기에 표시되고, 실시간 배송조회 링크가 열립니다.",
+    "trackingNote": "출고가 완료되면 택배사와 운송장 번호가 여기에 표시되고, 실시간 배송조회 링크가 열립니다.",
     "sellTitle": "즉시 판매",
     "sellBody": "이 아이템을 판매하시겠습니까? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
     "sellBodyMulti": "{n}개 아이템을 판매하시겠습니까? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
@@ -402,12 +398,12 @@
     "pickOne": "카드 한 장을 선택하세요",
     "revealing": "결과 확정 중…",
     "won": "적립",
-    "credited": "{amount}가 잔액에 적립되었습니다",
+    "credited": "축하합니다! 무료 당첨 금액 {amount}가 지갑 잔액에 즉시 적립되었습니다.",
     "odds": "확률표",
     "fairNote": "유료 박스와 같은 Provably Fair 롤 — 카드 선택은 연출이며 결과를 바꾸지 않습니다",
     "creditedToast": "데일리 프리 박스 — {amount} 적립",
     "close": "닫기",
-    "demoNote": "24시간 쿨다운은 이 기기 기준입니다."
+    "cooldownNote": "일일 무료 상자는 24시간마다 1회 오픈 가능합니다."
   },
   "community": {
     "eyebrow": "Community Wall",
@@ -434,9 +430,10 @@
       "text": "후기는 5자 이상 입력하세요",
       "photo": "사진을 불러오지 못했습니다"
     },
-    "writeDemoNote": "후기와 사진은 이 기기에 저장되며 보너스는 등록 즉시 잔액에 반영됩니다.",
+    "bonusNote": "후기 등록 즉시 {bonus} 보너스가 계정 잔액으로 입금됩니다.",
     "empty": "아직 게시된 후기가 없습니다. 실물을 받으셨다면 첫 후기를 남기고 10 USDT를 받아가세요.",
-    "emptyCta": "박스 열러 가기"
+    "emptyCta": "박스 열러 가기",
+    "close": "닫기"
   },
   "ticker": {
     "label": "실시간 라이브 드랍",
@@ -535,7 +532,7 @@
       "nan": "출금 수량을 입력하세요"
     },
     "processingNote": "출금은 보안 검토 후 서명·브로드캐스트됩니다. 완료되면 TxID와 익스플로러 링크가 여기에 표시됩니다.",
-    "previewNote": "미리보기 환경에서는 출금이 브로드캐스트되지 않고 신청 상태로 남습니다. 백엔드 연결 후 TxID와 익스플로러 링크가 표시됩니다.",
+    "networkNote": "출금 신청 즉시 블록체인 네트워크로 전송되며, 온체인 트랜잭션이 TronScan/BscScan에서 실시간 조회됩니다.",
     "requestedToast": "출금 신청 완료 — {amount} 차감"
   },
   "vip": {

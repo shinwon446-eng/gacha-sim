@@ -16,7 +16,7 @@ type Stage = { kind: "form" } | { kind: "processing" } | { kind: "receipt"; resu
 /**
  * 신용카드 결제 탭 (PROMPTS 4-2).
  *   선택 통화 기준 프리셋(USDT 20/50/100/300/500 · KRW 3만/7만/15만/40만/70만) + 직접 입력
- *   → 통화별 PG(KRW=PortOne, 그 외=Stripe) 브릿지, 미설정이면 데모 결제 → 영수증 + 잔액 즉시 갱신 + 거래 기록
+ *   → 통화별 PG(KRW=PortOne, 그 외=Stripe) 브릿지 → 영수증 + 잔액 즉시 갱신 + 거래 기록. PG 키가 없으면 버튼을 잠근다.
  * 화면의 금액은 선택 통화 하나로만 표기한다 (CLAUDE.md §4). 잔액 반영은 USDT 로 환산.
  */
 export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number) => void }) {
@@ -37,13 +37,13 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   // 잔액 반영용 USDT — 표시는 원금액(fmtNative)으로만 한다
   const amountUsdt = useMemo(() => +(amount / rates[currency]).toFixed(4), [amount, rates, currency]);
   const validity = validateAmount(amountUsdt);
-  const { provider, intended, fellBack } = useMemo(() => resolveProvider(currency), [currency]);
+  const { provider, intended, configured } = useMemo(() => resolveProvider(currency), [currency]);
 
   const errorText =
     validity === "min" ? t("belowMin", { min: fmt(MIN_CARD_USDT) }) : validity === "max" ? t("aboveMax", { max: fmt(MAX_CARD_USDT) }) : validity === "nan" ? t("invalid") : null;
 
   const pay = useCallback(async () => {
-    if (validity !== "ok") return;
+    if (validity !== "ok" || !configured) return;
     setStage({ kind: "processing" });
     const result = await provider.checkout({ amount, currency, amountUsdt, locale });
     if (!result.ok) {
@@ -55,9 +55,9 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
     if (!useSettingsStore.getState().muted) playChime();
     onCredited(amountUsdt);
     setStage({ kind: "receipt", result, amount, amountUsdt });
-  }, [validity, provider, amount, currency, amountUsdt, locale, credit, addTransaction, onCredited]);
+  }, [validity, configured, provider, amount, currency, amountUsdt, locale, credit, addTransaction, onCredited]);
 
-  const providerLabel = fellBack ? t("providerMock") : intended === "portone" ? t("providerPortone") : t("providerStripe");
+  const providerLabel = intended === "portone" ? t("providerPortone") : t("providerStripe");
   const recent = transactions.filter((x) => x.type === "deposit_card" || x.type === "deposit_usdt").slice(0, 4);
 
   if (stage.kind === "receipt") {
@@ -140,9 +140,9 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
         <div className="border-metallic-subtle rounded-lg bg-obsidian p-3">
           <div className="flex items-center justify-between">
             <span className="caption-luxury">{t("provider")}</span>
-            <span className={cn("text-[11px] font-semibold", fellBack ? "text-muted" : "text-gold-champagne")}>{providerLabel}</span>
+            <span className={cn("text-[11px] font-semibold", configured ? "text-gold-champagne" : "text-muted")}>{providerLabel}</span>
           </div>
-          {fellBack && <p className="mt-1.5 text-[10px] leading-relaxed text-faint">{t("mockNote")}</p>}
+          {!configured && <p className="mt-1.5 text-[10px] leading-relaxed text-faint">{t("cardSoon")}</p>}
         </div>
 
         {stage.kind === "declined" && (
@@ -159,7 +159,7 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
         <button
           type="button"
           onClick={pay}
-          disabled={validity !== "ok" || stage.kind === "processing"}
+          disabled={!configured || validity !== "ok" || stage.kind === "processing"}
           className="flex h-12 items-center justify-center gap-2 rounded-md bg-crimson text-sm font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
         >
           {stage.kind === "processing" ? <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2.2} /> : <CreditCard className="h-4 w-4" strokeWidth={2.2} />}

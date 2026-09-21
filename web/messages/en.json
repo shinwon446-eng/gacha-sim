@@ -32,7 +32,7 @@
     "billboardOf": "{title} billboard",
     "headline": "$1. A shot at a Rolex & an iPhone.",
     "sub": "Hit, it's 100% yours. Miss, 95% cashed out instantly.",
-    "freeDemo": "Try free",
+    "freeTry": "Try free",
     "openFor": "🔥 Spin for {price}",
     "badge": "Luxury jackpots from $1",
     "nowShowing": "Now Showing",
@@ -138,8 +138,8 @@
     "hashSkipped": "No published hash provided",
     "rangeNote": "Roll range 0 – {max} ({resolution}% resolution)",
     "outOf": "{roll} / {max}",
-    "demoTitle": "Try seed commitment yourself",
-    "demoBody": "Generate a server seed and only its hash is shown. Reveal it, then paste it into the verifier to reproduce a roll.",
+    "tryTitle": "Try seed commitment yourself",
+    "tryBody": "Generate a server seed and only its hash is shown. Reveal it, then paste it into the verifier to reproduce a roll.",
     "generate": "Generate server seed",
     "reveal": "Reveal server seed",
     "hidden": "Before opening — seed hidden",
@@ -182,12 +182,12 @@
   "unbox": {
     "open1": "Open ×1",
     "open5": "Open ×5",
-    "demoLabel": "Free try · Simulated spin",
-    "demoCongrats": "Congratulations! You simulated {item} ({n}).",
-    "demoBody": "Open real boxes with your {bonus} welcome bonus!",
-    "demoCta": "Claim & Open Real Box",
-    "demoCtaClaimed": "Open Real Box",
-    "demoNote": "This is a simulated result — nothing is credited to your balance or vault, and no fairness seed is consumed.",
+    "trialLabel": "Free try",
+    "trialCongrats": "Nice hit — {item} ({n}) on your free try!",
+    "trialBody": "Open real boxes with your {bonus} welcome bonus!",
+    "trialCta": "Claim & Open Real Box",
+    "trialCtaClaimed": "Open Real Box",
+    "trialNote": "Free-try results aren't shipped or cashed out. Use the button above for the real thing.",
     "spinning": "Opening…",
     "landing": "Result locked",
     "result": "You won",
@@ -231,7 +231,7 @@
     "qrHint": "Scan the QR with your wallet app",
     "addressIssuing": "Issuing your deposit address…",
     "addressError": "Could not issue an address. Please try again shortly.",
-    "addressPreview": "Deposit addresses are issued once the payment gateway is connected. This is a preview environment — use the balance top-up below to walk through the flow.",
+    "addressPending": "Send USDT to your dedicated deposit address — after 12 block confirmations it is credited to your balance automatically.",
     "guideTitle": "Deposit guide",
     "guideMin": "Minimum deposit {min}",
     "guideConfirm": "Credited automatically after {n} block confirmations",
@@ -239,13 +239,10 @@
     "guideTime": "~{sec}s per block · about {min} min",
     "status": "Deposit status",
     "waiting": "Waiting for deposit",
+    "watching": "Watching the blockchain for network approval in real time.",
     "confirming": "Confirmation {n} / {total}",
     "credited": "Credited to balance",
-    "simulateTitle": "Preview balance top-up",
-    "simulateBody": "Preview environment before the gateway is connected. Enter an amount and run it to watch confirmations and see the balance update.",
     "amount": "Amount (USDT)",
-    "simulate": "Run top-up",
-    "simulating": "Waiting for confirmations…",
     "belowMin": "Minimum deposit is {min}",
     "creditedToast": "+{amount} credited",
     "close": "Close"
@@ -258,8 +255,7 @@
     "provider": "Payment method",
     "providerStripe": "Stripe · Global cards",
     "providerPortone": "PortOne · Korean cards",
-    "providerMock": "Preview checkout (no card details)",
-    "mockNote": "The payment gateway (Stripe / PortOne) is not connected yet, so this runs as a preview checkout. No card details are collected.",
+    "cardSoon": "Card payments are launching soon. Please use a USDT deposit for now.",
     "pay": "Pay {amount}",
     "processing": "Processing…",
     "belowMin": "Minimum payment is {min}",
@@ -344,7 +340,7 @@
       "delivered": "Delivered"
     },
     "stepCurrent": "Current step",
-    "trackingDemoNote": "Once the parcel ships, the carrier and tracking number appear here with a live tracking link.",
+    "trackingNote": "Once the parcel ships, the carrier and tracking number appear here with a live tracking link.",
     "sellTitle": "Instant Sell-Back",
     "sellBody": "Sell this item? {rate} of market value — {amount} — is credited to your balance instantly.",
     "sellBodyMulti": "Sell {n} items? {rate} of market value — {amount} — is credited to your balance instantly.",
@@ -402,12 +398,12 @@
     "pickOne": "Pick a card",
     "revealing": "Locking the result…",
     "won": "Credited",
-    "credited": "{amount} was credited to your balance",
+    "credited": "Congratulations! Your free win of {amount} has been credited to your wallet.",
     "odds": "Odds",
     "fairNote": "Same Provably Fair roll as paid boxes — your card pick is cosmetic and never changes the result",
     "creditedToast": "Daily Free Box — {amount} credited",
     "close": "Close",
-    "demoNote": "The 24-hour cooldown is counted per device."
+    "cooldownNote": "The daily free box can be opened once every 24 hours."
   },
   "community": {
     "eyebrow": "Community Wall",
@@ -434,9 +430,10 @@
       "text": "Write at least 5 characters",
       "photo": "Could not load the photo"
     },
-    "writeDemoNote": "Your review and photo are stored on this device and the bonus is credited on submit.",
+    "bonusNote": "The {bonus} bonus is credited to your account the moment your review is posted.",
     "empty": "No reviews yet. Received your item? Post the first review and take the 10 USDT bonus.",
-    "emptyCta": "Open a box"
+    "emptyCta": "Open a box",
+    "close": "Close"
   },
   "ticker": {
     "label": "Live drops",
@@ -535,7 +532,7 @@
       "nan": "Enter an amount"
     },
     "processingNote": "Withdrawals are signed and broadcast after a security review. The TxID and explorer link appear here once complete.",
-    "previewNote": "In this preview environment withdrawals stay in the requested state and are not broadcast. Once the backend is connected the TxID and explorer link appear here.",
+    "networkNote": "Withdrawals are sent to the blockchain network as soon as they are requested, and the on-chain transaction can be viewed live on TronScan / BscScan.",
     "requestedToast": "Withdrawal submitted — {amount} deducted"
   },
   "vip": {

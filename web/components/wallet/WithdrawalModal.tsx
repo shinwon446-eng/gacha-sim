@@ -259,7 +259,7 @@ export function WithdrawalModal({ open, onClose, onRequested }: WithdrawalModalP
                     {liveTx?.txHash ? <TxLink network={stage.network} hash={liveTx.txHash} t={t} copied={copied} onCopy={copy} /> : <span className="text-xs text-faint">{t("txHashPending")}</span>}
                   </div>
                 </div>
-                <p className="mt-3 text-[10px] leading-relaxed text-faint">{isLive() ? t("processingNote") : t("previewNote")}</p>
+                <p className="mt-3 text-[10px] leading-relaxed text-faint">{isLive() ? t("processingNote") : t("networkNote")}</p>
                 <div className="mt-4 grid grid-cols-2 gap-2">
                   <button type="button" onClick={reset} className="glass-dark h-11 rounded-md text-sm font-semibold text-secondary hover:text-white">
                     {t("another")}

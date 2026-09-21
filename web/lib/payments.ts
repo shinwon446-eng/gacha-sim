@@ -3,16 +3,16 @@
  *
  * 설계
  *   · 화면은 Provider 인터페이스만 안다. 실제 PG(Stripe / PortOne)는 여기서 교체한다.
- *   · 정적 데모에는 키가 없다. 키가 없으면 Stripe/PortOne 은 "미설정"을 명시적으로 던지고,
- *     화면은 MockProvider 로 떨어져 결제 흐름(로딩 → 승인/실패 → 영수증)을 재현한다.
+ *   · 키가 없으면 Stripe/PortOne 은 "미설정"을 명시적으로 던지고, 화면은 결제 버튼을 잠근 채 오픈 예정 안내를 띄운다.
+ *     가짜 승인·가짜 영수증은 만들지 않는다.
  *   · 금액은 "선택 통화" 단위로 입력받고, 잔액 반영은 USDT 로 환산한다. 화면엔 통화 하나만 보인다.
  *   · 실서비스: 서버가 세션을 만들고(Stripe Checkout Session / PortOne 결제창) 웹훅으로 잔액을 올린다.
- *     클라이언트가 직접 잔액을 올리는 건 데모에서만 허용한다.
+ *     클라이언트가 직접 잔액을 올리는 경로는 없다.
  */
 
 import type { Currency } from "@/stores/currencyStore";
 
-export type CardProvider = "stripe" | "portone" | "mock";
+export type CardProvider = "stripe" | "portone";
 
 /** 통화별 빠른 충전 프리셋 — 선택 통화 단위의 "예쁜" 숫자 (PROMPTS 4-2-1) */
 export const PRESETS: Record<Currency, number[]> = {
@@ -40,7 +40,7 @@ export interface CheckoutResult {
   transactionId: string;
   /** 승인 시각(ISO) */
   at: string;
-  /** 카드 마스킹 (mock: **** 4242) */
+  /** 카드 마스킹 */
   cardMask?: string;
   /** 실패 사유 */
   reason?: string;
@@ -90,26 +90,11 @@ export const portoneProvider: PaymentProvider = {
   },
 };
 
-/**
- * 데모 결제. 1.4초 뒤 승인. 금액 끝자리가 13 이면 실패(카드 거절)를 재현한다 — 에러 경로 확인용.
- */
-export const mockProvider: PaymentProvider = {
-  key: "mock",
-  configured: () => true,
-  async checkout(req) {
-    await new Promise((r) => setTimeout(r, 1400));
-    const declined = Math.round(req.amount) % 100 === 13;
-    if (declined) return { ok: false, provider: "mock", transactionId: randomId("mock"), at: new Date().toISOString(), reason: "card_declined" };
-    return { ok: true, provider: "mock", transactionId: randomId("mock"), at: new Date().toISOString(), cardMask: "**** 4242" };
-  },
-};
-
-/** 통화에 맞는 PG 를 고르되, 미설정이면 mock 으로 떨어진다. 어느 쪽을 썼는지 돌려준다. */
-export function resolveProvider(currency: Currency): { provider: PaymentProvider; intended: CardProvider; fellBack: boolean } {
+/** 통화에 맞는 PG. 키가 없으면 `configured: false` — 결제 버튼은 잠기고 카드 결제 오픈 예정 안내가 뜬다(가짜 승인 없음). */
+export function resolveProvider(currency: Currency): { provider: PaymentProvider; intended: CardProvider; configured: boolean } {
   const intended = providerFor(currency);
   const p = intended === "portone" ? portoneProvider : stripeProvider;
-  if (p.configured()) return { provider: p, intended, fellBack: false };
-  return { provider: mockProvider, intended, fellBack: true };
+  return { provider: p, intended, configured: p.configured() };
 }
 
 /** 입력 검증 — USDT 환산 기준 한도 */

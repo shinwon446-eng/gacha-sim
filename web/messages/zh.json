@@ -32,7 +32,7 @@
     "billboardOf": "{title} 展示",
     "headline": "1 美元，博劳力士和 iPhone。",
     "sub": "中了 100% 归你，没中也立即折现 95%。",
-    "freeDemo": "免费试玩",
+    "freeTry": "免费试玩",
     "openFor": "🔥 {price} 开一发",
     "badge": "1 美元起的奢品头奖",
     "nowShowing": "正在上映",
@@ -138,8 +138,8 @@
     "hashSkipped": "未填写公开哈希",
     "rangeNote": "Roll 范围 0 ~ {max}（{resolution}% 精度）",
     "outOf": "{roll} / {max}",
-    "demoTitle": "亲手试试种子承诺",
-    "demoBody": "生成新的服务器种子后仅显示哈希。点击公开后显示原文，可填入验证器复现结果。",
+    "tryTitle": "亲手试试种子承诺",
+    "tryBody": "生成新的服务器种子后仅显示哈希。点击公开后显示原文，可填入验证器复现结果。",
     "generate": "生成服务器种子",
     "reveal": "公开服务器种子",
     "hidden": "开启前 — 原文未公开",
@@ -182,12 +182,12 @@
   "unbox": {
     "open1": "开启 ×1",
     "open5": "连续开启 ×5",
-    "demoLabel": "免费过把瘾 · 模拟开箱",
-    "demoCongrats": "恭喜！您在模拟中抽中了 {item}（{n}）。",
-    "demoBody": "用 {bonus} 新人奖励开启真实盲盒吧！",
-    "demoCta": "领取奖励并开启真实盲盒",
-    "demoCtaClaimed": "开启真实盲盒",
-    "demoNote": "这是模拟结果 — 不计入余额与仓库，也不消耗公平性种子。",
+    "trialLabel": "免费过把瘾",
+    "trialCongrats": "手感不错！免费试玩抽中 {item}（{n}）",
+    "trialBody": "用 {bonus} 新人奖励开启真实盲盒吧！",
+    "trialCta": "领取奖励并开启真实盲盒",
+    "trialCtaClaimed": "开启真实盲盒",
+    "trialNote": "免费试玩结果不参与配送与折现。真正开箱请点上方按钮。",
     "spinning": "开启中…",
     "landing": "结果已锁定",
     "result": "获得",
@@ -231,7 +231,7 @@
     "qrHint": "请用钱包 App 扫描二维码",
     "addressIssuing": "正在生成充值地址…",
     "addressError": "地址生成失败，请稍后重试。",
-    "addressPreview": "充值地址在接入支付网关后生成。当前为预览环境，可用下方的余额充值体验流程。",
+    "addressPending": "向专属充值地址转入 USDT，12 个区块确认后即自动计入账户余额。",
     "guideTitle": "充值说明",
     "guideMin": "最低充值 {min}",
     "guideConfirm": "区块链 {n} 次确认后自动到账",
@@ -239,13 +239,10 @@
     "guideTime": "约 {sec} 秒/区块 · 约 {min} 分钟",
     "status": "充值状态",
     "waiting": "等待入账",
+    "watching": "正在实时监测区块链网络确认。",
     "confirming": "确认 {n} / {total}",
     "credited": "已计入余额",
-    "simulateTitle": "预览余额充值",
-    "simulateBody": "接入网关前的预览环境。输入金额并执行，确认计数器会运行并计入余额。",
     "amount": "金额 (USDT)",
-    "simulate": "执行充值",
-    "simulating": "等待确认…",
     "belowMin": "最低充值为 {min}",
     "creditedToast": "+{amount} 已计入余额",
     "close": "关闭"
@@ -258,8 +255,7 @@
     "provider": "支付方式",
     "providerStripe": "Stripe · 国际信用卡",
     "providerPortone": "PortOne · 韩国信用卡",
-    "providerMock": "预览支付（不采集卡片信息）",
-    "mockNote": "支付网关（Stripe / PortOne）尚未接入，以预览支付进行。不会采集卡片信息。",
+    "cardSoon": "信用卡支付即将开放，目前请使用 USDT 充值。",
     "pay": "支付 {amount}",
     "processing": "支付处理中…",
     "belowMin": "最低支付金额为 {min}",
@@ -344,7 +340,7 @@
       "delivered": "已签收"
     },
     "stepCurrent": "当前环节",
-    "trackingDemoNote": "出库完成后，物流公司与运单号会显示在此，并开放实时查询链接。",
+    "trackingNote": "出库完成后，物流公司与运单号会显示在此，并开放实时查询链接。",
     "sellTitle": "即时回收",
     "sellBody": "确定回收该商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
     "sellBodyMulti": "确定回收 {n} 件商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
@@ -402,12 +398,12 @@
     "pickOne": "请选择一张卡片",
     "revealing": "结果确定中…",
     "won": "已计入",
-    "credited": "{amount} 已计入您的余额",
+    "credited": "恭喜！免费中奖金额 {amount} 已即时计入您的钱包余额。",
     "odds": "概率表",
     "fairNote": "与付费盲盒相同的 Provably Fair 掷点 — 选卡仅为演出，不会改变结果",
     "creditedToast": "每日免费盲盒 — 已计入 {amount}",
     "close": "关闭",
-    "demoNote": "24 小时冷却按本设备计算。"
+    "cooldownNote": "每日免费盲盒每 24 小时可开启一次。"
   },
   "community": {
     "eyebrow": "Community Wall",
@@ -434,9 +430,10 @@
       "text": "评价至少 5 个字",
       "photo": "无法加载照片"
     },
-    "writeDemoNote": "晒单和照片保存在本设备，奖励在提交时即刻计入余额。",
+    "bonusNote": "晒单发布后，{bonus} 奖励立即计入您的账户余额。",
     "empty": "还没有晒单。收到实物了？发第一条晒单领取 10 USDT 奖励。",
-    "emptyCta": "去开盲盒"
+    "emptyCta": "去开盲盒",
+    "close": "关闭"
   },
   "ticker": {
     "label": "实时开箱动态",
@@ -535,7 +532,7 @@
       "nan": "请输入提现数量"
     },
     "processingNote": "提现经安全审核后签名并广播，完成后 TxID 与浏览器链接会显示在此。",
-    "previewNote": "预览环境中提现停留在申请状态，不会广播。接入后端后将显示 TxID 与浏览器链接。",
+    "networkNote": "提现申请后立即发送至区块链网络，链上交易可在 TronScan / BscScan 实时查询。",
     "requestedToast": "提现申请已提交 — 已扣除 {amount}"
   },
   "vip": {

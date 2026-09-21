@@ -265,7 +265,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
         {/* 상단 바 */}
         <header className="flex items-center gap-3 px-4 py-3 md:px-8">
           <div className="min-w-0">
-            <div className={cn("caption-luxury", demo && "!text-gold-champagne")}>{demo ? t("demoLabel") : count > 1 ? t("open5") : t("open1")}</div>
+            <div className={cn("caption-luxury", demo && "!text-gold-champagne")}>{demo ? t("trialLabel") : count > 1 ? t("open5") : t("open1")}</div>
             <div className="truncate font-display text-lg font-bold uppercase tracking-tight text-white md:text-2xl">{boxTitle(box)}</div>
           </div>
           <div className="ml-auto flex items-center gap-2">
@@ -416,13 +416,13 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, demo
                 {/* 데모: 전환 CTA 하나만 */}
                 {demo ? (
                   <div className="relative mt-5 grid gap-2">
-                    <p className="text-center text-sm font-semibold text-white">{t("demoCongrats", { item: itemName(last.item), n: tr("tiers.multiple", { n: formatMultiple(last.item.value / box.price) }) })}</p>
-                    <p className="text-center text-xs text-secondary">{t("demoBody", { bonus: fmt(WELCOME_BONUS_USDT) })}</p>
+                    <p className="text-center text-sm font-semibold text-white">{t("trialCongrats", { item: itemName(last.item), n: tr("tiers.multiple", { n: formatMultiple(last.item.value / box.price) }) })}</p>
+                    <p className="text-center text-xs text-secondary">{t("trialBody", { bonus: fmt(WELCOME_BONUS_USDT) })}</p>
                     <button type="button" onClick={() => onDemoConvert?.(box)} className="mt-2 flex h-12 items-center justify-center gap-2 rounded-lg bg-crimson text-sm font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600">
                       <Play className="h-4 w-4 fill-current" strokeWidth={0} />
-                      {welcomeClaimed ? t("demoCtaClaimed") : t("demoCta")}
+                      {welcomeClaimed ? t("trialCtaClaimed") : t("trialCta")}
                     </button>
-                    <p className="text-center text-[10px] text-faint">{t("demoNote")}</p>
+                    <p className="text-center text-[10px] text-faint">{t("trialNote")}</p>
                     <button type="button" onClick={onClose} className="relative mt-1 h-10 w-full rounded-lg text-sm font-semibold text-muted transition-colors hover:text-white">
                       {t("close")}
                     </button>

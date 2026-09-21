@@ -51,7 +51,6 @@ export const COPY = {
   boxOpenAgain: { ko: "새 세션 재생", en: "RE-ROLL", zh: "重新开启" },
   episodeInfo: { ko: "에피소드 정보", en: "EPISODE DETAIL", zh: "详情" },
   acquiredIndex: { ko: "획득 목록", en: "ACQUIRED INDEX", zh: "获得记录" },
-  previewPlay: { ko: "프리뷰 재생", en: "PREVIEW PLAY", zh: "试玩预览" },
   guaranteedMin: { ko: "최저 보장가", en: "GUARANTEED MINIMUM", zh: "保底价值" },
   deposit: { ko: "충전", en: "DEPOSIT", zh: "充值" },
   balance: { ko: "잔액", en: "BALANCE", zh: "余额" },

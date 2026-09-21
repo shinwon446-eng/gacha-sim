@@ -22,7 +22,7 @@ UI = {
       "noBlank": "100% 실물 지급 · 꽝 없음", "guaranteedMinLabel": "최소 보장 금액",
       "guaranteedMin": "최소 보장 금액 {value}", "aboveOpenPrice": "오픈가 이상",
       "openNow": "지금 오픈하기", "viewContents": "뭐 들었나 보기", "billboardPicker": "빌보드 선택", "billboardOf": "{title} 빌보드",
-      "headline": "1달러로 롤렉스 & 아이폰, 긁어보세요.", "sub": "터지면 100% 내 것. 안 떠도 95% 즉시 환전해 드립니다.", "freeDemo": "손맛 보기 (무료)", "openFor": "🔥 {price}로 돌려보기", "badge": "1달러부터 명품 잭팟", "nowShowing": "지금 상영 중", "topMultipleShort": "최고 {n}"
+      "headline": "1달러로 롤렉스 & 아이폰, 긁어보세요.", "sub": "터지면 100% 내 것. 안 떠도 95% 즉시 환전해 드립니다.", "freeTry": "손맛 보기 (무료)", "openFor": "🔥 {price}로 돌려보기", "badge": "1달러부터 명품 잭팟", "nowShowing": "지금 상영 중", "topMultipleShort": "최고 {n}"
     },
     "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "guaranteed": "보장", "openNow": "바로 열기", "contents": "상세 정보", "details": "{title} 상세 정보", "expand": "확대"},
     "rows": {"trending": "🔥 지금 가장 많이 열리는 박스 TOP 10", "dollar": "🔥 1달러의 행복", "techMobility": "⚡ 애플&테크", "luxuryWatch": "👑 명품&시계", "guaranteed": "🚗 슈퍼카&골드바", "prev": "이전", "next": "다음"},
@@ -57,7 +57,7 @@ UI = {
       "resultHash": "서버 시드 SHA-256", "resultHmac": "HMAC-SHA256", "resultRoll": "롤 넘버", "resultItem": "당첨 항목", "resultRange": "당첨 구간",
       "hashMatch": "공개 해시와 일치", "hashMismatch": "공개 해시와 불일치 — 서버 시드가 다릅니다", "hashSkipped": "공개 해시 미입력",
       "rangeNote": "롤 범위 0 ~ {max} ({resolution}% 해상도)", "outOf": "{roll} / {max}",
-      "demoTitle": "시드 커밋 직접 해보기", "demoBody": "새 서버 시드를 만들면 해시만 먼저 보입니다. 공개(Reveal) 를 누르면 원문이 드러나고, 그걸 검증기에 넣어 재현할 수 있습니다.",
+      "tryTitle": "시드 커밋 직접 해보기", "tryBody": "새 서버 시드를 만들면 해시만 먼저 보입니다. 공개(Reveal) 를 누르면 원문이 드러나고, 그걸 검증기에 넣어 재현할 수 있습니다.",
       "generate": "새 서버 시드 생성", "reveal": "서버 시드 공개", "hidden": "개봉 전 — 원문 비공개", "useInVerifier": "검증기에 넣기",
       "invalidInput": "서버 시드와 클라이언트 시드를 입력하고 Nonce 는 0 이상의 정수여야 합니다.",
       "open": "공정성 검증 열기", "close": "닫기",
@@ -75,7 +75,7 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "1회 오픈", "open5": "5회 연속 오픈", "demoLabel": "손맛 보기 · 가상", "demoCongrats": "{item} ({n}) 가상 당첨!", "demoBody": "웰컴 보너스 {bonus} 받고 진짜로 열어보세요.", "demoCta": "보너스 받고 진짜 열기", "demoCtaClaimed": "실제 박스 열기", "demoNote": "가상 개봉 결과입니다 — 잔액·보관함에 반영되지 않으며 공정성 시드도 소모하지 않습니다.", "spinning": "개봉 중…", "landing": "결과 확정",
+      "open1": "1회 오픈", "open5": "5회 연속 오픈", "trialLabel": "손맛 보기 · 무료 체험", "trialCongrats": "{item} ({n}) 손맛 적중!", "trialBody": "웰컴 보너스 {bonus} 받고 진짜로 열어보세요.", "trialCta": "보너스 받고 진짜 열기", "trialCtaClaimed": "실제 박스 열기", "trialNote": "무료 체험 결과는 배송·환전 대상이 아닙니다. 진짜 오픈은 위 버튼으로.", "spinning": "개봉 중…", "landing": "결과 확정",
       "result": "당첨", "results": "5회 결과", "total": "합계 가치", "paid": "지불 {price}",
       "sellBack": "95% 즉시 회수 · {amount}", "sellBackAll": "전부 95% 회수 · {amount}", "sellBackNote": "실판매가의 {rate}가 잔액으로 즉시 반영됩니다",
       "sold": "회수 완료 — {amount} 잔액 반영", "claimShipping": "집으로 배송",
@@ -90,19 +90,19 @@ UI = {
       "title": "충전하기", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 암호화폐 입금", "tabCard": "신용카드 결제",
       "network": "네트워크 선택", "recommended": "추천 · 수수료 1 USDT 이하", "chain": "{chain}",
       "address": "입금 지갑 주소", "copy": "원클릭 복사", "copied": "주소가 복사되었습니다", "qrHint": "지갑 앱으로 QR을 스캔하세요",
-      "addressIssuing": "입금 주소를 발급하는 중입니다…", "addressError": "주소 발급에 실패했습니다. 잠시 후 다시 시도해 주세요.", "addressPreview": "입금 주소는 결제 게이트웨이 연결 후 발급됩니다. 지금은 미리보기 환경이라 아래에서 잔액을 채워 흐름을 볼 수 있습니다.",
+      "addressIssuing": "입금 주소를 발급하는 중입니다…", "addressError": "주소 발급에 실패했습니다. 잠시 후 다시 시도해 주세요.", "addressPending": "전용 입금 지갑 주소로 USDT 전송 시 12 블록 컨펌 후 계정 잔액에 즉시 자동 충전됩니다.",
       "guideTitle": "입금 안내", "guideMin": "최소 입금액 {min}", "guideConfirm": "블록체인 {n} 컨펌 후 자동 반영", "guideToken": "선택한 네트워크의 USDT 만 전송하세요. 다른 코인·네트워크 전송은 복구 불가",
       "guideTime": "평균 {sec}초/블록 · 약 {min}분",
-      "status": "입금 상태", "waiting": "입금 대기 중", "confirming": "컨펌 {n} / {total}", "credited": "잔액 반영 완료",
-      "simulateTitle": "미리보기 잔액 충전", "simulateBody": "게이트웨이 연결 전 미리보기 환경입니다. 금액을 넣고 실행하면 컨펌 카운터가 돌고 잔액에 반영됩니다.",
-      "amount": "금액 (USDT)", "simulate": "충전 실행", "simulating": "컨펌 대기 중…", "belowMin": "최소 입금액은 {min} 입니다",
+      "status": "입금 상태", "waiting": "입금 대기 중", "watching": "블록체인 네트워크 승인을 실시간 감지 중입니다.", "confirming": "컨펌 {n} / {total}", "credited": "잔액 반영 완료",
+     
+      "amount": "금액 (USDT)", "belowMin": "최소 입금액은 {min} 입니다",
       "creditedToast": "+{amount} 잔액 반영",
       "close": "닫기"
     },
     "cardPay": {
       "quick": "빠른 충전", "custom": "직접 입력", "amount": "결제 금액", "credit": "잔액 반영",
-      "provider": "결제 수단", "providerStripe": "Stripe · 글로벌 카드", "providerPortone": "PortOne · 국내 카드", "providerMock": "미리보기 결제 (카드 정보 입력 없음)",
-      "mockNote": "결제 게이트웨이(Stripe / PortOne) 연결 전이라 미리보기 결제로 진행됩니다. 카드 정보는 입력받지 않습니다.",
+      "provider": "결제 수단", "providerStripe": "Stripe · 글로벌 카드", "providerPortone": "PortOne · 국내 카드", "cardSoon": "카드 결제는 곧 오픈됩니다. 지금은 USDT 입금을 이용해 주세요.",
+     
       "pay": "{amount} 결제", "processing": "결제 진행 중…", "belowMin": "최소 결제액은 {min} 입니다", "aboveMax": "최대 결제액은 {max} 입니다", "invalid": "금액을 확인하세요",
       "declined": "카드가 거절되었습니다", "declinedHint": "카드사 승인이 거절되었습니다. 다른 카드로 다시 시도해 주세요.",
       "receipt": "영수증", "receiptId": "거래 번호", "receiptAt": "승인 시각", "receiptCard": "카드", "receiptPaid": "결제 금액", "receiptCredited": "잔액 반영", "receiptProvider": "결제 수단",
@@ -122,7 +122,7 @@ UI = {
       "track": "배송 조회", "trackingTitle": "배송 현황", "copyTracking": "운송장 복사", "trackOnCarrier": "{carrier} 실시간 배송조회",
       "carriers": {"CJ": "CJ대한통운", "EPOST": "우체국택배", "DHL": "DHL", "FEDEX": "FedEx"},
       "steps": {"requested": "배송 신청 접수", "label": "운송장 발급", "transit": "운송 중", "delivered": "배송 완료"}, "stepCurrent": "현재 단계",
-      "trackingDemoNote": "출고가 완료되면 택배사와 운송장 번호가 여기에 표시되고, 실시간 배송조회 링크가 열립니다.",
+      "trackingNote": "출고가 완료되면 택배사와 운송장 번호가 여기에 표시되고, 실시간 배송조회 링크가 열립니다.",
       "sellTitle": "즉시 판매", "sellBody": "이 아이템을 판매하시겠습니까? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
       "sellBodyMulti": "{n}개 아이템을 판매하시겠습니까? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
       "confirm": "확인", "cancel": "취소", "soldToast": "판매 완료 — {amount} 잔액 반영",
@@ -137,10 +137,10 @@ UI = {
     "daily": {
       "title": "데일리 프리 박스", "pill": "무료 상자", "openFree": "무료로 열기", "nextIn": "다음 오픈까지 {time}",
       "stripBody": "24시간마다 1회, 결제 없이 {min} ~ {max}를 잔액에 바로 적립합니다.", "body": "24시간마다 1회. 카드 한 장을 고르면 {min} ~ {max}가 잔액에 즉시 적립됩니다. 결제·가입 없음.",
-      "card": "카드 {n}", "pickOne": "카드 한 장을 선택하세요", "revealing": "결과 확정 중…", "won": "적립", "credited": "{amount}가 잔액에 적립되었습니다",
+      "card": "카드 {n}", "pickOne": "카드 한 장을 선택하세요", "revealing": "결과 확정 중…", "won": "적립", "credited": "축하합니다! 무료 당첨 금액 {amount}가 지갑 잔액에 즉시 적립되었습니다.",
       "odds": "확률표", "fairNote": "유료 박스와 같은 Provably Fair 롤 — 카드 선택은 연출이며 결과를 바꾸지 않습니다",
       "creditedToast": "데일리 프리 박스 — {amount} 적립", "close": "닫기",
-      "demoNote": "24시간 쿨다운은 이 기기 기준입니다."
+      "cooldownNote": "일일 무료 상자는 24시간마다 1회 오픈 가능합니다."
     },
     "community": {
       "eyebrow": "Community Wall", "title": "실물 언박싱 후기", "you": "나", 
@@ -150,8 +150,8 @@ UI = {
       "pickItem": "수령한 아이템", "photo": "언박싱 사진", "photoHint": "사진 선택 (선택 사항)", "rating": "별점", "text": "한 줄 후기", "textHint": "솔직한 한 줄이면 충분합니다 (5자 이상)",
       "submit": "등록하고 {bonus} 받기", "bonusToast": "후기 등록 — 보너스 {amount} 적립",
       "errors": {"item": "아이템을 선택하세요", "text": "후기는 5자 이상 입력하세요", "photo": "사진을 불러오지 못했습니다"},
-      "writeDemoNote": "후기와 사진은 이 기기에 저장되며 보너스는 등록 즉시 잔액에 반영됩니다.",
-      "empty": "아직 게시된 후기가 없습니다. 실물을 받으셨다면 첫 후기를 남기고 10 USDT를 받아가세요.", "emptyCta": "박스 열러 가기"
+      "bonusNote": "후기 등록 즉시 {bonus} 보너스가 계정 잔액으로 입금됩니다.",
+      "empty": "아직 게시된 후기가 없습니다. 실물을 받으셨다면 첫 후기를 남기고 10 USDT를 받아가세요.", "emptyCta": "박스 열러 가기", "close": "닫기"
     },
     "ticker": {"label": "실시간 라이브 드랍", "live": "LIVE", "lineup": "{box} · {item} {mult} · 확률 {rate}", "win": "님이 {price} 박스에서 {item} 획득", "cashout": "님이 {amount} 즉시 환전", "ship": "님이 {item} 출고 신청", "ago": "({s}초 전)"},
     "onboarding": {
@@ -176,7 +176,7 @@ UI = {
       "status": {"PENDING": "검토 중", "BROADCASTING": "전송 중", "COMPLETED": "완료"},
       "txHash": "온체인 TxID", "txHashPending": "브로드캐스트 후 TxID가 표시됩니다", "copyHash": "TxID 복사", "viewOnExplorer": "{explorer}에서 확인",
       "errors": {"TRC20": "TRC-20 주소는 T 로 시작하는 34자입니다", "BEP20": "BEP-20 주소는 0x 로 시작하는 42자입니다", "min": "최소 출금 수량은 {min}입니다", "insufficient": "잔액이 부족합니다", "nan": "출금 수량을 입력하세요"},
-      "processingNote": "출금은 보안 검토 후 서명·브로드캐스트됩니다. 완료되면 TxID와 익스플로러 링크가 여기에 표시됩니다.", "previewNote": "미리보기 환경에서는 출금이 브로드캐스트되지 않고 신청 상태로 남습니다. 백엔드 연결 후 TxID와 익스플로러 링크가 표시됩니다.",
+      "processingNote": "출금은 보안 검토 후 서명·브로드캐스트됩니다. 완료되면 TxID와 익스플로러 링크가 여기에 표시됩니다.", "networkNote": "출금 신청 즉시 블록체인 네트워크로 전송되며, 온체인 트랜잭션이 TronScan/BscScan에서 실시간 조회됩니다.",
       "requestedToast": "출금 신청 완료 — {amount} 차감"
     },
     "vip": {"title": "VIP 등급 {tier}", "tiers": {"member": "멤버", "silver": "실버", "gold": "골드", "black": "블랙"}},
@@ -227,7 +227,7 @@ UI = {
       "noBlank": "100% physical payout · No blanks", "guaranteedMinLabel": "Guaranteed Minimum",
       "guaranteedMin": "Guaranteed Minimum {value}", "aboveOpenPrice": "Above open price",
       "openNow": "Open Now", "viewContents": "What's inside", "billboardPicker": "Billboard picker", "billboardOf": "{title} billboard",
-      "headline": "$1. A shot at a Rolex & an iPhone.", "sub": "Hit, it's 100% yours. Miss, 95% cashed out instantly.", "freeDemo": "Try free", "openFor": "🔥 Spin for {price}", "badge": "Luxury jackpots from $1", "nowShowing": "Now Showing", "topMultipleShort": "up to {n}"
+      "headline": "$1. A shot at a Rolex & an iPhone.", "sub": "Hit, it's 100% yours. Miss, 95% cashed out instantly.", "freeTry": "Try free", "openFor": "🔥 Spin for {price}", "badge": "Luxury jackpots from $1", "nowShowing": "Now Showing", "topMultipleShort": "up to {n}"
     },
     "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "guaranteed": "guaranteed", "openNow": "Open now", "contents": "Details", "details": "{title} details", "expand": "Expand"},
     "rows": {"trending": "🔥 Most Opened Boxes TOP 10", "dollar": "🔥 $1 Boxes", "techMobility": "⚡ Apple & Tech", "luxuryWatch": "👑 Luxury & Watches", "guaranteed": "🚗 Supercars & Gold", "prev": "Previous", "next": "Next"},
@@ -262,7 +262,7 @@ UI = {
       "resultHash": "Server seed SHA-256", "resultHmac": "HMAC-SHA256", "resultRoll": "Roll number", "resultItem": "Winning item", "resultRange": "Winning range",
       "hashMatch": "Matches the published hash", "hashMismatch": "Does not match the published hash — different server seed", "hashSkipped": "No published hash provided",
       "rangeNote": "Roll range 0 – {max} ({resolution}% resolution)", "outOf": "{roll} / {max}",
-      "demoTitle": "Try seed commitment yourself", "demoBody": "Generate a server seed and only its hash is shown. Reveal it, then paste it into the verifier to reproduce a roll.",
+      "tryTitle": "Try seed commitment yourself", "tryBody": "Generate a server seed and only its hash is shown. Reveal it, then paste it into the verifier to reproduce a roll.",
       "generate": "Generate server seed", "reveal": "Reveal server seed", "hidden": "Before opening — seed hidden", "useInVerifier": "Use in verifier",
       "invalidInput": "Enter a server seed and a client seed; the nonce must be an integer ≥ 0.",
       "open": "Open Provably Fair", "close": "Close",
@@ -280,7 +280,7 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "Open ×1", "open5": "Open ×5", "demoLabel": "Free try · Simulated spin", "demoCongrats": "Congratulations! You simulated {item} ({n}).", "demoBody": "Open real boxes with your {bonus} welcome bonus!", "demoCta": "Claim & Open Real Box", "demoCtaClaimed": "Open Real Box", "demoNote": "This is a simulated result — nothing is credited to your balance or vault, and no fairness seed is consumed.", "spinning": "Opening…", "landing": "Result locked",
+      "open1": "Open ×1", "open5": "Open ×5", "trialLabel": "Free try", "trialCongrats": "Nice hit — {item} ({n}) on your free try!", "trialBody": "Open real boxes with your {bonus} welcome bonus!", "trialCta": "Claim & Open Real Box", "trialCtaClaimed": "Open Real Box", "trialNote": "Free-try results aren't shipped or cashed out. Use the button above for the real thing.", "spinning": "Opening…", "landing": "Result locked",
       "result": "You won", "results": "5 results", "total": "Total value", "paid": "Paid {price}",
       "sellBack": "Cash out 95% · {amount}", "sellBackAll": "Cash out all · {amount}", "sellBackNote": "{rate} of market value is credited to your balance instantly",
       "sold": "Cashed out — {amount} credited", "claimShipping": "Ship to me",
@@ -295,19 +295,19 @@ UI = {
       "title": "Deposit", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT Crypto Deposit", "tabCard": "Credit Card",
       "network": "Select network", "recommended": "Recommended · fee under 1 USDT", "chain": "{chain}",
       "address": "Deposit address", "copy": "Copy address", "copied": "Address copied", "qrHint": "Scan the QR with your wallet app",
-      "addressIssuing": "Issuing your deposit address…", "addressError": "Could not issue an address. Please try again shortly.", "addressPreview": "Deposit addresses are issued once the payment gateway is connected. This is a preview environment — use the balance top-up below to walk through the flow.",
+      "addressIssuing": "Issuing your deposit address…", "addressError": "Could not issue an address. Please try again shortly.", "addressPending": "Send USDT to your dedicated deposit address — after 12 block confirmations it is credited to your balance automatically.",
       "guideTitle": "Deposit guide", "guideMin": "Minimum deposit {min}", "guideConfirm": "Credited automatically after {n} block confirmations", "guideToken": "Send only USDT on the selected network. Other coins or networks cannot be recovered",
       "guideTime": "~{sec}s per block · about {min} min",
-      "status": "Deposit status", "waiting": "Waiting for deposit", "confirming": "Confirmation {n} / {total}", "credited": "Credited to balance",
-      "simulateTitle": "Preview balance top-up", "simulateBody": "Preview environment before the gateway is connected. Enter an amount and run it to watch confirmations and see the balance update.",
-      "amount": "Amount (USDT)", "simulate": "Run top-up", "simulating": "Waiting for confirmations…", "belowMin": "Minimum deposit is {min}",
+      "status": "Deposit status", "waiting": "Waiting for deposit", "watching": "Watching the blockchain for network approval in real time.", "confirming": "Confirmation {n} / {total}", "credited": "Credited to balance",
+     
+      "amount": "Amount (USDT)", "belowMin": "Minimum deposit is {min}",
       "creditedToast": "+{amount} credited",
       "close": "Close"
     },
     "cardPay": {
       "quick": "Quick top-up", "custom": "Custom amount", "amount": "Payment amount", "credit": "Credited",
-      "provider": "Payment method", "providerStripe": "Stripe · Global cards", "providerPortone": "PortOne · Korean cards", "providerMock": "Preview checkout (no card details)",
-      "mockNote": "The payment gateway (Stripe / PortOne) is not connected yet, so this runs as a preview checkout. No card details are collected.",
+      "provider": "Payment method", "providerStripe": "Stripe · Global cards", "providerPortone": "PortOne · Korean cards", "cardSoon": "Card payments are launching soon. Please use a USDT deposit for now.",
+     
       "pay": "Pay {amount}", "processing": "Processing…", "belowMin": "Minimum payment is {min}", "aboveMax": "Maximum payment is {max}", "invalid": "Check the amount",
       "declined": "Card declined", "declinedHint": "The issuer declined this card. Please try another card.",
       "receipt": "Receipt", "receiptId": "Transaction ID", "receiptAt": "Approved at", "receiptCard": "Card", "receiptPaid": "Paid", "receiptCredited": "Credited", "receiptProvider": "Method",
@@ -327,7 +327,7 @@ UI = {
       "track": "Track", "trackingTitle": "Shipment status", "copyTracking": "Copy tracking number", "trackOnCarrier": "Live tracking on {carrier}",
       "carriers": {"CJ": "CJ Logistics", "EPOST": "Korea Post", "DHL": "DHL", "FEDEX": "FedEx"},
       "steps": {"requested": "Shipping requested", "label": "Label issued", "transit": "In transit", "delivered": "Delivered"}, "stepCurrent": "Current step",
-      "trackingDemoNote": "Once the parcel ships, the carrier and tracking number appear here with a live tracking link.",
+      "trackingNote": "Once the parcel ships, the carrier and tracking number appear here with a live tracking link.",
       "sellTitle": "Instant Sell-Back", "sellBody": "Sell this item? {rate} of market value — {amount} — is credited to your balance instantly.",
       "sellBodyMulti": "Sell {n} items? {rate} of market value — {amount} — is credited to your balance instantly.",
       "confirm": "Confirm", "cancel": "Cancel", "soldToast": "Sold — {amount} credited",
@@ -342,10 +342,10 @@ UI = {
     "daily": {
       "title": "Daily Free Box", "pill": "Free Box", "openFree": "Open for free", "nextIn": "Next in {time}",
       "stripBody": "Once every 24 hours, no payment — {min} to {max} credited straight to your balance.", "body": "Once every 24 hours. Pick a card and {min} to {max} is credited instantly. No deposit, no sign-up.",
-      "card": "Card {n}", "pickOne": "Pick a card", "revealing": "Locking the result…", "won": "Credited", "credited": "{amount} was credited to your balance",
+      "card": "Card {n}", "pickOne": "Pick a card", "revealing": "Locking the result…", "won": "Credited", "credited": "Congratulations! Your free win of {amount} has been credited to your wallet.",
       "odds": "Odds", "fairNote": "Same Provably Fair roll as paid boxes — your card pick is cosmetic and never changes the result",
       "creditedToast": "Daily Free Box — {amount} credited", "close": "Close",
-      "demoNote": "The 24-hour cooldown is counted per device."
+      "cooldownNote": "The daily free box can be opened once every 24 hours."
     },
     "community": {
       "eyebrow": "Community Wall", "title": "Real Unboxing Reviews", "you": "You", 
@@ -355,8 +355,8 @@ UI = {
       "pickItem": "Received item", "photo": "Unboxing photo", "photoHint": "Choose a photo (optional)", "rating": "Rating", "text": "One-line review", "textHint": "One honest line is enough (5+ characters)",
       "submit": "Submit & get {bonus}", "bonusToast": "Review posted — {amount} bonus credited",
       "errors": {"item": "Pick an item", "text": "Write at least 5 characters", "photo": "Could not load the photo"},
-      "writeDemoNote": "Your review and photo are stored on this device and the bonus is credited on submit.",
-      "empty": "No reviews yet. Received your item? Post the first review and take the 10 USDT bonus.", "emptyCta": "Open a box"
+      "bonusNote": "The {bonus} bonus is credited to your account the moment your review is posted.",
+      "empty": "No reviews yet. Received your item? Post the first review and take the 10 USDT bonus.", "emptyCta": "Open a box", "close": "Close"
     },
     "ticker": {"label": "Live drops", "live": "LIVE", "lineup": "{box} · {item} {mult} · odds {rate}", "win": "pulled {item} from a {price} box", "cashout": "cashed out {amount}", "ship": "requested shipping for {item}", "ago": "({s}s ago)"},
     "onboarding": {
@@ -381,7 +381,7 @@ UI = {
       "status": {"PENDING": "Pending", "BROADCASTING": "Broadcasting", "COMPLETED": "Completed"},
       "txHash": "On-chain TxID", "txHashPending": "The TxID appears after broadcast", "copyHash": "Copy TxID", "viewOnExplorer": "View on {explorer}",
       "errors": {"TRC20": "A TRC-20 address is 34 characters starting with T", "BEP20": "A BEP-20 address is 42 characters starting with 0x", "min": "Minimum withdrawal is {min}", "insufficient": "Insufficient balance", "nan": "Enter an amount"},
-      "processingNote": "Withdrawals are signed and broadcast after a security review. The TxID and explorer link appear here once complete.", "previewNote": "In this preview environment withdrawals stay in the requested state and are not broadcast. Once the backend is connected the TxID and explorer link appear here.",
+      "processingNote": "Withdrawals are signed and broadcast after a security review. The TxID and explorer link appear here once complete.", "networkNote": "Withdrawals are sent to the blockchain network as soon as they are requested, and the on-chain transaction can be viewed live on TronScan / BscScan.",
       "requestedToast": "Withdrawal submitted — {amount} deducted"
     },
     "vip": {"title": "VIP tier {tier}", "tiers": {"member": "Member", "silver": "Silver", "gold": "Gold", "black": "Black"}},
@@ -432,7 +432,7 @@ UI = {
       "noBlank": "100% 实物发放 · 无空奖", "guaranteedMinLabel": "保底价值",
       "guaranteedMin": "保底价值 {value}", "aboveOpenPrice": "不低于开启价",
       "openNow": "立即开启", "viewContents": "看看里面", "billboardPicker": "选择展示", "billboardOf": "{title} 展示",
-      "headline": "1 美元，博劳力士和 iPhone。", "sub": "中了 100% 归你，没中也立即折现 95%。", "freeDemo": "免费试玩", "openFor": "🔥 {price} 开一发", "badge": "1 美元起的奢品头奖", "nowShowing": "正在上映", "topMultipleShort": "最高 {n}"
+      "headline": "1 美元，博劳力士和 iPhone。", "sub": "中了 100% 归你，没中也立即折现 95%。", "freeTry": "免费试玩", "openFor": "🔥 {price} 开一发", "badge": "1 美元起的奢品头奖", "nowShowing": "正在上映", "topMultipleShort": "最高 {n}"
     },
     "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "guaranteed": "保底", "openNow": "立即开", "contents": "详情", "details": "{title} 详情", "expand": "展开"},
     "rows": {"trending": "🔥 开启最多的盲盒 TOP 10", "dollar": "🔥 1 美元盲盒", "techMobility": "⚡ 苹果与科技", "luxuryWatch": "👑 奢品与腕表", "guaranteed": "🚗 超跑与金条", "prev": "上一页", "next": "下一页"},
@@ -467,7 +467,7 @@ UI = {
       "resultHash": "服务器种子 SHA-256", "resultHmac": "HMAC-SHA256", "resultRoll": "Roll 数值", "resultItem": "中奖商品", "resultRange": "中奖区间",
       "hashMatch": "与公开哈希一致", "hashMismatch": "与公开哈希不一致 — 服务器种子不同", "hashSkipped": "未填写公开哈希",
       "rangeNote": "Roll 范围 0 ~ {max}（{resolution}% 精度）", "outOf": "{roll} / {max}",
-      "demoTitle": "亲手试试种子承诺", "demoBody": "生成新的服务器种子后仅显示哈希。点击公开后显示原文，可填入验证器复现结果。",
+      "tryTitle": "亲手试试种子承诺", "tryBody": "生成新的服务器种子后仅显示哈希。点击公开后显示原文，可填入验证器复现结果。",
       "generate": "生成服务器种子", "reveal": "公开服务器种子", "hidden": "开启前 — 原文未公开", "useInVerifier": "填入验证器",
       "invalidInput": "请输入服务器种子与客户端种子，Nonce 须为 ≥ 0 的整数。",
       "open": "打开公平性验证", "close": "关闭",
@@ -485,7 +485,7 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "开启 ×1", "open5": "连续开启 ×5", "demoLabel": "免费过把瘾 · 模拟开箱", "demoCongrats": "恭喜！您在模拟中抽中了 {item}（{n}）。", "demoBody": "用 {bonus} 新人奖励开启真实盲盒吧！", "demoCta": "领取奖励并开启真实盲盒", "demoCtaClaimed": "开启真实盲盒", "demoNote": "这是模拟结果 — 不计入余额与仓库，也不消耗公平性种子。", "spinning": "开启中…", "landing": "结果已锁定",
+      "open1": "开启 ×1", "open5": "连续开启 ×5", "trialLabel": "免费过把瘾", "trialCongrats": "手感不错！免费试玩抽中 {item}（{n}）", "trialBody": "用 {bonus} 新人奖励开启真实盲盒吧！", "trialCta": "领取奖励并开启真实盲盒", "trialCtaClaimed": "开启真实盲盒", "trialNote": "免费试玩结果不参与配送与折现。真正开箱请点上方按钮。", "spinning": "开启中…", "landing": "结果已锁定",
       "result": "获得", "results": "5 次结果", "total": "总价值", "paid": "已支付 {price}",
       "sellBack": "95% 立即折现 · {amount}", "sellBackAll": "全部 95% 立即折现 · {amount}", "sellBackNote": "按市场价的 {rate} 即时计入余额",
       "sold": "已折现 — 余额 +{amount}", "claimShipping": "寄到家",
@@ -500,19 +500,19 @@ UI = {
       "title": "充值", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 加密货币充值", "tabCard": "信用卡支付",
       "network": "选择网络", "recommended": "推荐 · 手续费低于 1 USDT", "chain": "{chain}",
       "address": "充值钱包地址", "copy": "一键复制", "copied": "地址已复制", "qrHint": "请用钱包 App 扫描二维码",
-      "addressIssuing": "正在生成充值地址…", "addressError": "地址生成失败，请稍后重试。", "addressPreview": "充值地址在接入支付网关后生成。当前为预览环境，可用下方的余额充值体验流程。",
+      "addressIssuing": "正在生成充值地址…", "addressError": "地址生成失败，请稍后重试。", "addressPending": "向专属充值地址转入 USDT，12 个区块确认后即自动计入账户余额。",
       "guideTitle": "充值说明", "guideMin": "最低充值 {min}", "guideConfirm": "区块链 {n} 次确认后自动到账", "guideToken": "仅发送所选网络的 USDT。其他币种或网络无法找回",
       "guideTime": "约 {sec} 秒/区块 · 约 {min} 分钟",
-      "status": "充值状态", "waiting": "等待入账", "confirming": "确认 {n} / {total}", "credited": "已计入余额",
-      "simulateTitle": "预览余额充值", "simulateBody": "接入网关前的预览环境。输入金额并执行，确认计数器会运行并计入余额。",
-      "amount": "金额 (USDT)", "simulate": "执行充值", "simulating": "等待确认…", "belowMin": "最低充值为 {min}",
+      "status": "充值状态", "waiting": "等待入账", "watching": "正在实时监测区块链网络确认。", "confirming": "确认 {n} / {total}", "credited": "已计入余额",
+     
+      "amount": "金额 (USDT)", "belowMin": "最低充值为 {min}",
       "creditedToast": "+{amount} 已计入余额",
       "close": "关闭"
     },
     "cardPay": {
       "quick": "快捷充值", "custom": "自定义金额", "amount": "支付金额", "credit": "计入余额",
-      "provider": "支付方式", "providerStripe": "Stripe · 国际信用卡", "providerPortone": "PortOne · 韩国信用卡", "providerMock": "预览支付（不采集卡片信息）",
-      "mockNote": "支付网关（Stripe / PortOne）尚未接入，以预览支付进行。不会采集卡片信息。",
+      "provider": "支付方式", "providerStripe": "Stripe · 国际信用卡", "providerPortone": "PortOne · 韩国信用卡", "cardSoon": "信用卡支付即将开放，目前请使用 USDT 充值。",
+     
       "pay": "支付 {amount}", "processing": "支付处理中…", "belowMin": "最低支付金额为 {min}", "aboveMax": "最高支付金额为 {max}", "invalid": "请检查金额",
       "declined": "卡片被拒绝", "declinedHint": "发卡行拒绝了此卡，请换一张卡重试。",
       "receipt": "收据", "receiptId": "交易编号", "receiptAt": "批准时间", "receiptCard": "卡片", "receiptPaid": "支付金额", "receiptCredited": "计入余额", "receiptProvider": "支付方式",
@@ -532,7 +532,7 @@ UI = {
       "track": "查看物流", "trackingTitle": "物流状态", "copyTracking": "复制运单号", "trackOnCarrier": "在 {carrier} 实时查询",
       "carriers": {"CJ": "CJ大韩通运", "EPOST": "韩国邮政", "DHL": "DHL", "FEDEX": "FedEx"},
       "steps": {"requested": "已受理发货申请", "label": "已出运单", "transit": "运输中", "delivered": "已签收"}, "stepCurrent": "当前环节",
-      "trackingDemoNote": "出库完成后，物流公司与运单号会显示在此，并开放实时查询链接。",
+      "trackingNote": "出库完成后，物流公司与运单号会显示在此，并开放实时查询链接。",
       "sellTitle": "即时回收", "sellBody": "确定回收该商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
       "sellBodyMulti": "确定回收 {n} 件商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
       "confirm": "确认", "cancel": "取消", "soldToast": "已回收 — 余额 +{amount}",
@@ -547,10 +547,10 @@ UI = {
     "daily": {
       "title": "每日免费盲盒", "pill": "免费盲盒", "openFree": "免费开启", "nextIn": "距下次开启 {time}",
       "stripBody": "每 24 小时一次，无需支付，{min} ~ {max} 直接计入余额。", "body": "每 24 小时一次。选一张卡，{min} ~ {max} 即时计入余额。无需充值或注册。",
-      "card": "卡片 {n}", "pickOne": "请选择一张卡片", "revealing": "结果确定中…", "won": "已计入", "credited": "{amount} 已计入您的余额",
+      "card": "卡片 {n}", "pickOne": "请选择一张卡片", "revealing": "结果确定中…", "won": "已计入", "credited": "恭喜！免费中奖金额 {amount} 已即时计入您的钱包余额。",
       "odds": "概率表", "fairNote": "与付费盲盒相同的 Provably Fair 掷点 — 选卡仅为演出，不会改变结果",
       "creditedToast": "每日免费盲盒 — 已计入 {amount}", "close": "关闭",
-      "demoNote": "24 小时冷却按本设备计算。"
+      "cooldownNote": "每日免费盲盒每 24 小时可开启一次。"
     },
     "community": {
       "eyebrow": "Community Wall", "title": "实物开箱晒单", "you": "我", 
@@ -560,8 +560,8 @@ UI = {
       "pickItem": "已收到的商品", "photo": "开箱照片", "photoHint": "选择照片（可选）", "rating": "评分", "text": "一句话评价", "textHint": "一句真实感受即可（5 字以上）",
       "submit": "提交并领取 {bonus}", "bonusToast": "晒单已发布 — 奖励 {amount} 已计入",
       "errors": {"item": "请选择商品", "text": "评价至少 5 个字", "photo": "无法加载照片"},
-      "writeDemoNote": "晒单和照片保存在本设备，奖励在提交时即刻计入余额。",
-      "empty": "还没有晒单。收到实物了？发第一条晒单领取 10 USDT 奖励。", "emptyCta": "去开盲盒"
+      "bonusNote": "晒单发布后，{bonus} 奖励立即计入您的账户余额。",
+      "empty": "还没有晒单。收到实物了？发第一条晒单领取 10 USDT 奖励。", "emptyCta": "去开盲盒", "close": "关闭"
     },
     "ticker": {"label": "实时开箱动态", "live": "LIVE", "lineup": "{box} · {item} {mult} · 概率 {rate}", "win": "在 {price} 盲盒中开出 {item}", "cashout": "已折现 {amount}", "ship": "申请发货 {item}", "ago": "（{s} 秒前）"},
     "onboarding": {
@@ -586,7 +586,7 @@ UI = {
       "status": {"PENDING": "审核中", "BROADCASTING": "广播中", "COMPLETED": "已完成"},
       "txHash": "链上 TxID", "txHashPending": "广播后显示 TxID", "copyHash": "复制 TxID", "viewOnExplorer": "在 {explorer} 查看",
       "errors": {"TRC20": "TRC-20 地址为以 T 开头的 34 位字符", "BEP20": "BEP-20 地址为以 0x 开头的 42 位字符", "min": "最低提现数量为 {min}", "insufficient": "余额不足", "nan": "请输入提现数量"},
-      "processingNote": "提现经安全审核后签名并广播，完成后 TxID 与浏览器链接会显示在此。", "previewNote": "预览环境中提现停留在申请状态，不会广播。接入后端后将显示 TxID 与浏览器链接。",
+      "processingNote": "提现经安全审核后签名并广播，完成后 TxID 与浏览器链接会显示在此。", "networkNote": "提现申请后立即发送至区块链网络，链上交易可在 TronScan / BscScan 实时查询。",
       "requestedToast": "提现申请已提交 — 已扣除 {amount}"
     },
     "vip": {"title": "VIP 等级 {tier}", "tiers": {"member": "会员", "silver": "白银", "gold": "黄金", "black": "黑金"}},

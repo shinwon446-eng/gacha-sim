@@ -258,7 +258,7 @@ export function DailyFreeBoxModal({ open, onClose, onCredited }: { open: boolean
                 </div>
               )}
             </div>
-            <p className="relative mt-3 text-[10px] leading-relaxed text-faint">{t("demoNote")}</p>
+            <p className="relative mt-3 text-[10px] leading-relaxed text-faint">{t("cooldownNote")}</p>
           </motion.div>
         </motion.div>
       )}

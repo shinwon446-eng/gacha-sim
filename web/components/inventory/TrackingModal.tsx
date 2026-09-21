@@ -144,7 +144,7 @@ export function TrackingModal({ item, onClose }: TrackingModalProps) {
                 ))}
               </dl>
             )}
-            <p className="mt-3 text-[10px] leading-relaxed text-faint">{t("trackingDemoNote")}</p>
+            <p className="mt-3 text-[10px] leading-relaxed text-faint">{t("trackingNote")}</p>
           </motion.div>
         </motion.div>
       )}

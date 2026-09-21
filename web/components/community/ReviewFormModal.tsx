@@ -169,7 +169,7 @@ export function ReviewFormModal({ open, onClose, onSubmitted }: ReviewFormModalP
                 </button>
               </div>
             )}
-            <p className="mt-3 text-[10px] leading-relaxed text-faint">{t("writeDemoNote")}</p>
+            <p className="mt-3 text-[10px] leading-relaxed text-faint">{t("bonusNote", { bonus: fmt(REVIEW_BONUS_USDT) })}</p>
           </motion.div>
         </motion.div>
       )}

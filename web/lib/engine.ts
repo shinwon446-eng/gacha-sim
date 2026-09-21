@@ -1,4 +1,4 @@
-// 확률/부스터/등급 엔진 — 서버(API 라우트)와 정적 데모 폴백이 공유하는 순수 로직.
+// 확률/부스터/등급 엔진 — 순수 로직.
 // 프로덕션 원칙: 난수와 확률 계산은 서버에서만 실행하고, 클라이언트에는 결과만 내려준다.
 import { itemLine, type Box, type Item, type Line } from "./types";
 
@@ -6,8 +6,6 @@ import { itemLine, type Box, type Item, type Line } from "./types";
 export const BOOSTER_THRESHOLD = 10;
 /** 부스터 발동 시 [초대박 라인업] 가중치 배수 */
 export const BOOST_MULT = 5;
-/** 비회원 모의 체험 소멸까지의 시간 — 02:59 카운트다운 */
-export const DEMO_DURATION_MS = 179 * 1000;
 
 export type UserTier = "Bronze" | "Silver" | "Gold" | "VIP";
 

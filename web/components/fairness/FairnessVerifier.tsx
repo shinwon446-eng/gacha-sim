@@ -208,8 +208,8 @@ export function FairnessVerifier({ initialBox, initial, compact = false }: { ini
 
       {/* ── 시드 커밋 데모 ── */}
       <aside className={cn("border-metallic-subtle rounded-xl bg-surface p-4 md:p-5", compact ? "" : "lg:col-span-2")}>
-        <div className="caption-luxury">{t("demoTitle")}</div>
-        <p className="mt-2 text-xs leading-relaxed text-muted">{t("demoBody")}</p>
+        <div className="caption-luxury">{t("tryTitle")}</div>
+        <p className="mt-2 text-xs leading-relaxed text-muted">{t("tryBody")}</p>
 
         <button type="button" onClick={generate} className="glass mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-md text-sm font-semibold text-white hover:bg-white/15">
           <RefreshCw className="h-4 w-4" strokeWidth={2} />
