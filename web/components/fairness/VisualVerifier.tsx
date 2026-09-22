@@ -107,7 +107,8 @@ export function VisualVerifier({ className, record, autoRun = false, embedded = 
   return (
     <section className={cn(embedded ? "relative" : "border-metallic-gold relative overflow-hidden rounded-xl bg-surface p-5 md:p-6", className)} aria-label={t("title")}>
       {!embedded && <span aria-hidden className="pedestal-glow pointer-events-none absolute inset-0" />}
-      <div className="relative flex flex-wrap items-start justify-between gap-3">
+      {/* 모달 안에서는 우상단 닫기 버튼(absolute right-3, 36px) 자리를 비워 둔다 — 전문가 모드 칩이 X 아래로 들어가지 않게 */}
+      <div className={cn("relative flex flex-wrap items-start justify-between gap-3", embedded && "pr-10")}>
         <div>
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-gold-champagne" strokeWidth={2.2} />
