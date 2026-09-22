@@ -242,10 +242,12 @@ export function BulkOpenModal({ box, count, onClose, onSellBack }: Props) {
 
             {/* 액션 */}
             <div className="border-t border-hairline px-[4%] py-3">
-              <div className="mx-auto grid max-w-3xl grid-cols-2 gap-2">
+              {/* 전부 캐시백(자동 정산)이면 회수할 게 없다 — 비활성 "0개 회수" 대신 확인 버튼만 전폭으로 */}
+              <div className={cn("mx-auto grid max-w-3xl gap-2", pending.length > 0 ? "grid-cols-2" : "grid-cols-1")}>
+                {pending.length > 0 && (
                 <button
                   type="button"
-                  disabled={sold || pending.length === 0}
+                  disabled={sold}
                   onClick={() => {
                     setSold(true);
                     const ids = pending.map((r) => r.ownedId);
@@ -260,6 +262,7 @@ export function BulkOpenModal({ box, count, onClose, onSellBack }: Props) {
                   </span>
                   <span className="mt-1 font-mono text-[11px] font-bold leading-none tabular-nums">{fmt(sellAmount)}</span>
                 </button>
+                )}
                 <button type="button" onClick={onClose} className="glass flex h-12 items-center justify-center gap-2 rounded-lg text-sm font-bold text-white hover:bg-white/15">
                   <Package className="h-4 w-4" strokeWidth={2} />
                   {t("keep")}

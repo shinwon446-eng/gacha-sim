@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { AnimatePresence, animate, motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { MegaWinFX } from "@/components/unboxing/MegaWinFX";
 import { useTranslations } from "next-intl";
-import { Wallet, Truck, ShieldCheck, X, Volume2, VolumeX, Play, Square } from "lucide-react";
+import { Wallet, Truck, ShieldCheck, X, Volume2, VolumeX, Play } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
@@ -547,7 +547,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                 disabled={stopRef.current}
                 className="flex h-12 items-center gap-2 rounded-lg border border-crimson/60 bg-crimson/15 px-6 text-sm font-bold text-white shadow-[0_0_18px_rgba(229,9,20,0.3)] transition-colors hover:bg-crimson/30 disabled:opacity-60"
               >
-                <Square className="h-4 w-4 fill-current" strokeWidth={0} />
+                {/* 라벨(autoStop)에 ⏹ 이모지가 이미 있다 — lucide 아이콘을 같이 두면 ■■ 로 겹친다 */}
                 {t("autoStop", { n: Number.isFinite(remainingSpins(auto, autoState.done)) ? String(remainingSpins(auto, autoState.done)) : "∞" })}
               </button>
               <div className="flex items-center gap-3 font-mono text-[11px] tabular-nums text-muted">
