@@ -210,7 +210,9 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
             transition={{ duration: 0.35, ease: EASE }}
           >
             {/* ── 와이드 히어로 ── */}
-            <header className="relative aspect-[16/9] max-h-[52vh] w-full overflow-hidden bg-[#0A0A0A] md:aspect-[21/9]">
+            {/* 모바일: 커버(16:9) 아래로 카피가 흐름 배치 — 프리셋·버튼이 커버보다 길어 오버레이로는 잘린다. md+: 21:9 커버 위 오버레이 */}
+            <header className="relative w-full overflow-hidden bg-surface md:aspect-[21/9] md:max-h-[52vh] md:bg-[#0A0A0A]">
+              <div className="absolute inset-x-0 top-0 aspect-[16/9] md:inset-0 md:aspect-auto">
               <ProductArt
                 image={box.image}
                 alt={boxTitle(box)}
@@ -247,6 +249,7 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
                     "linear-gradient(to right, rgba(24,24,24,0.92) 0%, rgba(24,24,24,0.55) 40%, transparent 100%)",
                 }}
               />
+              </div>
 
               <button
                 type="button"
@@ -258,7 +261,7 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
               </button>
 
               {/* 히어로 카피 */}
-              <div className="absolute inset-x-0 bottom-0 z-10 px-5 pb-5 md:px-9 md:pb-7">
+              <div className="relative z-10 px-5 pb-5 pt-[40vw] md:absolute md:inset-x-0 md:bottom-0 md:px-9 md:pb-7 md:pt-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <TierBadge tier={meta.top} size="md" />
                   <span className="rounded-sm border border-[#2A2A2A] bg-black/60 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#AAAAAA]">
