@@ -18,7 +18,7 @@ import urllib.parse
 import urllib.request
 
 API = "https://commons.wikimedia.org/w/api.php"
-UA = "gachaflix-mock-sourcing/1.0 (prototype; shinwon446@gmail.com)"
+UA = "voila-image-sourcing/1.0 (prototype; shinwon446@gmail.com)"
 MIN_W, MIN_H = 1000, 640
 THUMB_W = 1600
 

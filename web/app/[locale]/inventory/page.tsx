@@ -23,6 +23,7 @@ import { DetailModal } from "@/components/box/DetailModal";
 import { UnboxingRoulette, type UnboxResult } from "@/components/unboxing/UnboxingRoulette";
 import { BulkOpenModal } from "@/components/unboxing/BulkOpenModal";
 import { BULK_THRESHOLD, type AutoplayConfig } from "@/lib/autoplay";
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import { CurrencySelector } from "@/components/layout/CurrencySelector";
 import { Money } from "@/components/ui/Money";
@@ -195,9 +196,7 @@ export default function InventoryPage() {
   return (
     <main className="min-h-screen bg-canvas pb-28">
       <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-hairline bg-obsidian/90 px-[4%] backdrop-blur-md sm:gap-5">
-        <Link href="/" className="font-display text-xl font-bold uppercase leading-none tracking-tight text-crimson">
-          Gachaflix
-        </Link>
+        <BrandLogo />
         <nav className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap text-[11px] text-muted [scrollbar-width:none] sm:gap-4 sm:text-xs">
           <Link href="/" className="hidden hover:text-white sm:inline">
             {t("nav.boxes")}

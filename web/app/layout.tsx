@@ -12,9 +12,9 @@ import { CurrencyHydrator } from "@/components/layout/CurrencyHydrator";
 const PRETENDARD_CSS = "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css";
 
 export const metadata: Metadata = {
-  title: "GACHAFLIX — Luxury Mystery Box",
+  title: "VOILA — You never know what’s next. | OPEN IT, OWN IT",
   description:
-    "롤렉스, 에르메스, 하이엔드 테크. 100% 정품 실물 배송 및 95% 즉시 환전(USDT) 보장. 블록체인 기반의 가장 투명한 글로벌 럭셔리 플랫폼.",
+    "스위스 명품 워치부터 테슬라 사이버트럭까지. 100% 온체인 공정성 · 전 품목 95% 즉시 캐시백 · 정품 300% 보증 실물 무료 배송. 글로벌 럭셔리 언박싱 플랫폼 VOILA (voila.gg).",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

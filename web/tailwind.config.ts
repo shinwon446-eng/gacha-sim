@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 /**
- * GACHAFLIX Ultra-Luxury 토큰 (CLAUDE.md §2).
+ * VOILA Ultra-Luxury 토큰 (CLAUDE.md §2).
  * 옵시디언/캔버스 다크 + 샴페인 골드 메탈릭 + 넷플릭스 크림슨 CTA. 네온 금지.
  */
 const config: Config = {

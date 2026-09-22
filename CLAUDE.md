@@ -1,4 +1,4 @@
-# CLAUDE.md - Ultra-Luxury GACHAFLIX (Production-Ready Edition)
+# CLAUDE.md - Ultra-Luxury VOILA (voila.gg) (Production-Ready Edition)
 
 이 문서는 Claude Code가 코드를 생성하고 리팩토링할 때 반드시 준수해야 하는 **프로젝트 전역 절대 지침서(헌법)**입니다.
 모든 '데모', '프로토타입', '모의 데이터', '18+ 성인 전용' 문구를 원천 배제하고, **즉시 실서비스 운영 및 상용 배포가 가능한 완성형 플랫폼**으로 구현합니다.
@@ -7,7 +7,11 @@
 
 ## 1. 프로젝트 정체성 & 핵심 비즈니스 모델
 
-- **서비스명**: GACHAFLIX (가차플릭스)
+- **서비스명**: **VOILA** (브왈라) · 공식 도메인 **voila.gg** — 2026-09-23 리브랜딩 (구 GACHAFLIX)
+- **공식 슬로건 2종**: 메인 `You never know what’s next.` / 액션 `OPEN IT, OWN IT` — 브랜드 슬로건이므로 **세 로케일 모두 원문 그대로** 쓴다(`footer.tagline` / `footer.actionSlogan`).
+- **브랜드 설명**: "스위스 명품 워치부터 테슬라 사이버트럭까지. 100% 온체인 공정성 · 전 품목 95% 즉시 캐시백 · 정품 300% 보증 실물 무료 배송. 글로벌 럭셔리 언박싱 플랫폼 VOILA."
+- **로고**: `components/layout/BrandLogo.tsx` 하나만 쓴다(헤더 5곳 공용). 워드마크 `VOILA`(Pretendard Black, `tracking-wider`) + 우측 `.gg` 골드 뱃지.
+- ⚠️ **리브랜딩이 건드리면 안 되는 것** — `stores/*.ts` 의 persist 키 `gachaflix.wallet` · `gachaflix.inventory` · `gachaflix.fair` · `gachaflix.currency` · `gachaflix.daily` · `gachaflix.community` · `gachaflix.settings` · `gachaflix.telemetry`, 로케일 키 `gachaflix.locale`(`LanguageSelector` + 루트 리다이렉트 스크립트 양쪽), `lib/fingerprint.ts` 의 캔버스 시드 `"GACHAFLIX-FP-0x1A"`. 전부 기존 유저의 잔액·보관함·시드·기기 지문이 걸려 있어 이름을 바꾸면 데이터가 날아간다.
 - **핵심 컨셉**: 넷플릭스 인터페이스 기반의 초호화 글로벌 럭셔리 랜덤박스 플랫폼.
 - **경제학 및 수익 구조 (카지노 하우스 엣지 & 마이크로 베팅)**:
   - **진입장벽 파괴 (Micro Entry)**: 누구나 부담 없이 긁을 수 있는 **1.00 USDT(약 1,400원)** 박스부터 시작.

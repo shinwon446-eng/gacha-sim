@@ -6,7 +6,7 @@ REJECT = {
     "guaranteed-luxury", "glx-lv", "gpu-5080", "gpu-cpu", "glx-btv", "gdy-breville",
     "aud-focal", "aud-he1000", "glx-gucci",
 }
-UA = "gachaflix-mock-sourcing/1.0 (prototype; shinwon446@gmail.com)"
+UA = "voila-image-sourcing/1.0 (prototype; shinwon446@gmail.com)"
 
 def head_ok(url):
     try:

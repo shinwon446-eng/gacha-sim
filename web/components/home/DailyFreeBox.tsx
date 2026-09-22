@@ -193,7 +193,7 @@ export function DailyFreeBoxModal({ open, onClose, onCredited }: { open: boolean
                       <div className={cn("border-metallic-gold absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-obsidian [backface-visibility:hidden]", !disabled && "transition-transform group-hover:-translate-y-1")}>
                         <span className="sheen pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity group-hover:opacity-100" />
                         <Gift className="h-8 w-8 text-gold-champagne" strokeWidth={1.6} />
-                        <span className="caption-luxury mt-2 !text-gold-champagne">Gachaflix</span>
+                        <span className="caption-luxury mt-2 !text-gold-champagne">Voila.gg</span>
                         {isPicked && stage.kind === "revealing" && (
                           <motion.span aria-hidden className="absolute inset-0 rounded-xl" style={{ background: "radial-gradient(60% 60% at 50% 50%, rgba(230,202,101,0.35) 0%, transparent 70%)" }} initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0.4, 1] }} transition={{ duration: 0.9 }} />
                         )}

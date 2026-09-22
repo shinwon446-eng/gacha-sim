@@ -24,8 +24,11 @@ export function Footer() {
     <footer className="border-metallic-subtle mt-10 border-x-0 border-b-0 bg-obsidian px-[4%] pb-8 pt-8 text-xs text-muted md:mt-16 md:pt-10">
       <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-[1.3fr_2fr]">
         <div>
-          <div className="font-display text-xl font-bold uppercase leading-none tracking-tight text-crimson">Gachaflix</div>
-          <p className="mt-2 max-w-sm leading-relaxed text-secondary">{t("slogan")}</p>
+          <div className="font-display text-xl font-black uppercase leading-none tracking-wider text-white">Voila.gg</div>
+          {/* 2대 공식 슬로건 — 메인(영문) + 액션. 브랜드 슬로건이라 세 로케일 모두 원문 그대로다 */}
+          <div className="mt-1 text-xs font-semibold text-secondary">{t("tagline")}</div>
+          <div className="mt-0.5 text-[11px] font-bold tracking-widest text-gold-champagne">{t("actionSlogan")}</div>
+          <p className="mt-2.5 max-w-sm leading-relaxed text-secondary">{t("slogan")}</p>
           <ul className="mt-4 flex flex-wrap gap-1.5">
             {BADGES.map(({ key, Icon, label }) => (
               <li key={key} className="border-metallic-subtle flex h-7 items-center gap-1.5 rounded-sm bg-canvas px-2 text-[10px] font-semibold text-secondary">
@@ -66,7 +69,7 @@ export function Footer() {
       </div>
       <div className="mx-auto mt-8 max-w-7xl border-t border-hairline pt-5">
         <p className="max-w-4xl break-keep text-[11px] leading-relaxed text-faint">{t("disclaimer")}</p>
-        <div className="mt-3 text-[11px] text-faint">© {year} GACHAFLIX. All rights reserved.</div>
+        <div className="mt-3 text-[11px] text-faint">© {year} VOILA (voila.gg). All rights reserved.</div>
       </div>
     </footer>
   );

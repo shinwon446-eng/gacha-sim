@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import { LegalNav } from "@/components/legal/LegalNav";
 
 const DOCS = ["terms", "privacy", "policy", "faq"] as const;
@@ -22,9 +23,7 @@ export default async function LegalPage({ params: { locale, doc } }: { params: {
   return (
     <main className="min-h-screen bg-canvas pb-16">
       <header className="sticky top-0 z-40 flex h-14 items-center gap-4 border-b border-hairline bg-obsidian/90 pl-[4%] backdrop-blur-md">
-        <Link href="/" className="flex-none font-display text-xl font-bold uppercase leading-none tracking-tight text-crimson">
-          Gachaflix
-        </Link>
+        <BrandLogo />
         <LegalNav items={DOCS.map((d) => ({ key: d, title: t(`${d}.title`) }))} current={key} />
       </header>
       <article className="mx-auto w-full max-w-3xl px-[4%] pt-10">

@@ -23,6 +23,7 @@ export async function getFingerprint(): Promise<string> {
       ctx.fillRect(0, 0, 120, 30);
       ctx.fillStyle = "#069";
       // ASCII 전용 토큰 — 글리프 폴백 차이로 해시가 흔들리지 않게 한다
+      // 리브랜딩(VOILA)에도 이 시드 문자열은 바꾸지 않는다 — 바꾸면 기존 기기의 지문이 전부 달라진다
       ctx.fillText("GACHAFLIX-FP-0x1A", 2, 2);
       ctx.strokeStyle = "rgba(102,204,0,0.7)";
       ctx.beginPath();

@@ -19,6 +19,7 @@ import { CurrencySelector } from "@/components/layout/CurrencySelector";
 import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import { Link } from "@/i18n/navigation";
 import { Wallet, ArrowUpRight } from "lucide-react";
 import { useWalletStore, WELCOME_BONUS_USDT } from "@/stores/walletStore";
@@ -190,9 +191,9 @@ export default function BoxesPage() {
     <main className="min-h-screen bg-canvas pb-0 md:pb-24">
       {/* 상단 바 — h-14 고정(스티키 퀵 탭이 top-14 로 이어 붙는다) */}
       <header className="sticky top-0 z-[60] flex h-14 items-center gap-2 border-b border-hairline bg-obsidian/90 px-3 backdrop-blur-md sm:gap-5 sm:px-[4%]">
-        <span className="flex-none whitespace-nowrap font-display text-sm font-black uppercase leading-none tracking-tight text-crimson sm:text-[22px]">
-          Gachaflix
-        </span>
+        {/* 모바일은 한 단계 작은 워드마크 — 헤더 최소폭 375px 규범(부록 A ⑤) */}
+        <BrandLogo size="sm" asLink={false} className="sm:hidden" />
+        <BrandLogo size="md" asLink={false} className="hidden sm:inline-flex" />
         {/* 데스크톱 텍스트 내비 — 모바일은 하단 고정 내비(MobileBottomNav)가 대신한다 */}
         <nav className="hidden min-w-0 flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap text-[12px] text-muted [scrollbar-width:none] sm:gap-4 md:flex">
           <span className="font-semibold text-white">{t("nav.boxes")}</span>

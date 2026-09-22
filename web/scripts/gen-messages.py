@@ -15,7 +15,8 @@ sys.stdout.reconfigure(encoding="utf-8")
 # ── UI 문자열 ──────────────────────────────────────────────
 UI = {
   "ko": {
-    "nav": {"boxes": "박스", "battles": "배틀", "inventory": "보관함", "fairness": "공정성 검증", "community": "커뮤니티", "highRoller": "하이롤러", "tech": "테크", "luxury": "럭셔리"},
+    "nav": {"boxes": "박스", "battles": "배틀", "inventory": "보관함", "fairness": "공정성 검증", "community": "커뮤니티", "about": "플랫폼 소개", "highRoller": "하이롤러", "tech": "테크", "luxury": "럭셔리"},
+    "about": {"badge": "PLATFORM", "heroLine1": "확률을 의심할 필요 없이,", "heroLine2": "마침내 브왈라(VOILA) 하나로.", "heroSub": "조작 불가능한 SHA-256 온체인 공정성, 95% 즉시 테더 환전, 전문 감정 기관 정밀 검수를 거친 100% 정품 무료 특송.", "scrollHint": "스크롤하면 볼트가 열립니다", "lineupTitle": "볼트 안에 걸려 있는 것들", "lineupSub": "지금 열려 있는 {boxes}개 박스, {categories}대 럭셔리 라인업", "catWatch": "스위스 워치", "catTech": "하이엔드 테크", "catFashion": "럭셔리 패션", "catSuper": "슈퍼카 & 순금", "s1Eyebrow": "쓰레기 상품 0개", "s1Title": "95% 캐시백이 도전 횟수 자체를 바꿉니다", "s1Body": "꽝을 사은품으로 떠넘기면 쓴 돈은 그대로 사라집니다. 브왈라(VOILA)는 모든 구성품을 정가의 95%로 즉시 테더로 돌려받을 수 있고, 바닥 등급은 아예 현금성 캐시백입니다.", "s1Formula": "실질 도전 횟수 = 1 ÷ (1 − 환급률)", "s1RivalLabel": "환급 없는 사은품형 (환급률 {rate}% 가정)", "s1OursLabel": "브왈라(VOILA) (최소 보장 환급률 {min}~{max}%)", "s1Attempts": "{n}배", "s1AttemptsNote": "같은 예산으로 돌릴 수 있는 실질 횟수", "s1Assume": "비교값은 가정에 따른 계산이며 특정 업체를 지목하지 않습니다. 계산식이 위에 그대로 있으니 직접 검산해 보세요.", "s1MockTitle": "개봉 완료", "s1MockCta": "95% 즉시 USDT 환전", "s1MockWallet": "지갑 잔액", "s2Eyebrow": "SHA-256 프로버블리 페어", "s2Title": "신뢰를 강요하지 않습니다. 수학으로 직접 검증하세요.", "s2Body": "상자를 열기 전에 서버 시드의 해시가 먼저 공개됩니다. 운영자는 결과를 미리 고를 수도, 나중에 바꿀 수도 없습니다.", "s2Step1": "서버 시드 해시 선공개", "s2Step1Sub": "개봉 전에 브라우저에 먼저 내려옵니다", "s2Step2": "내 브라우저 시드 결합", "s2Step2Sub": "결과에 내 난수가 반드시 섞입니다", "s2Step3": "HMAC-SHA256 → 당첨 슬롯", "s2Step3Sub": "앞 8자리를 {range}로 나눠 구간에 맵핑", "s2Note": "개봉 뒤 공개되는 서버 시드를 다시 해시해 보면 개봉 전에 받은 해시와 같아야 합니다. 다르면 조작입니다.", "s2Verify": "공정성 검증기 열기", "feedTitle": "글로벌 라이브 피드", "feedSub": "실제로 일어난 개봉·환전·출고만 흐릅니다", "feedLineup": "공개 잭팟 라인업", "feedEmptyTitle": "아직 이 기기의 기록이 없습니다", "feedEmptyNote": "다른 사람의 당첨을 지어내 채우지 않습니다. 서버 집계가 연결되면 전 세계 기록이 이 자리에 흐릅니다.", "feedNet": "USDT TRC-20 · BEP-20 입출금 지원", "feedShip": "관부가세 · 배송비 플랫폼 부담", "statsTitle": "숫자로 보는 브왈라(VOILA)", "statJackpot": "지금 걸려 있는 총 잭팟 상품 가치", "statSellback": "즉시 환급률", "statMutable": "개봉 후 운영자가 바꿀 수 있는 결과", "statMutableSub": "서버 시드 해시 선공개 구조", "statSla": "실물 출고 운영 기준", "statSlaSub": "측정된 평균이 아니라 운영 기준입니다", "statOdds": "확률이 공개된 구성품", "statsNote": "카탈로그와 정책에서 계산한 값입니다. 누적 지급액 같은 운영 실적 집계는 서버가 연결된 뒤에 표시합니다.", "unitUsdt": "USDT", "unitPct": "%", "unitCount": "건", "unitRows": "개", "unitHour": "시간", "s3Eyebrow": "정품 보증 & 특송", "s3Title": "가품이면 {n}배로 보상합니다", "s3Body": "전문 감정 기관의 정밀 검수를 통과한 물건만 나갑니다. 관부가세와 배송비는 플랫폼이 부담합니다.", "s3Stamp": "정품 검수 완료", "s3Waybill": "운송장", "s3WaybillPending": "출고 시 실제 운송장 번호가 발급됩니다", "s3Track1": "검수 완료", "s3Track2": "포장 · 출고", "s3Track3": "배송 중", "faqTitle": "자주 묻는 질문", "faqQ1": "당첨된 실물은 어떻게 받나요?", "faqA1": "보관함에서 [집으로 배송]을 누르고 주소를 넣으면 검수 후 출고됩니다. 관부가세와 배송비는 플랫폼이 부담합니다.", "faqQ2": "정품이 아니면 어떻게 되나요?", "faqA2": "전문 감정 기관 검수를 통과한 물건만 출고하며, 가품으로 확인되면 상품가의 {n}배를 보상합니다.", "faqQ3": "환전은 얼마나 빨리 되나요?", "faqA3": "보관함에서 [95% 즉시 회수]를 누르면 잔액에 곧바로 반영됩니다. 별도 승인 대기가 없습니다.", "faqQ4": "출금은 어떤 절차인가요?", "faqA4": "USDT 입금분은 롤오버 조건을 채운 뒤 TRC-20 또는 BEP-20으로 출금합니다. 카드 결제분은 온체인 출금이 아니라 개봉 · 배송 · 카드 환불에만 쓰입니다.", "faqQ5": "결과가 조작되지 않는다는 걸 어떻게 믿죠?", "faqA5": "믿지 않아도 됩니다. 개봉 전에 받은 서버 시드 해시와 개봉 후 공개되는 서버 시드를 직접 대조해 보세요. 검증기가 모든 기록을 다시 계산해 줍니다.", "ctaTitle": "새로운 럭셔리의 기준, 지금 시작하세요.", "ctaSub": "1 USDT부터. 꽝이 나와도 최소 {min}% 즉시 환급.", "ctaButton": "지금 상자 열러 가기", "ctaFair": "모든 결과는 SHA-256으로 검증됩니다"},
     "header": {"balance": "잔액", "language": "언어", "currency": "통화", "deposit": "충전하기", "withdraw": "출금", "welcomeToast": "웰컴 보너스 {amount} 지급 완료 — 실제 박스를 열어보세요"},
     "hero": {
       "royalSelection": "로열 셀렉션", "top": "TOP {n}", "pricePerOpen": "1회 오픈", "topPull": "최고 구성",
@@ -195,7 +196,7 @@ UI = {
       "title": "실지급 & 실배송 라이브 인증", "live": "LIVE", "tab": {"payouts": "USDT 실지급", "shipments": "실물 출고"},
       "kind": {"withdraw": "출금", "sellback": "즉시 환전"}, "viewOnExplorer": "{explorer} 조회", "track": "운송장 추적",
       "carriers": {"CJ": "CJ대한통운", "EPOST": "우체국택배", "DHL": "DHL", "FEDEX": "FedEx"},
-      "reserveEyebrow": "Proof of Reserves · 지급 준비금", "reserveBody": "GACHAFLIX는 유저 자산 보호와 즉시 출금을 위해 유동성 지급 준비금을 온체인 지갑에 보유하며, 아래 주소에서 누구나 잔고를 확인할 수 있습니다.",
+      "reserveEyebrow": "Proof of Reserves · 지급 준비금", "reserveBody": "VOILA는 유저 자산 보호와 즉시 출금을 위해 유동성 지급 준비금을 온체인 지갑에 보유하며, 아래 주소에서 누구나 잔고를 확인할 수 있습니다.",
       "reserveWallet": "리저브 지갑", "reserveBalance": "현재 보유", "copyAddress": "주소 복사",
       "emptyPayouts": "아직 지급 기록이 없습니다.", "emptyShipments": "아직 출고 기록이 없습니다.", "emptyCta": "박스 열러 가기", "factVerify": "모든 개봉 결과는 개봉 전 공개된 SHA-256 해시로 봉인되며, 서버 시드가 공개되면 누구나 같은 결과를 재현할 수 있습니다.", "factRefund": "당첨 상품은 실판매가의 95%로 즉시 USDT 회수, USDT 캐시백은 100% 즉시 적립됩니다.", "factFee": "출금 수수료는 네트워크 실비만 — TRC-20 1 USDT / BEP-20 0.5 USDT, 국내 배송비는 무료 이벤트 적용 중입니다.", "pendingTx": "전송 대기", "settledInstant": "즉시 정산"
     },
@@ -217,15 +218,16 @@ UI = {
     },
     "vip": {"title": "VIP 등급 {tier}", "tiers": {"member": "멤버", "silver": "실버", "gold": "골드", "black": "블랙"}},
     "footer": {
+      "tagline": "You never know what’s next.", "actionSlogan": "OPEN IT, OWN IT",
       "slogan": "블록체인 기반의 가장 투명한 실물 럭셔리 랜덤박스 플랫폼",
       "service": "서비스", "guide": "이용 안내", "support": "고객지원",
       "links": {"dollar": "1달러 박스", "vault": "명품 볼트", "feed": "실시간 라이브 피드", "verifier": "공정성 검증기", "terms": "서비스 이용약관", "privacy": "개인정보처리방침", "policy": "배송 및 95% 환전 정책", "faq": "자주 묻는 질문(FAQ)", "telegram": "텔레그램 24/7 실시간 상담", "discord": "공식 디스코드", "notice": "공지 채널"},
-      "disclaimer": "GACHAFLIX는 전 세계 유저를 위한 글로벌 이커머스 랜덤박스 플랫폼입니다. 모든 개봉 결과는 조작 불가능한 SHA-256 알고리즘을 통해 투명하게 공개되며, 당첨된 상품은 100% 실물 배송 또는 즉시 현금(USDT) 환전이 보장됩니다."
+      "disclaimer": "VOILA는 전 세계 유저를 위한 글로벌 이커머스 랜덤박스 플랫폼입니다. 모든 개봉 결과는 조작 불가능한 SHA-256 알고리즘을 통해 투명하게 공개되며, 당첨된 상품은 100% 실물 배송 또는 즉시 현금(USDT) 환전이 보장됩니다."
     },
     "legalDocs": {
       "eyebrow": "이용 안내", "updated": "최종 개정 2026년 9월 18일",
       "terms": {"title": "서비스 이용약관", "sections": [
-        {"h": "1. 서비스", "p": "GACHAFLIX는 확률이 전량 공개된 랜덤박스를 판매하고, 당첨 상품을 실물로 배송하거나 실판매가의 95%를 USDT로 즉시 환전해 드리는 이커머스 서비스입니다."},
+        {"h": "1. 서비스", "p": "VOILA는 확률이 전량 공개된 랜덤박스를 판매하고, 당첨 상품을 실물로 배송하거나 실판매가의 95%를 USDT로 즉시 환전해 드리는 이커머스 서비스입니다."},
         {"h": "2. 계정과 잔액", "p": "잔액은 USDT로 관리되며 입금·출금·오픈·회수 내역은 거래 기록으로 남습니다. 잔액은 상품 구매와 출금 외의 용도로 쓰이지 않습니다."},
         {"h": "3. 확률과 공정성", "p": "모든 박스의 항목별 확률은 오픈 전에 공개됩니다. 결과는 개봉 전 공개된 서버 시드 해시와 이용자의 클라이언트 시드로 결정되며 누구나 재현·검증할 수 있습니다."},
         {"h": "4. 취소와 환불", "p": "개봉이 시작된 박스는 취소할 수 없습니다. 당첨 상품은 언제든 95% 즉시 회수 또는 실물 배송 중 하나를 선택할 수 있습니다."},
@@ -256,7 +258,8 @@ UI = {
     "badges": {"dream": "드림 박스", "mobility": "모빌리티", "tech": "테크", "audio": "오디오", "watch": "워치", "luxury": "럭셔리", "lifestyle": "라이프스타일", "guaranteed": "가치 보장", "dollar": "1달러", "gold": "골드"},
   },
   "en": {
-    "nav": {"boxes": "Boxes", "battles": "Battles", "inventory": "Inventory", "fairness": "Provably Fair", "community": "Community", "highRoller": "High-Roller", "tech": "Tech", "luxury": "Luxury"},
+    "nav": {"boxes": "Boxes", "battles": "Battles", "inventory": "Inventory", "fairness": "Provably Fair", "community": "Community", "about": "About", "highRoller": "High-Roller", "tech": "Tech", "luxury": "Luxury"},
+    "about": {"badge": "PLATFORM", "heroLine1": "No more doubting the odds.", "heroLine2": "Just VOILA.", "heroSub": "Tamper-proof SHA-256 provable fairness, 95% instant USDT cashout, and free express shipping on items cleared by a professional authentication lab.", "scrollHint": "Scroll to open the vault", "lineupTitle": "What is sitting in the vault", "lineupSub": "{boxes} boxes open right now, across {categories} luxury lines", "catWatch": "Swiss Watches", "catTech": "High-End Tech", "catFashion": "Luxury Fashion", "catSuper": "Supercars & Gold", "s1Eyebrow": "Zero junk prizes", "s1Title": "95% cashback changes how many shots you actually get", "s1Body": "When a miss hands you a freebie, your money is simply gone. Every item here converts to USDT at 95% of retail on the spot, and the floor tier is cash to begin with.", "s1Formula": "Effective attempts = 1 / (1 - refund rate)", "s1RivalLabel": "Freebie-style box (assumed {rate}% refund)", "s1OursLabel": "VOILA (guaranteed floor {min}-{max}%)", "s1Attempts": "{n}x", "s1AttemptsNote": "Effective attempts on the same budget", "s1Assume": "The comparison is a calculation from a stated assumption and does not name any company. The formula is right above, so check it yourself.", "s1MockTitle": "Opened", "s1MockCta": "Cash out 95% in USDT", "s1MockWallet": "Wallet balance", "s2Eyebrow": "SHA-256 provably fair", "s2Title": "We do not ask for trust. Verify it with math.", "s2Body": "The hash of the server seed is published before the box opens. The operator can neither pick the outcome in advance nor change it afterwards.", "s2Step1": "Server seed hash, published first", "s2Step1Sub": "It reaches your browser before the spin", "s2Step2": "Your browser seed is mixed in", "s2Step2Sub": "Your randomness always enters the result", "s2Step3": "HMAC-SHA256 to the winning slot", "s2Step3Sub": "First 8 hex digits modulo {range}", "s2Note": "Re-hash the server seed revealed after the spin: it must match the hash you were given before it. If it does not, it was tampered with.", "s2Verify": "Open the verifier", "feedTitle": "Global live feed", "feedSub": "Only real opens, cashouts and shipments flow here", "feedLineup": "Published jackpot lineup", "feedEmptyTitle": "No records on this device yet", "feedEmptyNote": "We do not fill this with invented wins from other people. Once server-side aggregation is connected, worldwide records flow here.", "feedNet": "USDT TRC-20 and BEP-20 supported", "feedShip": "Duties and shipping covered by the platform", "statsTitle": "VOILA in numbers", "statJackpot": "Total jackpot value on the table right now", "statSellback": "Instant refund rate", "statMutable": "Results the operator can change after a spin", "statMutableSub": "Because the seed hash is published first", "statSla": "Target time to ship a physical item", "statSlaSub": "An operating target, not a measured average", "statOdds": "Items with published odds", "statsNote": "These come from the catalogue and from policy. Operating totals such as lifetime payouts appear once the backend is connected.", "unitUsdt": "USDT", "unitPct": "%", "unitCount": "", "unitRows": "", "unitHour": "h", "s3Eyebrow": "Authenticity & express shipping", "s3Title": "If it is not genuine, you get {n}x back", "s3Body": "Only items cleared by a professional authentication lab ship out. Duties and shipping are on the platform.", "s3Stamp": "Authentication passed", "s3Waybill": "Waybill", "s3WaybillPending": "A real tracking number is issued when it ships", "s3Track1": "Authenticated", "s3Track2": "Packed and dispatched", "s3Track3": "In transit", "faqTitle": "Frequently asked", "faqQ1": "How do I receive a physical win?", "faqA1": "Hit [Ship to my door] in your vault and enter an address. It ships after authentication, with duties and shipping covered by the platform.", "faqQ2": "What if an item turns out to be fake?", "faqA2": "Only items that pass a professional authentication lab ship out, and if one is confirmed fake you are compensated {n}x its value.", "faqQ3": "How fast is a cashout?", "faqA3": "Hit [Cash out 95%] in your vault and it lands in your balance immediately. There is no approval queue.", "faqQ4": "How does withdrawal work?", "faqA4": "USDT deposits withdraw over TRC-20 or BEP-20 once the rollover requirement is met. Card top-ups never leave on-chain; they are for opening, shipping and card refunds only.", "faqQ5": "How do I know the results are not rigged?", "faqA5": "You do not have to take our word for it. Compare the server seed hash you got before the spin with the server seed revealed after it. The verifier recomputes every record for you.", "ctaTitle": "The new standard for luxury. Start now.", "ctaSub": "From 1 USDT. Even a miss returns at least {min}% instantly.", "ctaButton": "Go open a box", "ctaFair": "Every result is verifiable with SHA-256"},
     "header": {"balance": "Balance", "language": "Language", "currency": "Currency", "deposit": "Deposit", "withdraw": "Withdraw", "welcomeToast": "Welcome bonus {amount} credited — open a real box"},
     "hero": {
       "royalSelection": "Royal Selection", "top": "TOP {n}", "pricePerOpen": "Per Open", "topPull": "Top Pull",
@@ -436,7 +439,7 @@ UI = {
       "title": "Live Proof of Payout & Delivery", "live": "LIVE", "tab": {"payouts": "USDT Payouts", "shipments": "Shipments"},
       "kind": {"withdraw": "Withdrawal", "sellback": "Instant sell-back"}, "viewOnExplorer": "View on {explorer}", "track": "Track parcel",
       "carriers": {"CJ": "CJ Logistics", "EPOST": "Korea Post", "DHL": "DHL", "FEDEX": "FedEx"},
-      "reserveEyebrow": "Proof of Reserves", "reserveBody": "GACHAFLIX keeps liquid payout reserves in an on-chain wallet to protect user assets and guarantee instant withdrawals. Anyone can check the balance at the address below.",
+      "reserveEyebrow": "Proof of Reserves", "reserveBody": "VOILA keeps liquid payout reserves in an on-chain wallet to protect user assets and guarantee instant withdrawals. Anyone can check the balance at the address below.",
       "reserveWallet": "Reserve wallet", "reserveBalance": "Current balance", "copyAddress": "Copy address",
       "emptyPayouts": "No payouts recorded yet.", "emptyShipments": "No shipments recorded yet.", "emptyCta": "Open a box", "factVerify": "Every result is sealed by a SHA-256 hash published before the box opens; once the server seed is revealed anyone can reproduce it.", "factRefund": "Physical wins cash out at 95% of market value instantly; USDT cashback is credited at 100%.", "factFee": "Withdrawals cost only the network fee — 1 USDT on TRC-20, 0.5 USDT on BEP-20 — and domestic shipping is free during the current event.", "pendingTx": "Awaiting broadcast", "settledInstant": "Settled instantly"
     },
@@ -458,15 +461,16 @@ UI = {
     },
     "vip": {"title": "VIP tier {tier}", "tiers": {"member": "Member", "silver": "Silver", "gold": "Gold", "black": "Black"}},
     "footer": {
+      "tagline": "You never know what’s next.", "actionSlogan": "OPEN IT, OWN IT",
       "slogan": "The most transparent blockchain-based luxury mystery box platform for real goods",
       "service": "Service", "guide": "Help & Policies", "support": "Support",
       "links": {"dollar": "$1 boxes", "vault": "Luxury vault", "feed": "Live payout feed", "verifier": "Fairness verifier", "terms": "Terms of Service", "privacy": "Privacy Policy", "policy": "Shipping & 95% cash-out policy", "faq": "FAQ", "telegram": "Telegram 24/7 live support", "discord": "Official Discord", "notice": "Announcements"},
-      "disclaimer": "GACHAFLIX is a global e-commerce mystery box platform. Every opening result is published transparently through a tamper-proof SHA-256 algorithm, and every winning item is guaranteed to ship as a physical product or to cash out instantly to USDT."
+      "disclaimer": "VOILA is a global e-commerce mystery box platform. Every opening result is published transparently through a tamper-proof SHA-256 algorithm, and every winning item is guaranteed to ship as a physical product or to cash out instantly to USDT."
     },
     "legalDocs": {
       "eyebrow": "Help & Policies", "updated": "Last updated September 18, 2026",
       "terms": {"title": "Terms of Service", "sections": [
-        {"h": "1. The service", "p": "GACHAFLIX sells mystery boxes with fully published odds and either ships the winning item or cashes it out instantly at 95% of market value in USDT."},
+        {"h": "1. The service", "p": "VOILA sells mystery boxes with fully published odds and either ships the winning item or cashes it out instantly at 95% of market value in USDT."},
         {"h": "2. Account and balance", "p": "Balances are held in USDT. Deposits, withdrawals, openings and cash-outs are recorded as transactions and used for nothing other than purchases and withdrawals."},
         {"h": "3. Odds and fairness", "p": "Every box publishes its per-item odds before opening. Results are fixed by a server seed hash published in advance and the user's client seed, and anyone can reproduce and verify them."},
         {"h": "4. Cancellation and refunds", "p": "A box cannot be cancelled once opening starts. Any winning item can be cashed out at 95% or shipped at any time."},
@@ -497,7 +501,8 @@ UI = {
     "badges": {"dream": "Dream Box", "mobility": "Mobility", "tech": "Tech", "audio": "Audio", "watch": "Watches", "luxury": "Luxury", "lifestyle": "Lifestyle", "guaranteed": "Guaranteed", "dollar": "$1", "gold": "Gold"},
   },
   "zh": {
-    "nav": {"boxes": "盲盒", "battles": "对战", "inventory": "仓库", "fairness": "公平性验证", "community": "社区", "highRoller": "高额玩家", "tech": "科技", "luxury": "奢侈品"},
+    "nav": {"boxes": "盲盒", "battles": "对战", "inventory": "仓库", "fairness": "公平性验证", "community": "社区", "about": "平台介绍", "highRoller": "高额玩家", "tech": "科技", "luxury": "奢侈品"},
+    "about": {"badge": "PLATFORM", "heroLine1": "不必再怀疑概率，", "heroLine2": "一个 VOILA 就够了。", "heroSub": "无法篡改的 SHA-256 链上公平性、95% USDT 极速兑现，以及通过专业鉴定机构精密检验后的 100% 正品免费特快配送。", "scrollHint": "向下滚动，金库将开启", "lineupTitle": "金库里摆着什么", "lineupSub": "当前开放 {boxes} 个盲盒，{categories} 大奢品阵容", "catWatch": "瑞士腕表", "catTech": "高端科技", "catFashion": "奢品时尚", "catSuper": "超跑与足金", "s1Eyebrow": "零垃圾奖品", "s1Title": "95% 返还，直接改变你能挑战的次数", "s1Body": "把没中的人用赠品打发掉，钱就真的没了。这里每一件商品都能按零售价的 95% 立刻换成 USDT，而保底档本身就是现金返还。", "s1Formula": "实际挑战次数 = 1 ÷ (1 − 返还率)", "s1RivalLabel": "赠品型盲盒（假设返还率 {rate}%）", "s1OursLabel": "VOILA（保底返还率 {min}~{max}%）", "s1Attempts": "{n} 倍", "s1AttemptsNote": "同样预算下的实际挑战次数", "s1Assume": "对比值基于明示假设计算，不指向任何具体公司。公式就在上方，欢迎自行验算。", "s1MockTitle": "开箱完成", "s1MockCta": "95% USDT 即时兑现", "s1MockWallet": "钱包余额", "s2Eyebrow": "SHA-256 可证明公平", "s2Title": "我们不要求信任，请用数学亲自验证。", "s2Body": "开箱之前，服务器种子的哈希已经先行公开。运营方既无法事先选定结果，也无法事后更改。", "s2Step1": "先公开服务器种子哈希", "s2Step1Sub": "开箱前就已送达你的浏览器", "s2Step2": "混入你的浏览器种子", "s2Step2Sub": "你的随机数必定参与结果", "s2Step3": "HMAC-SHA256 映射到中奖格", "s2Step3Sub": "取前 8 位十六进制对 {range} 取模", "s2Note": "把开箱后公开的服务器种子重新哈希，应当与开箱前拿到的哈希完全一致。不一致就是被动过手脚。", "s2Verify": "打开公平性验证器", "feedTitle": "全球实时动态", "feedSub": "这里只流动真实发生的开箱、兑现与发货", "feedLineup": "公开头奖阵容", "feedEmptyTitle": "本设备暂无记录", "feedEmptyNote": "我们不会用虚构的他人中奖来填充。服务器统计接入后，全球记录将在此流动。", "feedNet": "支持 USDT TRC-20 与 BEP-20 出入金", "feedShip": "关税与运费由平台承担", "statsTitle": "用数字看 VOILA", "statJackpot": "当前投放的头奖商品总价值", "statSellback": "即时返还率", "statMutable": "开箱后运营方可更改的结果", "statMutableSub": "因为种子哈希已先行公开", "statSla": "实物发货运营标准", "statSlaSub": "这是运营目标，而非实测平均值", "statOdds": "已公开概率的商品条目", "statsNote": "以上数值来自商品目录与既定政策。累计派彩等运营统计将在后端接入后显示。", "unitUsdt": "USDT", "unitPct": "%", "unitCount": "件", "unitRows": "条", "unitHour": "小时", "s3Eyebrow": "正品保证与特快配送", "s3Title": "若为仿品，按 {n} 倍赔付", "s3Body": "只有通过专业鉴定机构精密检验的商品才会发出。关税与运费由平台承担。", "s3Stamp": "鉴定通过", "s3Waybill": "运单", "s3WaybillPending": "发货时将签发真实运单号", "s3Track1": "鉴定完成", "s3Track2": "打包发出", "s3Track3": "运输中", "faqTitle": "常见问题", "faqQ1": "中到的实物怎么拿到手？", "faqA1": "在仓库点击［寄到我家］并填写地址，通过鉴定后即发出。关税与运费由平台承担。", "faqQ2": "如果商品不是正品怎么办？", "faqA2": "只有通过专业鉴定机构检验的商品才会发出；一旦确认为仿品，按商品价值的 {n} 倍赔付。", "faqQ3": "兑现有多快？", "faqA3": "在仓库点击［95% 即时折现］，余额立刻到账，没有审批排队。", "faqQ4": "提现流程是怎样的？", "faqA4": "USDT 充值部分在满足流水要求后可经 TRC-20 或 BEP-20 提现。银行卡充值部分不会上链提出，仅用于开箱、配送与退卡。", "faqQ5": "怎么确信结果没有被操纵？", "faqA5": "不必相信我们。把开箱前拿到的服务器种子哈希，与开箱后公开的服务器种子亲自比对即可。验证器会为你重新计算每一条记录。", "ctaTitle": "奢侈的新标准，现在就开始。", "ctaSub": "1 USDT 起。即使没中，也至少立刻返还 {min}%。", "ctaButton": "去开一箱", "ctaFair": "每个结果都可用 SHA-256 验证"},
     "header": {"balance": "余额", "language": "语言", "currency": "货币", "deposit": "充值", "withdraw": "提现", "welcomeToast": "新人奖励 {amount} 已到账 — 开启真实盲盒吧"},
     "hero": {
       "royalSelection": "皇家精选", "top": "TOP {n}", "pricePerOpen": "单次开启", "topPull": "最高奖品",
@@ -677,7 +682,7 @@ UI = {
       "title": "实付与实发实时证明", "live": "LIVE", "tab": {"payouts": "USDT 实付", "shipments": "实物发货"},
       "kind": {"withdraw": "提现", "sellback": "即时回收"}, "viewOnExplorer": "在 {explorer} 查看", "track": "运单追踪",
       "carriers": {"CJ": "CJ大韩通运", "EPOST": "韩国邮政", "DHL": "DHL", "FEDEX": "FedEx"},
-      "reserveEyebrow": "Proof of Reserves · 储备金", "reserveBody": "为保护用户资产并保证即时提现，GACHAFLIX 在链上钱包持有流动性储备金，任何人都可通过下方地址查询余额。",
+      "reserveEyebrow": "Proof of Reserves · 储备金", "reserveBody": "为保护用户资产并保证即时提现，VOILA 在链上钱包持有流动性储备金，任何人都可通过下方地址查询余额。",
       "reserveWallet": "储备钱包", "reserveBalance": "当前持有", "copyAddress": "复制地址",
       "emptyPayouts": "暂无支付记录。", "emptyShipments": "暂无发货记录。", "emptyCta": "去开盲盒", "factVerify": "每次开箱结果都由开箱前公开的 SHA-256 哈希封存；公开服务器种子后任何人都可复现。", "factRefund": "中奖实物可按市场价 95% 即时折现为 USDT，USDT 返现 100% 即时入账。", "factFee": "提现仅收网络实费 —— TRC-20 1 USDT / BEP-20 0.5 USDT；境内运费当前免费。", "pendingTx": "等待广播", "settledInstant": "即时结算"
     },
@@ -699,15 +704,16 @@ UI = {
     },
     "vip": {"title": "VIP 等级 {tier}", "tiers": {"member": "会员", "silver": "白银", "gold": "黄金", "black": "黑金"}},
     "footer": {
+      "tagline": "You never know what’s next.", "actionSlogan": "OPEN IT, OWN IT",
       "slogan": "基于区块链、最透明的实物奢品盲盒平台",
       "service": "服务", "guide": "使用指南", "support": "客户支持",
       "links": {"dollar": "1 美元盲盒", "vault": "奢品金库", "feed": "实时支付动态", "verifier": "公平性验证器", "terms": "服务条款", "privacy": "隐私政策", "policy": "发货与 95% 折现政策", "faq": "常见问题", "telegram": "Telegram 24/7 在线客服", "discord": "官方 Discord", "notice": "公告频道"},
-      "disclaimer": "GACHAFLIX 是面向全球用户的电商盲盒平台。所有开箱结果均通过不可篡改的 SHA-256 算法透明公开，中奖商品保证 100% 实物发货或即时折现为 USDT。"
+      "disclaimer": "VOILA 是面向全球用户的电商盲盒平台。所有开箱结果均通过不可篡改的 SHA-256 算法透明公开，中奖商品保证 100% 实物发货或即时折现为 USDT。"
     },
     "legalDocs": {
       "eyebrow": "使用指南", "updated": "最近更新 2026 年 9 月 18 日",
       "terms": {"title": "服务条款", "sections": [
-        {"h": "1. 服务", "p": "GACHAFLIX 销售概率完全公开的盲盒，中奖商品可实物发货，或按市场价 95% 即时折现为 USDT。"},
+        {"h": "1. 服务", "p": "VOILA 销售概率完全公开的盲盒，中奖商品可实物发货，或按市场价 95% 即时折现为 USDT。"},
         {"h": "2. 账户与余额", "p": "余额以 USDT 计。充值、提现、开箱与折现均记录为交易，仅用于购买与提现。"},
         {"h": "3. 概率与公平", "p": "每个盲盒在开启前公开各商品概率。结果由事先公布的服务器种子哈希与用户客户端种子决定，任何人都可复现验证。"},
         {"h": "4. 取消与退款", "p": "开箱开始后不可取消。中奖商品可随时选择 95% 折现或实物发货。"},

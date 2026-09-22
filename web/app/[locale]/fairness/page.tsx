@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { ROLL_RANGE } from "@/lib/fairness";
 import { VisualVerifier } from "@/components/fairness/VisualVerifier";
 import { ProofFeed } from "@/components/fairness/ProofFeed";
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import { CurrencySelector } from "@/components/layout/CurrencySelector";
 
@@ -15,9 +16,7 @@ export default function FairnessPage() {
   return (
     <main className="min-h-screen bg-canvas pb-24">
       <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-hairline bg-obsidian/90 px-[4%] backdrop-blur-md sm:gap-5">
-        <Link href="/" className="font-display text-xl font-bold uppercase leading-none tracking-tight text-crimson">
-          Gachaflix
-        </Link>
+        <BrandLogo />
         <nav className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap text-[11px] text-muted [scrollbar-width:none] sm:gap-4 sm:text-xs">
           {/* 모바일은 현재 페이지명만 — 나머지 이동은 하단 내비·푸터 */}
           <Link href="/" className="hidden transition-colors hover:text-white md:inline">

@@ -14,12 +14,12 @@ export function generateStaticParams() {
 export const dynamicParams = false;
 
 const SITE = "https://shinwon446-eng.github.io/gacha-sim";
-const TITLE = "GACHAFLIX — Luxury Mystery Box";
+const TITLE = "VOILA — You never know what’s next. | OPEN IT, OWN IT";
 /** 로케일별 메타 설명 — /en/, /zh/ 에 한국어가 새지 않게 여기서 분기한다 */
 const DESCRIPTION: Record<Locale, string> = {
-  ko: "롤렉스, 에르메스, 하이엔드 테크. 100% 정품 실물 배송 및 95% 즉시 환전(USDT) 보장. 블록체인 기반의 가장 투명한 글로벌 럭셔리 플랫폼.",
-  en: "Rolex, iPhone 16 Pro & High-End Tech. 100% Authentic delivery or 95% instant USDT cashout. The most transparent provably fair luxury platform.",
-  zh: "劳力士、iPhone 16 Pro 与高端科技。100% 正品实物配送或 95% USDT 极速兑现。基于区块链的最透明全球奢品盲盒平台。",
+  ko: "스위스 명품 워치부터 테슬라 사이버트럭까지. 100% 온체인 공정성 · 전 품목 95% 즉시 캐시백 · 정품 300% 보증 실물 무료 배송. 글로벌 럭셔리 언박싱 플랫폼 VOILA (voila.gg).",
+  en: "From Swiss Luxury Watches to Tesla Cybertruck. Provably Fair On-Chain · 95% Instant Cashback · 100% Authentic Free Global Shipping. VOILA (voila.gg) — You never know what’s next. OPEN IT, OWN IT.",
+  zh: "从瑞士名表到特斯拉赛博皮卡。100% 链上可验证公平 · 全品类 95% 极速返现 · 300% 正品保障全球包邮。全球奢品开箱平台 VOILA (voila.gg)。",
 };
 const OG_LOCALE: Record<Locale, string> = { ko: "ko_KR", en: "en_US", zh: "zh_CN" };
 
@@ -35,7 +35,7 @@ export function generateMetadata({ params: { locale } }: { params: { locale: str
     },
     openGraph: {
       type: "website",
-      siteName: "GACHAFLIX",
+      siteName: "VOILA",
       title: TITLE,
       description,
       url: `${SITE}/${loc}/`,

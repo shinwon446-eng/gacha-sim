@@ -12,7 +12,7 @@ export default function RootRedirect() {
       <meta httpEquiv="refresh" content="0; url=./ko/" />
       <script dangerouslySetInnerHTML={{ __html: REDIRECT }} />
       <main className="flex min-h-screen items-center justify-center bg-canvas">
-        <span className="caption-luxury">GACHAFLIX</span>
+        <span className="caption-luxury">VOILA.GG</span>
       </main>
     </>
   );
