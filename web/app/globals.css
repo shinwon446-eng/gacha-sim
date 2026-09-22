@@ -1,0 +1,502 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  /* 전 사이트 단일 서체 — 제목·본문·숫자·통화기호가 한 벌로 렌더된다 */
+  --font-pretendard: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  --font-sans: var(--font-pretendard);
+  --font-display: var(--font-pretendard);
+}
+
+html,
+body,
+*,
+::before,
+::after {
+  font-family: var(--font-pretendard);
+}
+
+html,
+body {
+  background-color: #141414;
+  color: #fff;
+}
+
+/* 가로 클리핑은 html(=뷰포트)에만. body 에도 걸면 body 가 스크롤 컨테이너가 되어 position: sticky 헤더·탭이 뷰포트에 붙지 않는다 */
+html {
+  overflow-x: hidden;
+}
+
+body {
+  background-image: radial-gradient(circle at center, #1f1f1f 0%, #141414 100%);
+  background-attachment: fixed;
+}
+
+/* 언어별 줄바꿈 규칙 (LocaleHtmlLang 이 <html lang> 을 맞춘다)
+   ko: 단어 중간 끊김('아이 / 폰') 금지 · 넘칠 때만 끊음(break-word — anywhere 는 min-content 를 바꿔 로고까지 쪼갠다)
+   en: 긴 단어가 카드를 뚫지 않게 + 콤팩트 트래킹
+   zh: 문자 단위 줄바꿈 */
+html[lang="ko"] body {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+html[lang="en"] body {
+  overflow-wrap: break-word;
+  letter-spacing: -0.01em;
+}
+html[lang^="zh"] body {
+  word-break: break-all;
+}
+
+/* 얇은 스크롤바 — 무채색 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0b0b;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a27b1e;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ── 럭셔리 유틸리티 (CLAUDE.md §2-B) ───────────────── */
+
+:root {
+  --bg-obsidian: #0b0b0b;
+  --bg-canvas: #141414;
+  --bg-surface: #181818;
+  --bg-surface-elevated: #222222;
+  --gold-champagne: #e6ca65;
+  --gold-metallic: #d4af37;
+  --gold-dark: #a27b1e;
+  --crimson-netflix: #e50914;
+  --platinum-ice: #e5e4e2;
+  --bronze-executive: #c5a059;
+  --text-primary: #ffffff;
+  --text-secondary: #e5e5e5;
+  --text-muted: #9ca3af;
+  --text-faint: #6b7280;
+}
+
+/* 극미세 화이트 헤어라인 + 상단 1px 하이라이트. 평범한 회색 보더를 대체한다. */
+.border-metallic-subtle {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* 샴페인 골드 헤어라인 — ROYAL 카드·강조 패널 전용. 확산 글로우는 최소로. */
+.border-metallic-gold {
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(230, 202, 101, 0.35),
+    0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+/* 그라데이션 보더가 필요한 곳 — border-image 는 radius 와 안 맞으므로 이중 배경 기법 */
+.border-gold-gradient {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--bg-surface), var(--bg-surface)) padding-box,
+    linear-gradient(135deg, rgba(230, 202, 101, 0.7) 0%, rgba(162, 123, 30, 0.35) 50%, rgba(230, 202, 101, 0.7) 100%) border-box;
+}
+
+/* 페데스탈 림라이트 — 고가 실물 뒤에 깔리는 스튜디오 조명. 부모는 relative, 이 요소는 absolute inset-0 로 쓴다. */
+.pedestal-glow {
+  background: radial-gradient(circle at 50% 60%, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+}
+.pedestal-glow-strong {
+  background: radial-gradient(circle at 50% 60%, rgba(212, 175, 55, 0.28) 0%, rgba(212, 175, 55, 0.08) 40%, transparent 72%);
+}
+
+/* 샴페인 골드 메탈릭 텍스트 */
+.text-gold-gradient {
+  background: linear-gradient(180deg, #f3e3a1 0%, #e6ca65 38%, #d4af37 62%, #a27b1e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 프로스티드 글래스 — 반투명 버튼·패널 */
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.glass-dark {
+  background: rgba(11, 11, 11, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* 홀로그램 샤인 — 호버 시 사선으로 한 번 스쳐 지나간다 (1-2 에서 카드에 적용) */
+.sheen {
+  position: relative;
+  overflow: hidden;
+}
+.sheen::before {
+  content: "";
+  position: absolute;
+  inset: -40% -60%;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.06) 47%,
+    rgba(230, 202, 101, 0.18) 50%,
+    rgba(255, 255, 255, 0.06) 53%,
+    transparent 60%
+  );
+  transform: translateX(-60%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+.sheen:hover::before {
+  opacity: 1;
+  animation: sheen-sweep 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes sheen-sweep {
+  from { transform: translateX(-60%); }
+  to   { transform: translateX(60%); }
+}
+
+/* 초정밀 캡션 — 0.2em 트래킹 대문자 */
+.caption-luxury {
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* 넷플릭스 오버사이즈 순위 숫자 — 메탈릭 스트로크 (CLAUDE.md §2-B-4) */
+.rank-numeral {
+  font-size: 6rem;
+  line-height: 0.72;
+  color: transparent;
+  -webkit-text-stroke: 1.5px #333333;
+  user-select: none;
+  pointer-events: none;
+}
+@media (min-width: 640px) {
+  .rank-numeral {
+    font-size: 8.5rem;
+    -webkit-text-stroke: 2px #333333;
+  }
+}
+
+/* 라이브 드랍 티커 — 목록을 두 번 렌더하고 절반만큼 이동시켜 이음새 없는 무한 루프 */
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.ticker-track {
+  animation: ticker-scroll 48s linear infinite;
+  will-change: transform;
+}
+/* 모바일: 읽을 수 있게 느리게 */
+@media (max-width: 639px) {
+  .ticker-track { animation-duration: 80s; }
+}
+.ticker-viewport:hover .ticker-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation-duration: 120s; }
+}
+
+/* 페데스탈 그림자 — 부유하는 피사체 아래 타원 (벨벳 쇼케이스) */
+.pedestal-shadow {
+  background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.25) 45%, transparent 72%);
+  filter: blur(6px);
+}
+
+/* 플로팅 확장 패널용 — 골드 헤어라인을 좌·우·아래에만 (상단은 카드 프레임과 이어진다) */
+.border-metallic-gold-xb {
+  border-left: 1px solid rgba(212, 175, 55, 0.4);
+  border-right: 1px solid rgba(212, 175, 55, 0.4);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+}
+
+/* 미니 카드용 축소판 — 같은 메탈릭 스트로크, 작은 크기 */
+.rank-numeral-sm {
+  font-family: var(--font-pretendard);
+  font-size: 4.25rem;
+  line-height: 0.72;
+  color: transparent;
+  -webkit-text-stroke: 1.5px #3a3a3a;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ── 표면 ───────────────────────────────────────────── */
+
+.vignette-bg {
+  background: radial-gradient(circle at center, #1f1f1f 0%, #141414 100%);
+}
+
+/* 타일링 노이즈 오버레이 */
+.film-grain::after {
+  content: "";
+  position: absolute;
+  inset: -100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  opacity: 0.06;
+  pointer-events: none;
+  animation: grain 1.2s steps(6, end) infinite;
+}
+
+/* 1px 수평 스캔라인 */
+.scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.045) 0px,
+    rgba(255, 255, 255, 0.045) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+}
+
+.hairline {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── 호버 엣지 — 확산 없는 1px 아웃라인 ─────────────── */
+
+.edge-white {
+  outline: 1px solid #fff;
+  outline-offset: 0;
+}
+
+.edge-crimson {
+  outline: 1px solid #e50914;
+  outline-offset: 0;
+}
+
+/* ── 타이포그래피 ───────────────────────────────────── */
+
+.display {
+  font-family: var(--font-pretendard);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.95;
+  font-weight: 700;
+}
+
+.label-caps {
+  font-size: 10px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+/* ── 레거시 유지 ─────────────────────────────────────── */
+
+/* 빌보드 하단 페이드 */
+.billboard-fade {
+  background: linear-gradient(180deg, transparent 40%, rgba(20, 20, 20, 0.85) 75%, #141414 100%);
+}
+
+.vignette {
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.72) 100%);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.8), 0 0 2px rgba(0, 0, 0, 0.9);
+}
+
+/* ── 룰렛 Phase 2: 번개/골드 전자기 스파크 보더 ─────────── */
+@keyframes spark-sweep {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+@keyframes spark-flicker {
+  0%, 100% { opacity: 0.55; }
+  20% { opacity: 1; }
+  35% { opacity: 0.4; }
+  50% { opacity: 0.95; }
+  70% { opacity: 0.6; }
+  85% { opacity: 1; }
+}
+.reel-tension {
+  box-shadow: 0 0 0 1px rgba(230, 202, 101, 0.7), 0 0 28px rgba(230, 202, 101, 0.45), inset 0 0 40px rgba(230, 202, 101, 0.12);
+}
+.reel-tension::before,
+.reel-tension::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 35;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent 0%, #fff7d6 8%, #E6CA65 14%, transparent 22%, transparent 48%, #ffffff 52%, #E6CA65 58%, transparent 66%, transparent 100%);
+  background-size: 200% 100%;
+  animation: spark-sweep 0.55s linear infinite, spark-flicker 0.32s steps(1) infinite;
+  filter: drop-shadow(0 0 6px rgba(230, 202, 101, 0.9));
+}
+.reel-tension::before { top: 0; }
+.reel-tension::after { bottom: 0; animation-direction: reverse, normal; }
+
+/* ── 룰렛 Phase 3: 골드 코인 샤워 & 컨페티 ────────────── */
+@keyframes coin-fall {
+  0% { transform: translate3d(0, -12vh, 0) rotateY(0deg) rotate(0deg); opacity: 0; }
+  8% { opacity: 1; }
+  100% { transform: translate3d(var(--drift, 0px), 110vh, 0) rotateY(1080deg) rotate(var(--spin, 360deg)); opacity: 0.9; }
+}
+@keyframes confetti-fall {
+  0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translate3d(var(--drift, 0px), 110vh, 0) rotate(var(--spin, 720deg)); opacity: 0.85; }
+}
+.fx-coin {
+  position: absolute;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 30%, #fff3c4 0%, #E6CA65 35%, #A27B1E 100%);
+  box-shadow: 0 0 10px rgba(230, 202, 101, 0.7), inset 0 0 0 2px rgba(255, 255, 255, 0.25);
+  animation: coin-fall var(--dur, 2.2s) cubic-bezier(0.2, 0.7, 0.4, 1) var(--delay, 0s) 1 both;
+}
+.fx-confetti {
+  position: absolute;
+  top: 0;
+  width: 8px;
+  height: 14px;
+  border-radius: 1px;
+  animation: confetti-fall var(--dur, 2.6s) ease-in var(--delay, 0s) 1 both;
+}
+
+/* ── 대량 개봉: 최고 등급 카드 3D 플로팅 + 골드 스파크 ───── */
+@keyframes bulk-float {
+  0%, 100% { transform: perspective(700px) rotateX(4deg) translateY(0); }
+  50% { transform: perspective(700px) rotateX(-3deg) translateY(-6px); }
+}
+.bulk-top {
+  animation: bulk-float 3.2s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+.bulk-spark {
+  background: linear-gradient(120deg, transparent 0%, rgba(255,247,214,0) 40%, rgba(255,247,214,0.55) 50%, rgba(230,202,101,0) 60%, transparent 100%);
+  background-size: 250% 100%;
+  animation: spark-sweep 1.4s linear infinite;
+  mix-blend-mode: screen;
+}
+
+/* ── 니어미스 텐션 셰이크 — 인디케이터 1px 미세 진동 ─────── */
+@keyframes marker-shake {
+  0%, 100% { transform: translateX(-50%); }
+  10% { transform: translateX(calc(-50% - 1px)); }
+  20% { transform: translateX(calc(-50% + 1px)); }
+  30% { transform: translateX(calc(-50% - 1px)); }
+  40% { transform: translateX(calc(-50% + 1.5px)); }
+  50% { transform: translateX(calc(-50% - 1px)); }
+  60% { transform: translateX(calc(-50% + 1px)); }
+  70% { transform: translateX(calc(-50% - 0.5px)); }
+  80% { transform: translateX(calc(-50% + 1px)); }
+  90% { transform: translateX(calc(-50% - 1px)); }
+}
+.marker-shake {
+  animation: marker-shake 0.4s linear 1;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
+}
+
+/* ── 승급 반전: 노이즈 글리치 + 화면 갈라짐 ───────────── */
+@keyframes fx-glitch-shift {
+  0% { clip-path: inset(0 0 92% 0); transform: translateX(-6px); }
+  15% { clip-path: inset(30% 0 55% 0); transform: translateX(8px); }
+  30% { clip-path: inset(60% 0 20% 0); transform: translateX(-10px); }
+  45% { clip-path: inset(10% 0 80% 0); transform: translateX(6px); }
+  60% { clip-path: inset(75% 0 5% 0); transform: translateX(-4px); }
+  75% { clip-path: inset(40% 0 40% 0); transform: translateX(9px); }
+  100% { clip-path: inset(0 0 0 0); transform: translateX(0); opacity: 0; }
+}
+.fx-glitch {
+  background: repeating-linear-gradient(0deg, rgba(255,255,255,0.09) 0 2px, transparent 2px 5px), linear-gradient(90deg, rgba(139,92,246,0.25), rgba(230,202,101,0.2));
+  mix-blend-mode: screen;
+  animation: fx-glitch-shift 0.5s steps(6, end) 1 both;
+}
+@keyframes fx-crack-in {
+  0% { opacity: 0; stroke-dashoffset: 300; }
+  30% { opacity: 1; }
+  100% { opacity: 0; stroke-dashoffset: 0; }
+}
+.fx-crack path {
+  stroke-dasharray: 300;
+  animation: fx-crack-in 0.9s ease-out 1 both;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,0.9));
+}
+
+/* 카테고리 탭 우측 "스와이프 ➔" 힌트 — 더 있다는 신호로 살짝 밀린다 */
+.swipe-hint {
+  animation: swipe-nudge 1.6s ease-in-out infinite;
+}
+@keyframes swipe-nudge {
+  0%, 100% { transform: translateX(0); opacity: 0.75; }
+  50% { transform: translateX(3px); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .swipe-hint { animation: none; }
+}
+
+/* 🔥 HOT 뱃지 — 은은한 점멸 (모션 민감 사용자는 정지) */
+.hot-pulse {
+  animation: hot-pulse 1.8s ease-in-out infinite;
+}
+@keyframes hot-pulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(229, 9, 20, 0); }
+  50% { box-shadow: 0 0 14px rgba(229, 9, 20, 0.55); }
+}
+
+/* 카드 호버 골드 림라이트 — 테두리를 따라 도는 빛 */
+.gold-rimlight::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from var(--rim-angle, 0deg), transparent 0deg, rgba(230, 202, 101, 0.85) 60deg, transparent 140deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: rim-spin 2.6s linear infinite;
+  pointer-events: none;
+}
+@property --rim-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes rim-spin {
+  to { --rim-angle: 360deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hot-pulse, .gold-rimlight::after { animation: none; }
+}
