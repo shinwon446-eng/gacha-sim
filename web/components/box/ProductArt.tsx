@@ -77,7 +77,7 @@ function CashToken({ size }: { size: "sm" | "md" | "lg" }) {
       </defs>
       <circle cx="50" cy="50" r="46" fill="url(#cash-rim)" />
       <circle cx="50" cy="50" r="39" fill="url(#cash-face)" stroke="rgba(243,227,163,0.35)" strokeWidth="1" />
-      <text x="50" y="64" textAnchor="middle" fontSize="40" fontWeight="700" fill="#E6CA65" fontFamily="Cinzel, serif">₮</text>
+      <text x="50" y="64" textAnchor="middle" fontSize="40" fontWeight="700" fill="#E6CA65" fontFamily="Pretendard Variable, Pretendard, sans-serif">₮</text>
     </svg>
   );
 }

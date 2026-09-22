@@ -39,6 +39,10 @@
     "freeTry": "免费试玩",
     "openFor": "🔥 {price} 开一发",
     "badge": "1 美元起的奢品头奖",
+    "poolLabel": "LIVE JACKPOT POOL",
+    "poolNote": "当前开放的 {n} 个盲盒最高奖品价值合计（公开阵容）",
+    "bigWin": "🔥 LIVE BIG WIN",
+    "bigWinGoal": "🎯 本周头奖挑战目标",
     "nowShowing": "正在上映",
     "topMultipleShort": "最高 {n}"
   },
@@ -108,6 +112,29 @@
     "tickerAuth": "出库前专业鉴定 · 确认仿品赔付 300%",
     "tickerInsured": "自动投保 —— 破损遗失可重发或 USDT 赔付",
     "doneCta": "确定"
+  },
+  "hot": {
+    "title": "🔥 实时最热头奖盲盒 TOP 3",
+    "subtitle": "按人气指数",
+    "heat": "{deg}°C HOT",
+    "upTo": "最高 {n} 倍",
+    "floor": "最低返还 {pct}%"
+  },
+  "hall": {
+    "title": "🏆 每周名人堂排位赛",
+    "pool": "总奖池 {amount} USDT",
+    "deadline": "本周排位赛剩余",
+    "payout": "前 5 名自动依次发放奖金",
+    "prize": "💰 奖金 {amount} USDT",
+    "openSlot": "空位 — 就等你来",
+    "entryRule": "{n} 倍以上中奖方可上榜",
+    "goal": "目标 {n} 倍",
+    "myRank": "我的排名：第 {rank} 名",
+    "myOutside": "我的排名：未进前 5",
+    "myBest": "· 本周最高 {n} 倍",
+    "myNone": "本周还没有记录 · 冲进前 5 领取奖金！",
+    "cta": "🚀 开启头奖盲盒冲榜",
+    "scopeNote": "排行榜只统计真实开箱记录。在服务器统计接入之前仅显示本设备的记录，空缺名次不会用虚构中奖者填充。"
   },
   "categories": {
     "all": "全部",
@@ -674,6 +701,9 @@
     "emptyPayouts": "暂无支付记录。",
     "emptyShipments": "暂无发货记录。",
     "emptyCta": "去开盲盒",
+    "factVerify": "每次开箱结果都由开箱前公开的 SHA-256 哈希封存；公开服务器种子后任何人都可复现。",
+    "factRefund": "中奖实物可按市场价 95% 即时折现为 USDT，USDT 返现 100% 即时入账。",
+    "factFee": "提现仅收网络实费 —— TRC-20 1 USDT / BEP-20 0.5 USDT；境内运费当前免费。",
     "pendingTx": "等待广播",
     "settledInstant": "即时结算"
   },

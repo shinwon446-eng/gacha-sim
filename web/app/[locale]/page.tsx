@@ -6,7 +6,8 @@ import { cn } from "@/lib/format";
 import { BOXES, CATEGORY_FILTERS, SORTS, byCategory, floorRatio, heroBox, sortBoxes, type BoxCategory, type ProductBox, type SortKey } from "@/lib/products";
 import { rolloverContribution } from "@/lib/rollover";
 import { BillboardHero } from "@/components/home/BillboardHero";
-import { OnboardingStrip } from "@/components/home/OnboardingStrip";
+import { HotBoxes } from "@/components/home/HotBoxes";
+import { HallOfFame } from "@/components/home/HallOfFame";
 import { LiveCounters } from "@/components/home/LiveCounters";
 import { LiveTicker } from "@/components/home/LiveTicker";
 import { DailyFreeBoxModal, DailyFreeBoxPill, DailyFreeBoxStrip } from "@/components/home/DailyFreeBox";
@@ -190,7 +191,7 @@ export default function BoxesPage() {
     <main className="min-h-screen bg-canvas pb-12 md:pb-24">
       {/* 상단 바 — h-14 고정(스티키 퀵 탭이 top-14 로 이어 붙는다) */}
       <header className="sticky top-0 z-[60] flex h-14 items-center gap-2 border-b border-hairline bg-obsidian/90 px-3 backdrop-blur-md sm:gap-5 sm:px-[4%]">
-        <span className="flex-none whitespace-nowrap font-display text-lg font-bold uppercase leading-none tracking-tight text-crimson sm:text-[22px]">
+        <span className="flex-none whitespace-nowrap font-display text-base font-black uppercase leading-none tracking-tight text-crimson sm:text-[22px]">
           Gachaflix
         </span>
         {/* 데스크톱 텍스트 내비 — 모바일은 하단 고정 내비(MobileBottomNav)가 대신한다 */}
@@ -225,7 +226,8 @@ export default function BoxesPage() {
               <span className="caption-luxury hidden sm:inline">{t("header.balance")}</span>
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.span key={balance} className="inline-flex" initial={{ y: -6, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 6, opacity: 0 }} transition={{ duration: 0.2 }}>
-                  <Money value={balance} size="sm" />
+                  <Money value={balance} size="xs" className="sm:hidden" />
+                  <Money value={balance} size="sm" className="hidden sm:inline-flex" />
                 </motion.span>
               </AnimatePresence>
             </span>
@@ -340,10 +342,12 @@ export default function BoxesPage() {
         )}
       </section>
 
-      {/* 5. 데일리 프리 박스 · 3초 안심 가이드 · 신뢰 지표 */}
+      {/* 5. 킬러 섹션 — 핫 박스 TOP 3 · 명예의 전당 (튜토리얼 카드 대체) */}
+      <HotBoxes onPick={setDetail} className="pt-8" />
+      <HallOfFame onPick={setDetail} className="pt-8" />
+
       <DailyFreeBoxStrip onOpen={() => setDailyOpen(true)} className="pt-8" />
-      <OnboardingStrip className="pt-6" />
-      <LiveCounters className="pt-4" />
+      <LiveCounters className="pt-6" />
 
       {/* 6. 실지급/실배송 라이브 피드 — 요약 4행, 전체는 /fairness */}
       <section className="px-[4%] pt-12">

@@ -39,6 +39,10 @@
     "freeTry": "손맛 보기 (무료)",
     "openFor": "🔥 {price}로 돌려보기",
     "badge": "1달러부터 명품 잭팟",
+    "poolLabel": "LIVE JACKPOT POOL",
+    "poolNote": "지금 열려 있는 {n}개 박스의 최고 상품 가치 합계 (공개 라인업 기준)",
+    "bigWin": "🔥 LIVE BIG WIN",
+    "bigWinGoal": "🎯 이번 주 잭팟 도전 목표",
     "nowShowing": "지금 상영 중",
     "topMultipleShort": "최고 {n}"
   },
@@ -108,6 +112,29 @@
     "tickerAuth": "출고 전 전문 감정 기관 정밀 검수 · 위조품 확인 시 300% 보상",
     "tickerInsured": "배송 보험 자동 가입 — 파손·분실 시 재발송 또는 USDT 보상",
     "doneCta": "확인"
+  },
+  "hot": {
+    "title": "🔥 실시간 핫 잭팟 박스 TOP 3",
+    "subtitle": "인기 지수 기준",
+    "heat": "{deg}°C HOT",
+    "upTo": "최고 {n}배",
+    "floor": "최소 {pct}% 환급"
+  },
+  "hall": {
+    "title": "🏆 주간 명예의 전당 랭킹전",
+    "pool": "총상금 {amount} USDT 상금 풀",
+    "deadline": "이번 주 랭킹전 마감까지",
+    "payout": "상위 5명에게 순차 상금 자동 지급",
+    "prize": "💰 상금 {amount} USDT",
+    "openSlot": "공석 — 이 자리를 노려보세요",
+    "entryRule": "{n}배 이상 당첨부터 랭킹 진입",
+    "goal": "목표 {n}배",
+    "myRank": "내 현재 랭킹 {rank}위",
+    "myOutside": "내 현재 랭킹 순위권 밖",
+    "myBest": "· 이번 주 최고 {n}배",
+    "myNone": "이번 주 기록이 아직 없습니다 · 상위 5위에 진입하여 상금을 획득하세요!",
+    "cta": "🚀 잭팟 박스 열고 순위 올리기",
+    "scopeNote": "랭킹은 실제 개봉 기록만 집계합니다. 서버 집계가 연결되기 전에는 이 기기의 기록만 표시되며, 비어 있는 순위는 임의의 당첨자로 채우지 않습니다."
   },
   "categories": {
     "all": "전체",
@@ -674,6 +701,9 @@
     "emptyPayouts": "아직 지급 기록이 없습니다.",
     "emptyShipments": "아직 출고 기록이 없습니다.",
     "emptyCta": "박스 열러 가기",
+    "factVerify": "모든 개봉 결과는 개봉 전 공개된 SHA-256 해시로 봉인되며, 서버 시드가 공개되면 누구나 같은 결과를 재현할 수 있습니다.",
+    "factRefund": "당첨 상품은 실판매가의 95%로 즉시 USDT 회수, USDT 캐시백은 100% 즉시 적립됩니다.",
+    "factFee": "출금 수수료는 네트워크 실비만 — TRC-20 1 USDT / BEP-20 0.5 USDT, 국내 배송비는 무료 이벤트 적용 중입니다.",
     "pendingTx": "전송 대기",
     "settledInstant": "즉시 정산"
   },

@@ -39,6 +39,10 @@
     "freeTry": "Try free",
     "openFor": "🔥 Spin for {price}",
     "badge": "Luxury jackpots from $1",
+    "poolLabel": "LIVE JACKPOT POOL",
+    "poolNote": "Combined value of the top prize in all {n} open boxes (published lineup)",
+    "bigWin": "🔥 LIVE BIG WIN",
+    "bigWinGoal": "🎯 Jackpot target this week",
     "nowShowing": "Now Showing",
     "topMultipleShort": "up to {n}"
   },
@@ -108,6 +112,29 @@
     "tickerAuth": "Expert authentication before dispatch · 300% if a counterfeit is found",
     "tickerInsured": "Shipping insurance included — reship or USDT compensation",
     "doneCta": "Done"
+  },
+  "hot": {
+    "title": "🔥 Hottest jackpot boxes — TOP 3",
+    "subtitle": "by popularity index",
+    "heat": "{deg}°C HOT",
+    "upTo": "up to {n}x",
+    "floor": "min {pct}% back"
+  },
+  "hall": {
+    "title": "🏆 Weekly Hall of Fame",
+    "pool": "{amount} USDT prize pool",
+    "deadline": "Season ends in",
+    "payout": "Top 5 paid out in order, automatically",
+    "prize": "💰 {amount} USDT",
+    "openSlot": "Open seat — claim it",
+    "entryRule": "{n}x or higher to enter the board",
+    "goal": "target {n}x",
+    "myRank": "Your rank: #{rank}",
+    "myOutside": "Your rank: outside the top 5",
+    "myBest": "· best {n}x this week",
+    "myNone": "No wins yet this week · break into the top 5 to claim a prize!",
+    "cta": "🚀 Open a jackpot box",
+    "scopeNote": "The board counts real openings only. Until server-side aggregation is connected it shows this device's records, and empty seats are never filled with invented winners."
   },
   "categories": {
     "all": "All",
@@ -674,6 +701,9 @@
     "emptyPayouts": "No payouts recorded yet.",
     "emptyShipments": "No shipments recorded yet.",
     "emptyCta": "Open a box",
+    "factVerify": "Every result is sealed by a SHA-256 hash published before the box opens; once the server seed is revealed anyone can reproduce it.",
+    "factRefund": "Physical wins cash out at 95% of market value instantly; USDT cashback is credited at 100%.",
+    "factFee": "Withdrawals cost only the network fee — 1 USDT on TRC-20, 0.5 USDT on BEP-20 — and domestic shipping is free during the current event.",
     "pendingTx": "Awaiting broadcast",
     "settledInstant": "Settled instantly"
   },

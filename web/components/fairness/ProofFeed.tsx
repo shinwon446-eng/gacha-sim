@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
-import { Gem, Package, ExternalLink, Landmark, Copy, Check, Clock } from "lucide-react";
+import { Gem, Package, ExternalLink, Landmark, Copy, Check, Clock, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/format";
 import { Link } from "@/i18n/navigation";
 import { useProductText } from "@/lib/useProductText";
@@ -235,13 +235,29 @@ export function ProofFeed({ limit, showReserve = true, className }: ProofFeedPro
   );
 }
 
+/**
+ * 기록이 없을 때 — "없습니다" 한 줄로 비워 두지 않는다.
+ * 지어낸 출금·출고를 채우는 대신, 지금 바로 확인 가능한 사실 3가지(검증 방식·환급률·수수료 정책)를 보여 준다.
+ */
 function Empty({ text, cta }: { text: string; cta: string }) {
+  const t = useTranslations("proof");
+  const facts = [t("factVerify"), t("factRefund"), t("factFee")];
   return (
-    <div className="px-4 py-8 text-center text-xs text-muted">
-      {text}{" "}
-      <Link href="/" className="font-semibold text-gold-champagne underline-offset-2 hover:underline">
-        {cta}
-      </Link>
+    <div className="px-4 py-5">
+      <ul className="grid gap-1.5">
+        {facts.map((f) => (
+          <li key={f} className="flex items-start gap-2 text-[11px] leading-relaxed text-secondary">
+            <ShieldCheck className="mt-0.5 h-3.5 w-3.5 flex-none text-emerald-300" strokeWidth={2.2} />
+            <span className="break-keep">{f}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-3 break-keep text-center text-[11px] text-muted">
+        {text}{" "}
+        <Link href="/" className="font-semibold text-gold-champagne underline-offset-2 hover:underline">
+          {cta}
+        </Link>
+      </p>
     </div>
   );
 }

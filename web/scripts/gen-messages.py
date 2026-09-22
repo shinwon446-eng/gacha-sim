@@ -22,7 +22,7 @@ UI = {
       "noBlank": "100% 실물 지급 · 꽝 없음", "guaranteedMinLabel": "최소 보장 금액",
       "guaranteedMin": "최소 보장 금액 {value}", "aboveOpenPrice": "오픈가 이상",
       "openNow": "지금 오픈하기", "viewContents": "뭐 들었나 보기", "billboardPicker": "빌보드 선택", "billboardOf": "{title} 빌보드",
-      "headline": "1달러로 롤렉스 & 아이폰, 긁어보세요.", "headline1": "1달러로 롤렉스 & 아이폰,", "headline2": "긁어보세요.", "sub": "터지면 100% 진짜 내 것. 안 떠도 95% 즉시 환전!", "sub1": "터지면 100% 진짜 내 것.", "sub2": "안 떠도 95% 즉시 환전!", "freeTry": "손맛 보기 (무료)", "openFor": "🔥 {price}로 돌려보기", "badge": "1달러부터 명품 잭팟", "nowShowing": "지금 상영 중", "topMultipleShort": "최고 {n}"
+      "headline": "1달러로 롤렉스 & 아이폰, 긁어보세요.", "headline1": "1달러로 롤렉스 & 아이폰,", "headline2": "긁어보세요.", "sub": "터지면 100% 진짜 내 것. 안 떠도 95% 즉시 환전!", "sub1": "터지면 100% 진짜 내 것.", "sub2": "안 떠도 95% 즉시 환전!", "freeTry": "손맛 보기 (무료)", "openFor": "🔥 {price}로 돌려보기", "badge": "1달러부터 명품 잭팟", "poolLabel": "LIVE JACKPOT POOL", "poolNote": "지금 열려 있는 {n}개 박스의 최고 상품 가치 합계 (공개 라인업 기준)", "bigWin": "🔥 LIVE BIG WIN", "bigWinGoal": "🎯 이번 주 잭팟 도전 목표", "nowShowing": "지금 상영 중", "topMultipleShort": "최고 {n}"
     },
     "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "noBlankShort": "꽝 없음 · 최소 {value}", "settleBadge": "전 품목 95% USDT 즉시 정산", "settleShort": "95% 즉시 정산", "upTo": "최고 {n} 잭팟", "rtp": "RTP {rate}%", "floorPct": "최소 {pct}% 환급", "guaranteed": "보장", "openNow": "바로 열기", "contents": "상세 정보", "details": "{title} 상세 정보", "expand": "확대"},
     "grid": {"title": "전체 박스", "sort": "정렬", "loadMore": "더 보기 ({n}개)"},
@@ -49,6 +49,8 @@ UI = {
       "tickerTitle": "📦 실배송 출고 현황", "tickerFree": "무료 배송 이벤트 적용 — 국내 배송비 0.00 USDT", "tickerAuth": "출고 전 전문 감정 기관 정밀 검수 · 위조품 확인 시 300% 보상", "tickerInsured": "배송 보험 자동 가입 — 파손·분실 시 재발송 또는 USDT 보상",
       "doneCta": "확인"
     },
+    "hot": {"title": "🔥 실시간 핫 잭팟 박스 TOP 3", "subtitle": "인기 지수 기준", "heat": "{deg}°C HOT", "upTo": "최고 {n}배", "floor": "최소 {pct}% 환급"},
+    "hall": {"title": "🏆 주간 명예의 전당 랭킹전", "pool": "총상금 {amount} USDT 상금 풀", "deadline": "이번 주 랭킹전 마감까지", "payout": "상위 5명에게 순차 상금 자동 지급", "prize": "💰 상금 {amount} USDT", "openSlot": "공석 — 이 자리를 노려보세요", "entryRule": "{n}배 이상 당첨부터 랭킹 진입", "goal": "목표 {n}배", "myRank": "내 현재 랭킹 {rank}위", "myOutside": "내 현재 랭킹 순위권 밖", "myBest": "· 이번 주 최고 {n}배", "myNone": "이번 주 기록이 아직 없습니다 · 상위 5위에 진입하여 상금을 획득하세요!", "cta": "🚀 잭팟 박스 열고 순위 올리기", "scopeNote": "랭킹은 실제 개봉 기록만 집계합니다. 서버 집계가 연결되기 전에는 이 기기의 기록만 표시되며, 비어 있는 순위는 임의의 당첨자로 채우지 않습니다."},
     "categories": {"all": "전체", "dollar": "🔥 1달러의 행복", "tech": "⚡ 애플&테크", "luxury": "👑 명품&시계", "jackpot": "🚗 슈퍼카&골드바"},
     "sections": {"dollar": "🔥 1달러의 행복", "tech": "⚡ 애플 & 하이엔드 테크", "luxury": "👑 럭셔리 명품 & 스위스 워치", "jackpot": "🚗 슈퍼카 & 순금 골드바 잭팟"},
     "sorts": {"featured": "추천순", "price-asc": "가격 낮은순", "price-desc": "가격 높은순", "popularity": "인기순"},
@@ -195,7 +197,7 @@ UI = {
       "carriers": {"CJ": "CJ대한통운", "EPOST": "우체국택배", "DHL": "DHL", "FEDEX": "FedEx"},
       "reserveEyebrow": "Proof of Reserves · 지급 준비금", "reserveBody": "GACHAFLIX는 유저 자산 보호와 즉시 출금을 위해 유동성 지급 준비금을 온체인 지갑에 보유하며, 아래 주소에서 누구나 잔고를 확인할 수 있습니다.",
       "reserveWallet": "리저브 지갑", "reserveBalance": "현재 보유", "copyAddress": "주소 복사",
-      "emptyPayouts": "아직 지급 기록이 없습니다.", "emptyShipments": "아직 출고 기록이 없습니다.", "emptyCta": "박스 열러 가기", "pendingTx": "전송 대기", "settledInstant": "즉시 정산"
+      "emptyPayouts": "아직 지급 기록이 없습니다.", "emptyShipments": "아직 출고 기록이 없습니다.", "emptyCta": "박스 열러 가기", "factVerify": "모든 개봉 결과는 개봉 전 공개된 SHA-256 해시로 봉인되며, 서버 시드가 공개되면 누구나 같은 결과를 재현할 수 있습니다.", "factRefund": "당첨 상품은 실판매가의 95%로 즉시 USDT 회수, USDT 캐시백은 100% 즉시 적립됩니다.", "factFee": "출금 수수료는 네트워크 실비만 — TRC-20 1 USDT / BEP-20 0.5 USDT, 국내 배송비는 무료 이벤트 적용 중입니다.", "pendingTx": "전송 대기", "settledInstant": "즉시 정산"
     },
     "withdraw": {
       "title": "USDT 출금", "close": "닫기", "available": "출금 가능 잔액", "availableCrypto": "출금 가능 잔액 (USDT 입금분)", "cardLocked": "플레이·배송 전용 잔액 (카드 충전분)", "cardLockedNote": "카드로 충전한 금액과 그 환급금은 상자 개봉·실물 배송·카드 환불에만 쓰이며 온체인 출금은 되지 않습니다.", "network": "출금 네트워크", "address": "받는 지갑 주소", "addressHint": "{hint} 로 시작하는 주소",
@@ -261,7 +263,7 @@ UI = {
       "noBlank": "100% physical payout · No blanks", "guaranteedMinLabel": "Guaranteed Minimum",
       "guaranteedMin": "Guaranteed Minimum {value}", "aboveOpenPrice": "Above open price",
       "openNow": "Open Now", "viewContents": "What's inside", "billboardPicker": "Billboard picker", "billboardOf": "{title} billboard",
-      "headline": "$1. A shot at a Rolex & an iPhone.", "headline1": "$1. A shot at", "headline2": "a Rolex & an iPhone.", "sub": "Hit, it's 100% truly yours. Miss, 95% cashed out instantly!", "sub1": "Hit, it's 100% truly yours.", "sub2": "Miss, 95% cashed out instantly!", "freeTry": "Try free", "openFor": "🔥 Spin for {price}", "badge": "Luxury jackpots from $1", "nowShowing": "Now Showing", "topMultipleShort": "up to {n}"
+      "headline": "$1. A shot at a Rolex & an iPhone.", "headline1": "$1. A shot at", "headline2": "a Rolex & an iPhone.", "sub": "Hit, it's 100% truly yours. Miss, 95% cashed out instantly!", "sub1": "Hit, it's 100% truly yours.", "sub2": "Miss, 95% cashed out instantly!", "freeTry": "Try free", "openFor": "🔥 Spin for {price}", "badge": "Luxury jackpots from $1", "poolLabel": "LIVE JACKPOT POOL", "poolNote": "Combined value of the top prize in all {n} open boxes (published lineup)", "bigWin": "🔥 LIVE BIG WIN", "bigWinGoal": "🎯 Jackpot target this week", "nowShowing": "Now Showing", "topMultipleShort": "up to {n}"
     },
     "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "noBlankShort": "No blanks · Min {value}", "settleBadge": "Every item cashes out 95% in USDT", "settleShort": "95% cash-out", "upTo": "Up to {n} jackpot", "rtp": "RTP {rate}%", "floorPct": "Min {pct}% back", "guaranteed": "guaranteed", "openNow": "Open now", "contents": "Details", "details": "{title} details", "expand": "Expand"},
     "grid": {"title": "All Boxes", "sort": "Sort", "loadMore": "Load more ({n})"},
@@ -288,6 +290,8 @@ UI = {
       "tickerTitle": "📦 Shipment status", "tickerFree": "Free-shipping event — 0.00 USDT domestically", "tickerAuth": "Expert authentication before dispatch · 300% if a counterfeit is found", "tickerInsured": "Shipping insurance included — reship or USDT compensation",
       "doneCta": "Done"
     },
+    "hot": {"title": "🔥 Hottest jackpot boxes — TOP 3", "subtitle": "by popularity index", "heat": "{deg}°C HOT", "upTo": "up to {n}x", "floor": "min {pct}% back"},
+    "hall": {"title": "🏆 Weekly Hall of Fame", "pool": "{amount} USDT prize pool", "deadline": "Season ends in", "payout": "Top 5 paid out in order, automatically", "prize": "💰 {amount} USDT", "openSlot": "Open seat — claim it", "entryRule": "{n}x or higher to enter the board", "goal": "target {n}x", "myRank": "Your rank: #{rank}", "myOutside": "Your rank: outside the top 5", "myBest": "· best {n}x this week", "myNone": "No wins yet this week · break into the top 5 to claim a prize!", "cta": "🚀 Open a jackpot box", "scopeNote": "The board counts real openings only. Until server-side aggregation is connected it shows this device's records, and empty seats are never filled with invented winners."},
     "categories": {"all": "All", "dollar": "🔥 $1 Boxes", "tech": "⚡ Apple & Tech", "luxury": "👑 Luxury & Watches", "jackpot": "🚗 Supercars & Gold"},
     "sections": {"dollar": "🔥 $1 Happiness", "tech": "⚡ Apple & High-End Tech", "luxury": "👑 Luxury & Swiss Watches", "jackpot": "🚗 Supercars & Gold Bars"},
     "sorts": {"featured": "Featured", "price-asc": "Price: Low to High", "price-desc": "Price: High to Low", "popularity": "Popularity"},
@@ -434,7 +438,7 @@ UI = {
       "carriers": {"CJ": "CJ Logistics", "EPOST": "Korea Post", "DHL": "DHL", "FEDEX": "FedEx"},
       "reserveEyebrow": "Proof of Reserves", "reserveBody": "GACHAFLIX keeps liquid payout reserves in an on-chain wallet to protect user assets and guarantee instant withdrawals. Anyone can check the balance at the address below.",
       "reserveWallet": "Reserve wallet", "reserveBalance": "Current balance", "copyAddress": "Copy address",
-      "emptyPayouts": "No payouts recorded yet.", "emptyShipments": "No shipments recorded yet.", "emptyCta": "Open a box", "pendingTx": "Awaiting broadcast", "settledInstant": "Settled instantly"
+      "emptyPayouts": "No payouts recorded yet.", "emptyShipments": "No shipments recorded yet.", "emptyCta": "Open a box", "factVerify": "Every result is sealed by a SHA-256 hash published before the box opens; once the server seed is revealed anyone can reproduce it.", "factRefund": "Physical wins cash out at 95% of market value instantly; USDT cashback is credited at 100%.", "factFee": "Withdrawals cost only the network fee — 1 USDT on TRC-20, 0.5 USDT on BEP-20 — and domestic shipping is free during the current event.", "pendingTx": "Awaiting broadcast", "settledInstant": "Settled instantly"
     },
     "withdraw": {
       "title": "Withdraw USDT", "close": "Close", "available": "Available balance", "availableCrypto": "Withdrawable (USDT deposits)", "cardLocked": "Play & shipping only (card top-ups)", "cardLockedNote": "Card top-ups and any refunds from them can only be used to open boxes, ship items or be refunded to the card — never withdrawn on-chain.", "network": "Withdrawal network", "address": "Destination wallet address", "addressHint": "Address starting with {hint}",
@@ -500,7 +504,7 @@ UI = {
       "noBlank": "100% 实物发放 · 无空奖", "guaranteedMinLabel": "保底价值",
       "guaranteedMin": "保底价值 {value}", "aboveOpenPrice": "不低于开启价",
       "openNow": "立即开启", "viewContents": "看看里面", "billboardPicker": "选择展示", "billboardOf": "{title} 展示",
-      "headline": "1 美元，博劳力士和 iPhone。", "headline1": "1 美元，", "headline2": "博劳力士和 iPhone。", "sub": "中了 100% 真归你，没中也立即折现 95%！", "sub1": "中了 100% 真归你，", "sub2": "没中也立即折现 95%！", "freeTry": "免费试玩", "openFor": "🔥 {price} 开一发", "badge": "1 美元起的奢品头奖", "nowShowing": "正在上映", "topMultipleShort": "最高 {n}"
+      "headline": "1 美元，博劳力士和 iPhone。", "headline1": "1 美元，", "headline2": "博劳力士和 iPhone。", "sub": "中了 100% 真归你，没中也立即折现 95%！", "sub1": "中了 100% 真归你，", "sub2": "没中也立即折现 95%！", "freeTry": "免费试玩", "openFor": "🔥 {price} 开一发", "badge": "1 美元起的奢品头奖", "poolLabel": "LIVE JACKPOT POOL", "poolNote": "当前开放的 {n} 个盲盒最高奖品价值合计（公开阵容）", "bigWin": "🔥 LIVE BIG WIN", "bigWinGoal": "🎯 本周头奖挑战目标", "nowShowing": "正在上映", "topMultipleShort": "最高 {n}"
     },
     "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "noBlankShort": "不落空 · 保底 {value}", "settleBadge": "全品类 95% USDT 即时结算", "settleShort": "95% 即时结算", "upTo": "最高 {n} 头奖", "rtp": "RTP {rate}%", "floorPct": "最低 {pct}% 返还", "guaranteed": "保底", "openNow": "立即开", "contents": "详情", "details": "{title} 详情", "expand": "展开"},
     "grid": {"title": "全部盲盒", "sort": "排序", "loadMore": "加载更多（{n}）"},
@@ -527,6 +531,8 @@ UI = {
       "tickerTitle": "📦 实物配送状态", "tickerFree": "免运费活动 —— 境内运费 0.00 USDT", "tickerAuth": "出库前专业鉴定 · 确认仿品赔付 300%", "tickerInsured": "自动投保 —— 破损遗失可重发或 USDT 赔付",
       "doneCta": "确定"
     },
+    "hot": {"title": "🔥 实时最热头奖盲盒 TOP 3", "subtitle": "按人气指数", "heat": "{deg}°C HOT", "upTo": "最高 {n} 倍", "floor": "最低返还 {pct}%"},
+    "hall": {"title": "🏆 每周名人堂排位赛", "pool": "总奖池 {amount} USDT", "deadline": "本周排位赛剩余", "payout": "前 5 名自动依次发放奖金", "prize": "💰 奖金 {amount} USDT", "openSlot": "空位 — 就等你来", "entryRule": "{n} 倍以上中奖方可上榜", "goal": "目标 {n} 倍", "myRank": "我的排名：第 {rank} 名", "myOutside": "我的排名：未进前 5", "myBest": "· 本周最高 {n} 倍", "myNone": "本周还没有记录 · 冲进前 5 领取奖金！", "cta": "🚀 开启头奖盲盒冲榜", "scopeNote": "排行榜只统计真实开箱记录。在服务器统计接入之前仅显示本设备的记录，空缺名次不会用虚构中奖者填充。"},
     "categories": {"all": "全部", "dollar": "🔥 1 美元盲盒", "tech": "⚡ 苹果与科技", "luxury": "👑 奢品与腕表", "jackpot": "🚗 超跑与金条"},
     "sections": {"dollar": "🔥 1 美元的幸福", "tech": "⚡ 苹果与高端科技", "luxury": "👑 奢侈名品与瑞士腕表", "jackpot": "🚗 超跑与纯金金条头奖"},
     "sorts": {"featured": "推荐", "price-asc": "价格从低到高", "price-desc": "价格从高到低", "popularity": "人气"},
@@ -673,7 +679,7 @@ UI = {
       "carriers": {"CJ": "CJ大韩通运", "EPOST": "韩国邮政", "DHL": "DHL", "FEDEX": "FedEx"},
       "reserveEyebrow": "Proof of Reserves · 储备金", "reserveBody": "为保护用户资产并保证即时提现，GACHAFLIX 在链上钱包持有流动性储备金，任何人都可通过下方地址查询余额。",
       "reserveWallet": "储备钱包", "reserveBalance": "当前持有", "copyAddress": "复制地址",
-      "emptyPayouts": "暂无支付记录。", "emptyShipments": "暂无发货记录。", "emptyCta": "去开盲盒", "pendingTx": "等待广播", "settledInstant": "即时结算"
+      "emptyPayouts": "暂无支付记录。", "emptyShipments": "暂无发货记录。", "emptyCta": "去开盲盒", "factVerify": "每次开箱结果都由开箱前公开的 SHA-256 哈希封存；公开服务器种子后任何人都可复现。", "factRefund": "中奖实物可按市场价 95% 即时折现为 USDT，USDT 返现 100% 即时入账。", "factFee": "提现仅收网络实费 —— TRC-20 1 USDT / BEP-20 0.5 USDT；境内运费当前免费。", "pendingTx": "等待广播", "settledInstant": "即时结算"
     },
     "withdraw": {
       "title": "USDT 提现", "close": "关闭", "available": "可提现余额", "availableCrypto": "可提现余额（USDT 充值）", "cardLocked": "仅限开箱与配送（信用卡充值）", "cardLockedNote": "信用卡充值及其折现金额只能用于开启盲盒、实物配送或原卡退款，不可链上提现。", "network": "提现网络", "address": "收款钱包地址", "addressHint": "以 {hint} 开头的地址",

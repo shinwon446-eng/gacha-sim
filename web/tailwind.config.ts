@@ -62,10 +62,9 @@ const config: Config = {
         "130": "1.3",
       },
       fontFamily: {
-        /** 메인 타이틀·대형 숫자 — Cinzel(세리프 럭셔리), 폴백 Pretendard Black */
-        display: ["var(--font-display)", "Cinzel", "Pretendard", "serif"],
-        /** 본문·라벨 — Pretendard → Inter */
-        sans: ["Pretendard", "var(--font-sans)", "Inter", "-apple-system", "system-ui", "sans-serif"],
+        /** 전 사이트 단일 서체 — 제목·본문·숫자 모두 Pretendard, 위계는 굵기로만 */
+        display: ["Pretendard Variable", "Pretendard", "-apple-system", "BlinkMacSystemFont", "system-ui", "Roboto", "sans-serif"],
+        sans: ["Pretendard Variable", "Pretendard", "-apple-system", "BlinkMacSystemFont", "system-ui", "Roboto", "sans-serif"],
       },
       transitionTimingFunction: {
         cine: "cubic-bezier(0.16, 1, 0.3, 1)",

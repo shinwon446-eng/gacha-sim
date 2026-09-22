@@ -1,16 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { Play, Info } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/format";
 import { useTranslations } from "next-intl";
-import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
 import { useCanHover } from "@/lib/useCanHover";
-import { dropTable, floorRatio, retailReturn, type ProductBox, type ProductItem } from "@/lib/products";
-import { boxFloorTier, boxTopTier, formatMultiple, glow, tierBreakdown, tierOf, topMultiple } from "@/lib/tiers";
-import { GameTierBar } from "@/components/box/TierStrip";
+import { type ProductBox } from "@/lib/products";
+import { boxTopTier, formatMultiple, glow, topMultiple } from "@/lib/tiers";
 import { ProductArt } from "@/components/box/ProductArt";
 import { Money } from "@/components/ui/Money";
 
@@ -20,7 +17,7 @@ export type CardEdge = "first" | "last" | "middle";
 export interface BoxCardProps {
   box: ProductBox;
   edge?: CardEdge;
-  /** TRENDING 행에서만 전달. 카드 뒤 오버사이즈 순위 숫자를 렌더한다. */
+  /** TRENDING 행에서만 전달. 카드 뒤 오버사이즈 순위 숫자 + 🔥 HOT 뱃지에 쓴다. */
   rank?: number;
   /** 호버 상태 통지 — 행이 z-index 를 올리는 데 쓴다. */
   onExpandChange?: (expanded: boolean) => void;
@@ -29,89 +26,30 @@ export interface BoxCardProps {
   className?: string;
 }
 
-/** 호버: 1.05x 부상(과하지 않게) + ±5° 틸트. 확장 패널은 카드 바닥에 붙는 플로팅 — 문서 흐름을 밀지 않는다. */
-const HOVER_SCALE = 1.05;
-const TILT_DEG = 5;
-const SPRING = { stiffness: 220, damping: 22, mass: 0.6 };
-
-/** 카드 하단 대표 명품 썸네일 — 등급색 헤어라인 + 정밀 가격 */
-function GrailThumb({ item, box }: { item: ProductItem; box: ProductBox }) {
-  const { fmt } = useCurrency();
-  const { itemName } = useProductText();
-  const t = tierOf(item.value, box.price);
-  return (
-    <li className="min-w-0 flex-1" title={`${itemName(item)} · ${fmt(item.value)}`}>
-      <div className="relative aspect-square w-full overflow-hidden rounded-sm" style={{ boxShadow: `inset 0 0 0 1px ${glow(t.accent, 0.45)}` }}>
-        <ProductArt image={item.image} alt={itemName(item)} accent={t.accent} glowStrength={0.28} fallbackSize="sm" kind={item.kind} />
-      </div>
-      <div className="mt-1 truncate text-center text-[10px] leading-none text-muted">{itemName(item)}</div>
-      <div className="mt-0.5 truncate text-center font-mono text-[10px] font-bold leading-none tabular-nums" style={{ color: t.accent }}>
-        {fmt(item.value)}
-      </div>
-    </li>
-  );
-}
-
 /**
- * 럭셔리 박스 카드 (PROMPTS 1-2-2).
+ * 럭셔리 박스 카드 — 클린 쇼케이스 (2026-09-23 운영자 지시 전면 개편).
  *
- *   기본(콤팩트): 16:9 비주얼 → 박스명 · 1회 가격 · 최고 배수 · [100% 꽝 없음] 미니 뱃지. 서브 항목은 숨긴다.
- *   호버(확장): 카드 바닥에 붙는 absolute 플로팅 패널(top-full)에 대표 명품 3종 + 퀵 액션이 0.2초 페이드인.
- *   카드의 물리적 높이는 호버 전후 동일 — 아래 행·섹션이 밀리지 않는다 (Layout Shift 0).
- *
- * 호버(Framer Motion)
- *   · 1.05x 확대 + 마우스 좌표 추적 ±5° 3D 틸트 (스프링) + z 부상
- *   · 홀로그램 메탈릭 샤인이 사선으로 한 번 스쳐 지나간다
- *   · 비주얼 하단에서 3px 등급 확률 바가 올라오고, 퀵 액션(오픈 / 구성품)이 나타난다
- *   · 프레임이 최고 등급 색 헤어라인으로 점화된다 (ROYAL 이면 샴페인 골드)
+ * 사진이 상품이다. 사진 위에 얹는 것은 **우상단 미니 뱃지 단 하나**뿐이다.
+ *   · 삭제: 상단 '100% 꽝 없음 · 최소 N USDT 보장' 배너, '최소 N% 환급' 뱃지,
+ *           '⚡ 전 품목 95% 즉시 정산' 배너, 무지개 등급 바(GameTierBar),
+ *           호버 시 카드 밖으로 튀어나오던 대표 아이템 3D 팝아웃, 바닥 플로팅 확장 패널.
+ *     (보장·환급·정밀 확률은 전부 상세 모달과 /fairness 에 그대로 남아 있다 — 숨기는 게 아니라 옮긴 것)
+ *   · 유지: 여백 + 다크 비네팅, 호버 시 사진 1.03x 줌과 은은한 골드 림라이트.
+ *     시야를 가리는 팝업·돌출은 띄우지 않는다.
+ *   · 메타: 박스명(화이트 볼드) / 1회 가격 / 최고 배수(샴페인 골드).
  *
  * 등급색은 데이터에서 오므로 인라인 style 로만 전달한다 — 그 외 레이아웃은 전부 유틸리티 클래스.
  */
-export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, onInspect, className }: BoxCardProps) {
+export function BoxCard({ box, edge = "middle", rank, onExpandChange, onInspect, className }: BoxCardProps) {
   const tr = useTranslations();
-  const { fmt } = useCurrency();
   const { boxTitle } = useProductText();
   const canHover = useCanHover();
   const [hovered, setHovered] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
-  const frameRef = useRef<HTMLDivElement>(null);
 
-  // 마우스 위치 → 틸트. 카드 중심이 (0,0), 가장자리가 ±0.5.
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const rotateX = useSpring(useTransform(my, [-0.5, 0.5], [TILT_DEG, -TILT_DEG]), SPRING);
-  const rotateY = useSpring(useTransform(mx, [-0.5, 0.5], [-TILT_DEG, TILT_DEG]), SPRING);
+  const meta = useMemo(() => ({ topTier: boxTopTier(box), mult: topMultiple(box) }), [box]);
 
-  const onMove = useCallback(
-    (e: React.MouseEvent) => {
-      const el = frameRef.current;
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      mx.set((e.clientX - r.left) / r.width - 0.5);
-      my.set((e.clientY - r.top) / r.height - 0.5);
-    },
-    [mx, my],
-  );
-
-  const leave = useCallback(() => {
-    setHovered(false);
-    mx.set(0);
-    my.set(0);
-  }, [mx, my]);
-
-  const meta = useMemo(
-    () => ({
-      guaranteed: box.guaranteedMin >= box.price, // "오픈가 이상" 문구는 바닥이 가격 이상일 때만 (잭팟 박스)
-      floorTier: boxFloorTier(box),
-      topTier: boxTopTier(box),
-      mult: topMultiple(box),
-      slices: tierBreakdown(box),
-      grails: dropTable(box).slice(0, 3),
-      rtp: retailReturn(box),
-      floorPct: Math.round(floorRatio(box) * 100),
-    }),
-    [box],
-  );
+  const leave = useCallback(() => setHovered(false), []);
 
   useEffect(() => {
     onExpandChange?.(hovered);
@@ -123,9 +61,10 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
   const showImg = !!box.imageUrl && !imgFailed;
   const accent = meta.topTier.accent;
   const royal = meta.topTier.key === "royal";
+  const hot = typeof rank === "number" && rank <= 3;
 
   return (
-    <div className={cn("relative", className)} style={{ zIndex: hovered ? 40 : 10 }} onMouseEnter={() => canHover && setHovered(true)} onMouseLeave={leave} onMouseMove={onMove}>
+    <div className={cn("relative", className)} style={{ zIndex: hovered ? 20 : 10 }} onMouseEnter={() => canHover && setHovered(true)} onMouseLeave={leave}>
       {/* 넷플릭스 오버사이즈 순위 숫자 — 오른쪽 20% 가 카드 뒤로 들어간다(글리프 폭과 무관). 모바일은 여백·크기 축소 */}
       {typeof rank === "number" && (
         <span aria-hidden className="rank-numeral pointer-events-none absolute bottom-1 left-5 z-0 -translate-x-[80%] font-display sm:left-7">
@@ -133,175 +72,87 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
         </span>
       )}
 
-      {/* 확대·틸트 그룹 — 카드 프레임과 플로팅 패널이 함께 움직인다. overflow 를 걸지 않아 패널이 바닥 밖으로 나온다 */}
-      <motion.div
-        ref={frameRef}
-        className={cn("relative", typeof rank === "number" && "ml-5 sm:ml-7")}
-        style={{ transformOrigin: origin, transformPerspective: 900, rotateX, rotateY }}
-        animate={{ scale: hovered ? HOVER_SCALE : 1 }}
-        transition={{ type: "spring", stiffness: 260, damping: 24, mass: 0.7 }}
-      >
-      <div
-        className={cn(
-          "relative cursor-pointer overflow-hidden rounded-xl bg-surface transition-[border-radius] duration-200",
-          royal ? "border-metallic-gold" : "border-metallic-subtle",
-          hovered && "rounded-b-none",
-        )}
-        style={{
-          // 호버 시 최고 등급 색으로 헤어라인 점화. 등급색은 데이터 값이라 인라인.
-          boxShadow: hovered ? `0 22px 48px rgba(0,0,0,0.7), 0 0 0 1px ${glow(accent, 0.55)}, 0 0 32px ${glow(accent, 0.22)}` : undefined,
-        }}
-        onClick={() => onInspect?.(box)}
-        role="button"
-        tabIndex={0}
-        aria-label={tr("card.details", { title: boxTitle(box) })}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            onInspect?.(box);
-          }
-        }}
-      >
-        {/* 홀로그램 메탈릭 샤인 — 호버마다 한 번 사선 스윕 */}
-        <AnimatePresence>
-          {hovered && (
-            <motion.span
+      <motion.div className={cn("relative", typeof rank === "number" && "ml-5 sm:ml-7")} style={{ transformOrigin: origin }}>
+        <div
+          className={cn(
+            "relative cursor-pointer overflow-hidden rounded-xl bg-surface",
+            royal ? "border-metallic-gold" : "border-metallic-subtle",
+            hovered && "gold-rimlight",
+          )}
+          style={{
+            // 호버 시 최고 등급 색으로 헤어라인 점화. 등급색은 데이터 값이라 인라인.
+            boxShadow: hovered ? `0 18px 40px rgba(0,0,0,0.65), 0 0 0 1px ${glow(accent, 0.5)}, 0 0 26px ${glow(accent, 0.18)}` : undefined,
+          }}
+          onClick={() => onInspect?.(box)}
+          role="button"
+          tabIndex={0}
+          aria-label={tr("card.details", { title: boxTitle(box) })}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onInspect?.(box);
+            }
+          }}
+        >
+          {/* ── 비주얼 — 피사체를 가리는 것은 아무것도 얹지 않는다 ── */}
+          <div className="relative aspect-video w-full overflow-hidden bg-obsidian">
+            {showImg ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={box.imageUrl!}
+                alt={boxTitle(box)}
+                draggable={false}
+                loading="lazy"
+                decoding="async"
+                referrerPolicy="no-referrer"
+                onError={() => setImgFailed(true)}
+                className={cn("h-full w-full object-cover transition-transform duration-500 ease-out", hovered && "scale-[1.03]")}
+              />
+            ) : (
+              <ProductArt image={{ src: null }} alt={boxTitle(box)} accent={accent} fallbackSize="md" />
+            )}
+            {/* 다크 비네팅 — 가장자리만 눌러 피사체를 또렷하게. 중앙은 건드리지 않는다 */}
+            <span
               aria-hidden
-              className="pointer-events-none absolute inset-0 z-30 bg-gradient-to-br from-transparent via-white/10 to-transparent"
-              style={{ backgroundSize: "40% 100%", backgroundRepeat: "no-repeat" }}
-              initial={{ backgroundPosition: "-60% 0", opacity: 0 }}
-              animate={{ backgroundPosition: "160% 0", opacity: [0, 1, 1, 0] }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+              className="pointer-events-none absolute inset-0"
+              style={{ background: "radial-gradient(72% 64% at 50% 44%, transparent 0%, transparent 52%, rgba(0,0,0,0.42) 100%)" }}
             />
-          )}
-        </AnimatePresence>
+            <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-surface to-transparent" />
 
-        {/* ── 비주얼 ── */}
-        <div className="relative aspect-video w-full overflow-hidden bg-obsidian">
-          {showImg ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={box.imageUrl!}
-              alt={boxTitle(box)}
-              draggable={false}
-              loading="lazy"
-              decoding="async"
-              referrerPolicy="no-referrer"
-              onError={() => setImgFailed(true)}
-              className={cn("h-full w-full object-cover transition-transform duration-500", hovered && "scale-105")}
-            />
-          ) : (
-            <ProductArt image={{ src: null }} alt={boxTitle(box)} accent={accent} fallbackSize="md" />
-          )}
-          {/* 쇼케이스 핀조명 — 딤 없이 중앙을 밝히고 가장자리만 살짝 누른다 + 하단 페이드 */}
-          <span aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(70% 60% at 50% 42%, rgba(230,202,101,0.10) 0%, transparent 55%, rgba(0,0,0,0.38) 100%)" }} />
-          <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-surface to-transparent" />
-
-          {/* 100% 꽝 없음 · 최소 보장 뱃지 — 고대비 (CLAUDE.md §4-C) */}
-          <span
-            className={cn(
-              "absolute left-1.5 right-1.5 top-1.5 z-10 truncate whitespace-nowrap rounded-sm px-1.5 py-1 text-[10px] font-bold leading-none tracking-tight sm:left-2 sm:right-2 sm:top-2 sm:px-2",
-              meta.guaranteed ? "border-metallic-gold bg-obsidian/90 text-gold-champagne" : "border-metallic-subtle bg-obsidian/90 text-white",
-            )}
-          >
-            <span className="sm:hidden">{tr("card.noBlankShort", { value: fmt(box.guaranteedMin) })}</span>
-            <span className="hidden sm:inline">
-              {tr("card.noBlankBadge", { value: fmt(box.guaranteedMin) })}
-              {meta.guaranteed ? ` · ${tr("hero.aboveOpenPrice")}` : ""}
+            {/* 사진 위의 유일한 요소 — 우상단 미니 뱃지 하나 */}
+            <span className="absolute right-2 top-2 z-10">
+              {hot ? (
+                <span className="hot-pulse whitespace-nowrap rounded-sm border border-crimson/60 bg-crimson/25 px-1.5 py-0.5 text-[9px] font-bold leading-none text-white backdrop-blur-sm">
+                  🔥 HOT
+                </span>
+              ) : (
+                <span className="whitespace-nowrap rounded-sm border border-gold-champagne/45 bg-obsidian/80 px-1.5 py-0.5 text-[9px] font-bold leading-none tabular-nums text-gold-champagne backdrop-blur-sm">
+                  {tr("tiers.multiple", { n: formatMultiple(meta.mult) })}
+                </span>
+              )}
             </span>
-          </span>
-          {/* ⚡ 전 품목 1클릭 95% USDT 즉시 정산 · 개인지갑 출금 보장 */}
-          <span className={cn("absolute bottom-1.5 left-1.5 z-10 flex max-w-[calc(100%-12px)] items-center gap-1 rounded-sm border border-gold-champagne/50 bg-obsidian/85 px-1.5 py-0.5 text-[9px] sm:bottom-2 sm:left-2 font-bold leading-none text-gold-champagne shadow-[0_0_8px_rgba(230,202,101,0.25)] backdrop-blur-sm transition-opacity duration-200", hovered && "opacity-0")}>
-            <span className="whitespace-nowrap sm:hidden">⚡ {tr("card.settleShort")}</span>
-            <span className="hidden whitespace-nowrap sm:inline">⚡ {tr("card.settleBadge")}</span>
-          </span>
+          </div>
 
-          {/* 호버: 3px 등급 확률 바 */}
-          <AnimatePresence>
-            {hovered && (
-              <motion.div
-                className="absolute inset-x-0 bottom-0 z-20 px-2 pb-2"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 4 }}
-                transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <GameTierBar slices={meta.slices} compact />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* ── 메타 ── */}
-        <div className="border-t border-hairline px-2 pb-1.5 pt-2 sm:px-3 sm:pb-2 sm:pt-3">
-          <div className="truncate text-[13px] font-bold leading-tight text-white sm:text-sm">{boxTitle(box)}</div>
-          <div className="mt-1 flex items-end justify-between gap-2 sm:mt-1.5">
-            <div>
-              <div className="caption-luxury">{tr("card.perOpen")}</div>
-              <Money value={box.price} size="md" />
-            </div>
-            <div className="text-right">
-              <div className="caption-luxury">{tr("card.top")}</div>
-              <div className={cn("whitespace-nowrap font-display text-lg font-bold leading-none tracking-tight tabular-nums sm:text-xl", royal && "text-gold-gradient")} style={royal ? undefined : { color: accent }}>
-                {tr("tiers.multiple", { n: formatMultiple(meta.mult) })}
+          {/* ── 메타 — 박스명 · 1회 가격 · 최고 배수 ── */}
+          <div className="border-t border-hairline px-2 pb-1.5 pt-2 sm:px-3 sm:pb-2 sm:pt-3">
+            <div className="truncate text-[13px] font-bold leading-tight text-white sm:text-sm">{boxTitle(box)}</div>
+            <div className="mt-1 flex items-end justify-between gap-2 sm:mt-1.5">
+              <div>
+                <div className="caption-luxury">{tr("card.perOpen")}</div>
+                <Money value={box.price} size="md" />
+              </div>
+              <div className="text-right">
+                <div className="caption-luxury">{tr("card.top")}</div>
+                <div
+                  className={cn("whitespace-nowrap font-display text-lg font-bold leading-none tracking-tight tabular-nums sm:text-xl", royal && "text-gold-gradient")}
+                  style={royal ? undefined : { color: accent }}
+                >
+                  {tr("tiers.multiple", { n: formatMultiple(meta.mult) })}
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-      </div>
-
-        {/* ── 플로팅 확장 패널 — 카드 바닥에 absolute 로 붙는다. 문서 흐름 밖이라 아래 섹션이 밀리지 않는다 (CLAUDE.md §3) ── */}
-        <AnimatePresence initial={false}>
-          {hovered && (
-            <motion.div
-              key="panel"
-              className="border-metallic-gold-xb absolute left-0 right-0 top-full z-50 rounded-b-xl bg-surface px-3 pb-3 pt-2.5 shadow-[0_25px_50px_rgba(0,0,0,0.8)]"
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* 도파민 수치 3종 — 최고 배수 · RTP · 바닥 환급. 절망적인 소수점 확률은 쓰지 않는다 */}
-              <ul className="mb-2 grid grid-cols-3 gap-1 text-center">
-                {[
-                  [tr("card.upTo", { n: tr("tiers.multiple", { n: formatMultiple(meta.mult) }) }), accent],
-                  [tr("card.rtp", { rate: (meta.rtp * 100).toFixed(1) }), "#93C5FD"],
-                  [tr("card.floorPct", { pct: meta.floorPct }), "#E6CA65"],
-                ].map(([label, color]) => (
-                  <li key={label} className="rounded-sm border border-white/10 bg-obsidian/70 px-1 py-1 text-[9px] font-bold leading-none" style={{ color }}>
-                    {label}
-                  </li>
-                ))}
-              </ul>
-              <ul className="flex gap-2">
-                {meta.grails.map((it) => (
-                  <GrailThumb key={it.id} item={it} box={box} />
-                ))}
-              </ul>
-              <div className="mt-2.5 flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => onOpen?.(box)}
-                  className="flex h-8 flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-sm bg-crimson px-2 text-xs font-bold text-white transition-colors hover:bg-red-600"
-                >
-                  <Play className="h-3 w-3 fill-current" strokeWidth={0} />
-                  {tr("card.openNow")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onInspect?.(box)}
-                  className="glass flex h-8 flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-sm px-2 text-xs font-semibold text-white backdrop-blur-md hover:bg-white/15"
-                >
-                  <Info className="h-3 w-3" strokeWidth={2} />
-                  {tr("card.contents")}
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </motion.div>
     </div>
   );
