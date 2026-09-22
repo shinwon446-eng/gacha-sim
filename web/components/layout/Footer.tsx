@@ -21,7 +21,7 @@ export function Footer() {
   const t = useTranslations("footer");
   const year = 2026;
   return (
-    <footer className="border-metallic-subtle mt-16 border-x-0 border-b-0 bg-obsidian px-[4%] pb-8 pt-10 text-xs text-muted">
+    <footer className="border-metallic-subtle mt-10 border-x-0 border-b-0 bg-obsidian px-[4%] pb-8 pt-8 text-xs text-muted md:mt-16 md:pt-10">
       <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-[1.3fr_2fr]">
         <div>
           <div className="font-display text-xl font-bold uppercase leading-none tracking-tight text-crimson">Gachaflix</div>

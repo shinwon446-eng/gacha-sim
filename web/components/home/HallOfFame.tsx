@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Trophy, Rocket } from "lucide-react";
+import { Rocket } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useProductText } from "@/lib/useProductText";
 import { BOXES, BOX_BY_SLUG, dropTable, type ProductBox, type ProductItem } from "@/lib/products";
@@ -94,10 +94,7 @@ export function HallOfFame({ onPick, className }: { onPick: (box: ProductBox) =>
       {/* 헤더 — 타이틀 · 총상금 · 시즌 타이머 */}
       <div className="mb-3">
         <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-          <h2 className="flex items-center gap-1.5 break-keep text-[15px] font-extrabold tracking-tight text-white sm:text-[17px]">
-            <Trophy className="h-4 w-4 text-gold-champagne" strokeWidth={2.4} />
-            {t("title")}
-          </h2>
+          <h2 className="break-keep text-[15px] font-extrabold tracking-tight text-white sm:text-[17px]">{t("title")}</h2>
           <span className="border-metallic-gold whitespace-nowrap rounded-full bg-obsidian/70 px-2 py-0.5 text-[10px] font-bold text-gold-champagne">
             {t("pool", { amount: WEEKLY_PRIZE_POOL_USDT.toLocaleString("en-US") })}
           </span>
@@ -106,7 +103,7 @@ export function HallOfFame({ onPick, className }: { onPick: (box: ProductBox) =>
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-crimson" />
           {t("deadline")}
           <span className="whitespace-nowrap font-bold tabular-nums text-crimson">{remaining === null ? "—" : formatCountdown(remaining)}</span>
-          <span className="text-faint">· {t("payout")}</span>
+          <span className="text-faint">{t("payout")}</span>
         </p>
       </div>
 

@@ -48,7 +48,7 @@ export function CurrencySelector({ className }: { className?: string }) {
       >
         <span className="text-gold-champagne">{SYMBOL[currency]}</span>
         <span className="hidden tracking-wide sm:inline">{LABEL[currency]}</span>
-        <ChevronDown className={cn("h-3.5 w-3.5 text-muted transition-transform", open && "rotate-180")} strokeWidth={2} />
+        <ChevronDown className={cn("hidden h-3.5 w-3.5 text-muted transition-transform sm:block", open && "rotate-180")} strokeWidth={2} />
       </button>
 
       {open && (

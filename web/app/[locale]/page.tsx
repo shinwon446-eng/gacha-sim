@@ -187,10 +187,10 @@ export default function BoxesPage() {
   const visible = grid.slice(0, shown);
 
   return (
-    <main className="min-h-screen bg-canvas pb-12 md:pb-24">
+    <main className="min-h-screen bg-canvas pb-0 md:pb-24">
       {/* 상단 바 — h-14 고정(스티키 퀵 탭이 top-14 로 이어 붙는다) */}
       <header className="sticky top-0 z-[60] flex h-14 items-center gap-2 border-b border-hairline bg-obsidian/90 px-3 backdrop-blur-md sm:gap-5 sm:px-[4%]">
-        <span className="flex-none whitespace-nowrap font-display text-base font-black uppercase leading-none tracking-tight text-crimson sm:text-[22px]">
+        <span className="flex-none whitespace-nowrap font-display text-sm font-black uppercase leading-none tracking-tight text-crimson sm:text-[22px]">
           Gachaflix
         </span>
         {/* 데스크톱 텍스트 내비 — 모바일은 하단 고정 내비(MobileBottomNav)가 대신한다 */}
@@ -230,8 +230,9 @@ export default function BoxesPage() {
                 </motion.span>
               </AnimatePresence>
             </span>
+            {/* 크립토/카드 분리 표기는 sm 이상에서만 — 모바일 헤더 폭을 넘기지 않는다(모달 지갑 탭에 같은 분리가 있다) */}
             {cardBalance > 0 && (
-              <span className="flex items-center gap-1.5 text-[9px] leading-none tabular-nums text-faint">
+              <span className="hidden items-center gap-1.5 text-[9px] leading-none tabular-nums text-faint sm:flex">
                 <span className="text-gold-champagne">↗ {fmt(cryptoBalance)}</span>
                 <span>💳 {fmt(cardBalance)}</span>
               </span>

@@ -60,7 +60,8 @@ export function LanguageSelector({ className }: { className?: string }) {
       >
         <Globe className="hidden h-3.5 w-3.5 text-gold-champagne sm:block" strokeWidth={2} />
         <span className="tracking-wide">{LOCALE_SHORT[locale]}</span>
-        <ChevronDown className={cn("h-3.5 w-3.5 text-muted transition-transform", open && "rotate-180")} strokeWidth={2} />
+        {/* 375px 기기에서 헤더가 넘치지 않게 — 모바일에서는 셰브런을 감춘다(알약 자체가 탭 대상) */}
+        <ChevronDown className={cn("hidden h-3.5 w-3.5 text-muted transition-transform sm:block", open && "rotate-180")} strokeWidth={2} />
       </button>
 
       {open && (
