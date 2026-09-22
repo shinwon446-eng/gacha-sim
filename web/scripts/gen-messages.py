@@ -77,7 +77,7 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "1회 오픈", "open5": "5회 연속 오픈", "openN": "{n}회 연속 오픈", "upgrade": "UPGRADE!", "openBulk": "{n}개 고속 개봉", "qty": "개봉 수량", "autoStop": "⏹ 정지 (남은 {n}회)", "autoSpent": "투입", "autoWon": "획득", "autoNet": "순손익", "autoStopped": {"spins": "오토플레이 완료", "jackpot": "👑 잭팟 당첨 — 자동 정지", "multiple": "목표 배수 달성 — 자동 정지", "stopLoss": "손실 한도 도달 — 자동 정지", "balance": "잔고 부족 — 정지", "manual": "수동 정지"}, "trialLabel": "손맛 보기 · 무료 체험", "trialCongrats": "{item} ({n}) 손맛 적중!", "trialBody": "웰컴 보너스 {bonus} 받고 진짜로 열어보세요.", "trialCta": "보너스 받고 진짜 열기", "trialCtaClaimed": "실제 박스 열기", "trialNote": "무료 체험 결과는 배송·환전 대상이 아닙니다. 진짜 오픈은 위 버튼으로.", "spinning": "개봉 중…", "landing": "결과 확정",
+      "open1": "1회 오픈", "open5": "5회 연속 오픈", "openN": "{n}회 연속 오픈", "upgrade": "UPGRADE!", "openBulk": "🚀 {n}개 한 번에 대량 개봉하기 ({amount})", "openAllIn": "👑 {n}개 올인 잭팟 대량 개봉 ({amount})", "openNow": "🔥 {n}개 지금 개봉하기 ({amount})", "preset": {"1": "1개 오픈", "5": "5연타 오픈", "10": "10연타 오픈", "50": "50개 대량 개봉", "100": "100개 올인 잭팟"}, "qtyNote": "선택한 수량만큼 한 번에 개봉하며, 에픽/잭팟 당첨 시 3D 하이라이트가 발동합니다.", "qty": "개봉 수량", "autoStop": "⏹ 정지 (남은 {n}회)", "autoSpent": "투입", "autoWon": "획득", "autoNet": "순손익", "autoStopped": {"spins": "오토플레이 완료", "jackpot": "👑 잭팟 당첨 — 자동 정지", "multiple": "목표 배수 달성 — 자동 정지", "stopLoss": "손실 한도 도달 — 자동 정지", "balance": "잔고 부족 — 정지", "manual": "수동 정지"}, "trialLabel": "손맛 보기 · 무료 체험", "trialCongrats": "{item} ({n}) 손맛 적중!", "trialBody": "웰컴 보너스 {bonus} 받고 진짜로 열어보세요.", "trialCta": "보너스 받고 진짜 열기", "trialCtaClaimed": "실제 박스 열기", "trialNote": "무료 체험 결과는 배송·환전 대상이 아닙니다. 진짜 오픈은 위 버튼으로.", "spinning": "개봉 중…", "landing": "결과 확정",
       "result": "당첨", "results": "{n}회 결과", "total": "합계 가치", "paid": "지불 {price}",
       "sellBack": "95% 즉시 회수 · {amount}", "sellBackAll": "전부 95% 회수 · {amount}", "cashoutCta": "⚡ 95% USDT 즉시 회수", "noFee": "수수료 0%", "shipSub": "실물 · 무료 배송", "cashCredited": "{amount} 잔액에 즉시 적립됨", "respin": "🔥 {price}로 다시 돌리기", "sellBackNote": "실판매가의 {rate}가 잔액으로 즉시 반영됩니다",
       "sold": "회수 완료 — {amount} 잔액 반영", "claimShipping": "집으로 배송",
@@ -90,19 +90,19 @@ UI = {
     },
     "deposit": {
       "title": "충전하기", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 입금", "tabCard": "신용카드 결제",
-      "network": "네트워크 선택", "recommended": "추천 · 수수료 1 USDT 이하", "chain": "{chain}",
+      "network": "네트워크 선택", "recommended": "수수료 0원 추천", "chain": "{chain}",
       "address": "입금 지갑 주소", "copy": "원클릭 복사", "copied": "주소가 복사되었습니다", "qrHint": "지갑 앱으로 QR을 스캔하세요",
       "addressIssuing": "입금 주소를 발급하는 중입니다…", "addressError": "주소 발급에 실패했습니다. 잠시 후 다시 시도해 주세요.", "addressPending": "전용 입금 지갑 주소로 USDT 전송 시 12 블록 컨펌 후 계정 잔액에 즉시 자동 충전됩니다.",
       "guideTitle": "입금 안내", "guideMin": "최소 입금액 {min}", "guideConfirm": "블록체인 {n} 컨펌 후 자동 반영", "guideToken": "선택한 네트워크의 USDT 만 전송하세요. 다른 코인·네트워크 전송은 복구 불가",
       "guideTime": "평균 {sec}초/블록 · 약 {min}분",
-      "status": "입금 상태", "waiting": "입금 대기 중", "watching": "블록체인 네트워크 승인을 실시간 감지 중입니다.", "confirming": "컨펌 {n} / {total}", "credited": "잔액 반영 완료",
+      "status": "입금 상태", "waiting": "입금 대기 중", "checking": "블록체인 확인 중…", "amountTitle": "충전 금액 (입금 예정)", "confirmSent": "⚡ 입금 전송 완료 (자동 잔고 확인)", "pendingNote": "입금 확인 대기 중 — 네트워크 컨펌이 확인되는 즉시 잔고에 자동 반영됩니다.", "creditedToastDone": "입금 확인 완료! 잔고에 충전되었습니다", "watching": "블록체인 네트워크 승인을 실시간 감지 중입니다.", "confirming": "컨펌 {n} / {total}", "credited": "잔액 반영 완료",
      
       "amount": "금액 (USDT)", "belowMin": "최소 입금액은 {min} 입니다",
-      "creditedToast": "+{amount} 잔액 반영",
+      "creditedToast": "입금 확인 완료! {amount} 잔고에 충전되었습니다",
       "close": "닫기"
     },
     "cardPay": {
-      "quick": "빠른 충전", "custom": "직접 입력", "amount": "결제 금액", "credit": "잔액 반영",
+      "quick": "빠른 충전", "custom": "직접 입력", "amount": "결제 금액", "credit": "잔액 반영", "cardNumber": "카드 번호", "expiry": "유효기간 (MM/YY)", "cvc": "CVC (3자리)", "holder": "카드 소유자 (영문)", "threeDs": "3D Secure 인증 중…", "threeDsBody": "{brand} 카드사 본인 인증을 확인하고 있습니다", "payAndCredit": "{usd} 결제하고 {usdt} 즉시 충전", "retry": "다른 카드로 다시 시도", "summaryPay": "결제 금액 (USD)", "summaryCredit": "즉시 충전 (USDT)", "rateNote": "USD 1 = USDT 1 · 카드사 해외결제 수수료는 별도", "recent": "최근 충전 내역", "noRecent": "충전 내역이 없습니다", "recentCard": "카드 충전", "recentUsdt": "USDT 입금",
       "provider": "결제 수단", "providerStripe": "Stripe · 글로벌 카드", "providerPortone": "PortOne · 국내 카드", "cardSoon": "카드 결제는 곧 오픈됩니다. 지금은 USDT 입금을 이용해 주세요.",
      
       "pay": "{amount} 결제", "processing": "결제 진행 중…", "belowMin": "최소 결제액은 {min} 입니다", "aboveMax": "최대 결제액은 {max} 입니다", "invalid": "금액을 확인하세요",
@@ -288,7 +288,7 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "Open ×1", "open5": "Open ×5", "openN": "Open ×{n}", "upgrade": "UPGRADE!", "openBulk": "Fast-open {n}", "qty": "Quantity", "autoStop": "⏹ Stop ({n} left)", "autoSpent": "Spent", "autoWon": "Won", "autoNet": "Net", "autoStopped": {"spins": "Autoplay finished", "jackpot": "👑 Jackpot hit — auto-stopped", "multiple": "Target multiple reached — auto-stopped", "stopLoss": "Stop-loss reached — auto-stopped", "balance": "Insufficient balance — stopped", "manual": "Stopped manually"}, "trialLabel": "Free try", "trialCongrats": "Nice hit — {item} ({n}) on your free try!", "trialBody": "Open real boxes with your {bonus} welcome bonus!", "trialCta": "Claim & Open Real Box", "trialCtaClaimed": "Open Real Box", "trialNote": "Free-try results aren't shipped or cashed out. Use the button above for the real thing.", "spinning": "Opening…", "landing": "Result locked",
+      "open1": "Open ×1", "open5": "Open ×5", "openN": "Open ×{n}", "upgrade": "UPGRADE!", "openBulk": "🚀 Bulk-open {n} at once ({amount})", "openAllIn": "👑 All-in jackpot: open {n} ({amount})", "openNow": "🔥 Open {n} now ({amount})", "preset": {"1": "Open 1", "5": "5-combo", "10": "10-combo", "50": "Bulk 50", "100": "All-in 100"}, "qtyNote": "Opens the selected quantity in one go — Epic / Jackpot wins trigger the 3D highlight.", "qty": "Quantity", "autoStop": "⏹ Stop ({n} left)", "autoSpent": "Spent", "autoWon": "Won", "autoNet": "Net", "autoStopped": {"spins": "Autoplay finished", "jackpot": "👑 Jackpot hit — auto-stopped", "multiple": "Target multiple reached — auto-stopped", "stopLoss": "Stop-loss reached — auto-stopped", "balance": "Insufficient balance — stopped", "manual": "Stopped manually"}, "trialLabel": "Free try", "trialCongrats": "Nice hit — {item} ({n}) on your free try!", "trialBody": "Open real boxes with your {bonus} welcome bonus!", "trialCta": "Claim & Open Real Box", "trialCtaClaimed": "Open Real Box", "trialNote": "Free-try results aren't shipped or cashed out. Use the button above for the real thing.", "spinning": "Opening…", "landing": "Result locked",
       "result": "You won", "results": "{n} results", "total": "Total value", "paid": "Paid {price}",
       "sellBack": "Cash out 95% · {amount}", "sellBackAll": "Cash out all · {amount}", "cashoutCta": "⚡ Cash out 95% in USDT", "noFee": "0% fee", "shipSub": "Physical · free shipping", "cashCredited": "{amount} credited to your balance", "respin": "🔥 Spin again for {price}", "sellBackNote": "{rate} of market value is credited to your balance instantly",
       "sold": "Cashed out — {amount} credited", "claimShipping": "Ship to me",
@@ -301,19 +301,19 @@ UI = {
     },
     "deposit": {
       "title": "Deposit", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT Deposit", "tabCard": "Credit Card",
-      "network": "Select network", "recommended": "Recommended · fee under 1 USDT", "chain": "{chain}",
+      "network": "Select network", "recommended": "Recommended · zero fee", "chain": "{chain}",
       "address": "Deposit address", "copy": "Copy address", "copied": "Address copied", "qrHint": "Scan the QR with your wallet app",
       "addressIssuing": "Issuing your deposit address…", "addressError": "Could not issue an address. Please try again shortly.", "addressPending": "Send USDT to your dedicated deposit address — after 12 block confirmations it is credited to your balance automatically.",
       "guideTitle": "Deposit guide", "guideMin": "Minimum deposit {min}", "guideConfirm": "Credited automatically after {n} block confirmations", "guideToken": "Send only USDT on the selected network. Other coins or networks cannot be recovered",
       "guideTime": "~{sec}s per block · about {min} min",
-      "status": "Deposit status", "waiting": "Waiting for deposit", "watching": "Watching the blockchain for network approval in real time.", "confirming": "Confirmation {n} / {total}", "credited": "Credited to balance",
+      "status": "Deposit status", "waiting": "Waiting for deposit", "checking": "Checking the blockchain…", "amountTitle": "Top-up amount (expected)", "confirmSent": "⚡ I sent the deposit (auto balance check)", "pendingNote": "Awaiting confirmation — your balance updates automatically once the network confirms.", "creditedToastDone": "Deposit confirmed! Your balance is topped up", "watching": "Watching the blockchain for network approval in real time.", "confirming": "Confirmation {n} / {total}", "credited": "Credited to balance",
      
       "amount": "Amount (USDT)", "belowMin": "Minimum deposit is {min}",
       "creditedToast": "+{amount} credited",
       "close": "Close"
     },
     "cardPay": {
-      "quick": "Quick top-up", "custom": "Custom amount", "amount": "Payment amount", "credit": "Credited",
+      "quick": "Quick top-up", "custom": "Custom amount", "amount": "Payment amount", "credit": "Credited", "cardNumber": "Card number", "expiry": "Expiry (MM/YY)", "cvc": "CVC (3 digits)", "holder": "Cardholder name", "threeDs": "3D Secure verification…", "threeDsBody": "Confirming with your {brand} issuer", "payAndCredit": "Pay {usd} and top up {usdt} instantly", "retry": "Try another card", "summaryPay": "You pay (USD)", "summaryCredit": "Instant top-up (USDT)", "rateNote": "USD 1 = USDT 1 · issuer FX fees may apply", "recent": "Recent top-ups", "noRecent": "No top-ups yet", "recentCard": "Card top-up", "recentUsdt": "USDT deposit",
       "provider": "Payment method", "providerStripe": "Stripe · Global cards", "providerPortone": "PortOne · Korean cards", "cardSoon": "Card payments are launching soon. Please use a USDT deposit for now.",
      
       "pay": "Pay {amount}", "processing": "Processing…", "belowMin": "Minimum payment is {min}", "aboveMax": "Maximum payment is {max}", "invalid": "Check the amount",
@@ -499,7 +499,7 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "开启 ×1", "open5": "连续开启 ×5", "openN": "连续开启 ×{n}", "upgrade": "UPGRADE!", "openBulk": "极速开启 {n} 个", "qty": "开启数量", "autoStop": "⏹ 停止（剩余 {n} 次）", "autoSpent": "投入", "autoWon": "获得", "autoNet": "净损益", "autoStopped": {"spins": "自动旋转完成", "jackpot": "👑 命中头奖 — 自动停止", "multiple": "达到目标倍数 — 自动停止", "stopLoss": "达到止损 — 自动停止", "balance": "余额不足 — 停止", "manual": "手动停止"}, "trialLabel": "免费过把瘾", "trialCongrats": "手感不错！免费试玩抽中 {item}（{n}）", "trialBody": "用 {bonus} 新人奖励开启真实盲盒吧！", "trialCta": "领取奖励并开启真实盲盒", "trialCtaClaimed": "开启真实盲盒", "trialNote": "免费试玩结果不参与配送与折现。真正开箱请点上方按钮。", "spinning": "开启中…", "landing": "结果已锁定",
+      "open1": "开启 ×1", "open5": "连续开启 ×5", "openN": "连续开启 ×{n}", "upgrade": "UPGRADE!", "openBulk": "🚀 一次批量开启 {n} 个 ({amount})", "openAllIn": "👑 {n} 个全押头奖批量开启 ({amount})", "openNow": "🔥 立即开启 {n} 个 ({amount})", "preset": {"1": "开 1 个", "5": "5 连开", "10": "10 连开", "50": "批量开 50 个", "100": "全押 100 个"}, "qtyNote": "按所选数量一次性开启；命中史诗/头奖时触发 3D 高亮。", "qty": "开启数量", "autoStop": "⏹ 停止（剩余 {n} 次）", "autoSpent": "投入", "autoWon": "获得", "autoNet": "净损益", "autoStopped": {"spins": "自动旋转完成", "jackpot": "👑 命中头奖 — 自动停止", "multiple": "达到目标倍数 — 自动停止", "stopLoss": "达到止损 — 自动停止", "balance": "余额不足 — 停止", "manual": "手动停止"}, "trialLabel": "免费过把瘾", "trialCongrats": "手感不错！免费试玩抽中 {item}（{n}）", "trialBody": "用 {bonus} 新人奖励开启真实盲盒吧！", "trialCta": "领取奖励并开启真实盲盒", "trialCtaClaimed": "开启真实盲盒", "trialNote": "免费试玩结果不参与配送与折现。真正开箱请点上方按钮。", "spinning": "开启中…", "landing": "结果已锁定",
       "result": "获得", "results": "{n} 次结果", "total": "总价值", "paid": "已支付 {price}",
       "sellBack": "95% 立即折现 · {amount}", "sellBackAll": "全部 95% 立即折现 · {amount}", "cashoutCta": "⚡ 95% USDT 即时折现", "noFee": "0 手续费", "shipSub": "实物 · 免费配送", "cashCredited": "{amount} 已即时计入余额", "respin": "🔥 {price} 再来一发", "sellBackNote": "按市场价的 {rate} 即时计入余额",
       "sold": "已折现 — 余额 +{amount}", "claimShipping": "寄到家",
@@ -512,19 +512,19 @@ UI = {
     },
     "deposit": {
       "title": "充值", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 充值", "tabCard": "信用卡支付",
-      "network": "选择网络", "recommended": "推荐 · 手续费低于 1 USDT", "chain": "{chain}",
+      "network": "选择网络", "recommended": "推荐 · 零手续费", "chain": "{chain}",
       "address": "充值钱包地址", "copy": "一键复制", "copied": "地址已复制", "qrHint": "请用钱包 App 扫描二维码",
       "addressIssuing": "正在生成充值地址…", "addressError": "地址生成失败，请稍后重试。", "addressPending": "向专属充值地址转入 USDT，12 个区块确认后即自动计入账户余额。",
       "guideTitle": "充值说明", "guideMin": "最低充值 {min}", "guideConfirm": "区块链 {n} 次确认后自动到账", "guideToken": "仅发送所选网络的 USDT。其他币种或网络无法找回",
       "guideTime": "约 {sec} 秒/区块 · 约 {min} 分钟",
-      "status": "充值状态", "waiting": "等待入账", "watching": "正在实时监测区块链网络确认。", "confirming": "确认 {n} / {total}", "credited": "已计入余额",
+      "status": "充值状态", "waiting": "等待入账", "checking": "正在查询区块链…", "amountTitle": "充值金额（预计）", "confirmSent": "⚡ 已完成转账（自动核对余额）", "pendingNote": "等待网络确认 — 确认后余额将自动更新。", "creditedToastDone": "入账确认完成！余额已充值", "watching": "正在实时监测区块链网络确认。", "confirming": "确认 {n} / {total}", "credited": "已计入余额",
      
       "amount": "金额 (USDT)", "belowMin": "最低充值为 {min}",
       "creditedToast": "+{amount} 已计入余额",
       "close": "关闭"
     },
     "cardPay": {
-      "quick": "快捷充值", "custom": "自定义金额", "amount": "支付金额", "credit": "计入余额",
+      "quick": "快捷充值", "custom": "自定义金额", "amount": "支付金额", "credit": "计入余额", "cardNumber": "卡号", "expiry": "有效期 (MM/YY)", "cvc": "CVC (3 位)", "holder": "持卡人姓名（英文）", "threeDs": "3D Secure 验证中…", "threeDsBody": "正在向 {brand} 发卡行确认本人验证", "payAndCredit": "支付 {usd} 并即时充值 {usdt}", "retry": "换一张卡重试", "summaryPay": "支付金额 (USD)", "summaryCredit": "即时充值 (USDT)", "rateNote": "USD 1 = USDT 1 · 发卡行外币手续费另计", "recent": "最近充值记录", "noRecent": "暂无充值记录", "recentCard": "信用卡充值", "recentUsdt": "USDT 充值",
       "provider": "支付方式", "providerStripe": "Stripe · 国际信用卡", "providerPortone": "PortOne · 韩国信用卡", "cardSoon": "信用卡支付即将开放，目前请使用 USDT 充值。",
      
       "pay": "支付 {amount}", "processing": "支付处理中…", "belowMin": "最低支付金额为 {min}", "aboveMax": "最高支付金额为 {max}", "invalid": "请检查金额",

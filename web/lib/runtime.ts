@@ -14,6 +14,15 @@ export const isPreview = (): boolean => !isLive();
 
 /** 온체인 지급 준비금 지갑 — 설정된 경우에만 화면에 노출한다 */
 export const RESERVE_ADDRESS = process.env.NEXT_PUBLIC_RESERVE_ADDRESS ?? "";
+/**
+ * 플랫폼 전용 입금 지갑 — 운영자가 실제로 통제하는 주소만 env 로 넣는다. 비어 있으면 화면에 주소를 만들어 보여주지 않는다
+ * (남의 주소·가짜 주소로 송금이 일어나면 복구가 불가능하다). live 모드에서는 API 가 유저별 주소를 발급한다.
+ */
+export const DEPOSIT_ADDRESSES: Record<"TRC20" | "BEP20" | "ERC20", string> = {
+  TRC20: process.env.NEXT_PUBLIC_DEPOSIT_TRC20 ?? "",
+  BEP20: process.env.NEXT_PUBLIC_DEPOSIT_BEP20 ?? "",
+  ERC20: process.env.NEXT_PUBLIC_DEPOSIT_ERC20 ?? "",
+};
 export const RESERVE_NETWORK = (process.env.NEXT_PUBLIC_RESERVE_NETWORK ?? "TRC20") as "TRC20" | "BEP20";
 
 /** 고객지원 채널 — 푸터 */

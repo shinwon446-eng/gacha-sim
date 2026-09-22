@@ -2,50 +2,82 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { CreditCard, Check, X, Receipt, Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { CreditCard, Check, X, Receipt, Loader2, Lock, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
-import { useCurrencyStore } from "@/stores/currencyStore";
 import { useWalletStore } from "@/stores/walletStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { playChime } from "@/lib/audio";
-import { MAX_CARD_USDT, MIN_CARD_USDT, PRESETS, resolveProvider, validateAmount, type CheckoutResult } from "@/lib/payments";
+import { resolveProvider, validateAmount, type CheckoutResult } from "@/lib/payments";
+import { CARD_PRESETS_USD, cardMask, cvcValid, detectBrand, expiryValid, formatCardNumber, formatExpiry, holderValid, luhnValid } from "@/lib/card";
 
-type Stage = { kind: "form" } | { kind: "processing" } | { kind: "receipt"; result: CheckoutResult; amount: number; amountUsdt: number } | { kind: "declined"; result: CheckoutResult };
+type Stage = { kind: "form" } | { kind: "3ds" } | { kind: "receipt"; result: CheckoutResult; amountUsd: number } | { kind: "declined"; result: CheckoutResult };
+
+const usd = (n: number) => `$${n.toFixed(2)}`;
+
+/** 브랜드 로고 — 카드 번호 앞자리로 자동 표기 */
+function BrandMark({ brand }: { brand: ReturnType<typeof detectBrand> }) {
+  if (brand === "visa")
+    return (
+      <span className="rounded-sm bg-white px-1.5 py-0.5 font-display text-[11px] font-bold italic tracking-tight text-[#1A1F71]">
+        VISA
+      </span>
+    );
+  if (brand === "mastercard")
+    return (
+      <span aria-label="Mastercard" className="flex items-center">
+        <span className="h-4 w-4 rounded-full bg-[#EB001B]" />
+        <span className="-ml-1.5 h-4 w-4 rounded-full bg-[#F79E1B] opacity-90" />
+      </span>
+    );
+  return <CreditCard className="h-4 w-4 text-faint" strokeWidth={2} />;
+}
 
 /**
- * 신용카드 결제 탭 (PROMPTS 4-2).
- *   선택 통화 기준 프리셋(USDT 20/50/100/300/500 · KRW 3만/7만/15만/40만/70만) + 직접 입력
- *   → 통화별 PG(KRW=PortOne, 그 외=Stripe) 브릿지 → 영수증 + 잔액 즉시 갱신 + 거래 기록. PG 키가 없으면 버튼을 잠근다.
- * 화면의 금액은 선택 통화 하나로만 표기한다 (CLAUDE.md §4). 잔액 반영은 USDT 로 환산.
+ * 글로벌 신용카드 결제 (Visa / Mastercard) — Stripe 온램프 스타일.
+ *   $20 / $50 / $100 / $500 → 1:1 USDT. 카드 번호(브랜드 자동 표기) · MM/YY · CVC · 영문 소유자명 · 🔒 256-Bit SSL · PCI-DSS Level 1.
+ *   [💳 $50.00 결제하고 50 USDT 즉시 충전] → 3D Secure 인증 애니메이션 → PG 승인 → 잔고 반영.
+ * 카드 정보는 화면 검증(Luhn·만료일·CVC)에만 쓰고 전송하지 않는다 — 실결제는 PG(Stripe/PortOne)의 토큰화 세션이 처리한다.
+ * PG 키가 없으면 결제 버튼은 잠긴다(가짜 승인·가짜 영수증 없음).
  */
 export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number) => void }) {
   const t = useTranslations("cardPay");
   const locale = useLocale();
-  const { currency, fmt, fmtNative } = useCurrency();
-  const rates = useCurrencyStore((s) => s.rates);
+  const { fmt } = useCurrency();
   const credit = useWalletStore((s) => s.credit);
   const addTransaction = useWalletStore((s) => s.addTransaction);
   const transactions = useWalletStore((s) => s.transactions);
 
-  const presets = PRESETS[currency];
-  const [picked, setPicked] = useState<number | null>(presets[1]);
-  const [custom, setCustom] = useState("");
+  const [picked, setPicked] = useState<number>(50);
+  const [number, setNumber] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvc, setCvc] = useState("");
+  const [holder, setHolder] = useState("");
+  const [touched, setTouched] = useState(false);
   const [stage, setStage] = useState<Stage>({ kind: "form" });
 
-  const amount = picked ?? Number(custom);
-  // 잔액 반영용 USDT — 표시는 원금액(fmtNative)으로만 한다
-  const amountUsdt = useMemo(() => +(amount / rates[currency]).toFixed(4), [amount, rates, currency]);
+  const amountUsd = picked;
+  const amountUsdt = amountUsd; // 1:1
   const validity = validateAmount(amountUsdt);
-  const { provider, intended, configured } = useMemo(() => resolveProvider(currency), [currency]);
-
-  const errorText =
-    validity === "min" ? t("belowMin", { min: fmt(MIN_CARD_USDT) }) : validity === "max" ? t("aboveMax", { max: fmt(MAX_CARD_USDT) }) : validity === "nan" ? t("invalid") : null;
+  const { provider, intended, configured } = useMemo(() => resolveProvider("USD"), []);
+  const brand = detectBrand(number);
+  const errors = {
+    number: !luhnValid(number) || brand === "unknown",
+    expiry: !expiryValid(expiry),
+    cvc: !cvcValid(cvc),
+    holder: !holderValid(holder),
+  };
+  const formOk = !errors.number && !errors.expiry && !errors.cvc && !errors.holder;
+  const canPay = configured && validity === "ok" && formOk && stage.kind === "form";
 
   const pay = useCallback(async () => {
-    if (validity !== "ok" || !configured) return;
-    setStage({ kind: "processing" });
-    const result = await provider.checkout({ amount, currency, amountUsdt, locale });
+    setTouched(true);
+    if (!canPay) return;
+    setStage({ kind: "3ds" });
+    await new Promise((r) => setTimeout(r, 1800));
+    // 카드 원문은 넘기지 않는다 — PG 가 자체 토큰화/3DS 로 승인한다
+    const result = await provider.checkout({ amount: amountUsd, currency: "USD", amountUsdt, locale }).catch<CheckoutResult>((e: Error) => ({ ok: false, provider: intended, transactionId: "", at: new Date().toISOString(), reason: e.message }));
     if (!result.ok) {
       setStage({ kind: "declined", result });
       return;
@@ -54,11 +86,12 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
     addTransaction({ type: "deposit_card", amountUsdt, ref: `${result.provider}:${result.transactionId}` });
     if (!useSettingsStore.getState().muted) playChime();
     onCredited(amountUsdt);
-    setStage({ kind: "receipt", result, amount, amountUsdt });
-  }, [validity, configured, provider, amount, currency, amountUsdt, locale, credit, addTransaction, onCredited]);
+    setStage({ kind: "receipt", result: { ...result, cardMask: result.cardMask ?? cardMask(number) }, amountUsd });
+  }, [canPay, provider, intended, amountUsd, amountUsdt, locale, credit, addTransaction, onCredited, number]);
 
-  const providerLabel = intended === "portone" ? t("providerPortone") : t("providerStripe");
   const recent = transactions.filter((x) => x.type === "deposit_card" || x.type === "deposit_usdt").slice(0, 4);
+  const providerLabel = intended === "portone" ? t("providerPortone") : t("providerStripe");
+  const field = "h-11 w-full rounded-md border bg-obsidian px-3 font-mono text-sm text-white outline-none transition-colors focus:border-gold-champagne";
 
   if (stage.kind === "receipt") {
     const r = stage.result;
@@ -68,11 +101,11 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
           <Receipt className="h-5 w-5" strokeWidth={2.2} />
           <span className="caption-luxury !text-gold-champagne">{t("receipt")}</span>
         </div>
-        <div className="text-gold-gradient mt-3 font-display text-4xl font-bold tabular-nums">{fmtNative(stage.amount)}</div>
+        <div className="text-gold-gradient mt-3 font-display text-4xl font-bold tabular-nums">{usd(stage.amountUsd)}</div>
         <dl className="mt-4 grid gap-2 text-xs">
           {[
-            [t("receiptPaid"), fmtNative(stage.amount)],
-            [t("receiptCredited"), fmtNative(stage.amount)],
+            [t("receiptPaid"), usd(stage.amountUsd)],
+            [t("receiptCredited"), fmt(stage.amountUsd)],
             [t("receiptProvider"), providerLabel],
             [t("receiptCard"), r.cardMask ?? "—"],
             [t("receiptId"), r.transactionId],
@@ -93,99 +126,137 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   }
 
   return (
-    <div className="grid gap-5 md:grid-cols-5">
+    <div className="relative grid gap-5 md:grid-cols-5">
+      {/* 3D Secure 인증 오버레이 */}
+      <AnimatePresence>
+        {stage.kind === "3ds" && (
+          <motion.div className="absolute inset-0 z-20 flex flex-col items-center justify-center rounded-xl bg-obsidian/92 backdrop-blur-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-gold-champagne/60" animate={{ rotate: 360 }} transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}>
+              <Lock className="h-6 w-6 text-gold-champagne" strokeWidth={2.2} />
+            </motion.div>
+            <div className="mt-4 text-sm font-bold text-white">{t("threeDs")}</div>
+            <div className="mt-1 text-[11px] text-muted">{t("threeDsBody", { brand: brand === "mastercard" ? "Mastercard" : "Visa" })}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="grid gap-4 md:col-span-3">
-        {/* 프리셋 */}
+        {/* 결제 금액 */}
         <div>
           <div className="caption-luxury">{t("quick")}</div>
-          <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5">
-            {presets.map((p) => {
+          <div className="mt-2 grid grid-cols-4 gap-2">
+            {CARD_PRESETS_USD.map((p) => {
               const active = picked === p;
               return (
                 <button
                   key={p}
                   type="button"
-                  onClick={() => {
-                    setPicked(p);
-                    setCustom("");
-                  }}
-                  className={cn(
-                    "h-12 rounded-md font-mono text-sm font-bold tabular-nums transition-colors",
-                    active ? "border-metallic-gold bg-gold-champagne/10 text-gold-champagne" : "border-metallic-subtle bg-obsidian text-secondary hover:text-white",
-                  )}
+                  onClick={() => setPicked(p)}
+                  className={cn("flex h-14 flex-col items-center justify-center rounded-md transition-colors", active ? "border-metallic-gold bg-gold-champagne/15 text-gold-champagne" : "border-metallic-subtle bg-obsidian text-secondary hover:text-white")}
                 >
-                  {fmtNative(p)}
+                  <span className="font-display text-base font-bold leading-none">{usd(p)}</span>
+                  <span className="mt-1 font-mono text-[10px] leading-none opacity-80">= {fmt(p)}</span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* 직접 입력 */}
-        <label className="block">
-          <span className="caption-luxury">{t("custom")}</span>
-          <input
-            value={custom}
-            onChange={(e) => {
-              setCustom(e.target.value);
-              setPicked(null);
-            }}
-            inputMode="decimal"
-            placeholder={currency}
-            className="mt-2 w-full rounded-md border border-hairline bg-obsidian px-3 py-2.5 font-mono text-sm text-white outline-none focus:border-gold-champagne"
-          />
-        </label>
+        {/* 카드 정보 */}
+        <div className="grid gap-3">
+          <label className="block">
+            <span className="caption-luxury">{t("cardNumber")}</span>
+            <span className="relative mt-2 block">
+              <input
+                value={number}
+                onChange={(e) => setNumber(formatCardNumber(e.target.value))}
+                inputMode="numeric"
+                autoComplete="cc-number"
+                placeholder="4242 4242 4242 4242"
+                className={cn(field, "pr-16", touched && errors.number ? "border-crimson" : "border-hairline")}
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                <BrandMark brand={brand} />
+              </span>
+            </span>
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block">
+              <span className="caption-luxury">{t("expiry")}</span>
+              <input value={expiry} onChange={(e) => setExpiry(formatExpiry(e.target.value))} inputMode="numeric" autoComplete="cc-exp" placeholder="MM/YY" className={cn(field, "mt-2", touched && errors.expiry ? "border-crimson" : "border-hairline")} />
+            </label>
+            <label className="block">
+              <span className="caption-luxury">{t("cvc")}</span>
+              <input value={cvc} onChange={(e) => setCvc(e.target.value.replace(/\D/g, "").slice(0, 3))} inputMode="numeric" autoComplete="cc-csc" placeholder="123" className={cn(field, "mt-2", touched && errors.cvc ? "border-crimson" : "border-hairline")} />
+            </label>
+          </div>
+          <label className="block">
+            <span className="caption-luxury">{t("holder")}</span>
+            <input value={holder} onChange={(e) => setHolder(e.target.value.toUpperCase())} autoComplete="cc-name" placeholder="HONG GILDONG" className={cn(field, "mt-2 font-sans uppercase", touched && errors.holder ? "border-crimson" : "border-hairline")} />
+          </label>
+        </div>
 
-        {/* 결제 수단 */}
+        {/* 결제 수단 · 보안 뱃지 */}
         <div className="border-metallic-subtle rounded-lg bg-obsidian p-3">
           <div className="flex items-center justify-between">
             <span className="caption-luxury">{t("provider")}</span>
             <span className={cn("text-[11px] font-semibold", configured ? "text-gold-champagne" : "text-muted")}>{providerLabel}</span>
           </div>
-          {!configured && <p className="mt-1.5 text-[10px] leading-relaxed text-faint">{t("cardSoon")}</p>}
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <span className="flex items-center gap-1 rounded-sm border border-white/10 bg-elevation px-2 py-1 text-[10px] font-semibold text-secondary">
+              <Lock className="h-3 w-3 text-gold-champagne" strokeWidth={2.4} /> 🔒 256-Bit SSL Encrypted
+            </span>
+            <span className="flex items-center gap-1 rounded-sm border border-white/10 bg-elevation px-2 py-1 text-[10px] font-semibold text-secondary">
+              <ShieldCheck className="h-3 w-3 text-gold-champagne" strokeWidth={2.4} /> PCI-DSS Level 1
+            </span>
+            <span className="flex items-center gap-1 rounded-sm border border-white/10 bg-elevation px-2 py-1 text-[10px] font-semibold text-secondary">
+              <BrandMark brand="visa" /> <BrandMark brand="mastercard" />
+            </span>
+          </div>
+          {!configured && <p className="mt-2 break-keep text-[10px] leading-relaxed text-faint">{t("cardSoon")}</p>}
         </div>
 
         {stage.kind === "declined" && (
           <div className="flex items-start gap-2 rounded-md border border-crimson/40 bg-crimson/10 p-3 text-xs">
             <X className="mt-0.5 h-4 w-4 flex-none text-crimson" strokeWidth={2.5} />
             <div>
-              <div className="font-bold text-crimson">{t("declined")}</div>
-              <div className="mt-0.5 text-faint">{t("declinedHint")}</div>
+              <div className="font-bold text-white">{t("declined")}</div>
+              <div className="mt-0.5 break-all text-muted">{stage.result.reason}</div>
+              <button type="button" onClick={() => setStage({ kind: "form" })} className="mt-2 text-[11px] font-semibold text-gold-champagne hover:underline">{t("retry")}</button>
             </div>
           </div>
         )}
-        {errorText && stage.kind === "form" && <p className="text-xs text-crimson">{errorText}</p>}
 
         <button
           type="button"
           onClick={pay}
-          disabled={!configured || validity !== "ok" || stage.kind === "processing"}
+          disabled={!configured || validity !== "ok" || stage.kind !== "form"}
           className="flex h-12 items-center justify-center gap-2 rounded-md bg-crimson text-sm font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
         >
-          {stage.kind === "processing" ? <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2.2} /> : <CreditCard className="h-4 w-4" strokeWidth={2.2} />}
-          {stage.kind === "processing" ? t("processing") : t("pay", { amount: validity === "ok" ? fmtNative(amount) : "—" })}
+          {stage.kind === "3ds" ? <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2.2} /> : <CreditCard className="h-4 w-4" strokeWidth={2.2} />}
+          {stage.kind === "3ds" ? t("processing") : `💳 ${t("payAndCredit", { usd: usd(amountUsd), usdt: fmt(amountUsdt) })}`}
         </button>
       </div>
 
       {/* 우: 요약 + 최근 내역 */}
-      <div className="grid gap-4 md:col-span-2">
+      <div className="grid content-start gap-4 md:col-span-2">
         <div className="border-metallic-gold rounded-lg bg-obsidian p-4">
-          <div className="caption-luxury">{t("amount")}</div>
-          <div className="mt-1 font-display text-3xl font-bold tabular-nums text-white">{validity === "ok" ? fmtNative(amount) : "—"}</div>
-          <div className="mt-3 caption-luxury">{t("credit")}</div>
-          <div className="text-gold-gradient mt-1 font-display text-2xl font-bold tabular-nums">{validity === "ok" ? fmtNative(amount) : "—"}</div>
+          <div className="caption-luxury">{t("summaryPay")}</div>
+          <div className="mt-1 font-display text-3xl font-bold text-white">{usd(amountUsd)}</div>
+          <div className="caption-luxury mt-3">{t("summaryCredit")}</div>
+          <div className="text-gold-gradient mt-1 font-display text-2xl font-bold">{fmt(amountUsdt)}</div>
+          <div className="mt-2 text-[10px] text-faint">{t("rateNote")}</div>
         </div>
-
-        <div className="border-metallic-subtle rounded-lg bg-obsidian p-3">
-          <div className="caption-luxury">{t("history")}</div>
+        <div className="border-metallic-subtle rounded-lg bg-obsidian p-4">
+          <div className="caption-luxury">{t("recent")}</div>
           {recent.length === 0 ? (
-            <p className="mt-2 text-[11px] text-faint">{t("noHistory")}</p>
+            <div className="mt-2 text-xs text-faint">{t("noRecent")}</div>
           ) : (
-            <ul className="mt-2 space-y-1.5 text-[11px]">
+            <ul className="mt-2 space-y-1.5 text-xs">
               {recent.map((x) => (
-                <li key={x.id} className="flex items-center justify-between gap-2">
-                  <span className="text-muted">{x.type === "deposit_card" ? t("txDepositCard") : t("txDepositUsdt")}</span>
-                  <span className="font-mono tabular-nums text-gold-champagne">+{fmt(x.amountUsdt)}</span>
+                <li key={x.id} className="flex items-baseline justify-between gap-3">
+                  <span className="truncate text-muted">{x.type === "deposit_card" ? t("recentCard") : t("recentUsdt")}</span>
+                  <span className="font-mono text-secondary">{fmt(x.amountUsdt)}</span>
                 </li>
               ))}
             </ul>

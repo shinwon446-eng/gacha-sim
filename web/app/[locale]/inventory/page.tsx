@@ -325,7 +325,7 @@ export default function InventoryPage() {
         {/* ── 그리드 / 빈 화면 ── */}
         {visible.length === 0 ? (
           items.length === 0 ? (
-            <HotBoxes className="mt-6" onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+            <HotBoxes className="mt-6" onOpen={setDetail} onInspect={setDetail} />
           ) : (
             <div className="border-metallic-subtle mt-6 rounded-xl bg-surface px-6 py-12 text-center text-sm text-muted">{tab === "done" && tier === "all" ? t("inventory.emptyDone") : t("inventory.emptyFiltered")}</div>
           )

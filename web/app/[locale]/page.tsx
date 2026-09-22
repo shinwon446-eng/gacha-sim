@@ -193,14 +193,14 @@ export default function BoxesPage() {
       <LiveTicker />
 
       {/* 2. 히어로 — 다이어트판 */}
-      <BillboardHero boxes={billboard} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} onDemo={openDemo} />
+      <BillboardHero boxes={billboard} onOpen={setDetail} onInspect={setDetail} onDemo={openDemo} />
 
       {/* 3. 퀵 카테고리 탭 → 해당 캐러셀로 */}
       <QuickTabs className="pt-5" />
 
       {/* 4. 상품 우선 — TOP 10 을 히어로 바로 아래에 */}
       <div className="pt-5">
-        <NetflixRow title={t("rows.trending")} boxes={trending()} variant="top10" onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow title={t("rows.trending")} boxes={trending()} variant="top10" onOpen={setDetail} onInspect={setDetail} />
       </div>
 
       {/* 데일리 프리 박스 — 첫 캐러셀 아래, 무위험 체험 */}
@@ -212,10 +212,10 @@ export default function BoxesPage() {
 
       {/* 5. 보조 큐레이션 캐러셀 */}
       <div className="pt-10">
-        <NetflixRow id="category-dollar" title={t("rows.dollar")} boxes={dollarRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
-        <NetflixRow id="category-tech" title={t("rows.techMobility")} boxes={techRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
-        <NetflixRow id="category-luxury" title={t("rows.luxuryWatch")} boxes={luxuryRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
-        <NetflixRow id="category-jackpot" title={t("rows.guaranteed")} boxes={jackpotRow()} onOpen={(b) => openBox(b, 1)} onInspect={setDetail} />
+        <NetflixRow id="category-dollar" title={t("rows.dollar")} boxes={dollarRow()} onOpen={setDetail} onInspect={setDetail} />
+        <NetflixRow id="category-tech" title={t("rows.techMobility")} boxes={techRow()} onOpen={setDetail} onInspect={setDetail} />
+        <NetflixRow id="category-luxury" title={t("rows.luxuryWatch")} boxes={luxuryRow()} onOpen={setDetail} onInspect={setDetail} />
+        <NetflixRow id="category-jackpot" title={t("rows.guaranteed")} boxes={jackpotRow()} onOpen={setDetail} onInspect={setDetail} />
       </div>
 
       {/* 등급 범례 — 배수 기준을 한 번만 설명한다 */}
@@ -294,7 +294,7 @@ export default function BoxesPage() {
               box={box}
               edge={i % 5 === 0 ? "first" : i % 5 === 4 ? "last" : "middle"}
               onInspect={setDetail}
-              onOpen={(b) => openBox(b, 1)}
+              onOpen={setDetail}
             />
           ))}
         </div>

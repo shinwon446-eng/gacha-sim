@@ -276,7 +276,8 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
                 </h2>
 
                 {/* 수량 프리셋 */}
-                <div className="mt-4 inline-flex items-center gap-1 rounded-md border border-white/15 bg-obsidian/70 p-1" role="radiogroup" aria-label={t("unbox.qty")}>
+                {/* 수량 프리셋 — 배속으로 오해되는 1x/5x 표기 대신 '개수 + 금액' 뱃지 */}
+                <div className="mt-4 flex flex-wrap gap-1.5" role="radiogroup" aria-label={t("unbox.qty")}>
                   {OPEN_PRESETS.map((n) => (
                     <button
                       key={n}
@@ -284,9 +285,13 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
                       role="radio"
                       aria-checked={qty === n}
                       onClick={() => setQty(n)}
-                      className={cn("h-8 min-w-[2.75rem] rounded-sm px-2 font-mono text-[12px] font-bold transition-colors", qty === n ? "bg-gold-champagne text-obsidian" : "text-secondary hover:bg-white/10 hover:text-white")}
+                      className={cn(
+                        "flex h-9 items-center gap-1.5 whitespace-nowrap rounded-md border px-3 text-[12px] font-bold transition-colors",
+                        qty === n ? "border-gold-champagne bg-gold-champagne/15 text-gold-champagne shadow-[0_0_12px_rgba(230,202,101,0.25)]" : "border-white/15 bg-obsidian/70 text-secondary hover:border-white/40 hover:text-white",
+                      )}
                     >
-                      {n}x
+                      <span>{t(`unbox.preset.${n}`)}</span>
+                      <span className="font-mono text-[11px] tabular-nums opacity-80">({fmt(box.price * n)})</span>
                     </button>
                   ))}
                 </div>
@@ -298,7 +303,7 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
                     className="flex h-11 items-center gap-2 rounded-sm bg-crimson px-5 text-[14px] font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors duration-200 hover:bg-red-600"
                   >
                     <Play className="h-4 w-4 fill-current" strokeWidth={0} />
-                    {qty >= BULK_THRESHOLD ? t("unbox.openBulk", { n: qty }) : qty > 1 ? t("unbox.openN", { n: qty }) : t("unbox.open1")} · {fmt(box.price * qty)}
+                    {qty === 100 ? t("unbox.openAllIn", { n: qty, amount: fmt(box.price * qty) }) : qty >= BULK_THRESHOLD ? t("unbox.openBulk", { n: qty, amount: fmt(box.price * qty) }) : t("unbox.openNow", { n: qty, amount: fmt(box.price * qty) })}
                   </button>
 
                   {/* 프라그마틱 스타일 오토플레이 [−] [🔄 N회] [+] */}
@@ -325,6 +330,7 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
                     {t("modal.viewOdds")}
                   </a>
                 </div>
+                <p className="mt-2 break-keep text-[11px] leading-relaxed text-muted">{t("unbox.qtyNote")}</p>
               </div>
             </header>
 
