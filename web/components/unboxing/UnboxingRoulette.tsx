@@ -447,7 +447,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
     <AnimatePresence>
       <motion.div
         key="unbox"
-        className="fixed inset-0 z-[100] flex flex-col bg-obsidian/95 backdrop-blur-sm"
+        className="fixed inset-0 z-[100] flex flex-col bg-obsidian backdrop-blur-sm md:bg-obsidian/95"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

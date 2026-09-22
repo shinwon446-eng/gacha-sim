@@ -160,7 +160,7 @@ export function BulkOpenModal({ box, count, onClose, onSellBack }: Props) {
 
   return (
     <AnimatePresence>
-      <motion.div key="bulk" className="fixed inset-0 z-[100] flex flex-col bg-obsidian/95 backdrop-blur-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+      <motion.div key="bulk" className="fixed inset-0 z-[100] flex flex-col bg-obsidian backdrop-blur-sm md:bg-obsidian/95" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
         <AnimatePresence>{mega && <MegaWinFX key="mega" accent={mega} />}</AnimatePresence>
 
         {/* 헤더 */}
