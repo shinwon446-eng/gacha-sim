@@ -91,7 +91,7 @@ UI = {
     "deposit": {
       "title": "충전하기", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 입금", "tabCard": "신용카드 결제",
       "network": "네트워크 선택", "recommended": "수수료 0원 추천", "chain": "{chain}",
-      "address": "입금 지갑 주소", "copy": "원클릭 복사", "copied": "주소가 복사되었습니다", "qrHint": "지갑 앱으로 QR을 스캔하세요",
+      "address": "입금 지갑 주소", "copy": "원클릭 복사", "copied": "복사 완료", "qrHint": "지갑 앱으로 QR을 스캔하세요",
       "addressIssuing": "입금 주소를 발급하는 중입니다…", "addressError": "주소 발급에 실패했습니다. 잠시 후 다시 시도해 주세요.", "addressPending": "전용 입금 지갑 주소로 USDT 전송 시 12 블록 컨펌 후 계정 잔액에 즉시 자동 충전됩니다.",
       "guideTitle": "입금 안내", "guideMin": "최소 입금액 {min}", "guideConfirm": "블록체인 {n} 컨펌 후 자동 반영", "guideToken": "선택한 네트워크의 USDT 만 전송하세요. 다른 코인·네트워크 전송은 복구 불가",
       "guideTime": "평균 {sec}초/블록 · 약 {min}분",
@@ -301,7 +301,7 @@ UI = {
     "deposit": {
       "title": "Deposit", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT Deposit", "tabCard": "Credit Card",
       "network": "Select network", "recommended": "Recommended · zero fee", "chain": "{chain}",
-      "address": "Deposit address", "copy": "Copy address", "copied": "Address copied", "qrHint": "Scan the QR with your wallet app",
+      "address": "Deposit address", "copy": "Copy address", "copied": "Copied", "qrHint": "Scan the QR with your wallet app",
       "addressIssuing": "Issuing your deposit address…", "addressError": "Could not issue an address. Please try again shortly.", "addressPending": "Send USDT to your dedicated deposit address — after 12 block confirmations it is credited to your balance automatically.",
       "guideTitle": "Deposit guide", "guideMin": "Minimum deposit {min}", "guideConfirm": "Credited automatically after {n} block confirmations", "guideToken": "Send only USDT on the selected network. Other coins or networks cannot be recovered",
       "guideTime": "~{sec}s per block · about {min} min",
@@ -511,7 +511,7 @@ UI = {
     "deposit": {
       "title": "充值", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 充值", "tabCard": "信用卡支付",
       "network": "选择网络", "recommended": "推荐 · 零手续费", "chain": "{chain}",
-      "address": "充值钱包地址", "copy": "一键复制", "copied": "地址已复制", "qrHint": "请用钱包 App 扫描二维码",
+      "address": "充值钱包地址", "copy": "一键复制", "copied": "已复制", "qrHint": "请用钱包 App 扫描二维码",
       "addressIssuing": "正在生成充值地址…", "addressError": "地址生成失败，请稍后重试。", "addressPending": "向专属充值地址转入 USDT，12 个区块确认后即自动计入账户余额。",
       "guideTitle": "充值说明", "guideMin": "最低充值 {min}", "guideConfirm": "区块链 {n} 次确认后自动到账", "guideToken": "仅发送所选网络的 USDT。其他币种或网络无法找回",
       "guideTime": "约 {sec} 秒/区块 · 约 {min} 分钟",

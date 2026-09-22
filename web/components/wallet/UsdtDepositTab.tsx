@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrcode.react";
-import { Copy, Check, AlertTriangle, ShieldAlert, Radio, Loader2, Zap } from "lucide-react";
+import { Copy, Check, AlertTriangle, ShieldAlert, Radio, Loader2 } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { MIN_DEPOSIT_USDT, NETWORKS, looksLikeAddress, type DepositNetwork } from "@/lib/depositAddress";
@@ -205,7 +205,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
       {/* ── 우: QR + 확인 상태 + 확인 버튼 ── */}
       <div className="grid content-start gap-4 md:col-span-2">
         {address && (
-          <div className="border-metallic-gold flex flex-col items-center rounded-lg bg-white p-4">
+          <div className="border-metallic-gold mx-auto flex w-fit flex-col items-center rounded-lg bg-white p-4 md:mx-0 md:w-full">
             <QRCodeSVG value={address} size={168} level="M" bgColor="#ffffff" fgColor="#0B0B0B" includeMargin={false} />
             <span className="mt-2 text-center text-[10px] text-neutral-600">{t("qrHint")}</span>
           </div>
@@ -238,7 +238,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
           disabled={!address || busy || status.kind === "credited"}
           className="flex h-12 items-center justify-center gap-2 rounded-lg bg-gold-champagne text-sm font-bold text-obsidian shadow-[0_0_24px_rgba(230,202,101,0.35)] transition-colors hover:bg-gold-metallic disabled:cursor-not-allowed disabled:opacity-40"
         >
-          {busy ? <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2.4} /> : <Zap className="h-4 w-4" strokeWidth={2.4} />}
+          {busy && <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2.4} />}
           {busy ? t("checking") : t("confirmSent")}
         </button>
       </div>

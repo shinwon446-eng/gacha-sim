@@ -39,7 +39,7 @@ export function ShippingModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKey);
-    panelRef.current?.focus();
+    panelRef.current?.focus({ preventScroll: true });
     return () => {
       document.body.style.overflow = prev;
       window.removeEventListener("keydown", onKey);

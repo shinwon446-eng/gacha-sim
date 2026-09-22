@@ -96,7 +96,7 @@ export function WithdrawalModal({ open, onClose, onRequested }: WithdrawalModalP
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKey);
-    panelRef.current?.focus();
+    panelRef.current?.focus({ preventScroll: true });
     return () => {
       document.body.style.overflow = prev;
       window.removeEventListener("keydown", onKey);

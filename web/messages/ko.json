@@ -275,7 +275,7 @@
     "chain": "{chain}",
     "address": "입금 지갑 주소",
     "copy": "원클릭 복사",
-    "copied": "주소가 복사되었습니다",
+    "copied": "복사 완료",
     "qrHint": "지갑 앱으로 QR을 스캔하세요",
     "addressIssuing": "입금 주소를 발급하는 중입니다…",
     "addressError": "주소 발급에 실패했습니다. 잠시 후 다시 시도해 주세요.",

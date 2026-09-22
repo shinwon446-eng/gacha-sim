@@ -154,7 +154,7 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
                   onClick={() => setPicked(p)}
                   className={cn("flex h-14 flex-col items-center justify-center rounded-md transition-colors", active ? "border-metallic-gold bg-gold-champagne/15 text-gold-champagne" : "border-metallic-subtle bg-obsidian text-secondary hover:text-white")}
                 >
-                  <span className="font-display text-base font-bold leading-none">{usd(p)}</span>
+                  <span className="font-display text-sm font-bold leading-none sm:text-base">{usd(p)}</span>
                   <span className="mt-1 font-mono text-[10px] leading-none opacity-80">= {fmt(p)}</span>
                 </button>
               );
@@ -233,7 +233,7 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
           disabled={!configured || validity !== "ok" || stage.kind !== "form"}
           className="flex h-12 items-center justify-center gap-2 rounded-md bg-crimson text-sm font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
         >
-          {stage.kind === "3ds" ? <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2.2} /> : <CreditCard className="h-4 w-4" strokeWidth={2.2} />}
+          {stage.kind === "3ds" && <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2.2} />}
           {stage.kind === "3ds" ? t("processing") : `💳 ${t("payAndCredit", { usd: usd(amountUsd), usdt: fmt(amountUsdt) })}`}
         </button>
       </div>

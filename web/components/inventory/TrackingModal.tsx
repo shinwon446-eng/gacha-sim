@@ -43,7 +43,7 @@ export function TrackingModal({ item, onClose }: TrackingModalProps) {
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
-    ref.current?.focus();
+    ref.current?.focus({ preventScroll: true });
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 

@@ -275,7 +275,7 @@
     "chain": "{chain}",
     "address": "Deposit address",
     "copy": "Copy address",
-    "copied": "Address copied",
+    "copied": "Copied",
     "qrHint": "Scan the QR with your wallet app",
     "addressIssuing": "Issuing your deposit address…",
     "addressError": "Could not issue an address. Please try again shortly.",
