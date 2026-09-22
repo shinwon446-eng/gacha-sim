@@ -520,10 +520,6 @@
     "stage1": "解锁金库转轮",
     "stage2": "正在解除封印"
   },
-  "splash": {
-    "slogan": "THE ULTRA-LUXURY PROVABLY FAIR VAULT",
-    "skip": "SKIP"
-  },
   "autoplay": {
     "eyebrow": "Autoplay",
     "title": "自动旋转设置",

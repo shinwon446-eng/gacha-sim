@@ -156,7 +156,6 @@ UI = {
       "empty": "아직 게시된 후기가 없습니다. 실물을 받으셨다면 첫 후기를 남기고 10 USDT를 받아가세요.", "emptyCta": "박스 열러 가기", "close": "닫기"
     },
     "gate": {"stage1": "금고 휠 잠금 해제", "stage2": "봉인 해제 중"},
-    "splash": {"slogan": "THE ULTRA-LUXURY PROVABLY FAIR VAULT", "skip": "SKIP"},
     "autoplay": {"eyebrow": "Autoplay", "title": "오토플레이 설정", "close": "닫기", "perSpin": "회", "spins": "회전 수", "times": "{n}회", "budget": "최대 투입 {amount}", "autoSell": "⚡ 모든 당첨품 95% USDT 즉시 자동 환전 (잔고 자동 재충전)", "autoSellBody": "실물·기프트카드는 실판매가의 95%로 바로 회수해 잔고를 채웁니다. USDT 캐시백은 원래 100% 즉시 적립.", "smartStop": "스마트 정지 조건", "stopJackpot": "👑 에픽/레전더리(잭팟) 당첨 시 즉시 회전 멈춤", "stopMultiple": "단일 승리 N배 이상 시 중단", "multipleUnit": "배 이상", "stopLoss": "손실 한도(Stop Loss) 도달 시 중단", "stopLossUnit": "누적 손실", "start": "🔄 오토플레이 시작 · {n}회", "button": "🔄 오토플레이 {n}회"},
     "bulk": {"eyebrow": "대량 개봉 · {n}개", "opening": "고속 개봉 중…", "spent": "총 투입 비용", "won": "총 획득 가치", "net": "순손익", "sellAll": "⚡ {n}개 95% 즉시 회수", "keep": "보관함에 두기"},
     "ticker": {"label": "실시간 라이브 드랍", "live": "LIVE", "lineup": "{box} · {item} {mult} 잭팟", "win": "{box} ➔ {item} 획득", "cashout": "{amount} 즉시 환전", "ship": "{item} 출고 신청", "ago": "({s}초 전)"},
@@ -367,7 +366,6 @@ UI = {
       "empty": "No reviews yet. Received your item? Post the first review and take the 10 USDT bonus.", "emptyCta": "Open a box", "close": "Close"
     },
     "gate": {"stage1": "Unlocking the vault wheel", "stage2": "Breaking the seal"},
-    "splash": {"slogan": "THE ULTRA-LUXURY PROVABLY FAIR VAULT", "skip": "SKIP"},
     "autoplay": {"eyebrow": "Autoplay", "title": "Autoplay settings", "close": "Close", "perSpin": "spin", "spins": "Number of spins", "times": "{n}", "budget": "Max stake {amount}", "autoSell": "⚡ Auto cash out every win at 95% USDT (balance auto-refills)", "autoSellBody": "Physical items and gift cards are cashed out at 95% of market value right away. USDT cashback is credited 100% as always.", "smartStop": "Smart stop", "stopJackpot": "👑 Stop on Epic / Legendary (jackpot) win", "stopMultiple": "Stop on a single win of N× or more", "multipleUnit": "× or more", "stopLoss": "Stop when the loss limit is reached", "stopLossUnit": "net loss", "start": "🔄 Start autoplay · {n}", "button": "🔄 Autoplay {n}"},
     "bulk": {"eyebrow": "Bulk open · {n}", "opening": "Fast-opening…", "spent": "Total stake", "won": "Total value won", "net": "Net", "sellAll": "⚡ Cash out {n} at 95%", "keep": "Keep in vault"},
     "ticker": {"label": "Live drops", "live": "LIVE", "lineup": "{box} · {item} {mult} jackpot", "win": "{box} ➔ {item}", "cashout": "cashed out {amount}", "ship": "requested shipping for {item}", "ago": "({s}s ago)"},
@@ -578,7 +576,6 @@ UI = {
       "empty": "还没有晒单。收到实物了？发第一条晒单领取 10 USDT 奖励。", "emptyCta": "去开盲盒", "close": "关闭"
     },
     "gate": {"stage1": "解锁金库转轮", "stage2": "正在解除封印"},
-    "splash": {"slogan": "THE ULTRA-LUXURY PROVABLY FAIR VAULT", "skip": "SKIP"},
     "autoplay": {"eyebrow": "Autoplay", "title": "自动旋转设置", "close": "关闭", "perSpin": "次", "spins": "旋转次数", "times": "{n} 次", "budget": "最多投入 {amount}", "autoSell": "⚡ 所有中奖品 95% USDT 即时自动折现（余额自动补充）", "autoSellBody": "实物与礼品卡按市场价 95% 立即折现补充余额。USDT 返现一如既往 100% 即时计入。", "smartStop": "智能停止条件", "stopJackpot": "👑 命中史诗/传说（头奖）时立即停止", "stopMultiple": "单次赢得 N 倍以上时停止", "multipleUnit": "倍以上", "stopLoss": "达到止损额度时停止", "stopLossUnit": "累计亏损", "start": "🔄 开始自动旋转 · {n} 次", "button": "🔄 自动旋转 {n} 次"},
     "bulk": {"eyebrow": "批量开启 · {n} 个", "opening": "极速开启中…", "spent": "总投入", "won": "总获得价值", "net": "净损益", "sellAll": "⚡ {n} 件 95% 即时折现", "keep": "留在仓库"},
     "ticker": {"label": "实时开箱动态", "live": "LIVE", "lineup": "{box} · {item} {mult} 头奖", "win": "{box} ➔ 开出 {item}", "cashout": "已折现 {amount}", "ship": "申请发货 {item}", "ago": "（{s} 秒前）"},

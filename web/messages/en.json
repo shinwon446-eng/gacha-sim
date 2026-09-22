@@ -520,10 +520,6 @@
     "stage1": "Unlocking the vault wheel",
     "stage2": "Breaking the seal"
   },
-  "splash": {
-    "slogan": "THE ULTRA-LUXURY PROVABLY FAIR VAULT",
-    "skip": "SKIP"
-  },
   "autoplay": {
     "eyebrow": "Autoplay",
     "title": "Autoplay settings",
