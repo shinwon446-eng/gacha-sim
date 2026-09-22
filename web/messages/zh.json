@@ -673,11 +673,14 @@
     "amlRule": "流水进度达到 100% 方可提现",
     "amlProgress": "当前进度 {pct}%",
     "amlRemaining": "再开启 {amount} 即可提现",
-    "amlMet": "✓ 流水已达 100%（可提现）",
-    "amlBlocked": "根据反洗钱规定，请先将充值金额(100%)用于开启盲盒，之后即可安全提现。（当前进度：{pct}%）",
+    "amlMet": "✓ 流水已达标（可提现）",
+    "amlBlocked": "根据反洗钱规定，流水达到 100% 后方可提现。（当前：{pct}%）",
     "amlWhy": "此规定用于阻断充值后立刻转出的诈骗与洗钱资金。没有充值记录的余额不受影响。",
     "amlDeposited": "累计充值",
-    "amlWagered": "累计开启"
+    "amlWagered": "累计开启",
+    "amlRequired": "所需流水",
+    "amlCurrent": "已完成流水",
+    "amlGrinding": "保底折现率 90% 以上的超低风险盲盒，开启金额仅按 {pct}% 计入流水——无法用无风险刷量绕过规定。"
   },
   "vip": {
     "title": "VIP 等级 {tier}",

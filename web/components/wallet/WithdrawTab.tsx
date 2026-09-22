@@ -11,7 +11,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { playChime } from "@/lib/audio";
 import type { Network } from "@/lib/depositAddress";
 import { EXPLORERS, MIN_WITHDRAW_USDT, WITHDRAW_NETWORKS, WITHDRAW_NETWORK_BY_KEY, explorerTxUrl, maxWithdrawable, netReceive, validateWithdrawal, type WithdrawError } from "@/lib/withdrawal";
-import { rolloverMet, rolloverProgress, rolloverRemaining } from "@/lib/rollover";
+import { LOW_RISK_WEIGHT, requiredRollover, rolloverProgress } from "@/lib/rollover";
 import { isLive } from "@/lib/runtime";
 import { api } from "@/lib/api";
 import { useFairStore } from "@/stores/fairStore";
@@ -71,11 +71,12 @@ function TxLink({ network, hash, compact, t, copied, onCopy }: { network: Networ
 /** 🛡️ 자금세탁 방지(AML) 롤오버 바 — 입금액의 100% 를 개봉에 소진해야 출금이 열린다 */
 function RolloverBar({ t }: { t: TFn }) {
   const { fmt } = useCurrency();
-  const totalDeposited = useWalletStore((s) => s.totalDeposited);
-  const totalWagered = useWalletStore((s) => s.totalWagered);
-  const pct = rolloverProgress(totalWagered, totalDeposited);
+  const depositedCrypto = useWalletStore((s) => s.totalDepositedCrypto);
+  const current = useWalletStore((s) => s.totalWagered);
+  const required = requiredRollover(depositedCrypto);
+  const pct = rolloverProgress(current, depositedCrypto);
   const met = pct >= 100;
-  const remaining = rolloverRemaining(totalWagered, totalDeposited);
+  const remaining = +Math.max(0, required - current).toFixed(2);
   return (
     <div className={cn("mt-4 rounded-lg p-3", met ? "border border-emerald-500/40 bg-emerald-500/[0.07]" : "border-metallic-gold bg-gold-champagne/[0.06]")}>
       <div className="flex items-start gap-2">
@@ -91,14 +92,16 @@ function RolloverBar({ t }: { t: TFn }) {
       </div>
       <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-[10px] text-faint">
         <span className="flex items-baseline gap-1">
-          {t("amlDeposited")} <span className="font-mono text-secondary">{fmt(totalDeposited)}</span>
+          {t("amlRequired")} <span className="font-mono text-secondary">{fmt(required)}</span>
         </span>
         <span className="flex items-baseline gap-1">
-          {t("amlWagered")} <span className="font-mono text-secondary">{fmt(totalWagered)}</span>
+          {t("amlCurrent")} <span className="font-mono text-secondary">{fmt(current)}</span>
         </span>
       </div>
       {!met && remaining > 0 && <div className="mt-1.5 break-keep text-[11px] font-semibold text-white">{t("amlRemaining", { amount: fmt(remaining) })}</div>}
-      <p className="mt-2 break-keep text-[10px] leading-relaxed text-faint">{t("amlWhy")}</p>
+      {/* 안티 그라인딩 — 저위험 상자만 반복해 롤오버를 채우는 우회를 막는다 */}
+      <p className="mt-2 break-keep text-[10px] leading-relaxed text-faint">{t("amlGrinding", { pct: Math.round(LOW_RISK_WEIGHT * 100) })}</p>
+      <p className="mt-1 break-keep text-[10px] leading-relaxed text-faint">{t("amlWhy")}</p>
     </div>
   );
 }
@@ -117,7 +120,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const rates = useCurrencyStore((s) => s.rates);
   const balance = useWalletStore((s) => s.cryptoBalance);
   const cardBalance = useWalletStore((s) => s.cardBalance);
-  const totalDeposited = useWalletStore((s) => s.totalDeposited);
+  const totalDepositedCrypto = useWalletStore((s) => s.totalDepositedCrypto);
   const totalWagered = useWalletStore((s) => s.totalWagered);
   const debitCrypto = useWalletStore((s) => s.debitCrypto);
   const addTransaction = useWalletStore((s) => s.addTransaction);
@@ -160,8 +163,8 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const amountOk = !errors.includes("nan") && !errors.includes("min") && !errors.includes("insufficient");
   const net = amountOk ? netReceive(amountUsdt, network) : 0;
 
-  const amlPct = rolloverProgress(totalWagered, totalDeposited);
-  const amlOk = rolloverMet(totalWagered, totalDeposited);
+  const amlPct = rolloverProgress(totalWagered, totalDepositedCrypto);
+  const amlOk = amlPct >= 100;
 
   /** 잔액의 일정 비율을 입력창에 넣는다 (선택 통화 단위) */
   const setRatio = (ratio: number) => {

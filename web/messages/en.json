@@ -673,11 +673,14 @@
     "amlRule": "Withdrawals unlock at 100% rollover",
     "amlProgress": "Currently {pct}%",
     "amlRemaining": "Open {amount} more to unlock withdrawals",
-    "amlMet": "✓ Rollover 100% met (withdrawals unlocked)",
-    "amlBlocked": "Under our AML rule you can withdraw safely once you have spent 100% of your deposits on opening boxes. (Currently: {pct}%)",
+    "amlMet": "✓ Rollover met (withdrawal approved)",
+    "amlBlocked": "Under our AML rule, withdrawals unlock at 100% rollover. (Currently: {pct}%)",
     "amlWhy": "This blocks scam and phishing funds from being deposited and pulled straight back out. Balances with no deposit history are not affected.",
     "amlDeposited": "Deposited",
-    "amlWagered": "Wagered"
+    "amlWagered": "Wagered",
+    "amlRequired": "Required rollover",
+    "amlCurrent": "Completed",
+    "amlGrinding": "Ultra-low-risk boxes (guaranteed floor of 90% or more) count only {pct}% of what you open toward the rollover — risk-free grinding cannot bypass the rule."
   },
   "vip": {
     "title": "VIP tier {tier}",

@@ -8,7 +8,8 @@ import { Wallet, Truck, ShieldCheck, X, Volume2, VolumeX, Play } from "lucide-re
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
-import { dropTable, sellValueOf, REFUND_RATE, type ProductBox, type ProductItem } from "@/lib/products";
+import { dropTable, floorRatio, sellValueOf, REFUND_RATE, type ProductBox, type ProductItem } from "@/lib/products";
+import { rolloverContribution } from "@/lib/rollover";
 import { formatMultiple, glow, tierOf, type Tier } from "@/lib/tiers";
 import { canAfford, netOf, remainingSpins, stopReasonAfter, type AutoplayConfig, type AutoplayState, type StopReason } from "@/lib/autoplay";
 import { calculateRollResult, determineItem } from "@/lib/fairness";
@@ -373,7 +374,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
           const plan = debitSplit(box.price);
           if (!plan) { reason = "balance"; break; }
           fundingRef.current = plan.ratio; // 이 스핀의 족보
-          addTransaction({ type: "open", amountUsdt: -box.price, ref: `${box.slug}x1:auto` });
+          addTransaction({ type: "open", amountUsdt: -box.price, ref: `${box.slug}x1:auto`, rolloverUsdt: rolloverContribution(box.price, floorRatio(box)) });
           st.spent = +(st.spent + box.price).toFixed(2);
           const r = await spinOnce(REEL_DURATION_MULTI_S);
           if (cancelled.current) return;

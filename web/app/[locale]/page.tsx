@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/format";
-import { BOXES, CATEGORY_FILTERS, SORTS, byCategory, heroBox, sortBoxes, type BoxCategory, type ProductBox, type SortKey } from "@/lib/products";
+import { BOXES, CATEGORY_FILTERS, SORTS, byCategory, floorRatio, heroBox, sortBoxes, type BoxCategory, type ProductBox, type SortKey } from "@/lib/products";
+import { rolloverContribution } from "@/lib/rollover";
 import { BillboardHero } from "@/components/home/BillboardHero";
 import { OnboardingStrip } from "@/components/home/OnboardingStrip";
 import { LiveCounters } from "@/components/home/LiveCounters";
@@ -133,7 +134,8 @@ export default function BoxesPage() {
         pushToast({ title: t("unbox.insufficient", { price: fmt(cost) }), body: t("unbox.topUp"), tone: "#E50914" });
         return;
       }
-      addTransaction({ type: "open", amountUsdt: -cost, ref: `${box.slug}x${count}` });
+      // 롤오버 인정액 — 저위험(바닥 환전율 90%+) 상자는 30% 만 (lib/rollover.ts)
+      addTransaction({ type: "open", amountUsdt: -cost, ref: `${box.slug}x${count}`, rolloverUsdt: rolloverContribution(cost, floorRatio(box)) });
       setDetail(null);
       if (count >= BULK_THRESHOLD) setBulk({ box, count, funding: plan.ratio });
       else setUnbox({ box, count, funding: plan.ratio });

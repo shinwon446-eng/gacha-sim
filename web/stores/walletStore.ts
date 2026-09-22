@@ -24,6 +24,11 @@ export interface Transaction {
   at: string;
   /** 부가 정보 — PG 거래 id, 네트워크, 박스 slug 등 */
   ref?: string;
+  /**
+   * 이 개봉이 롤오버에 인정되는 금액(USDT). 저위험 상자는 개봉액의 30% 만 잡힌다 (lib/rollover.ts).
+   * 없으면 개봉액 전액으로 본다. 배송비처럼 롤오버와 무관한 지출은 0 을 준다.
+   */
+  rolloverUsdt?: number;
   /** 출금처럼 비동기 처리되는 거래의 진행 상태 */
   status?: TxStatus;
   /** 온체인 TxID — BROADCASTING 이후 */
@@ -40,6 +45,10 @@ interface WalletState {
   transactions: Transaction[];
   /** 롤오버(자금세탁 방지) 누계 — addTransaction 이 자동으로 적립한다. lib/rollover.ts 참고 */
   totalDeposited: number;
+  /** 크립토 입금 누계 — 필요 롤오버의 기준(카드 입금분은 온체인 출금이 애초에 불가하므로 제외) */
+  totalDepositedCrypto: number;
+  totalDepositedCard: number;
+  /** 가중치가 반영된 누적 롤오버 달성액 */
   totalWagered: number;
   /** 웰컴 보너스 수령 여부 — 브라우저당 1회 */
   welcomeClaimed: boolean;
@@ -72,17 +81,22 @@ export const useWalletStore = create<WalletState>()(
       cardBalance: 0,
       transactions: [],
       totalDeposited: 0,
+      totalDepositedCrypto: 0,
+      totalDepositedCard: 0,
       totalWagered: 0,
       welcomeClaimed: false,
       hydrated: false,
       addTransaction: (tx) => {
         const rec: Transaction = { ...tx, id: `tx_${Date.now().toString(36)}_${Math.floor(Math.random() * 1e6).toString(36)}`, at: new Date().toISOString() };
-        // 롤오버 누계는 여기서만 늘어난다 — 입금(+)은 요구액, 개봉(−)은 소진액
-        const deposited = rec.type === "deposit_usdt" || rec.type === "deposit_card" ? Math.max(0, rec.amountUsdt) : 0;
-        const wagered = rec.type === "open" ? Math.abs(Math.min(0, rec.amountUsdt)) : 0;
+        // 롤오버 누계는 여기서만 늘어난다 — 입금(+)은 요구액, 개봉(−)은 가중치가 반영된 인정액
+        const depositedCrypto = rec.type === "deposit_usdt" ? Math.max(0, rec.amountUsdt) : 0;
+        const depositedCard = rec.type === "deposit_card" ? Math.max(0, rec.amountUsdt) : 0;
+        const wagered = rec.type === "open" ? (typeof rec.rolloverUsdt === "number" ? Math.max(0, rec.rolloverUsdt) : Math.abs(Math.min(0, rec.amountUsdt))) : 0;
         set((s) => ({
           transactions: [rec, ...s.transactions].slice(0, 200),
-          totalDeposited: +(s.totalDeposited + deposited).toFixed(2),
+          totalDepositedCrypto: +(s.totalDepositedCrypto + depositedCrypto).toFixed(2),
+          totalDepositedCard: +(s.totalDepositedCard + depositedCard).toFixed(2),
+          totalDeposited: +(s.totalDeposited + depositedCrypto + depositedCard).toFixed(2),
           totalWagered: +(s.totalWagered + wagered).toFixed(2),
         }));
         return rec;
@@ -115,14 +129,22 @@ export const useWalletStore = create<WalletState>()(
     {
       name: "gachaflix.wallet",
       storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ balance: s.balance, cryptoBalance: s.cryptoBalance, cardBalance: s.cardBalance, transactions: s.transactions, welcomeClaimed: s.welcomeClaimed, totalDeposited: s.totalDeposited, totalWagered: s.totalWagered }),
-      version: 3,
+      partialize: (s) => ({ balance: s.balance, cryptoBalance: s.cryptoBalance, cardBalance: s.cardBalance, transactions: s.transactions, welcomeClaimed: s.welcomeClaimed, totalDeposited: s.totalDeposited, totalDepositedCrypto: s.totalDepositedCrypto, totalDepositedCard: s.totalDepositedCard, totalWagered: s.totalWagered }),
+      version: 4,
       // v0 → v1: 출금 상태명 PROCESSING → BROADCASTING
       // v1 → v2: 롤오버 누계 신설 — 남아 있는 거래 기록에서 되살린다
       migrate: (persisted, version) => {
         const s = persisted as { transactions?: Transaction[]; totalDeposited?: number; totalWagered?: number };
         if (version < 1 && Array.isArray(s.transactions)) {
           s.transactions = s.transactions.map((x) => ((x.status as string) === "PROCESSING" ? { ...x, status: "BROADCASTING" } : x));
+        }
+        if (version < 4) {
+          // v3 → v4: 필요 롤오버를 크립토 입금분 기준으로 — 남은 거래 기록에서 되살린다
+          const w = persisted as { transactions?: Transaction[]; totalDeposited?: number; totalDepositedCrypto?: number; totalDepositedCard?: number };
+          const txs = Array.isArray(w.transactions) ? w.transactions : [];
+          w.totalDepositedCrypto = +txs.filter((x) => x.type === "deposit_usdt").reduce((n, x) => n + Math.max(0, x.amountUsdt), 0).toFixed(2);
+          w.totalDepositedCard = +txs.filter((x) => x.type === "deposit_card").reduce((n, x) => n + Math.max(0, x.amountUsdt), 0).toFixed(2);
+          w.totalDeposited = +(w.totalDepositedCrypto + w.totalDepositedCard).toFixed(2);
         }
         if (version < 3) {
           // v2 → v3: 원천 분리 신설. 카드 결제 도입 전 잔액은 전부 암호화폐분으로 본다.

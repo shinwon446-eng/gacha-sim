@@ -185,11 +185,11 @@ UI = {
       "processingNote": "출금은 보안 검토 후 서명·브로드캐스트됩니다. 완료되면 TxID와 익스플로러 링크가 여기에 표시됩니다.", "networkNote": "출금 신청 즉시 블록체인 네트워크로 전송되며, 온체인 트랜잭션이 TronScan/BscScan에서 실시간 조회됩니다.",
       "requestedToast": "출금 신청 완료 — {amount} 차감",
       "quick25": "+25%", "quick50": "+50%", "quickMax": "전액 출금", "submitAmount": "🚀 {amount} 내 지갑으로 즉시 출금 신청", "submitting": "블록체인 네트워크 전송 준비 중…",
-      "amlTitle": "🛡️ 자금세탁 방지(AML) 규정", "amlRule": "롤오버 진행률 100% 달성 시 출금 가능", "amlProgress": "현재 달성률 {pct}%", "amlRemaining": "출금까지 {amount} 더 개봉하면 됩니다",
-      "amlMet": "✓ 롤오버 100% 충족 (출금 가능)",
-      "amlBlocked": "자금세탁 방지 규정에 따라 입금액(100%)을 상자 개봉에 소진하신 후 안전하게 출금하실 수 있습니다. (현재 달성률: {pct}%)",
+      "amlTitle": "🛡️ 자금세탁 방지(AML) 규정", "amlRule": "롤오버 달성률 100% 도달 시 출금 가능", "amlProgress": "현재 달성률 {pct}%", "amlRemaining": "출금까지 {amount} 더 개봉하면 됩니다",
+      "amlMet": "✓ 롤오버 충족 (출금 승인 가능)",
+      "amlBlocked": "자금세탁 방지 규정에 따라 롤오버 100% 달성 후 출금 가능합니다. (현재: {pct}%)",
       "amlWhy": "입금 직후 그대로 빠져나가는 보이스피싱·삼자사기 자금을 막기 위한 규정입니다. 입금 이력이 없는 잔액에는 적용되지 않습니다.",
-      "amlDeposited": "총 입금", "amlWagered": "총 개봉"
+      "amlDeposited": "총 입금", "amlWagered": "총 개봉", "amlRequired": "필요 롤오버", "amlCurrent": "달성 롤오버", "amlGrinding": "최저 보장 환전율이 90% 이상인 초저위험 상자는 개봉 금액의 {pct}% 만 롤오버로 인정됩니다 — 손실 없는 반복 개봉으로 규정을 우회할 수 없습니다."
     },
     "vip": {"title": "VIP 등급 {tier}", "tiers": {"member": "멤버", "silver": "실버", "gold": "골드", "black": "블랙"}},
     "footer": {
@@ -403,10 +403,10 @@ UI = {
       "requestedToast": "Withdrawal submitted — {amount} deducted",
       "quick25": "+25%", "quick50": "+50%", "quickMax": "Withdraw all", "submitAmount": "🚀 Withdraw {amount} to my wallet", "submitting": "Preparing the on-chain transfer…",
       "amlTitle": "🛡️ Anti-Money-Laundering (AML) rule", "amlRule": "Withdrawals unlock at 100% rollover", "amlProgress": "Currently {pct}%", "amlRemaining": "Open {amount} more to unlock withdrawals",
-      "amlMet": "✓ Rollover 100% met (withdrawals unlocked)",
-      "amlBlocked": "Under our AML rule you can withdraw safely once you have spent 100% of your deposits on opening boxes. (Currently: {pct}%)",
+      "amlMet": "✓ Rollover met (withdrawal approved)",
+      "amlBlocked": "Under our AML rule, withdrawals unlock at 100% rollover. (Currently: {pct}%)",
       "amlWhy": "This blocks scam and phishing funds from being deposited and pulled straight back out. Balances with no deposit history are not affected.",
-      "amlDeposited": "Deposited", "amlWagered": "Wagered"
+      "amlDeposited": "Deposited", "amlWagered": "Wagered", "amlRequired": "Required rollover", "amlCurrent": "Completed", "amlGrinding": "Ultra-low-risk boxes (guaranteed floor of 90% or more) count only {pct}% of what you open toward the rollover — risk-free grinding cannot bypass the rule."
     },
     "vip": {"title": "VIP tier {tier}", "tiers": {"member": "Member", "silver": "Silver", "gold": "Gold", "black": "Black"}},
     "footer": {
@@ -620,10 +620,10 @@ UI = {
       "requestedToast": "提现申请已提交 — 已扣除 {amount}",
       "quick25": "+25%", "quick50": "+50%", "quickMax": "全额提现", "submitAmount": "🚀 立即提现 {amount} 到我的钱包", "submitting": "正在准备链上转账…",
       "amlTitle": "🛡️ 反洗钱(AML)规定", "amlRule": "流水进度达到 100% 方可提现", "amlProgress": "当前进度 {pct}%", "amlRemaining": "再开启 {amount} 即可提现",
-      "amlMet": "✓ 流水已达 100%（可提现）",
-      "amlBlocked": "根据反洗钱规定，请先将充值金额(100%)用于开启盲盒，之后即可安全提现。（当前进度：{pct}%）",
+      "amlMet": "✓ 流水已达标（可提现）",
+      "amlBlocked": "根据反洗钱规定，流水达到 100% 后方可提现。（当前：{pct}%）",
       "amlWhy": "此规定用于阻断充值后立刻转出的诈骗与洗钱资金。没有充值记录的余额不受影响。",
-      "amlDeposited": "累计充值", "amlWagered": "累计开启"
+      "amlDeposited": "累计充值", "amlWagered": "累计开启", "amlRequired": "所需流水", "amlCurrent": "已完成流水", "amlGrinding": "保底折现率 90% 以上的超低风险盲盒，开启金额仅按 {pct}% 计入流水——无法用无风险刷量绕过规定。"
     },
     "vip": {"title": "VIP 等级 {tier}", "tiers": {"member": "会员", "silver": "白银", "gold": "黄金", "black": "黑金"}},
     "footer": {

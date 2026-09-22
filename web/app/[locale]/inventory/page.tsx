@@ -8,7 +8,8 @@ import { cn } from "@/lib/format";
 import { Link } from "@/i18n/navigation";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
-import { BOX_BY_SLUG, REFUND_RATE, type ProductBox, type ProductItem } from "@/lib/products";
+import { BOX_BY_SLUG, REFUND_RATE, floorRatio, type ProductBox, type ProductItem } from "@/lib/products";
+import { rolloverContribution } from "@/lib/rollover";
 import { TIERS, TIER_BY_KEY, glow, type TierKey } from "@/lib/tiers";
 import type { ShippingAddress } from "@/lib/shipping";
 import { isLive } from "@/lib/runtime";
@@ -155,7 +156,7 @@ export default function InventoryPage() {
     if (!shipTarget) return;
     if (!debit(fee)) return;
     requestShipping(shipTarget, address, fee);
-    if (fee > 0) addTransaction({ type: "open", amountUsdt: -fee, ref: `shipping:${address.country}` });
+    if (fee > 0) addTransaction({ type: "open", amountUsdt: -fee, ref: `shipping:${address.country}`, rolloverUsdt: 0 });
     say(t("inventory.shipRequestedToast"), "#93C5FD");
     setShipTarget(null);
     setSelected(new Set());
@@ -170,7 +171,8 @@ export default function InventoryPage() {
         say(t("unbox.insufficient", { price: fmt(cost) }), "#E50914");
         return;
       }
-      addTransaction({ type: "open", amountUsdt: -cost, ref: `${box.slug}x${count}` });
+      // 롤오버 인정액 — 저위험(바닥 환전율 90%+) 상자는 30% 만 (lib/rollover.ts)
+      addTransaction({ type: "open", amountUsdt: -cost, ref: `${box.slug}x${count}`, rolloverUsdt: rolloverContribution(cost, floorRatio(box)) });
       setDetail(null);
       if (count >= BULK_THRESHOLD) setBulk({ box, count, funding: plan.ratio });
       else setUnbox({ box, count, funding: plan.ratio });

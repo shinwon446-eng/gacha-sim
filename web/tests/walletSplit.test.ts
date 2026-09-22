@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 const reset = async () => {
   const { useWalletStore } = await import("../stores/walletStore");
   const { useInventoryStore } = await import("../stores/inventoryStore");
-  useWalletStore.setState({ balance: 0, cryptoBalance: 0, cardBalance: 0, transactions: [], totalDeposited: 0, totalWagered: 0, welcomeClaimed: false });
+  useWalletStore.setState({ balance: 0, cryptoBalance: 0, cardBalance: 0, transactions: [], totalDeposited: 0, totalDepositedCrypto: 0, totalDepositedCard: 0, totalWagered: 0, welcomeClaimed: false });
   useInventoryStore.setState({ items: [] });
   return { useWalletStore, useInventoryStore };
 };
@@ -100,4 +100,37 @@ test("롤오버 누계: 입금은 요구액, 개봉은 소진액으로 잡힌다
   const s = useWalletStore.getState();
   assert.equal(s.totalDeposited, 100);
   assert.equal(s.totalWagered, 30, "환급은 롤오버를 되돌리지 않는다");
+});
+
+test("안티 그라인딩: 저위험 상자 개봉은 30% 만 롤오버에 잡힌다", async () => {
+  const { useWalletStore } = await reset();
+  const w = useWalletStore.getState();
+  w.addTransaction({ type: "deposit_usdt", amountUsdt: 100 });
+  // 잭팟(바닥 95%) 100 USDT 개봉 → 인정 30
+  w.addTransaction({ type: "open", amountUsdt: -100, ref: "jackpot-supercar x1", rolloverUsdt: 30 });
+  let s = useWalletStore.getState();
+  assert.equal(s.totalDepositedCrypto, 100);
+  assert.equal(s.totalWagered, 30);
+  // 1달러 상자(바닥 85%) 70 USDT 개봉 → 전액 인정
+  w.addTransaction({ type: "open", amountUsdt: -70, ref: "dollar-apple x70", rolloverUsdt: 70 });
+  s = useWalletStore.getState();
+  assert.equal(s.totalWagered, 100, "30 + 70 = 100 → 충족");
+});
+
+test("카드 입금은 필요 롤오버(크립토 기준)를 늘리지 않는다", async () => {
+  const { useWalletStore } = await reset();
+  const w = useWalletStore.getState();
+  w.addTransaction({ type: "deposit_card", amountUsdt: 500 });
+  const s = useWalletStore.getState();
+  assert.equal(s.totalDepositedCrypto, 0);
+  assert.equal(s.totalDepositedCard, 500);
+  assert.equal(s.totalDeposited, 500, "표시용 합계는 그대로");
+});
+
+test("배송비 같은 비개봉 지출(rolloverUsdt: 0)은 롤오버를 채우지 않는다", async () => {
+  const { useWalletStore } = await reset();
+  const w = useWalletStore.getState();
+  w.addTransaction({ type: "deposit_usdt", amountUsdt: 100 });
+  w.addTransaction({ type: "open", amountUsdt: -15, ref: "shipping:KR", rolloverUsdt: 0 });
+  assert.equal(useWalletStore.getState().totalWagered, 0);
 });

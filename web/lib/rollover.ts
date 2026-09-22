@@ -29,3 +29,38 @@ export function rolloverRemaining(totalWagered: number, totalDeposited: number):
   const required = Math.max(0, totalDeposited) * ROLLOVER_MULTIPLIER;
   return +Math.max(0, required - Math.max(0, totalWagered)).toFixed(2);
 }
+
+/* ── 2단계: 안티 그라인딩 가중치 (2026-09-23) ─────────────────────────────
+ * 바닥 환전율이 높은 상자는 사실상 손실이 거의 없다 — 그런 상자만 반복해서(그라인딩)
+ * 롤오버를 채우고 빠져나가는 세탁을 막기 위해, 저위험 상자는 개봉액의 일부만 인정한다.
+ *   rolloverContribution = boxPrice × (isLowRisk ? 0.3 : 1.0)
+ */
+
+/** 이 비율 이상이면 초저위험 상자 */
+export const LOW_RISK_FLOOR_RATIO = 0.9;
+/** 초저위험 상자의 롤오버 인정 비율 */
+export const LOW_RISK_WEIGHT = 0.3;
+/** 일반(중·고위험) 상자의 인정 비율 */
+export const NORMAL_WEIGHT = 1;
+
+/** 바닥 환전율(0~1) → 초저위험 여부 */
+export function isLowRiskBox(floorRatio: number): boolean {
+  return Number.isFinite(floorRatio) && floorRatio >= LOW_RISK_FLOOR_RATIO;
+}
+
+/** 바닥 환전율 → 롤오버 인정 가중치 */
+export function rolloverWeight(floorRatio: number): number {
+  return isLowRiskBox(floorRatio) ? LOW_RISK_WEIGHT : NORMAL_WEIGHT;
+}
+
+/** 이번 개봉이 롤오버에 얼마나 잡히는지 (USDT) */
+export function rolloverContribution(spentUsdt: number, floorRatio: number): number {
+  const spent = Number.isFinite(spentUsdt) ? Math.max(0, spentUsdt) : 0;
+  return +(spent * rolloverWeight(floorRatio)).toFixed(2);
+}
+
+/** 필요 롤오버 = 크립토 입금액 × 요구 배수 (카드 입금분은 애초에 온체인 출금이 불가하므로 제외) */
+export function requiredRollover(totalDepositedCrypto: number): number {
+  const deposited = Number.isFinite(totalDepositedCrypto) ? Math.max(0, totalDepositedCrypto) : 0;
+  return +(deposited * ROLLOVER_MULTIPLIER).toFixed(2);
+}
