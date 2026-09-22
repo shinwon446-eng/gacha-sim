@@ -108,12 +108,50 @@
 
 ---
 
+## 7. 보안 규정 — 자금세탁·카드깡·삼자사기 차단 (2026-09-23 운영자 지시)
+
+랜덤박스 플랫폼은 "입금 → 곧바로 출금"이 가능한 순간 자금세탁 통로가 된다. 두 겹으로 막는다.
+
+### A. 100% 롤오버 (Wager Requirement) — `lib/rollover.ts`
+
+- **규칙**: 출금은 **입금액의 100% 이상을 상자 개봉에 소진**한 뒤에만 열린다.
+  `진행률 = min(100, floor(총개봉액 / max(1, 총입금액) × 100))`
+- 누계는 `walletStore.totalDeposited / totalWagered` 가 `addTransaction` 에서 자동 적립한다(입금 `deposit_usdt|deposit_card`, 개봉 `open`). 환급(sellback)은 롤오버를 되돌리지 않는다.
+- **입금 이력이 없는 잔액은 묶지 않는다** — `max(1, 총입금액)` 이므로 1 USDT 만 개봉해도 100%.
+- 출금 탭 상단에 🛡️ AML 바(진행률 %, 총 입금/총 개봉, 잔여 개봉액, 사유)를 띄우고, 미달이면 버튼을 잠그고 경고 토스트(`withdraw.amlBlocked`)를 낸다. 충족 시 녹색 `✓ 롤오버 100% 충족 (출금 가능)`.
+
+### B. 자산 원천 분리 · 인벤토리 족보 추적 (Tainted Asset Tracking) — `lib/funding.ts`
+
+카드 결제분이 "개봉 → 환전 → 코인 출금"으로 빠져나가는 카드깡·차지백 경로를 원천 차단한다.
+
+| 항목 | 규칙 |
+|---|---|
+| 잔액 버킷 | `cryptoBalance`(USDT 온체인 입금분, 출금 가능) / `cardBalance`(카드 결제분, **온체인 출금 불가** — 개봉·실물 배송·카드 환불 전용). `balance` 는 둘의 합으로만 산출된다(어긋날 수 없다) |
+| 개봉 차감 | `debitSplit` — 암호화폐 우선 소진, 모자라면 카드와 결합(Mixed). 합계가 모자라면 차감하지 않는다 |
+| 아이템 족보 | 당첨 인스턴스에 `fundingSource: crypto \| card \| mixed` 와 `fundingRatio: {crypto, card}` 를 영구 기록 |
+| 환급 귀속 | card 출처 → 100% `cardBalance`, crypto 출처 → 100% `cryptoBalance`, mixed → 비율대로 분할(반올림 오차는 카드 쪽에 몰아 합계 보존). **교차 환급 금지** |
+| 출금 차감 | `debitCrypto` 만 사용 — 카드 잔액은 어떤 경로로도 온체인에 나가지 않는다 |
+| 구버전 기록 | 족보가 없는 과거 아이템·잔액은 전부 `crypto` 로 간주(`normalizeRatio`), 지갑 persist v3 마이그레이션이 `balance → cryptoBalance` 로 옮긴다 |
+
+- UI: 헤더 잔액 알약이 카드분이 있을 때 `↗ {crypto} / 💳 {card}` 로 분리 표기하고, 지갑 모달은 [출금 가능 잔액(USDT 입금분)] / [플레이·배송 전용 잔액(카드 충전분)] 2열로 보여준다.
+- 함정: `UnboxingRoulette` 은 `box=null` 로 미리 마운트돼 있다 — 족보 ref 를 프롭 변화에 동기화하지 않으면 첫 마운트 값(crypto)이 박혀 카드 자금 개봉이 crypto 로 기록된다(2026-09-23 실제 발생·수정).
+- 검증: `tests/funding.test.ts`, `tests/walletSplit.test.ts` 가 "카드 충전 → 개봉 → 환전 → 출금 시도" 전 구간을 막는지 확인한다.
+
+### C. 지갑 UI 통합 (모바일 출금 누락 해소)
+
+- 지갑 모달은 3탭 — [USDT 입금] / [신용카드 결제] / [↗ 출금]. 출금 본문은 `WithdrawTab` 하나를 출금 모달과 공유한다.
+- 모바일에서도 헤더에 콤팩트 골드 [↗ 출금] 뱃지가 항상 보이고, 하단 내비 4번째는 [💳 지갑 (입출금)], 보관함 볼트 카드에는 [🚀 잔액 출금하기] 골드 버튼이 있다.
+- 출금 수량 퀵 버튼 [+25%] [+50%] [전액 출금], 신청 버튼은 `🚀 {금액} 내 지갑으로 즉시 출금 신청`(골드). 누르면 1.5초 전송 준비 후 신청이 접수된다.
+- **네트워크 수수료** TRC-20 1.00 / BEP-20 **0.50** USDT (2026-09-23 조정), 최소 출금 20 USDT.
+- TxID·영수증은 부록 C 원칙 그대로 — live(API)가 준 실제 TxID 만 TronScan/BscScan 링크로 노출하고, 백엔드가 없으면 PENDING 에 머문다(가짜 해시 없음).
+
 ## 부록 A. 계승 규범 (v2~v4 → v5)
 
 v5 본문이 다루지 않는 항목은 이전 규범을 유지한다. 코드가 이미 이 값으로 구현되어 있다.
 
 - **색·표면 토큰** obsidian `#0B0B0B` / canvas `#141414` / surface `#181818`, champagne `#E6CA65` / metallic `#D4AF37`, crimson `#E50914`. **등급** ROYAL `#E6CA65`(20x+) / PRESTIGE `#93C5FD`(6~20x) / EXECUTIVE `#C084FC`(2~6x) / CURATED `#94A3B8`.
 - **홈 계층 (2026-09-22 모바일 퍼스트 개편)** 티커 → 히어로 → **스티키 퀵 탭** → **단일 그리드(탭 필터)** → 데일리 프리 박스 → 3-Step + 지표 → 인증 피드 → 푸터. TOP 10 · 카테고리 캐러셀(NetflixRow) · 전체 그리드로 3중 나열하던 것을 그리드 하나로 일원화했다(세로 길이 ~10,000px → ~3,600px). **카드** 16:9 콤팩트, 모바일 패딩 슬림(뱃지 축약 `card.noBlankShort`/`settleShort`), 데스크톱 호버 1.05x + 플로팅 패널.
+- **[전체] 탭 구역화 (2026-09-23)** 전체 탭은 12박스를 섞어 늘어놓지 않고 4대 카테고리 소제목(`sections.*`: 🔥 1달러의 행복 / ⚡ 애플 & 하이엔드 테크 / 👑 럭셔리 명품 & 스위스 워치 / 🚗 슈퍼카 & 순금 골드바 잭팟)으로 구역을 나눠 각 3박스를 보여준다 — 모바일에서 뒤쪽 카테고리가 누락된 것처럼 보이던 문제를 없앤다. 소제목 옆 가격대는 데이터에서 계산한다. 탭 바 우측에는 페이드 + `.swipe-hint` ➔ 가 더 있음을 알린다.
 - **모바일 규범 (2026-09-22)** ① 헤더 `h-14` 고정, 퀵 탭 `sticky top-14 z-40 bg-obsidian/95 backdrop-blur-md`, 탭 클릭 시 `scrollIntoView({inline:"center"})` 로 중앙 정렬 + 그리드(`#boxes`, scroll-mt 118px)로 스크롤, 양끝 딤 페이드는 그 방향으로 더 스와이프할 수 있을 때만. ② `components/layout/MobileBottomNav.tsx` — `fixed bottom-0 h-14 md:hidden`, 레이아웃이 `pb-16 md:pb-0` 으로 푸터까지 보호. [💳 충전]은 홈에서 즉시 모달(`stores/uiStore.ts`), 다른 페이지에선 `/#deposit` 으로 이동해 연다. [👑 1달러 잭팟] = `/#category-dollar`(홈이 hashchange 로 탭 전환). 모바일 헤더의 텍스트 내비·충전 버튼은 `hidden md:flex`(하단 내비가 대신). ③ **position: sticky 주의** — `overflow-x: hidden` 은 `html` 에만 건다. body 나 main 에 걸면 그것이 스크롤 컨테이너가 되어 스티키 헤더·탭이 뷰포트에 붙지 않는다(실제로 그렇게 깨져 있던 것을 고침). ④ 언어별 줄바꿈은 `globals.css` 의 `html[lang]` 규칙 — ko `keep-all`(+ `overflow-wrap: break-word`; `anywhere` 는 min-content 를 바꿔 로고까지 쪼갬), en `break-word` + `-0.01em` 트래킹, zh `break-all`. ⑤ 금액 문자열은 숫자와 단위 사이가 NBSP(`formatCurrency` `NBSP`) 라 어디에 끼워도 "1 / USDT" 로 안 갈라지고, `<Money>` 는 `whitespace-nowrap tabular-nums`. 버튼 카피는 `whitespace-nowrap text-xs sm:text-sm`.
 - **확률 노출 정책 (2026-09-21)** 카드·호버·상세 모달 본문에는 소수점 확률을 쓰지 않는다. 대신 [최고 N배 잭팟] · [환수율 RTP x%] · [최소 y% 환급 보장] 3수치와 게임형 등급 바(`Tier.gameLabel`: LEGENDARY=ROYAL / EPIC=PRESTIGE / RARE=EXECUTIVE / CASHBACK=CURATED — 색은 위 등급색 그대로)만 보인다. 정밀 확률표는 상세 모달의 접힌 "정밀 확률표 · Provably Fair" 섹션과 `/fairness` 에서만 연다(공개 자체는 유지).
 - **룰렛 3단계 연출** Phase 1 속도 기반 모션 블러(≤14px) → Phase 2 감속 구간(55~96%)에서 ROYAL/PRESTIGE 타일 근처 0.3배속 + 골드 스파크 보더(`.reel-tension`) → Phase 3 ROYAL/PRESTIGE 적중 시 `MegaWinFX`(화이트→골드 플래시 · 충격파 · 코인 샤워 · 컨페티) + 결과 카드 3D 줌인. 감속 구간에는 `SHOWCASE_OFFSETS` 자리에 고등급 타일을 심는다 — 결과 칸은 Provably Fair 로 먼저 확정되며 연출이 바꾸지 않는다.

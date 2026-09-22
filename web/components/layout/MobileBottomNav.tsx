@@ -76,9 +76,9 @@ export function MobileBottomNav() {
         <span aria-hidden className="text-lg leading-none">📦</span>
         <span className="truncate">{t("vault")}</span>
       </Link>
-      <button type="button" onClick={deposit} className={cn(item, "text-crimson active:text-red-400")}>
+      <button type="button" onClick={deposit} className={cn(item, "text-gold-champagne active:text-gold-metallic")}>
         <span aria-hidden className="text-lg leading-none">💳</span>
-        <span className="truncate">{t("deposit")}</span>
+        <span className="truncate">{t("wallet")}</span>
       </button>
     </nav>
   );

@@ -19,6 +19,7 @@ import { playWin, playTaDum } from "@/lib/audio";
 import { ProductArt } from "@/components/box/ProductArt";
 import { Money } from "@/components/ui/Money";
 import { MegaWinFX } from "@/components/unboxing/MegaWinFX";
+import { CRYPTO_ONLY, type FundingRatio } from "@/lib/funding";
 
 export interface BulkResult {
   ownedId: string;
@@ -32,7 +33,9 @@ interface Props {
   count: number;
   onClose: () => void;
   /** 미정산(실물·디지털) 당첨의 일괄 회수 — 호출측이 잔액에 반영한다 */
-  onSellBack: (ids: string[], amountUsdt: number) => void;
+  onSellBack: (ids: string[], amountUsdt: number, split?: { toCrypto: number; toCard: number }) => void;
+  /** 이 개봉에 쓰인 잔액의 원천 비율 — 당첨 아이템 족보로 박힌다 */
+  funding?: FundingRatio;
 }
 
 /** 스펙: 대량 개봉은 릴 없이 1.5초 고속 개봉 */
@@ -57,7 +60,7 @@ function CountUp({ value, className, style }: { value: number; className?: strin
  * 릴은 생략하고 1.5초 고속 개봉 연출 뒤 요약 그리드: 상단 [총 투입 vs 총 획득 가치 · 순손익] 카운트업,
  * 최고 등급 카드는 골드 스파크 + 3D 플로팅 하이라이트. 캐시백은 확정 즉시 100% 잔액에 적립된다.
  */
-export function BulkOpenModal({ box, count, onClose, onSellBack }: Props) {
+export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPTO_ONLY }: Props) {
   const t = useTranslations("bulk");
   const tr = useTranslations();
   const { fmt } = useCurrency();
@@ -65,6 +68,7 @@ export function BulkOpenModal({ box, count, onClose, onSellBack }: Props) {
   const addOwned = useInventoryStore((s) => s.add);
   const sellOwned = useInventoryStore((s) => s.sell);
   const credit = useWalletStore((s) => s.credit);
+  const creditSplit = useWalletStore((s) => s.creditSplit);
   const addTransaction = useWalletStore((s) => s.addTransaction);
   const [phase, setPhase] = useState<"opening" | "done">("opening");
   const [progress, setProgress] = useState(0);
@@ -92,12 +96,12 @@ export function BulkOpenModal({ box, count, onClose, onSellBack }: Props) {
         return { item, tier: tierOf(item.value, box.price), nonce: nonces[i], roll: r.roll };
       });
       // 보관함에 한 번에 넣고(persist 1회), 캐시백은 한 번에 정산한다
-      const owned = addOwned(picked.map((p) => ({ itemId: p.item.id, boxSlug: box.slug, valueUsdt: p.item.value, tier: p.tier.key, fair: { serverSeedHash, serverSeed, clientSeed, nonce: p.nonce, roll: p.roll } })));
+      const owned = addOwned(picked.map((p) => ({ itemId: p.item.id, boxSlug: box.slug, valueUsdt: p.item.value, tier: p.tier.key, fair: { serverSeedHash, serverSeed, clientSeed, nonce: p.nonce, roll: p.roll }, fundingRatio: funding })));
       const out: BulkResult[] = picked.map((p, i) => ({ ownedId: owned[i].id, item: p.item, tier: p.tier, settled: p.item.kind === "cash" }));
       const cashIds = out.filter((r) => r.settled).map((r) => r.ownedId);
       if (cashIds.length > 0) {
-        const { totalUsdt } = sellOwned(cashIds, 1);
-        credit(totalUsdt);
+        const { totalUsdt, toCrypto, toCard } = sellOwned(cashIds, 1);
+        creditSplit(toCrypto, toCard);
         addTransaction({ type: "sellback", amountUsdt: totalUsdt, ref: `${box.slug}:cashback x${cashIds.length}` });
       }
       // 1.5초 고속 개봉 연출 — 결과는 이미 확정돼 있고 카운터만 흘러간다
@@ -251,8 +255,8 @@ export function BulkOpenModal({ box, count, onClose, onSellBack }: Props) {
                   onClick={() => {
                     setSold(true);
                     const ids = pending.map((r) => r.ownedId);
-                    const { totalUsdt } = sellOwned(ids, REFUND_RATE);
-                    onSellBack(ids, totalUsdt || sellAmount);
+                    const { totalUsdt, toCrypto, toCard } = sellOwned(ids, REFUND_RATE);
+                    onSellBack(ids, totalUsdt || sellAmount, { toCrypto, toCard });
                   }}
                   className="flex h-12 flex-col items-center justify-center rounded-lg bg-gold-champagne text-obsidian transition-colors hover:bg-gold-metallic disabled:opacity-40"
                 >

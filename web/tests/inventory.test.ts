@@ -77,7 +77,7 @@ test("배송비: 모든 국가에 정액이 있고 KR 이 가장 싸다", () => 
 test("지갑: 출금 거래는 status 를 갖고 PENDING → BROADCASTING(TxID) → COMPLETED 로 갱신된다", async () => {
   const { useWalletStore } = await import("../stores/walletStore");
   const w = useWalletStore.getState();
-  useWalletStore.setState({ balance: 100, transactions: [] });
+  useWalletStore.setState({ balance: 100, cryptoBalance: 100, cardBalance: 0, transactions: [] });
   assert.ok(w.debit(50));
   const tx = w.addTransaction({ type: "withdraw", amountUsdt: -50, ref: "TRC20:Txxx", status: "PENDING" });
   assert.equal(useWalletStore.getState().balance, 50);
@@ -92,7 +92,7 @@ test("지갑: 출금 거래는 status 를 갖고 PENDING → BROADCASTING(TxID) 
 
 test("지갑: 웰컴 보너스는 브라우저당 1회만 지급된다", async () => {
   const { useWalletStore, WELCOME_BONUS_USDT } = await import("../stores/walletStore");
-  useWalletStore.setState({ balance: 0, transactions: [], welcomeClaimed: false });
+  useWalletStore.setState({ balance: 0, cryptoBalance: 0, cardBalance: 0, transactions: [], welcomeClaimed: false });
   const w = useWalletStore.getState();
   assert.equal(WELCOME_BONUS_USDT, 5);
   assert.ok(w.claimWelcome());

@@ -26,8 +26,9 @@ UI = {
     },
     "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "noBlankShort": "꽝 없음 · 최소 {value}", "settleBadge": "전 품목 95% USDT 즉시 정산", "settleShort": "95% 즉시 정산", "upTo": "최고 {n} 잭팟", "rtp": "RTP {rate}%", "floorPct": "최소 {pct}% 환급", "guaranteed": "보장", "openNow": "바로 열기", "contents": "상세 정보", "details": "{title} 상세 정보", "expand": "확대"},
     "grid": {"title": "전체 박스", "sort": "정렬", "loadMore": "더 보기 ({n}개)"},
-    "mobileNav": {"aria": "빠른 이동", "home": "홈", "dollar": "1달러 잭팟", "vault": "내 보관함", "deposit": "충전 (+)"},
+    "mobileNav": {"aria": "빠른 이동", "home": "홈", "dollar": "1달러 잭팟", "vault": "내 보관함", "deposit": "충전 (+)", "wallet": "지갑 (입출금)"},
     "categories": {"all": "전체", "dollar": "🔥 1달러의 행복", "tech": "⚡ 애플&테크", "luxury": "👑 명품&시계", "jackpot": "🚗 슈퍼카&골드바"},
+    "sections": {"dollar": "🔥 1달러의 행복", "tech": "⚡ 애플 & 하이엔드 테크", "luxury": "👑 럭셔리 명품 & 스위스 워치", "jackpot": "🚗 슈퍼카 & 순금 골드바 잭팟"},
     "sorts": {"featured": "추천순", "price-asc": "가격 낮은순", "price-desc": "가격 높은순", "popularity": "인기순"},
     "tiers": {
       "legendTitle": "등급 = 실판매가 ÷ 오픈가",
@@ -89,7 +90,7 @@ UI = {
       "fairNote": "이 결과는 아래 시드와 Nonce 로 결정됐습니다. [이 결과 검증]에서 그대로 재현할 수 있습니다."
     },
     "deposit": {
-      "title": "충전하기", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 입금", "tabCard": "신용카드 결제", "tabWithdraw": "출금",
+      "title": "충전하기", "eyebrow": "Wallet · Deposit", "eyebrowWithdraw": "Wallet · Withdraw", "tabUsdt": "USDT 입금", "tabCard": "신용카드 결제", "tabWithdraw": "출금",
       "network": "네트워크 선택", "recommended": "수수료 0원 추천", "chain": "{chain}",
       "address": "입금 지갑 주소", "copy": "원클릭 복사", "copied": "복사 완료", "qrHint": "지갑 앱으로 QR을 스캔하세요",
       "addressIssuing": "입금 주소를 발급하는 중입니다…", "addressError": "주소 발급에 실패했습니다. 잠시 후 다시 시도해 주세요.", "addressPending": "전용 입금 지갑 주소로 USDT 전송 시 12 블록 컨펌 후 계정 잔액에 즉시 자동 충전됩니다.",
@@ -114,7 +115,7 @@ UI = {
     "inventory": {
       "title": "보관함", "eyebrow": "My Vault", "empty": "보관 중인 아이템이 없습니다. 박스를 열어 채워보세요.", "goBoxes": "박스 보러 가기",
       "summary": "총 아이템 {n}개 · 보관 중인 총 가치 {value}", "storedCount": "보관 중 {n}", "shippingCount": "배송 {n}", "soldCount": "환전 완료 {n}",
-      "filterStatus": "상태", "filterTier": "등급", "all": "전체", "tabHeld": "보유 중 ({n})", "tabDone": "처리 완료 ({n})", "cashableValue": "즉시 환전 가능한 총 가치", "doneSold": "95% 환전 완료 +{amount}", "doneCash": "캐시백 적립 +{amount}", "archived": "처리 완료", "doneShipping": "배송 출발", "donePreparing": "출고 준비", "emptyDone": "아직 처리 완료된 내역이 없습니다. 환전하거나 배송한 상품이 여기에 보관됩니다.",
+      "filterStatus": "상태", "filterTier": "등급", "all": "전체", "tabHeld": "보유 중 ({n})", "tabDone": "처리 완료 ({n})", "cashableValue": "즉시 환전 가능한 총 가치", "withdrawBalance": "🚀 잔액 출금하기", "doneSold": "95% 환전 완료 +{amount}", "doneCash": "캐시백 적립 +{amount}", "archived": "처리 완료", "doneShipping": "배송 출발", "donePreparing": "출고 준비", "emptyDone": "아직 처리 완료된 내역이 없습니다. 환전하거나 배송한 상품이 여기에 보관됩니다.",
       "status": {"IN_STORAGE": "보관 중", "SHIPPING_REQUESTED": "배송 준비 중", "SHIPPING": "배송 중", "SOLD": "환전 완료"},
       "acquired": "획득 {date}", "from": "{box}", "soldFor": "환급 {amount}", "tracking": "운송장", "trackingPending": "운송장 발급 대기",
       "sell": "⚡ 95% USDT 즉시 회수", "noFee": "수수료 0%", "ship": "📦 우리 집으로 배송", "sellShort": "⚡ 95% 즉시 회수", "shipShort": "📦 집으로 배송", "verify": "공정성 1초 검증", "select": "선택", "selected": "{n}개 선택", "selectAll": "전체 선택", "clearSelection": "선택 해제",
@@ -175,14 +176,20 @@ UI = {
       "emptyPayouts": "아직 지급 기록이 없습니다.", "emptyShipments": "아직 출고 기록이 없습니다.", "emptyCta": "박스 열러 가기", "pendingTx": "전송 대기", "settledInstant": "즉시 정산"
     },
     "withdraw": {
-      "title": "USDT 출금", "close": "닫기", "available": "출금 가능 잔액", "network": "출금 네트워크", "address": "받는 지갑 주소", "addressHint": "{hint} 로 시작하는 주소",
+      "title": "USDT 출금", "close": "닫기", "available": "출금 가능 잔액", "availableCrypto": "출금 가능 잔액 (USDT 입금분)", "cardLocked": "플레이·배송 전용 잔액 (카드 충전분)", "cardLockedNote": "카드로 충전한 금액과 그 환급금은 상자 개봉·실물 배송·카드 환불에만 쓰이며 온체인 출금은 되지 않습니다.", "network": "출금 네트워크", "address": "받는 지갑 주소", "addressHint": "{hint} 로 시작하는 주소",
       "amount": "출금 수량", "min": "최소 {min}", "max": "전액", "fee": "네트워크 수수료", "feeShort": "수수료", "net": "최종 실 수령액", "netLabel": "최종 실 수령액",
       "submit": "출금 신청 완료", "requested": "출금 신청 접수", "txId": "거래 ID", "at": "신청 시각", "another": "추가 출금", "done": "확인", "history": "최근 출금",
       "status": {"PENDING": "검토 중", "BROADCASTING": "전송 중", "COMPLETED": "완료"},
       "txHash": "온체인 TxID", "txHashPending": "브로드캐스트 후 TxID가 표시됩니다", "copyHash": "TxID 복사", "viewOnExplorer": "{explorer}에서 확인",
       "errors": {"TRC20": "TRC-20 주소는 T 로 시작하는 34자입니다", "BEP20": "BEP-20 주소는 0x 로 시작하는 42자입니다", "min": "최소 출금 수량은 {min}입니다", "insufficient": "잔액이 부족합니다", "nan": "출금 수량을 입력하세요"},
       "processingNote": "출금은 보안 검토 후 서명·브로드캐스트됩니다. 완료되면 TxID와 익스플로러 링크가 여기에 표시됩니다.", "networkNote": "출금 신청 즉시 블록체인 네트워크로 전송되며, 온체인 트랜잭션이 TronScan/BscScan에서 실시간 조회됩니다.",
-      "requestedToast": "출금 신청 완료 — {amount} 차감"
+      "requestedToast": "출금 신청 완료 — {amount} 차감",
+      "quick25": "+25%", "quick50": "+50%", "quickMax": "전액 출금", "submitAmount": "🚀 {amount} 내 지갑으로 즉시 출금 신청", "submitting": "블록체인 네트워크 전송 준비 중…",
+      "amlTitle": "🛡️ 자금세탁 방지(AML) 규정", "amlRule": "롤오버 진행률 100% 달성 시 출금 가능", "amlProgress": "현재 달성률 {pct}%", "amlRemaining": "출금까지 {amount} 더 개봉하면 됩니다",
+      "amlMet": "✓ 롤오버 100% 충족 (출금 가능)",
+      "amlBlocked": "자금세탁 방지 규정에 따라 입금액(100%)을 상자 개봉에 소진하신 후 안전하게 출금하실 수 있습니다. (현재 달성률: {pct}%)",
+      "amlWhy": "입금 직후 그대로 빠져나가는 보이스피싱·삼자사기 자금을 막기 위한 규정입니다. 입금 이력이 없는 잔액에는 적용되지 않습니다.",
+      "amlDeposited": "총 입금", "amlWagered": "총 개봉"
     },
     "vip": {"title": "VIP 등급 {tier}", "tiers": {"member": "멤버", "silver": "실버", "gold": "골드", "black": "블랙"}},
     "footer": {
@@ -236,8 +243,9 @@ UI = {
     },
     "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "noBlankShort": "No blanks · Min {value}", "settleBadge": "Every item cashes out 95% in USDT", "settleShort": "95% cash-out", "upTo": "Up to {n} jackpot", "rtp": "RTP {rate}%", "floorPct": "Min {pct}% back", "guaranteed": "guaranteed", "openNow": "Open now", "contents": "Details", "details": "{title} details", "expand": "Expand"},
     "grid": {"title": "All Boxes", "sort": "Sort", "loadMore": "Load more ({n})"},
-    "mobileNav": {"aria": "Quick navigation", "home": "Home", "dollar": "$1 Jackpot", "vault": "Vault", "deposit": "Deposit (+)"},
+    "mobileNav": {"aria": "Quick navigation", "home": "Home", "dollar": "$1 Jackpot", "vault": "Vault", "deposit": "Deposit (+)", "wallet": "Wallet"},
     "categories": {"all": "All", "dollar": "🔥 $1 Boxes", "tech": "⚡ Apple & Tech", "luxury": "👑 Luxury & Watches", "jackpot": "🚗 Supercars & Gold"},
+    "sections": {"dollar": "🔥 $1 Happiness", "tech": "⚡ Apple & High-End Tech", "luxury": "👑 Luxury & Swiss Watches", "jackpot": "🚗 Supercars & Gold Bars"},
     "sorts": {"featured": "Featured", "price-asc": "Price: Low to High", "price-desc": "Price: High to Low", "popularity": "Popularity"},
     "tiers": {
       "legendTitle": "Tier = market value ÷ open price",
@@ -299,7 +307,7 @@ UI = {
       "fairNote": "This result was determined by the seeds and nonce below. Reproduce it exactly under [Verify this result]."
     },
     "deposit": {
-      "title": "Deposit", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT Deposit", "tabCard": "Credit Card", "tabWithdraw": "Withdraw",
+      "title": "Deposit", "eyebrow": "Wallet · Deposit", "eyebrowWithdraw": "Wallet · Withdraw", "tabUsdt": "USDT Deposit", "tabCard": "Credit Card", "tabWithdraw": "Withdraw",
       "network": "Select network", "recommended": "Recommended · zero fee", "chain": "{chain}",
       "address": "Deposit address", "copy": "Copy address", "copied": "Copied", "qrHint": "Scan the QR with your wallet app",
       "addressIssuing": "Issuing your deposit address…", "addressError": "Could not issue an address. Please try again shortly.", "addressPending": "Send USDT to your dedicated deposit address — after 12 block confirmations it is credited to your balance automatically.",
@@ -324,7 +332,7 @@ UI = {
     "inventory": {
       "title": "Inventory", "eyebrow": "My Vault", "empty": "Nothing in your vault yet. Open a box to fill it.", "goBoxes": "Browse boxes",
       "summary": "{n} items · Total value in vault {value}", "storedCount": "In vault {n}", "shippingCount": "Shipping {n}", "soldCount": "Sold {n}",
-      "filterStatus": "Status", "filterTier": "Tier", "all": "All", "tabHeld": "Holding ({n})", "tabDone": "Settled ({n})", "cashableValue": "Total cash-out value now", "doneSold": "Cashed out 95% +{amount}", "doneCash": "Cashback credited +{amount}", "archived": "Settled", "doneShipping": "Shipped", "donePreparing": "Preparing shipment", "emptyDone": "Nothing settled yet. Items you cash out or ship are archived here.",
+      "filterStatus": "Status", "filterTier": "Tier", "all": "All", "tabHeld": "Holding ({n})", "tabDone": "Settled ({n})", "cashableValue": "Total cash-out value now", "withdrawBalance": "🚀 Withdraw balance", "doneSold": "Cashed out 95% +{amount}", "doneCash": "Cashback credited +{amount}", "archived": "Settled", "doneShipping": "Shipped", "donePreparing": "Preparing shipment", "emptyDone": "Nothing settled yet. Items you cash out or ship are archived here.",
       "status": {"IN_STORAGE": "In Vault", "SHIPPING_REQUESTED": "Preparing shipment", "SHIPPING": "Shipping", "SOLD": "Sold"},
       "acquired": "Acquired {date}", "from": "{box}", "soldFor": "Refunded {amount}", "tracking": "Tracking", "trackingPending": "Awaiting tracking number",
       "sell": "⚡ Cash out 95% USDT", "noFee": "0% fee", "ship": "📦 Ship to my door", "sellShort": "⚡ Cash out 95%", "shipShort": "📦 Ship home", "verify": "1-second fairness check", "select": "Select", "selected": "{n} selected", "selectAll": "Select all", "clearSelection": "Clear",
@@ -385,14 +393,20 @@ UI = {
       "emptyPayouts": "No payouts recorded yet.", "emptyShipments": "No shipments recorded yet.", "emptyCta": "Open a box", "pendingTx": "Awaiting broadcast", "settledInstant": "Settled instantly"
     },
     "withdraw": {
-      "title": "Withdraw USDT", "close": "Close", "available": "Available balance", "network": "Withdrawal network", "address": "Destination wallet address", "addressHint": "Address starting with {hint}",
+      "title": "Withdraw USDT", "close": "Close", "available": "Available balance", "availableCrypto": "Withdrawable (USDT deposits)", "cardLocked": "Play & shipping only (card top-ups)", "cardLockedNote": "Card top-ups and any refunds from them can only be used to open boxes, ship items or be refunded to the card — never withdrawn on-chain.", "network": "Withdrawal network", "address": "Destination wallet address", "addressHint": "Address starting with {hint}",
       "amount": "Amount", "min": "Min {min}", "max": "MAX", "fee": "Network fee", "feeShort": "Fee", "net": "You receive", "netLabel": "Net amount you receive",
       "submit": "Submit withdrawal", "requested": "Withdrawal submitted", "txId": "Transaction ID", "at": "Submitted at", "another": "New withdrawal", "done": "Done", "history": "Recent withdrawals",
       "status": {"PENDING": "Pending", "BROADCASTING": "Broadcasting", "COMPLETED": "Completed"},
       "txHash": "On-chain TxID", "txHashPending": "The TxID appears after broadcast", "copyHash": "Copy TxID", "viewOnExplorer": "View on {explorer}",
       "errors": {"TRC20": "A TRC-20 address is 34 characters starting with T", "BEP20": "A BEP-20 address is 42 characters starting with 0x", "min": "Minimum withdrawal is {min}", "insufficient": "Insufficient balance", "nan": "Enter an amount"},
       "processingNote": "Withdrawals are signed and broadcast after a security review. The TxID and explorer link appear here once complete.", "networkNote": "Withdrawals are sent to the blockchain network as soon as they are requested, and the on-chain transaction can be viewed live on TronScan / BscScan.",
-      "requestedToast": "Withdrawal submitted — {amount} deducted"
+      "requestedToast": "Withdrawal submitted — {amount} deducted",
+      "quick25": "+25%", "quick50": "+50%", "quickMax": "Withdraw all", "submitAmount": "🚀 Withdraw {amount} to my wallet", "submitting": "Preparing the on-chain transfer…",
+      "amlTitle": "🛡️ Anti-Money-Laundering (AML) rule", "amlRule": "Withdrawals unlock at 100% rollover", "amlProgress": "Currently {pct}%", "amlRemaining": "Open {amount} more to unlock withdrawals",
+      "amlMet": "✓ Rollover 100% met (withdrawals unlocked)",
+      "amlBlocked": "Under our AML rule you can withdraw safely once you have spent 100% of your deposits on opening boxes. (Currently: {pct}%)",
+      "amlWhy": "This blocks scam and phishing funds from being deposited and pulled straight back out. Balances with no deposit history are not affected.",
+      "amlDeposited": "Deposited", "amlWagered": "Wagered"
     },
     "vip": {"title": "VIP tier {tier}", "tiers": {"member": "Member", "silver": "Silver", "gold": "Gold", "black": "Black"}},
     "footer": {
@@ -446,8 +460,9 @@ UI = {
     },
     "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "noBlankShort": "不落空 · 保底 {value}", "settleBadge": "全品类 95% USDT 即时结算", "settleShort": "95% 即时结算", "upTo": "最高 {n} 头奖", "rtp": "RTP {rate}%", "floorPct": "最低 {pct}% 返还", "guaranteed": "保底", "openNow": "立即开", "contents": "详情", "details": "{title} 详情", "expand": "展开"},
     "grid": {"title": "全部盲盒", "sort": "排序", "loadMore": "加载更多（{n}）"},
-    "mobileNav": {"aria": "快捷导航", "home": "首页", "dollar": "1美元大奖", "vault": "保管箱", "deposit": "充值 (+)"},
+    "mobileNav": {"aria": "快捷导航", "home": "首页", "dollar": "1美元大奖", "vault": "保管箱", "deposit": "充值 (+)", "wallet": "钱包(存提)"},
     "categories": {"all": "全部", "dollar": "🔥 1 美元盲盒", "tech": "⚡ 苹果与科技", "luxury": "👑 奢品与腕表", "jackpot": "🚗 超跑与金条"},
+    "sections": {"dollar": "🔥 1 美元的幸福", "tech": "⚡ 苹果与高端科技", "luxury": "👑 奢侈名品与瑞士腕表", "jackpot": "🚗 超跑与纯金金条头奖"},
     "sorts": {"featured": "推荐", "price-asc": "价格从低到高", "price-desc": "价格从高到低", "popularity": "人气"},
     "tiers": {
       "legendTitle": "等级 = 市场价 ÷ 开启价",
@@ -509,7 +524,7 @@ UI = {
       "fairNote": "本次结果由以下种子与 Nonce 决定。可在[验证本次结果]中完整复现。"
     },
     "deposit": {
-      "title": "充值", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 充值", "tabCard": "信用卡支付", "tabWithdraw": "提现",
+      "title": "充值", "eyebrow": "Wallet · Deposit", "eyebrowWithdraw": "Wallet · Withdraw", "tabUsdt": "USDT 充值", "tabCard": "信用卡支付", "tabWithdraw": "提现",
       "network": "选择网络", "recommended": "推荐 · 零手续费", "chain": "{chain}",
       "address": "充值钱包地址", "copy": "一键复制", "copied": "已复制", "qrHint": "请用钱包 App 扫描二维码",
       "addressIssuing": "正在生成充值地址…", "addressError": "地址生成失败，请稍后重试。", "addressPending": "向专属充值地址转入 USDT，12 个区块确认后即自动计入账户余额。",
@@ -534,7 +549,7 @@ UI = {
     "inventory": {
       "title": "仓库", "eyebrow": "My Vault", "empty": "仓库还是空的。开启盲盒来填满它吧。", "goBoxes": "浏览盲盒",
       "summary": "共 {n} 件 · 仓库总价值 {value}", "storedCount": "保管中 {n}", "shippingCount": "发货 {n}", "soldCount": "已回收 {n}",
-      "filterStatus": "状态", "filterTier": "等级", "all": "全部", "tabHeld": "持有中 ({n})", "tabDone": "已处理 ({n})", "cashableValue": "可即时折现总价值", "doneSold": "95% 折现完成 +{amount}", "doneCash": "返现已计入 +{amount}", "archived": "已处理", "doneShipping": "已发货", "donePreparing": "备货中", "emptyDone": "暂无已处理记录。折现或发货的商品会归档在这里。",
+      "filterStatus": "状态", "filterTier": "等级", "all": "全部", "tabHeld": "持有中 ({n})", "tabDone": "已处理 ({n})", "cashableValue": "可即时折现总价值", "withdrawBalance": "🚀 提现余额", "doneSold": "95% 折现完成 +{amount}", "doneCash": "返现已计入 +{amount}", "archived": "已处理", "doneShipping": "已发货", "donePreparing": "备货中", "emptyDone": "暂无已处理记录。折现或发货的商品会归档在这里。",
       "status": {"IN_STORAGE": "保管中", "SHIPPING_REQUESTED": "备货中", "SHIPPING": "运输中", "SOLD": "已回收"},
       "acquired": "获得于 {date}", "from": "{box}", "soldFor": "已退回 {amount}", "tracking": "运单号", "trackingPending": "等待运单号",
       "sell": "⚡ 95% USDT 即时折现", "noFee": "0 手续费", "ship": "📦 寄到我家", "sellShort": "⚡ 95% 即时折现", "shipShort": "📦 寄到家", "verify": "1 秒公平性验证", "select": "选择", "selected": "已选 {n} 件", "selectAll": "全选", "clearSelection": "取消选择",
@@ -595,14 +610,20 @@ UI = {
       "emptyPayouts": "暂无支付记录。", "emptyShipments": "暂无发货记录。", "emptyCta": "去开盲盒", "pendingTx": "等待广播", "settledInstant": "即时结算"
     },
     "withdraw": {
-      "title": "USDT 提现", "close": "关闭", "available": "可提现余额", "network": "提现网络", "address": "收款钱包地址", "addressHint": "以 {hint} 开头的地址",
+      "title": "USDT 提现", "close": "关闭", "available": "可提现余额", "availableCrypto": "可提现余额（USDT 充值）", "cardLocked": "仅限开箱与配送（信用卡充值）", "cardLockedNote": "信用卡充值及其折现金额只能用于开启盲盒、实物配送或原卡退款，不可链上提现。", "network": "提现网络", "address": "收款钱包地址", "addressHint": "以 {hint} 开头的地址",
       "amount": "提现数量", "min": "最低 {min}", "max": "全部", "fee": "网络手续费", "feeShort": "手续费", "net": "实际到账", "netLabel": "实际到账金额",
       "submit": "提交提现申请", "requested": "提现申请已受理", "txId": "交易 ID", "at": "申请时间", "another": "再次提现", "done": "确定", "history": "最近提现",
       "status": {"PENDING": "审核中", "BROADCASTING": "广播中", "COMPLETED": "已完成"},
       "txHash": "链上 TxID", "txHashPending": "广播后显示 TxID", "copyHash": "复制 TxID", "viewOnExplorer": "在 {explorer} 查看",
       "errors": {"TRC20": "TRC-20 地址为以 T 开头的 34 位字符", "BEP20": "BEP-20 地址为以 0x 开头的 42 位字符", "min": "最低提现数量为 {min}", "insufficient": "余额不足", "nan": "请输入提现数量"},
       "processingNote": "提现经安全审核后签名并广播，完成后 TxID 与浏览器链接会显示在此。", "networkNote": "提现申请后立即发送至区块链网络，链上交易可在 TronScan / BscScan 实时查询。",
-      "requestedToast": "提现申请已提交 — 已扣除 {amount}"
+      "requestedToast": "提现申请已提交 — 已扣除 {amount}",
+      "quick25": "+25%", "quick50": "+50%", "quickMax": "全额提现", "submitAmount": "🚀 立即提现 {amount} 到我的钱包", "submitting": "正在准备链上转账…",
+      "amlTitle": "🛡️ 反洗钱(AML)规定", "amlRule": "流水进度达到 100% 方可提现", "amlProgress": "当前进度 {pct}%", "amlRemaining": "再开启 {amount} 即可提现",
+      "amlMet": "✓ 流水已达 100%（可提现）",
+      "amlBlocked": "根据反洗钱规定，请先将充值金额(100%)用于开启盲盒，之后即可安全提现。（当前进度：{pct}%）",
+      "amlWhy": "此规定用于阻断充值后立刻转出的诈骗与洗钱资金。没有充值记录的余额不受影响。",
+      "amlDeposited": "累计充值", "amlWagered": "累计开启"
     },
     "vip": {"title": "VIP 等级 {tier}", "tiers": {"member": "会员", "silver": "白银", "gold": "黄金", "black": "黑金"}},
     "footer": {

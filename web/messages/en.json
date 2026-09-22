@@ -69,7 +69,8 @@
     "home": "Home",
     "dollar": "$1 Jackpot",
     "vault": "Vault",
-    "deposit": "Deposit (+)"
+    "deposit": "Deposit (+)",
+    "wallet": "Wallet"
   },
   "categories": {
     "all": "All",
@@ -77,6 +78,12 @@
     "tech": "⚡ Apple & Tech",
     "luxury": "👑 Luxury & Watches",
     "jackpot": "🚗 Supercars & Gold"
+  },
+  "sections": {
+    "dollar": "🔥 $1 Happiness",
+    "tech": "⚡ Apple & High-End Tech",
+    "luxury": "👑 Luxury & Swiss Watches",
+    "jackpot": "🚗 Supercars & Gold Bars"
   },
   "sorts": {
     "featured": "Featured",
@@ -272,6 +279,7 @@
   "deposit": {
     "title": "Deposit",
     "eyebrow": "Wallet · Deposit",
+    "eyebrowWithdraw": "Wallet · Withdraw",
     "tabUsdt": "USDT Deposit",
     "tabCard": "Credit Card",
     "tabWithdraw": "Withdraw",
@@ -367,6 +375,7 @@
     "tabHeld": "Holding ({n})",
     "tabDone": "Settled ({n})",
     "cashableValue": "Total cash-out value now",
+    "withdrawBalance": "🚀 Withdraw balance",
     "doneSold": "Cashed out 95% +{amount}",
     "doneCash": "Cashback credited +{amount}",
     "archived": "Settled",
@@ -616,6 +625,9 @@
     "title": "Withdraw USDT",
     "close": "Close",
     "available": "Available balance",
+    "availableCrypto": "Withdrawable (USDT deposits)",
+    "cardLocked": "Play & shipping only (card top-ups)",
+    "cardLockedNote": "Card top-ups and any refunds from them can only be used to open boxes, ship items or be refunded to the card — never withdrawn on-chain.",
     "network": "Withdrawal network",
     "address": "Destination wallet address",
     "addressHint": "Address starting with {hint}",
@@ -651,7 +663,21 @@
     },
     "processingNote": "Withdrawals are signed and broadcast after a security review. The TxID and explorer link appear here once complete.",
     "networkNote": "Withdrawals are sent to the blockchain network as soon as they are requested, and the on-chain transaction can be viewed live on TronScan / BscScan.",
-    "requestedToast": "Withdrawal submitted — {amount} deducted"
+    "requestedToast": "Withdrawal submitted — {amount} deducted",
+    "quick25": "+25%",
+    "quick50": "+50%",
+    "quickMax": "Withdraw all",
+    "submitAmount": "🚀 Withdraw {amount} to my wallet",
+    "submitting": "Preparing the on-chain transfer…",
+    "amlTitle": "🛡️ Anti-Money-Laundering (AML) rule",
+    "amlRule": "Withdrawals unlock at 100% rollover",
+    "amlProgress": "Currently {pct}%",
+    "amlRemaining": "Open {amount} more to unlock withdrawals",
+    "amlMet": "✓ Rollover 100% met (withdrawals unlocked)",
+    "amlBlocked": "Under our AML rule you can withdraw safely once you have spent 100% of your deposits on opening boxes. (Currently: {pct}%)",
+    "amlWhy": "This blocks scam and phishing funds from being deposited and pulled straight back out. Balances with no deposit history are not affected.",
+    "amlDeposited": "Deposited",
+    "amlWagered": "Wagered"
   },
   "vip": {
     "title": "VIP tier {tier}",

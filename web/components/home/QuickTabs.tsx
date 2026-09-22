@@ -85,7 +85,10 @@ export function QuickTabs({ value, onChange, className }: QuickTabsProps) {
         </ul>
         {/* 스와이프 힌트 — 그 방향으로 더 있을 때만 딤 페이드 */}
         <span aria-hidden className={cn("pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-obsidian to-transparent transition-opacity duration-200", fade.left ? "opacity-100" : "opacity-0")} />
-        <span aria-hidden className={cn("pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-obsidian to-transparent transition-opacity duration-200", fade.right ? "opacity-100" : "opacity-0")} />
+        {/* 오른쪽에 카테고리가 더 있다는 신호 — 페이드 + 스와이프 힌트 */}
+        <span aria-hidden className={cn("pointer-events-none absolute inset-y-0 right-0 flex w-16 items-center justify-end bg-gradient-to-l from-obsidian via-obsidian/85 to-transparent pr-1 transition-opacity duration-200", fade.right ? "opacity-100" : "opacity-0")}>
+          <span className="swipe-hint text-[11px] font-bold text-gold-champagne">➔</span>
+        </span>
       </div>
     </nav>
   );

@@ -11,6 +11,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import type { TierKey } from "@/lib/tiers";
 import type { ShippingAddress } from "@/lib/shipping";
 import type { CarrierKey } from "@/lib/carriers";
+import { attributeRefunds, normalizeRatio, sourceOf, type FundingRatio, type FundingSource } from "@/lib/funding";
 
 export type OwnedStatus = "IN_STORAGE" | "SHIPPING_REQUESTED" | "SHIPPING" | "SOLD";
 
@@ -24,6 +25,9 @@ export interface OwnedItem {
   acquiredAt: string;
   /** 공정성 메타 — 검증기 프리필용 */
   fair: { serverSeedHash: string; serverSeed: string; clientSeed: string; nonce: number; roll: number };
+  /** 결제 원천 족보 — 이 아이템을 뽑은 개봉에 쓰인 잔액의 출처 (CLAUDE.md §7-B). 구버전 기록은 crypto 로 본다. */
+  fundingSource?: FundingSource;
+  fundingRatio?: FundingRatio;
   /** SOLD 시 실제 환급액 */
   soldForUsdt?: number;
   soldAt?: string;
@@ -34,7 +38,8 @@ interface InventoryState {
   items: OwnedItem[];
   hydrated: boolean;
   add: (items: Omit<OwnedItem, "id" | "status" | "acquiredAt">[]) => OwnedItem[];
-  sell: (ids: string[], refundRate: number) => { ids: string[]; totalUsdt: number };
+  /** 환급 — 합계와 함께 원천별 귀속액(교차 환급 차단)을 돌려준다 */
+  sell: (ids: string[], refundRate: number) => { ids: string[]; totalUsdt: number; toCrypto: number; toCard: number };
   requestShipping: (ids: string[], address: ShippingAddress, feeUsdt: number) => void;
   /** 데모/관리자: 운송장 발급 */
   markShipping: (id: string, carrier: CarrierKey, trackingNumber: string) => void;
@@ -49,7 +54,10 @@ export const useInventoryStore = create<InventoryState>()(
       hydrated: false,
       add: (items) => {
         const now = new Date().toISOString();
-        const recs: OwnedItem[] = items.map((i) => ({ ...i, id: uid(), status: "IN_STORAGE", acquiredAt: now }));
+        const recs: OwnedItem[] = items.map((i) => {
+          const ratio = normalizeRatio(i.fundingRatio);
+          return { ...i, fundingRatio: ratio, fundingSource: i.fundingSource ?? sourceOf(ratio), id: uid(), status: "IN_STORAGE", acquiredAt: now };
+        });
         set((s) => ({ items: [...recs, ...s.items] }));
         return recs;
       },
@@ -58,16 +66,20 @@ export const useInventoryStore = create<InventoryState>()(
         const set_ = new Set(ids);
         let total = 0;
         const sold: string[] = [];
+        // 아이템별 족보를 모아 환급금을 원천대로 되돌린다 — 카드 출처는 절대 암호화폐 잔액으로 가지 않는다
+        const refunds: { amountUsdt: number; ratio: FundingRatio }[] = [];
         set((s) => ({
           items: s.items.map((it) => {
             if (!set_.has(it.id) || it.status !== "IN_STORAGE") return it;
             const refund = +(it.valueUsdt * refundRate).toFixed(2);
             total += refund;
             sold.push(it.id);
+            refunds.push({ amountUsdt: refund, ratio: normalizeRatio(it.fundingRatio) });
             return { ...it, status: "SOLD", soldForUsdt: refund, soldAt: now };
           }),
         }));
-        return { ids: sold, totalUsdt: +total.toFixed(2) };
+        const { toCrypto, toCard } = attributeRefunds(refunds);
+        return { ids: sold, totalUsdt: +total.toFixed(2), toCrypto, toCard };
       },
       requestShipping: (ids, address, feeUsdt) => {
         const now = new Date().toISOString();

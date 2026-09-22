@@ -440,3 +440,15 @@ html[lang^="zh"] body {
   animation: fx-crack-in 0.9s ease-out 1 both;
   filter: drop-shadow(0 0 3px rgba(255,255,255,0.9));
 }
+
+/* 카테고리 탭 우측 "스와이프 ➔" 힌트 — 더 있다는 신호로 살짝 밀린다 */
+.swipe-hint {
+  animation: swipe-nudge 1.6s ease-in-out infinite;
+}
+@keyframes swipe-nudge {
+  0%, 100% { transform: translateX(0); opacity: 0.75; }
+  50% { transform: translateX(3px); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .swipe-hint { animation: none; }
+}

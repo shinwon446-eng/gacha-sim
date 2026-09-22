@@ -7,9 +7,9 @@ import { MIN_WITHDRAW_USDT, WITHDRAW_NETWORKS, WITHDRAW_NETWORK_BY_KEY, isValidW
 const TRON = "T" + "9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb".slice(0, 33);
 const BSC = "0x" + "a".repeat(40);
 
-test("네트워크 수수료: TRC-20 1.00 / BEP-20 0.80 USDT, 최소 20 USDT", () => {
+test("네트워크 수수료: TRC-20 1.00 / BEP-20 0.50 USDT, 최소 20 USDT", () => {
   assert.equal(WITHDRAW_NETWORK_BY_KEY.TRC20.feeUsdt, 1.0);
-  assert.equal(WITHDRAW_NETWORK_BY_KEY.BEP20.feeUsdt, 0.8);
+  assert.equal(WITHDRAW_NETWORK_BY_KEY.BEP20.feeUsdt, 0.5);
   assert.equal(MIN_WITHDRAW_USDT, 20);
   assert.equal(WITHDRAW_NETWORKS.length, 2);
 });
@@ -27,7 +27,7 @@ test("주소 형식: TRC-20 은 T + base58 33자, BEP-20 은 0x + hex 40자", ()
 
 test("실수령액 = 신청액 − 네트워크 수수료, 음수 없음", () => {
   assert.equal(netReceive(100, "TRC20"), 99);
-  assert.equal(netReceive(100, "BEP20"), 99.2);
+  assert.equal(netReceive(100, "BEP20"), 99.5);
   assert.equal(netReceive(0.5, "TRC20"), 0);
 });
 

@@ -30,6 +30,7 @@ import { ShippingModal } from "@/components/inventory/ShippingModal";
 import { TrackingModal } from "@/components/inventory/TrackingModal";
 import { HotBoxes } from "@/components/inventory/HotBoxes";
 import { WithdrawalModal } from "@/components/wallet/WithdrawalModal";
+import type { FundingRatio } from "@/lib/funding";
 import { VisualVerifyModal } from "@/components/fairness/VisualVerifyModal";
 
 /** 2단 탭 — 보유 중(미사용 당첨 상품) / 처리 완료(환전·출고 아카이브) */
@@ -62,7 +63,9 @@ export default function InventoryPage() {
   const markShipping = useInventoryStore((s) => s.markShipping);
   const balance = useWalletStore((s) => s.balance);
   const credit = useWalletStore((s) => s.credit);
+  const creditSplit = useWalletStore((s) => s.creditSplit);
   const debit = useWalletStore((s) => s.debit);
+  const debitSplit = useWalletStore((s) => s.debitSplit);
   const addTransaction = useWalletStore((s) => s.addTransaction);
 
   const [tab, setTab] = useState<VaultTab>("held");
@@ -75,8 +78,8 @@ export default function InventoryPage() {
   const [track, setTrack] = useState<OwnedItem | null>(null);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [detail, setDetail] = useState<ProductBox | null>(null);
-  const [unbox, setUnbox] = useState<{ box: ProductBox; count: number; auto?: AutoplayConfig } | null>(null);
-  const [bulk, setBulk] = useState<{ box: ProductBox; count: number } | null>(null);
+  const [unbox, setUnbox] = useState<{ box: ProductBox; count: number; auto?: AutoplayConfig; funding?: FundingRatio } | null>(null);
+  const [bulk, setBulk] = useState<{ box: ProductBox; count: number; funding?: FundingRatio } | null>(null);
   const [toast, setToast] = useState<{ id: number; text: string; tone: string } | null>(null);
 
   /** 한 번에 그리는 카드 수 — 수백 건을 모바일에서 한꺼번에 렌더하지 않는다 */
@@ -136,9 +139,10 @@ export default function InventoryPage() {
 
   const confirmSell = () => {
     if (!sellTarget) return;
-    const { ids, totalUsdt } = sell(sellTarget, REFUND_RATE);
+    const { ids, totalUsdt, toCrypto, toCard } = sell(sellTarget, REFUND_RATE);
     if (ids.length) {
-      credit(totalUsdt);
+      // 카드 출처 아이템의 환급금은 카드 잔액으로만 되돌아간다 (CLAUDE.md §7-B)
+      creditSplit(toCrypto, toCard);
       addTransaction({ type: "sellback", amountUsdt: totalUsdt, ref: ids.join(",") });
       if (!useSettingsStore.getState().muted) playChime();
       say(t("inventory.soldToast", { amount: fmt(totalUsdt) }), "#E6CA65");
@@ -161,24 +165,27 @@ export default function InventoryPage() {
   const openBox = useCallback(
     (box: ProductBox, count = 1) => {
       const cost = box.price * count;
-      if (!debit(cost)) {
+      const plan = debitSplit(cost);
+      if (!plan) {
         say(t("unbox.insufficient", { price: fmt(cost) }), "#E50914");
         return;
       }
       addTransaction({ type: "open", amountUsdt: -cost, ref: `${box.slug}x${count}` });
       setDetail(null);
-      if (count >= BULK_THRESHOLD) setBulk({ box, count });
-      else setUnbox({ box, count });
+      if (count >= BULK_THRESHOLD) setBulk({ box, count, funding: plan.ratio });
+      else setUnbox({ box, count, funding: plan.ratio });
     },
-    [debit, addTransaction, say, t, fmt],
+    [debitSplit, addTransaction, say, t, fmt],
   );
   const onSellBack = useCallback(
-    (results: UnboxResult[], amount: number) => {
-      credit(amount);
+    (results: UnboxResult[], amount: number, split?: { toCrypto: number; toCard: number }) => {
+      // 환급금은 아이템 족보대로 — 카드 출처는 카드 잔액으로만 (CLAUDE.md §7-B)
+      if (split) creditSplit(split.toCrypto, split.toCard);
+      else credit(amount);
       addTransaction({ type: "sellback", amountUsdt: amount, ref: results.map((r) => r.item.id).join(",") });
       say(t("unbox.sold", { amount: fmt(amount) }), "#E6CA65");
     },
-    [credit, addTransaction, say, t, fmt],
+    [credit, creditSplit, addTransaction, say, t, fmt],
   );
 
   return (
@@ -245,9 +252,9 @@ export default function InventoryPage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button type="button" onClick={() => setWithdrawOpen(true)} className="border-gold-gradient flex h-10 items-center gap-1.5 whitespace-nowrap rounded-md px-4 text-xs font-bold text-gold-champagne transition-colors hover:bg-gold-champagne/10">
+                <button type="button" onClick={() => setWithdrawOpen(true)} className="flex h-10 items-center gap-1.5 whitespace-nowrap rounded-md bg-gold-champagne px-4 text-xs font-bold text-obsidian shadow-[0_0_18px_rgba(230,202,101,0.3)] transition-colors hover:bg-gold-metallic">
                   <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2.4} />
-                  {t("header.withdraw")}
+                  {t("inventory.withdrawBalance")}
                 </button>
                 <button
                   type="button"
@@ -479,11 +486,11 @@ export default function InventoryPage() {
       <SellConfirmModal open={!!sellTarget} count={sellTarget?.length ?? 0} amountUsdt={sellTarget ? sellAmountFor(sellTarget) : 0} refundRate={REFUND_RATE} onClose={() => setSellTarget(null)} onConfirm={confirmSell} />
       <ShippingModal open={!!shipTarget} itemCount={shipTarget?.length ?? 0} balanceUsdt={balance} onClose={() => setShipTarget(null)} onSubmit={submitShip} />
       <TrackingModal item={track} onClose={() => setTrack(null)} />
-      <WithdrawalModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onRequested={(amount) => say(t("withdraw.requestedToast", { amount: fmt(amount) }), "#E6CA65")} />
+      <WithdrawalModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onRequested={(amount) => say(t("withdraw.requestedToast", { amount: fmt(amount) }), "#E6CA65")} onBlocked={(pct) => say(t("withdraw.amlBlocked", { pct }), "#E50914")} />
       <VisualVerifyModal item={verify} onClose={() => setVerify(null)} />
       <DetailModal box={detail} onClose={() => setDetail(null)} onOpen={openBox} onAutoplay={(b, cfg) => { setDetail(null); setUnbox({ box: b, count: 1, auto: cfg }); }} />
-      <BulkOpenModal box={bulk?.box ?? null} count={bulk?.count ?? 0} onClose={() => setBulk(null)} onSellBack={(ids, amount) => { credit(amount); addTransaction({ type: "sellback", amountUsdt: amount, ref: ids.join(",") }); say(t("inventory.soldToast", { amount: fmt(amount) }), "#E6CA65"); }} />
-      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} auto={unbox?.auto} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={() => say(t("inventory.shipRequestedToast"), "#93C5FD")} onRespin={(b) => { setUnbox(null); setTimeout(() => openBox(b, 1), 60); }} />
+      <BulkOpenModal box={bulk?.box ?? null} count={bulk?.count ?? 0} funding={bulk?.funding} onClose={() => setBulk(null)} onSellBack={(ids, amount, split) => { if (split) creditSplit(split.toCrypto, split.toCard); else credit(amount); addTransaction({ type: "sellback", amountUsdt: amount, ref: ids.join(",") }); say(t("inventory.soldToast", { amount: fmt(amount) }), "#E6CA65"); }} />
+      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} funding={unbox?.funding} auto={unbox?.auto} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={() => say(t("inventory.shipRequestedToast"), "#93C5FD")} onRespin={(b) => { setUnbox(null); setTimeout(() => openBox(b, 1), 60); }} />
 
       <AnimatePresence>
         {toast && (

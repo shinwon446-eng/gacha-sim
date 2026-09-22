@@ -18,7 +18,7 @@ export interface WithdrawNetworkMeta {
 
 export const WITHDRAW_NETWORKS: WithdrawNetworkMeta[] = [
   { key: "TRC20", chain: "Tron Network", token: "USDT (TRC-20)", feeUsdt: 1.0, addressHint: "T…", recommended: true },
-  { key: "BEP20", chain: "BNB Smart Chain (BSC)", token: "USDT (BEP-20)", feeUsdt: 0.8, addressHint: "0x…", recommended: false },
+  { key: "BEP20", chain: "BNB Smart Chain (BSC)", token: "USDT (BEP-20)", feeUsdt: 0.5, addressHint: "0x…", recommended: false },
 ];
 
 export const WITHDRAW_NETWORK_BY_KEY: Record<Network, WithdrawNetworkMeta> = Object.fromEntries(WITHDRAW_NETWORKS.map((n) => [n.key, n])) as Record<Network, WithdrawNetworkMeta>;

@@ -91,7 +91,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
       try {
         const r = await api.depositCheck({ network, address, userKey, expectedUsdt: amountOk ? expected : undefined });
         if (r.status === "confirmed" && r.amountUsdt && r.amountUsdt > 0) {
-          credit(r.amountUsdt);
+          credit(r.amountUsdt, "crypto");
           addTransaction({ type: "deposit_usdt", amountUsdt: r.amountUsdt, ref: `${network}:${r.txHash ?? "confirmed"}`, txHash: r.txHash });
           if (!useSettingsStore.getState().muted) playChime();
           setStatus({ kind: "credited", amount: r.amountUsdt, txHash: r.txHash });

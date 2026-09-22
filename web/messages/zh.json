@@ -69,7 +69,8 @@
     "home": "首页",
     "dollar": "1美元大奖",
     "vault": "保管箱",
-    "deposit": "充值 (+)"
+    "deposit": "充值 (+)",
+    "wallet": "钱包(存提)"
   },
   "categories": {
     "all": "全部",
@@ -77,6 +78,12 @@
     "tech": "⚡ 苹果与科技",
     "luxury": "👑 奢品与腕表",
     "jackpot": "🚗 超跑与金条"
+  },
+  "sections": {
+    "dollar": "🔥 1 美元的幸福",
+    "tech": "⚡ 苹果与高端科技",
+    "luxury": "👑 奢侈名品与瑞士腕表",
+    "jackpot": "🚗 超跑与纯金金条头奖"
   },
   "sorts": {
     "featured": "推荐",
@@ -272,6 +279,7 @@
   "deposit": {
     "title": "充值",
     "eyebrow": "Wallet · Deposit",
+    "eyebrowWithdraw": "Wallet · Withdraw",
     "tabUsdt": "USDT 充值",
     "tabCard": "信用卡支付",
     "tabWithdraw": "提现",
@@ -367,6 +375,7 @@
     "tabHeld": "持有中 ({n})",
     "tabDone": "已处理 ({n})",
     "cashableValue": "可即时折现总价值",
+    "withdrawBalance": "🚀 提现余额",
     "doneSold": "95% 折现完成 +{amount}",
     "doneCash": "返现已计入 +{amount}",
     "archived": "已处理",
@@ -616,6 +625,9 @@
     "title": "USDT 提现",
     "close": "关闭",
     "available": "可提现余额",
+    "availableCrypto": "可提现余额（USDT 充值）",
+    "cardLocked": "仅限开箱与配送（信用卡充值）",
+    "cardLockedNote": "信用卡充值及其折现金额只能用于开启盲盒、实物配送或原卡退款，不可链上提现。",
     "network": "提现网络",
     "address": "收款钱包地址",
     "addressHint": "以 {hint} 开头的地址",
@@ -651,7 +663,21 @@
     },
     "processingNote": "提现经安全审核后签名并广播，完成后 TxID 与浏览器链接会显示在此。",
     "networkNote": "提现申请后立即发送至区块链网络，链上交易可在 TronScan / BscScan 实时查询。",
-    "requestedToast": "提现申请已提交 — 已扣除 {amount}"
+    "requestedToast": "提现申请已提交 — 已扣除 {amount}",
+    "quick25": "+25%",
+    "quick50": "+50%",
+    "quickMax": "全额提现",
+    "submitAmount": "🚀 立即提现 {amount} 到我的钱包",
+    "submitting": "正在准备链上转账…",
+    "amlTitle": "🛡️ 反洗钱(AML)规定",
+    "amlRule": "流水进度达到 100% 方可提现",
+    "amlProgress": "当前进度 {pct}%",
+    "amlRemaining": "再开启 {amount} 即可提现",
+    "amlMet": "✓ 流水已达 100%（可提现）",
+    "amlBlocked": "根据反洗钱规定，请先将充值金额(100%)用于开启盲盒，之后即可安全提现。（当前进度：{pct}%）",
+    "amlWhy": "此规定用于阻断充值后立刻转出的诈骗与洗钱资金。没有充值记录的余额不受影响。",
+    "amlDeposited": "累计充值",
+    "amlWagered": "累计开启"
   },
   "vip": {
     "title": "VIP 等级 {tier}",

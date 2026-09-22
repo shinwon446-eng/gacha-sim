@@ -23,6 +23,7 @@ import { Money } from "@/components/ui/Money";
 import { VisualVerifyModal } from "@/components/fairness/VisualVerifyModal";
 import { ShippingModal } from "@/components/inventory/ShippingModal";
 import { useInventoryStore, type OwnedItem } from "@/stores/inventoryStore";
+import { CRYPTO_ONLY, type FundingRatio } from "@/lib/funding";
 import { useWalletStore, WELCOME_BONUS_USDT } from "@/stores/walletStore";
 import type { ShippingAddress } from "@/lib/shipping";
 import { Link } from "@/i18n/navigation";
@@ -50,13 +51,15 @@ export interface UnboxingRouletteProps {
   count: number;
   onClose: () => void;
   /** 즉시 판매 — 호출측이 잔액에 반영한다 */
-  onSellBack: (results: UnboxResult[], amountUsdt: number) => void;
+  onSellBack: (results: UnboxResult[], amountUsdt: number, split?: { toCrypto: number; toCard: number }) => void;
   /** 배송 신청 완료 — 호출측이 토스트를 띄운다 (배송비 차감·상태 전환은 여기서) */
   onShip: (results: UnboxResult[]) => void;
   /** 결과가 전부 USDT 캐시백일 때 [다시 돌리기] — 호출측이 같은 박스를 다시 연다 */
   onRespin?: (box: ProductBox) => void;
   /** 오토플레이 — 스핀마다 가격을 차감하고 규칙(lib/autoplay)에 따라 멈춘다. count 는 무시된다 */
   auto?: AutoplayConfig;
+  /** 이 개봉에 쓰인 잔액의 원천 비율 — 당첨 아이템 족보로 박힌다 (호출측 debitSplit 결과) */
+  funding?: FundingRatio;
   /**
    * 무료 체험 모드 (CLAUDE.md §4-A). 지정 항목으로 결과를 고정하고 잔액·보관함·공정성 nonce 를 건드리지 않는다.
    * 결과 팝업은 전환 CTA(웰컴 보너스) 하나만 보여준다.
@@ -88,7 +91,7 @@ const GAP = 10;
  *   4. 정지: 등급색 플래시 + 승리 징글 → 결과 팝업(사진·등급·가치·시드·nonce)
  * 연출(3)은 결과(1)를 바꿀 수 없다. 5연속은 1~3 을 짧게 반복하고 마지막에 목록으로 보여준다.
  */
-export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRespin, auto, demo, onDemoConvert, welcomeClaimed }: UnboxingRouletteProps) {
+export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRespin, auto, funding, demo, onDemoConvert, welcomeClaimed }: UnboxingRouletteProps) {
   const t = useTranslations("unbox");
   const tr = useTranslations();
   const { fmt } = useCurrency();
@@ -130,8 +133,17 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
   const sellOwned = useInventoryStore((s) => s.sell);
   const requestShipping = useInventoryStore((s) => s.requestShipping);
   const balance = useWalletStore((s) => s.balance);
+  const debitSplit = useWalletStore((s) => s.debitSplit);
   const debit = useWalletStore((s) => s.debit);
   const credit = useWalletStore((s) => s.credit);
+  const creditSplit = useWalletStore((s) => s.creditSplit);
+  /** 이번 개봉(또는 오토플레이 스핀)에 쓰인 잔액 원천 — 아이템 족보로 박힌다 */
+  const fundingRef = useRef<FundingRatio>(funding ?? CRYPTO_ONLY);
+  // 이 컴포넌트는 box=null 로 미리 마운트돼 있다 — 프롭이 바뀔 때마다 족보를 갱신하지 않으면
+  // 첫 마운트 값(crypto)이 그대로 박혀 카드 자금으로 연 아이템이 crypto 로 기록된다(원천 분리 붕괴).
+  useEffect(() => {
+    fundingRef.current = funding ?? CRYPTO_ONLY;
+  }, [funding, box?.id]);
   const addTransaction = useWalletStore((s) => s.addTransaction);
   const tickIndex = useRef(-1);
   const rafRef = useRef<number | null>(null);
@@ -202,12 +214,13 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
           valueUsdt: item.value,
           tier: res.tier.key,
           fair: { serverSeedHash, serverSeed, clientSeed, nonce, roll: r.roll },
+          fundingRatio: fundingRef.current,
         };
         res.ownedId = addOwned([rec])[0].id;
         if (item.kind === "cash") {
           // USDT 캐시백·인스턴트 드롭: 보관함 레코드는 공정성 기록용으로 남기고(환전 완료 상태) 금액은 100% 즉시 잔액에
-          const { totalUsdt } = sellOwned([res.ownedId], 1);
-          credit(totalUsdt);
+          const { totalUsdt, toCrypto, toCard } = sellOwned([res.ownedId], 1);
+          creditSplit(toCrypto, toCard);
           addTransaction({ type: "sellback", amountUsdt: totalUsdt, ref: `${box.slug}:${item.id}:cashback` });
           res.settled = true;
         }
@@ -357,7 +370,9 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
         while (!cancelled.current) {
           if (stopRef.current) { reason = "manual"; break; }
           if (!canAfford(useWalletStore.getState().balance, box.price)) { reason = "balance"; break; }
-          if (!debit(box.price)) { reason = "balance"; break; }
+          const plan = debitSplit(box.price);
+          if (!plan) { reason = "balance"; break; }
+          fundingRef.current = plan.ratio; // 이 스핀의 족보
           addTransaction({ type: "open", amountUsdt: -box.price, ref: `${box.slug}x1:auto` });
           st.spent = +(st.spent + box.price).toFixed(2);
           const r = await spinOnce(REEL_DURATION_MULTI_S);
@@ -365,8 +380,8 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
           st.done += 1;
           st.won = +(st.won + r.item.value).toFixed(2);
           if (auto.autoSell && !r.settled && r.ownedId) {
-            const { totalUsdt } = sellOwned([r.ownedId], REFUND_RATE);
-            credit(totalUsdt);
+            const { totalUsdt, toCrypto, toCard } = sellOwned([r.ownedId], REFUND_RATE);
+            creditSplit(toCrypto, toCard);
             addTransaction({ type: "sellback", amountUsdt: totalUsdt, ref: `${r.item.id}:auto` });
             r.settled = true;
             r.autoSold = totalUsdt;
@@ -685,8 +700,8 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                         onClick={() => {
                           setSold(true);
                           const ids = pending.map((r) => r.ownedId).filter((x): x is string => !!x);
-                          const { totalUsdt } = sellOwned(ids, REFUND_RATE);
-                          onSellBack(pending, totalUsdt || sellAmount);
+                          const { totalUsdt, toCrypto, toCard } = sellOwned(ids, REFUND_RATE);
+                          onSellBack(pending, totalUsdt || sellAmount, { toCrypto, toCard });
                         }}
                         className="flex h-14 flex-col items-center justify-center rounded-lg bg-gold-champagne px-2 text-obsidian transition-colors hover:bg-gold-metallic disabled:opacity-50"
                       >

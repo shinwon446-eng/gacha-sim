@@ -82,7 +82,8 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
       setStage({ kind: "declined", result });
       return;
     }
-    credit(amountUsdt);
+    // 카드 충전분은 카드 잔액으로만 — 온체인 출금 불가 (CLAUDE.md §7-B)
+    credit(amountUsdt, "card");
     addTransaction({ type: "deposit_card", amountUsdt, ref: `${result.provider}:${result.transactionId}` });
     if (!useSettingsStore.getState().muted) playChime();
     onCredited(amountUsdt);
