@@ -39,3 +39,17 @@ test("한도: 10 USDT 미만·5,000 초과·비수치 거부", () => {
   assert.equal(validateAmount(10), "ok");
 });
 
+
+// ── 3단계: 3D Secure 2.0
+import { DEFAULT_3DS_REQUEST, liabilityShiftApplied } from "../lib/payments";
+
+test("3DS 요청 기본값은 'any' — 발급사가 면제해도 인증을 요구한다", () => {
+  assert.equal(DEFAULT_3DS_REQUEST, "any");
+});
+
+test("책임 전가 마크는 PG 가 인증 성공 + 책임 전가를 보고했을 때만", () => {
+  assert.equal(liabilityShiftApplied({ threeDSecure: "authenticated", liabilityShift: true }), true);
+  assert.equal(liabilityShiftApplied({ threeDSecure: "authenticated", liabilityShift: false }), false, "인증돼도 책임 전가가 없으면 표기 불가");
+  assert.equal(liabilityShiftApplied({ threeDSecure: "attempted", liabilityShift: true }), false);
+  assert.equal(liabilityShiftApplied({}), false, "PG 가 알려주지 않으면 붙이지 않는다");
+});

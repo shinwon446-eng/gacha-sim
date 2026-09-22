@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrcode.react";
-import { Copy, Check, AlertTriangle, ShieldAlert, Radio, Loader2 } from "lucide-react";
+import { Copy, Check, AlertTriangle, ShieldAlert, Radio, Loader2, Timer } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { MIN_DEPOSIT_USDT, NETWORKS, looksLikeAddress, type DepositNetwork } from "@/lib/depositAddress";
@@ -29,6 +29,9 @@ const CHECK_MAX_ROUNDS = 36;
  * 주소는 운영자가 통제하는 지갑(env NEXT_PUBLIC_DEPOSIT_*) 또는 API 발급분만 보여준다. 잔고는 체인에서 확인된 입금만 올린다 —
  * 클라이언트가 스스로 잔액을 만드는 경로는 없다.
  */
+/** 입금 세션 길이 — 30분. 만료는 타이머일 뿐이고, 72시간 이내 도착분은 그대로 처리된다. */
+const SESSION_MS = 30 * 60 * 1000;
+
 export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number) => void }) {
   const t = useTranslations("deposit");
   const { fmt } = useCurrency();
@@ -41,6 +44,17 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   const userKey = useFairStore((s) => s.clientSeed) || "anon";
 
   const meta = useMemo(() => NETWORKS.find((n) => n.key === network)!, [network]);
+  // 30분 입금 세션 — 만료돼도 72시간 이내 도착분은 자동 처리된다(아래 graceNote). 재시작하면 타이머만 초기화된다.
+  const [sessionStart, setSessionStart] = useState(() => Date.now());
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const msLeft = Math.max(0, SESSION_MS - (now - sessionStart));
+  const expired = msLeft === 0;
+  const mmss = `${String(Math.floor(msLeft / 60000)).padStart(2, "0")}:${String(Math.floor((msLeft % 60000) / 1000)).padStart(2, "0")}`;
+
   const envAddress = DEPOSIT_ADDRESSES[network];
   const [apiAddress, setApiAddress] = useState<string | null>(null);
   const [addrError, setAddrError] = useState(false);
@@ -137,6 +151,29 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
           </div>
         </fieldset>
 
+        {/* 30:00 입금 세션 타이머 */}
+        <div className={cn("rounded-lg p-3", expired ? "border border-crimson/40 bg-crimson/[0.07]" : "border-metallic-subtle bg-obsidian")}>
+          <div className="flex items-center justify-between gap-3">
+            <span className="flex items-center gap-1.5">
+              <Timer className={cn("h-3.5 w-3.5", expired ? "text-crimson" : "text-gold-champagne")} strokeWidth={2.2} />
+              <span className="caption-luxury">{t("sessionTitle")}</span>
+            </span>
+            {expired ? (
+              <button type="button" onClick={() => setSessionStart(Date.now())} className="h-7 whitespace-nowrap rounded border border-gold-champagne/40 px-2 text-[11px] font-bold text-gold-champagne hover:bg-gold-champagne/10">
+                {t("sessionRenew")}
+              </button>
+            ) : (
+              <span className="font-display text-xl font-bold tabular-nums text-white">{mmss}</span>
+            )}
+          </div>
+          <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
+            <div className={cn("h-full rounded-full", expired ? "bg-crimson" : "bg-gold-champagne")} style={{ width: `${Math.round((msLeft / SESSION_MS) * 100)}%` }} />
+          </div>
+          {expired && <div className="mt-1.5 text-[11px] font-semibold text-crimson">{t("sessionExpired")}</div>}
+          {/* 거래소 전송 지연 사고 방지 — 만료 후에도 72시간 유예 */}
+          <p className="mt-2 break-keep text-[10px] leading-relaxed text-secondary">{t("graceNote")}</p>
+        </div>
+
         <div>
           <div className="caption-luxury">{t("address")}</div>
           {address ? (
@@ -195,7 +232,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
             <span className="caption-luxury !text-gold-champagne">{t("guideTitle")}</span>
           </div>
           <ul className="mt-2 space-y-1 text-[11px] leading-relaxed text-secondary">
-            <li>· {t("guideMin", { min: fmt(MIN_DEPOSIT_USDT) })}</li>
+            <li className="font-semibold text-white">· {t("dustWarn", { min: fmt(MIN_DEPOSIT_USDT) })}</li>
             <li>· {t("guideConfirm", { n: meta.confirmations })} ({t("guideTime", { sec: meta.blockSeconds, min: Math.ceil((meta.confirmations * meta.blockSeconds) / 60) })})</li>
             <li>· {t("guideToken")}</li>
           </ul>

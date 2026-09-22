@@ -94,7 +94,7 @@ UI = {
       "network": "네트워크 선택", "recommended": "수수료 0원 추천", "chain": "{chain}",
       "address": "입금 지갑 주소", "copy": "원클릭 복사", "copied": "복사 완료", "qrHint": "지갑 앱으로 QR을 스캔하세요",
       "addressIssuing": "입금 주소를 발급하는 중입니다…", "addressError": "주소 발급에 실패했습니다. 잠시 후 다시 시도해 주세요.", "addressPending": "전용 입금 지갑 주소로 USDT 전송 시 12 블록 컨펌 후 계정 잔액에 즉시 자동 충전됩니다.",
-      "guideTitle": "입금 안내", "guideMin": "최소 입금액 {min}", "guideConfirm": "블록체인 {n} 컨펌 후 자동 반영", "guideToken": "선택한 네트워크의 USDT 만 전송하세요. 다른 코인·네트워크 전송은 복구 불가",
+      "guideTitle": "입금 안내", "sessionTitle": "입금 세션", "sessionLeft": "남은 시간 {time}", "sessionExpired": "세션이 만료되었습니다", "sessionRenew": "🔄 새 세션 시작", "graceNote": "안내: 30분 타이머 만료 후에도 72시간 이내에 블록체인에 도착한 정상 입금은 안전하게 계정으로 자동 처리됩니다.", "dustWarn": "최소 입금액: {min} ({min} 미만 전송 시 가스비 정책상 수기 확인이 필요합니다)", "guideMin": "최소 입금액 {min}", "guideConfirm": "블록체인 {n} 컨펌 후 자동 반영", "guideToken": "선택한 네트워크의 USDT 만 전송하세요. 다른 코인·네트워크 전송은 복구 불가",
       "guideTime": "평균 {sec}초/블록 · 약 {min}분",
       "status": "입금 상태", "waiting": "입금 대기 중", "checking": "블록체인 확인 중…", "amountTitle": "충전 금액 (입금 예정)", "confirmSent": "⚡ 입금 전송 완료 (자동 잔고 확인)", "pendingNote": "입금 확인 대기 중 — 네트워크 컨펌이 확인되는 즉시 잔고에 자동 반영됩니다.", "creditedToastDone": "입금 확인 완료! 잔고에 충전되었습니다", "watching": "블록체인 네트워크 승인을 실시간 감지 중입니다.", "confirming": "컨펌 {n} / {total}", "credited": "잔액 반영 완료",
      
@@ -104,7 +104,7 @@ UI = {
     },
     "cardPay": {
       "quick": "빠른 충전", "custom": "직접 입력", "amount": "결제 금액", "credit": "잔액 반영", "cardNumber": "카드 번호", "expiry": "유효기간 (MM/YY)", "cvc": "CVC (3자리)", "holder": "카드 소유자 (영문)", "threeDs": "3D Secure 인증 중…", "threeDsBody": "{brand} 카드사 본인 인증을 확인하고 있습니다", "payAndCredit": "{usd} 결제하고 {usdt} 즉시 충전", "retry": "다른 카드로 다시 시도", "summaryPay": "결제 금액 (USD)", "summaryCredit": "즉시 충전 (USDT)", "rateNote": "USD 1 = USDT 1 · 카드사 해외결제 수수료는 별도", "recent": "최근 충전 내역", "noRecent": "충전 내역이 없습니다", "recentCard": "카드 충전", "recentUsdt": "USDT 입금",
-      "provider": "결제 수단", "providerStripe": "Stripe · 글로벌 카드", "providerPortone": "PortOne · 국내 카드", "cardSoon": "카드 결제는 곧 오픈됩니다. 지금은 USDT 입금을 이용해 주세요.",
+      "provider": "결제 수단", "providerStripe": "Stripe · 글로벌 카드", "providerPortone": "PortOne · 국내 카드", "errCardNumber": "카드 번호를 다시 확인해 주세요 (Visa/Mastercard 16자리)", "errExpiry": "유효기간이 지났거나 형식이 올바르지 않습니다 (MM/YY)", "errCvc": "CVC 3자리를 입력해 주세요", "errHolder": "카드에 적힌 영문 이름을 입력해 주세요", "threeDS": {"authenticated": "3DS Verified", "attempted": "3DS Attempted (인증 시도)", "not_supported": "3DS 미지원 카드", "failed": "3DS 인증 실패", "unknown": "3DS 결과 미보고"}, "threeDSNote": "3D Secure 2.0 인증은 PG(카드사)가 수행하며, 책임 전가(Liability Shift) 표기는 PG 응답에 인증 성공이 기록된 경우에만 붙습니다.", "threeDSTitle": "3D Secure 2.0 인증 중", "cardSoon": "카드 결제는 곧 오픈됩니다. 지금은 USDT 입금을 이용해 주세요.",
      
       "pay": "{amount} 결제", "processing": "결제 진행 중…", "belowMin": "최소 결제액은 {min} 입니다", "aboveMax": "최대 결제액은 {max} 입니다", "invalid": "금액을 확인하세요",
       "declined": "카드가 거절되었습니다", "declinedHint": "카드사 승인이 거절되었습니다. 다른 카드로 다시 시도해 주세요.",
@@ -311,7 +311,7 @@ UI = {
       "network": "Select network", "recommended": "Recommended · zero fee", "chain": "{chain}",
       "address": "Deposit address", "copy": "Copy address", "copied": "Copied", "qrHint": "Scan the QR with your wallet app",
       "addressIssuing": "Issuing your deposit address…", "addressError": "Could not issue an address. Please try again shortly.", "addressPending": "Send USDT to your dedicated deposit address — after 12 block confirmations it is credited to your balance automatically.",
-      "guideTitle": "Deposit guide", "guideMin": "Minimum deposit {min}", "guideConfirm": "Credited automatically after {n} block confirmations", "guideToken": "Send only USDT on the selected network. Other coins or networks cannot be recovered",
+      "guideTitle": "Deposit guide", "sessionTitle": "Deposit session", "sessionLeft": "{time} left", "sessionExpired": "Session expired", "sessionRenew": "🔄 Start a new session", "graceNote": "Note: even after the 30-minute timer expires, a normal deposit that reaches the blockchain within 72 hours is still credited to your account automatically.", "dustWarn": "Minimum deposit: {min} (transfers below {min} need manual review because of gas-fee policy)", "guideMin": "Minimum deposit {min}", "guideConfirm": "Credited automatically after {n} block confirmations", "guideToken": "Send only USDT on the selected network. Other coins or networks cannot be recovered",
       "guideTime": "~{sec}s per block · about {min} min",
       "status": "Deposit status", "waiting": "Waiting for deposit", "checking": "Checking the blockchain…", "amountTitle": "Top-up amount (expected)", "confirmSent": "⚡ I sent the deposit (auto balance check)", "pendingNote": "Awaiting confirmation — your balance updates automatically once the network confirms.", "creditedToastDone": "Deposit confirmed! Your balance is topped up", "watching": "Watching the blockchain for network approval in real time.", "confirming": "Confirmation {n} / {total}", "credited": "Credited to balance",
      
@@ -321,7 +321,7 @@ UI = {
     },
     "cardPay": {
       "quick": "Quick top-up", "custom": "Custom amount", "amount": "Payment amount", "credit": "Credited", "cardNumber": "Card number", "expiry": "Expiry (MM/YY)", "cvc": "CVC (3 digits)", "holder": "Cardholder name", "threeDs": "3D Secure verification…", "threeDsBody": "Confirming with your {brand} issuer", "payAndCredit": "Pay {usd} and top up {usdt} instantly", "retry": "Try another card", "summaryPay": "You pay (USD)", "summaryCredit": "Instant top-up (USDT)", "rateNote": "USD 1 = USDT 1 · issuer FX fees may apply", "recent": "Recent top-ups", "noRecent": "No top-ups yet", "recentCard": "Card top-up", "recentUsdt": "USDT deposit",
-      "provider": "Payment method", "providerStripe": "Stripe · Global cards", "providerPortone": "PortOne · Korean cards", "cardSoon": "Card payments are launching soon. Please use a USDT deposit for now.",
+      "provider": "Payment method", "providerStripe": "Stripe · Global cards", "providerPortone": "PortOne · Korean cards", "errCardNumber": "Check the card number (16 digits, Visa/Mastercard)", "errExpiry": "Expired or malformed date (MM/YY)", "errCvc": "Enter the 3-digit CVC", "errHolder": "Enter the name printed on the card", "threeDS": {"authenticated": "3DS Verified", "attempted": "3DS Attempted", "not_supported": "3DS not supported by issuer", "failed": "3DS authentication failed", "unknown": "3DS result not reported"}, "threeDSNote": "3D Secure 2.0 runs at the payment provider; the Liability Shift mark appears only when the provider reports a successful authentication.", "threeDSTitle": "3D Secure 2.0 authentication", "cardSoon": "Card payments are launching soon. Please use a USDT deposit for now.",
      
       "pay": "Pay {amount}", "processing": "Processing…", "belowMin": "Minimum payment is {min}", "aboveMax": "Maximum payment is {max}", "invalid": "Check the amount",
       "declined": "Card declined", "declinedHint": "The issuer declined this card. Please try another card.",
@@ -528,7 +528,7 @@ UI = {
       "network": "选择网络", "recommended": "推荐 · 零手续费", "chain": "{chain}",
       "address": "充值钱包地址", "copy": "一键复制", "copied": "已复制", "qrHint": "请用钱包 App 扫描二维码",
       "addressIssuing": "正在生成充值地址…", "addressError": "地址生成失败，请稍后重试。", "addressPending": "向专属充值地址转入 USDT，12 个区块确认后即自动计入账户余额。",
-      "guideTitle": "充值说明", "guideMin": "最低充值 {min}", "guideConfirm": "区块链 {n} 次确认后自动到账", "guideToken": "仅发送所选网络的 USDT。其他币种或网络无法找回",
+      "guideTitle": "充值说明", "sessionTitle": "充值会话", "sessionLeft": "剩余 {time}", "sessionExpired": "会话已过期", "sessionRenew": "🔄 开始新会话", "graceNote": "提示：即使 30 分钟计时结束，只要在 72 小时内到达区块链的正常充值，仍会自动安全入账。", "dustWarn": "最低充值：{min}（低于 {min} 的转账因手续费政策需人工确认）", "guideMin": "最低充值 {min}", "guideConfirm": "区块链 {n} 次确认后自动到账", "guideToken": "仅发送所选网络的 USDT。其他币种或网络无法找回",
       "guideTime": "约 {sec} 秒/区块 · 约 {min} 分钟",
       "status": "充值状态", "waiting": "等待入账", "checking": "正在查询区块链…", "amountTitle": "充值金额（预计）", "confirmSent": "⚡ 已完成转账（自动核对余额）", "pendingNote": "等待网络确认 — 确认后余额将自动更新。", "creditedToastDone": "入账确认完成！余额已充值", "watching": "正在实时监测区块链网络确认。", "confirming": "确认 {n} / {total}", "credited": "已计入余额",
      
@@ -538,7 +538,7 @@ UI = {
     },
     "cardPay": {
       "quick": "快捷充值", "custom": "自定义金额", "amount": "支付金额", "credit": "计入余额", "cardNumber": "卡号", "expiry": "有效期 (MM/YY)", "cvc": "CVC (3 位)", "holder": "持卡人姓名（英文）", "threeDs": "3D Secure 验证中…", "threeDsBody": "正在向 {brand} 发卡行确认本人验证", "payAndCredit": "支付 {usd} 并即时充值 {usdt}", "retry": "换一张卡重试", "summaryPay": "支付金额 (USD)", "summaryCredit": "即时充值 (USDT)", "rateNote": "USD 1 = USDT 1 · 发卡行外币手续费另计", "recent": "最近充值记录", "noRecent": "暂无充值记录", "recentCard": "信用卡充值", "recentUsdt": "USDT 充值",
-      "provider": "支付方式", "providerStripe": "Stripe · 国际信用卡", "providerPortone": "PortOne · 韩国信用卡", "cardSoon": "信用卡支付即将开放，目前请使用 USDT 充值。",
+      "provider": "支付方式", "providerStripe": "Stripe · 国际信用卡", "providerPortone": "PortOne · 韩国信用卡", "errCardNumber": "请检查卡号（Visa/Mastercard 16 位）", "errExpiry": "有效期已过或格式不正确（MM/YY）", "errCvc": "请输入 3 位 CVC", "errHolder": "请输入卡面上的英文姓名", "threeDS": {"authenticated": "3DS Verified", "attempted": "3DS Attempted（已尝试认证）", "not_supported": "发卡行不支持 3DS", "failed": "3DS 认证失败", "unknown": "未返回 3DS 结果"}, "threeDSNote": "3D Secure 2.0 由支付服务商执行；只有服务商回报认证成功时才会显示责任转移标记。", "threeDSTitle": "3D Secure 2.0 认证中", "cardSoon": "信用卡支付即将开放，目前请使用 USDT 充值。",
      
       "pay": "支付 {amount}", "processing": "支付处理中…", "belowMin": "最低支付金额为 {min}", "aboveMax": "最高支付金额为 {max}", "invalid": "请检查金额",
       "declined": "卡片被拒绝", "declinedHint": "发卡行拒绝了此卡，请换一张卡重试。",

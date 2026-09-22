@@ -9,7 +9,7 @@ import { useCurrency } from "@/lib/useCurrency";
 import { useWalletStore } from "@/stores/walletStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { playChime } from "@/lib/audio";
-import { resolveProvider, validateAmount, type CheckoutResult } from "@/lib/payments";
+import { DEFAULT_3DS_REQUEST, liabilityShiftApplied, resolveProvider, validateAmount, type CheckoutResult } from "@/lib/payments";
 import { CARD_PRESETS_USD, cardMask, cvcValid, detectBrand, expiryValid, formatCardNumber, formatExpiry, holderValid, luhnValid } from "@/lib/card";
 
 type Stage = { kind: "form" } | { kind: "3ds" } | { kind: "receipt"; result: CheckoutResult; amountUsd: number } | { kind: "declined"; result: CheckoutResult };
@@ -55,6 +55,9 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   const [cvc, setCvc] = useState("");
   const [holder, setHolder] = useState("");
   const [touched, setTouched] = useState(false);
+  /** 필드별 입력 시작 여부 — 결제 버튼을 누르기 전에도 값이 틀리면 바로 붉게 표시한다 */
+  const [dirty, setDirty] = useState({ number: false, expiry: false, cvc: false, holder: false });
+  const mark = (k: keyof typeof dirty) => setDirty((d) => (d[k] ? d : { ...d, [k]: true }));
   const [stage, setStage] = useState<Stage>({ kind: "form" });
 
   const amountUsd = picked;
@@ -77,7 +80,7 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
     setStage({ kind: "3ds" });
     await new Promise((r) => setTimeout(r, 1800));
     // 카드 원문은 넘기지 않는다 — PG 가 자체 토큰화/3DS 로 승인한다
-    const result = await provider.checkout({ amount: amountUsd, currency: "USD", amountUsdt, locale }).catch<CheckoutResult>((e: Error) => ({ ok: false, provider: intended, transactionId: "", at: new Date().toISOString(), reason: e.message }));
+    const result = await provider.checkout({ amount: amountUsd, currency: "USD", amountUsdt, locale, requestThreeDSecure: DEFAULT_3DS_REQUEST }).catch<CheckoutResult>((e: Error) => ({ ok: false, provider: intended, transactionId: "", at: new Date().toISOString(), reason: e.message }));
     if (!result.ok) {
       setStage({ kind: "declined", result });
       return;
@@ -118,6 +121,17 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
             </div>
           ))}
         </dl>
+        {/* 3DS 2.0 인증 마크 — PG 응답에 근거할 때만 책임 전가 문구를 붙인다 */}
+        <div className={cn("mt-4 flex items-start gap-2 rounded-md border p-2.5", liabilityShiftApplied(r) ? "border-emerald-500/40 bg-emerald-500/[0.07]" : "border-white/10 bg-elevation")}>
+          <ShieldCheck className={cn("mt-0.5 h-3.5 w-3.5 flex-none", liabilityShiftApplied(r) ? "text-emerald-300" : "text-muted")} strokeWidth={2.4} />
+          <div className="min-w-0">
+            <div className={cn("text-[11px] font-bold", liabilityShiftApplied(r) ? "text-emerald-300" : "text-secondary")}>
+              {liabilityShiftApplied(r) ? "3DS Verified (Liability Shift Applied)" : t(`threeDS.${r.threeDSecure ?? "unknown"}`)}
+            </div>
+            <div className="mt-0.5 break-keep text-[10px] leading-relaxed text-faint">{t("threeDSNote")}</div>
+          </div>
+        </div>
+
         <button type="button" onClick={() => setStage({ kind: "form" })} className="mt-5 flex h-11 w-full items-center justify-center gap-2 rounded-md bg-gold-champagne text-sm font-bold text-obsidian hover:bg-gold-metallic">
           <Check className="h-4 w-4" strokeWidth={2.5} />
           {t("done")}
@@ -135,7 +149,7 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
             <motion.div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-gold-champagne/60" animate={{ rotate: 360 }} transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}>
               <Lock className="h-6 w-6 text-gold-champagne" strokeWidth={2.2} />
             </motion.div>
-            <div className="mt-4 text-sm font-bold text-white">{t("threeDs")}</div>
+            <div className="mt-4 text-sm font-bold text-white">{t("threeDSTitle")}</div>
             <div className="mt-1 text-[11px] text-muted">{t("threeDsBody", { brand: brand === "mastercard" ? "Mastercard" : "Visa" })}</div>
           </motion.div>
         )}
@@ -170,30 +184,34 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
             <span className="relative mt-2 block">
               <input
                 value={number}
-                onChange={(e) => setNumber(formatCardNumber(e.target.value))}
+                onChange={(e) => { setNumber(formatCardNumber(e.target.value)); mark("number"); }}
                 inputMode="numeric"
                 autoComplete="cc-number"
                 placeholder="4242 4242 4242 4242"
-                className={cn(field, "pr-16", touched && errors.number ? "border-crimson" : "border-hairline")}
+                className={cn(field, "pr-16", (touched || dirty.number) && errors.number ? "border-crimson" : "border-hairline")}
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2">
                 <BrandMark brand={brand} />
               </span>
             </span>
+            {(touched || dirty.number) && errors.number && <span className="mt-1 block text-[11px] text-crimson">{t("errCardNumber")}</span>}
           </label>
           <div className="grid grid-cols-2 gap-3">
             <label className="block">
               <span className="caption-luxury">{t("expiry")}</span>
-              <input value={expiry} onChange={(e) => setExpiry(formatExpiry(e.target.value))} inputMode="numeric" autoComplete="cc-exp" placeholder="MM/YY" className={cn(field, "mt-2", touched && errors.expiry ? "border-crimson" : "border-hairline")} />
+              <input value={expiry} onChange={(e) => { setExpiry(formatExpiry(e.target.value)); mark("expiry"); }} inputMode="numeric" autoComplete="cc-exp" placeholder="MM/YY" className={cn(field, "mt-2", (touched || dirty.expiry) && errors.expiry ? "border-crimson" : "border-hairline")} />
+              {(touched || dirty.expiry) && errors.expiry && <span className="mt-1 block text-[11px] text-crimson">{t("errExpiry")}</span>}
             </label>
             <label className="block">
               <span className="caption-luxury">{t("cvc")}</span>
-              <input value={cvc} onChange={(e) => setCvc(e.target.value.replace(/\D/g, "").slice(0, 3))} inputMode="numeric" autoComplete="cc-csc" placeholder="123" className={cn(field, "mt-2", touched && errors.cvc ? "border-crimson" : "border-hairline")} />
+              <input value={cvc} onChange={(e) => { setCvc(e.target.value.replace(/\D/g, "").slice(0, 3)); mark("cvc"); }} inputMode="numeric" autoComplete="cc-csc" placeholder="123" className={cn(field, "mt-2", (touched || dirty.cvc) && errors.cvc ? "border-crimson" : "border-hairline")} />
+              {(touched || dirty.cvc) && errors.cvc && <span className="mt-1 block text-[11px] text-crimson">{t("errCvc")}</span>}
             </label>
           </div>
           <label className="block">
             <span className="caption-luxury">{t("holder")}</span>
-            <input value={holder} onChange={(e) => setHolder(e.target.value.toUpperCase())} autoComplete="cc-name" placeholder="HONG GILDONG" className={cn(field, "mt-2 font-sans uppercase", touched && errors.holder ? "border-crimson" : "border-hairline")} />
+            <input value={holder} onChange={(e) => { setHolder(e.target.value.toUpperCase()); mark("holder"); }} autoComplete="cc-name" placeholder="HONG GILDONG" className={cn(field, "mt-2 font-sans uppercase", (touched || dirty.holder) && errors.holder ? "border-crimson" : "border-hairline")} />
+            {(touched || dirty.holder) && errors.holder && <span className="mt-1 block text-[11px] text-crimson">{t("errHolder")}</span>}
           </label>
         </div>
 

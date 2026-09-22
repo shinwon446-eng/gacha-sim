@@ -24,7 +24,21 @@ export const PRESETS: Record<Currency, number[]> = {
 export const MIN_CARD_USDT = 10;
 export const MAX_CARD_USDT = 5000;
 
+/**
+ * 3D Secure 2.0 요청 강도 — Stripe 의 payment_method_options.card.request_three_d_secure 와 같은 값.
+ *   any       — 발급사가 면제해도 3DS 를 요구한다(책임 전가 확보). 기본값.
+ *   automatic — 발급사 판단에 맡긴다.
+ */
+export type ThreeDSecureRequest = "any" | "automatic";
+
+/** 3DS 인증 결과 — PG 가 알려준 값만 쓴다(우리가 지어내지 않는다) */
+export type ThreeDSecureOutcome = "authenticated" | "attempted" | "not_supported" | "failed";
+
+export const DEFAULT_3DS_REQUEST: ThreeDSecureRequest = "any";
+
 export interface CheckoutRequest {
+  /** 3DS 2.0 요청 강도 — 서버가 PaymentIntent 에 그대로 넘긴다 */
+  requestThreeDSecure?: ThreeDSecureRequest;
   /** 선택 통화 단위 금액 */
   amount: number;
   currency: Currency;
@@ -34,6 +48,10 @@ export interface CheckoutRequest {
 }
 
 export interface CheckoutResult {
+  /** PG 가 보고한 3DS 2.0 인증 결과 */
+  threeDSecure?: ThreeDSecureOutcome;
+  /** 책임 전가(Liability Shift) 적용 여부 — PG 응답 그대로 */
+  liabilityShift?: boolean;
   ok: boolean;
   provider: CardProvider;
   /** PG 거래 id */
@@ -44,6 +62,11 @@ export interface CheckoutResult {
   cardMask?: string;
   /** 실패 사유 */
   reason?: string;
+}
+
+/** 영수증에 "3DS Verified (Liability Shift Applied)" 를 붙일 수 있는가 — 인증 성공 + 책임 전가일 때만 */
+export function liabilityShiftApplied(result: Pick<CheckoutResult, "threeDSecure" | "liabilityShift">): boolean {
+  return result.threeDSecure === "authenticated" && result.liabilityShift === true;
 }
 
 export interface PaymentProvider {
