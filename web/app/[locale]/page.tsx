@@ -303,6 +303,10 @@ export default function BoxesPage() {
         onCredited={(amount, source) =>
           pushToast({ title: t(source === "card" ? "cardPay.creditedToast" : "deposit.creditedToast", { amount: fmt(amount) }), tone: "#E6CA65" })
         }
+        onWithdraw={() => {
+          setDepositOpen(false);
+          setWithdrawOpen(true);
+        }}
       />
 
       <DailyFreeBoxModal open={dailyOpen} onClose={() => setDailyOpen(false)} onCredited={(amount) => pushToast({ title: t("daily.creditedToast", { amount: fmt(amount) }), tone: "#E6CA65" })} />

@@ -274,6 +274,7 @@
     "eyebrow": "Wallet · Deposit",
     "tabUsdt": "USDT Deposit",
     "tabCard": "Credit Card",
+    "tabWithdraw": "Withdraw",
     "network": "Select network",
     "recommended": "Recommended · zero fee",
     "chain": "{chain}",

@@ -274,6 +274,7 @@
     "eyebrow": "Wallet · Deposit",
     "tabUsdt": "USDT 充值",
     "tabCard": "信用卡支付",
+    "tabWithdraw": "提现",
     "network": "选择网络",
     "recommended": "推荐 · 零手续费",
     "chain": "{chain}",

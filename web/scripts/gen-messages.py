@@ -89,7 +89,7 @@ UI = {
       "fairNote": "이 결과는 아래 시드와 Nonce 로 결정됐습니다. [이 결과 검증]에서 그대로 재현할 수 있습니다."
     },
     "deposit": {
-      "title": "충전하기", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 입금", "tabCard": "신용카드 결제",
+      "title": "충전하기", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 입금", "tabCard": "신용카드 결제", "tabWithdraw": "출금",
       "network": "네트워크 선택", "recommended": "수수료 0원 추천", "chain": "{chain}",
       "address": "입금 지갑 주소", "copy": "원클릭 복사", "copied": "복사 완료", "qrHint": "지갑 앱으로 QR을 스캔하세요",
       "addressIssuing": "입금 주소를 발급하는 중입니다…", "addressError": "주소 발급에 실패했습니다. 잠시 후 다시 시도해 주세요.", "addressPending": "전용 입금 지갑 주소로 USDT 전송 시 12 블록 컨펌 후 계정 잔액에 즉시 자동 충전됩니다.",
@@ -299,7 +299,7 @@ UI = {
       "fairNote": "This result was determined by the seeds and nonce below. Reproduce it exactly under [Verify this result]."
     },
     "deposit": {
-      "title": "Deposit", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT Deposit", "tabCard": "Credit Card",
+      "title": "Deposit", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT Deposit", "tabCard": "Credit Card", "tabWithdraw": "Withdraw",
       "network": "Select network", "recommended": "Recommended · zero fee", "chain": "{chain}",
       "address": "Deposit address", "copy": "Copy address", "copied": "Copied", "qrHint": "Scan the QR with your wallet app",
       "addressIssuing": "Issuing your deposit address…", "addressError": "Could not issue an address. Please try again shortly.", "addressPending": "Send USDT to your dedicated deposit address — after 12 block confirmations it is credited to your balance automatically.",
@@ -509,7 +509,7 @@ UI = {
       "fairNote": "本次结果由以下种子与 Nonce 决定。可在[验证本次结果]中完整复现。"
     },
     "deposit": {
-      "title": "充值", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 充值", "tabCard": "信用卡支付",
+      "title": "充值", "eyebrow": "Wallet · Deposit", "tabUsdt": "USDT 充值", "tabCard": "信用卡支付", "tabWithdraw": "提现",
       "network": "选择网络", "recommended": "推荐 · 零手续费", "chain": "{chain}",
       "address": "充值钱包地址", "copy": "一键复制", "copied": "已复制", "qrHint": "请用钱包 App 扫描二维码",
       "addressIssuing": "正在生成充值地址…", "addressError": "地址生成失败，请稍后重试。", "addressPending": "向专属充值地址转入 USDT，12 个区块确认后即自动计入账户余额。",

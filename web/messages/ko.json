@@ -274,6 +274,7 @@
     "eyebrow": "Wallet · Deposit",
     "tabUsdt": "USDT 입금",
     "tabCard": "신용카드 결제",
+    "tabWithdraw": "출금",
     "network": "네트워크 선택",
     "recommended": "수수료 0원 추천",
     "chain": "{chain}",
