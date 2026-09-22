@@ -24,6 +24,7 @@ import { Money } from "@/components/ui/Money";
 import { VisualVerifyModal } from "@/components/fairness/VisualVerifyModal";
 import { ShippingModal } from "@/components/inventory/ShippingModal";
 import { useInventoryStore, type OwnedItem } from "@/stores/inventoryStore";
+import { useTelemetryStore } from "@/stores/telemetryStore";
 import { CRYPTO_ONLY, type FundingRatio } from "@/lib/funding";
 import { useWalletStore, WELCOME_BONUS_USDT } from "@/stores/walletStore";
 import type { ShippingAddress } from "@/lib/shipping";
@@ -190,6 +191,8 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
   const spinOnce = useCallback(
     async (duration: number): Promise<UnboxResult> => {
       if (!box) throw new Error("box 없음");
+      // 매크로 봇 탐지용 스핀 간격 기록 — 무료 체험은 제외 (lib/fraudScoring.ts)
+      if (!demo) useTelemetryStore.getState().recordSpin();
       let res: UnboxResult;
       let item: ProductItem;
       if (demo) {

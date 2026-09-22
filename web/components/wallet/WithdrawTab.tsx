@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowUpRight, Check, Clock, Loader2, Copy, ExternalLink, CheckCircle2, ShieldCheck, ShieldAlert, CreditCard } from "lucide-react";
+import { ArrowUpRight, Check, Clock, Loader2, Copy, ExternalLink, CheckCircle2, ShieldCheck, ShieldAlert, CreditCard, Activity, Gavel } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useCurrencyStore } from "@/stores/currencyStore";
@@ -12,6 +12,8 @@ import { playChime } from "@/lib/audio";
 import type { Network } from "@/lib/depositAddress";
 import { EXPLORERS, MIN_WITHDRAW_USDT, WITHDRAW_NETWORKS, WITHDRAW_NETWORK_BY_KEY, explorerTxUrl, maxWithdrawable, netReceive, validateWithdrawal, type WithdrawError } from "@/lib/withdrawal";
 import { LOW_RISK_WEIGHT, requiredRollover, rolloverProgress } from "@/lib/rollover";
+import { assessWithdrawalRisk, circuitState, needsManualReview, CIRCUIT_LIMIT_USDT, REVIEW_THRESHOLD } from "@/lib/fraudScoring";
+import { useTelemetryStore } from "@/stores/telemetryStore";
 import { isLive } from "@/lib/runtime";
 import { api } from "@/lib/api";
 import { useFairStore } from "@/stores/fairStore";
@@ -29,7 +31,10 @@ export interface WithdrawTabProps {
   onDone?: () => void;
 }
 
-type Stage = { kind: "form" } | { kind: "submitting" } | { kind: "done"; tx: Transaction; amountUsdt: number; network: Network; address: string };
+type Stage =
+  | { kind: "form" }
+  | { kind: "submitting" }
+  | { kind: "done"; tx: Transaction; amountUsdt: number; network: Network; address: string; review: boolean; riskScore: number };
 
 const inputCls = "mt-1.5 w-full rounded-md border border-hairline bg-obsidian px-3 py-2.5 font-mono text-sm text-white outline-none transition-colors placeholder:text-faint focus:border-gold-champagne";
 
@@ -43,8 +48,8 @@ type TFn = ReturnType<typeof useTranslations<"withdraw">>;
 
 function StatusPill({ status, t }: { status: TxStatus; t: TFn }) {
   return (
-    <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold", status === "PENDING" ? "bg-white/10 text-secondary" : status === "BROADCASTING" ? "bg-gold-champagne/15 text-gold-champagne" : "bg-emerald-500/15 text-emerald-300")}>
-      {status === "PENDING" ? <Clock className="h-3 w-3" strokeWidth={2.4} /> : status === "BROADCASTING" ? <Loader2 className="h-3 w-3 animate-spin" strokeWidth={2.4} /> : <CheckCircle2 className="h-3 w-3" strokeWidth={2.4} />}
+    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-bold", status === "PENDING_ADMIN_REVIEW" ? "bg-crimson/15 text-crimson" : status === "PENDING" ? "bg-white/10 text-secondary" : status === "BROADCASTING" ? "bg-gold-champagne/15 text-gold-champagne" : "bg-emerald-500/15 text-emerald-300")}>
+      {status === "PENDING_ADMIN_REVIEW" ? <Gavel className="h-3 w-3" strokeWidth={2.4} /> : status === "PENDING" ? <Clock className="h-3 w-3" strokeWidth={2.4} /> : status === "BROADCASTING" ? <Loader2 className="h-3 w-3 animate-spin" strokeWidth={2.4} /> : <CheckCircle2 className="h-3 w-3" strokeWidth={2.4} />}
       {t(`status.${status}`)}
     </span>
   );
@@ -106,6 +111,27 @@ function RolloverBar({ t }: { t: TFn }) {
   );
 }
 
+/** ⛔ 서킷 브레이커 — 1시간 누적 출금이 한도를 넘으면 핫월렛 자동 출금을 멈추고 전부 수동 승인으로 돌린다 */
+function CircuitBanner({ t, used, limit, remaining, tripped }: { t: TFn; used: number; limit: number; remaining: number; tripped: boolean }) {
+  const { fmt } = useCurrency();
+  const pct = Math.min(100, Math.round((used / limit) * 100));
+  return (
+    <div className={cn("mt-3 rounded-lg p-3", tripped ? "border border-crimson/50 bg-crimson/[0.08]" : "border-metallic-subtle bg-obsidian")}>
+      <div className="flex items-start gap-2">
+        <Activity className={cn("mt-0.5 h-3.5 w-3.5 flex-none", tripped ? "text-crimson" : "text-muted")} strokeWidth={2.2} />
+        <div className="min-w-0 flex-1">
+          <div className={cn("break-keep text-[11px] font-bold", tripped ? "text-crimson" : "text-secondary")}>{tripped ? t("circuitTripped") : t("circuitTitle")}</div>
+          <div className="mt-0.5 break-keep text-[10px] leading-relaxed text-faint">{tripped ? t("circuitTrippedNote") : t("circuitNote", { limit: fmt(limit), remaining: fmt(remaining) })}</div>
+        </div>
+        <span className={cn("flex-none font-mono text-[11px] tabular-nums", tripped ? "text-crimson" : "text-faint")}>{fmt(used)}</span>
+      </div>
+      <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
+        <div className={cn("h-full rounded-full transition-[width] duration-500", tripped ? "bg-crimson" : "bg-secondary/60")} style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
 /**
  * USDT 출금 탭 — 지갑 모달 3번째 탭이자 출금 모달의 본문.
  * 네트워크(TRC-20 / BEP-20) → 개인 지갑 주소 → 수량(최소 20 USDT, +25%/+50%/전액) → 실수령액 → 신청.
@@ -163,6 +189,16 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const amountOk = !errors.includes("nan") && !errors.includes("min") && !errors.includes("insufficient");
   const net = amountOk ? netReceive(amountUsdt, network) : 0;
 
+  // 부정거래 탐지 입력 — 첫 입금 시각, 스핀 간격, 1시간 누적 출금
+  const spinTimes = useTelemetryStore((s) => s.spinTimes);
+  const firstDepositAt = useMemo(() => {
+    const deposits = transactions.filter((x) => x.type === "deposit_usdt" || x.type === "deposit_card");
+    if (deposits.length === 0) return undefined;
+    return Math.min(...deposits.map((x) => Date.parse(x.at)).filter(Number.isFinite));
+  }, [transactions]);
+  const withdrawHistory = useMemo(() => transactions.filter((x) => x.type === "withdraw").map((x) => ({ amountUsdt: x.amountUsdt, at: x.at })), [transactions]);
+  const circuit = useMemo(() => circuitState(withdrawHistory), [withdrawHistory]);
+
   const amlPct = rolloverProgress(totalWagered, totalDepositedCrypto);
   const amlOk = amlPct >= 100;
 
@@ -188,12 +224,15 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
           setStage({ kind: "form" });
           return;
         }
-        const tx = addTransaction({ type: "withdraw", amountUsdt: -amountUsdt, ref: `${network}:${addr}`, status: "PENDING" });
+        const risk = assessWithdrawalRisk({ amountUsdt, firstDepositAt, spinTimes });
+        const review = needsManualReview(risk, circuitState(withdrawHistory));
+        const tx = addTransaction({ type: "withdraw", amountUsdt: -amountUsdt, ref: `${network}:${addr}`, status: review ? "PENDING_ADMIN_REVIEW" : "PENDING" });
         if (!useSettingsStore.getState().muted) playChime();
         onRequested?.(amountUsdt, network);
-        setStage({ kind: "done", tx, amountUsdt, network, address: addr });
-        // live: 서버가 서명·브로드캐스트 → 상태·TxID 를 폴링으로 반영. preview: PENDING 에 머문다 (TxID 를 지어내지 않는다).
-        if (isLive()) {
+        setStage({ kind: "done", tx, amountUsdt, network, address: addr, review, riskScore: risk.score });
+        // 심사 대상이면 자동 송금 경로를 타지 않는다 — 관리자 승인 후 백엔드가 브로드캐스트한다.
+        // live: 서버가 서명·브로드캐스트 → 상태·TxID 를 폴링으로 반영. preview: 상태에 머문다 (TxID 를 지어내지 않는다).
+        if (!review && isLive()) {
           api
             .withdraw({ network, address: addr, amountUsdt, userKey })
             .then((r) => {
@@ -214,7 +253,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
         }
       }, SUBMIT_MS),
     );
-  }, [errors, stage.kind, amlOk, amlPct, onBlocked, debitCrypto, amountUsdt, address, addTransaction, network, onRequested, setTransactionStatus, userKey]);
+  }, [errors, stage.kind, amlOk, amlPct, onBlocked, firstDepositAt, spinTimes, withdrawHistory, debitCrypto, amountUsdt, address, addTransaction, network, onRequested, setTransactionStatus, userKey]);
 
   const reset = () => {
     setStage({ kind: "form" });
@@ -237,7 +276,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
         {/* 상태 타임라인 */}
         <ol className="mt-3 flex items-center gap-1.5">
           {(["PENDING", "BROADCASTING", "COMPLETED"] as TxStatus[]).map((s, i) => {
-            const order = ["PENDING", "BROADCASTING", "COMPLETED"];
+            const order = ["PENDING", "PENDING_ADMIN_REVIEW", "BROADCASTING", "COMPLETED"].filter((x) => x !== "PENDING_ADMIN_REVIEW");
             const done = order.indexOf(liveStatus ?? "PENDING") >= i;
             return (
               <li key={s} className="flex flex-1 items-center gap-1.5">
@@ -277,7 +316,18 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
             {liveTx?.txHash ? <TxLink network={stage.network} hash={liveTx.txHash} t={t} copied={copied} onCopy={copy} /> : <span className="text-xs text-faint">{t("txHashPending")}</span>}
           </div>
         </div>
-        <p className="mt-3 text-[10px] leading-relaxed text-faint">{isLive() ? t("processingNote") : t("networkNote")}</p>
+        {stage.review ? (
+          <div className="mt-3 rounded-md border border-crimson/40 bg-crimson/[0.08] p-2.5">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-crimson">
+              <Gavel className="h-3.5 w-3.5" strokeWidth={2.4} />
+              {t("reviewTitle")}
+            </div>
+            <p className="mt-1 break-keep text-[10px] leading-relaxed text-secondary">{t("reviewNote")}</p>
+            <p className="mt-1 break-keep text-[10px] leading-relaxed text-faint">{t("riskScore", { score: stage.riskScore, threshold: REVIEW_THRESHOLD })}</p>
+          </div>
+        ) : (
+          <p className="mt-3 text-[10px] leading-relaxed text-faint">{isLive() ? t("processingNote") : t("networkNote")}</p>
+        )}
         <div className={cn("mt-4 grid gap-2", onDone ? "grid-cols-2" : "grid-cols-1")}>
           <button type="button" onClick={reset} className="glass-dark h-11 rounded-md text-sm font-semibold text-secondary hover:text-white">
             {t("another")}
@@ -317,6 +367,9 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
 
       {/* 🛡️ 자금세탁 방지(AML) 롤오버 */}
       <RolloverBar t={t} />
+
+      {/* ⛔ 시간당 출금 서킷 브레이커 */}
+      <CircuitBanner t={t} used={circuit.usedUsdt} limit={CIRCUIT_LIMIT_USDT} remaining={circuit.remainingUsdt} tripped={circuit.tripped} />
 
       {/* 네트워크 */}
       <fieldset className="mt-4">

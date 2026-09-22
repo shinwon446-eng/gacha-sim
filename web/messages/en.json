@@ -664,8 +664,16 @@
     "another": "New withdrawal",
     "done": "Done",
     "history": "Recent withdrawals",
+    "reviewTitle": "PENDING_ADMIN_REVIEW · security review",
+    "reviewNote": "Under our security policy an administrator approves the transfer within 24 hours, after which it is broadcast on-chain.",
+    "riskScore": "Risk score {score} (auto-approval below {threshold})",
+    "circuitTitle": "Hourly automatic withdrawal limit",
+    "circuitNote": "{remaining} left of the {limit} hourly limit — beyond it, hot-wallet automation stops and every withdrawal switches to manual approval.",
+    "circuitTripped": "⛔ Circuit breaker engaged — automatic withdrawals paused",
+    "circuitTrippedNote": "Hourly withdrawals exceeded the limit, so hot-wallet automation is paused. Requests accepted now are settled by manual approval (funds stay safe).",
     "status": {
       "PENDING": "Pending",
+      "PENDING_ADMIN_REVIEW": "Security review",
       "BROADCASTING": "Broadcasting",
       "COMPLETED": "Completed"
     },

@@ -664,8 +664,16 @@
     "another": "再次提现",
     "done": "确定",
     "history": "最近提现",
+    "reviewTitle": "PENDING_ADMIN_REVIEW · 安全审核中",
+    "reviewNote": "根据安全政策，管理员将在 24 小时内完成安全审批，随后在链上完成转账。",
+    "riskScore": "风险分 {score}（自动通过标准为 {threshold} 分以下）",
+    "circuitTitle": "每小时自动提现额度",
+    "circuitNote": "每小时额度 {limit} 中剩余 {remaining} —— 超出后热钱包自动提现暂停，所有提现转为人工审批。",
+    "circuitTripped": "⛔ 熔断已触发 —— 自动提现暂停",
+    "circuitTrippedNote": "1 小时累计提现超过额度，热钱包自动转账已暂停。现在提交的提现将由管理员人工审批（资金安全保管）。",
     "status": {
       "PENDING": "审核中",
+      "PENDING_ADMIN_REVIEW": "安全审核",
       "BROADCASTING": "广播中",
       "COMPLETED": "已完成"
     },

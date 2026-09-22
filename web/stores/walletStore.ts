@@ -14,7 +14,8 @@ export const WELCOME_BONUS_USDT = 5;
 
 export type TxType = "deposit_usdt" | "deposit_card" | "open" | "sellback" | "withdraw" | "bonus";
 
-export type TxStatus = "PENDING" | "BROADCASTING" | "COMPLETED";
+/** PENDING_ADMIN_REVIEW — 부정거래 탐지·서킷 브레이커로 관리자 안전 심사 대기 (lib/fraudScoring.ts) */
+export type TxStatus = "PENDING" | "PENDING_ADMIN_REVIEW" | "BROADCASTING" | "COMPLETED";
 
 export interface Transaction {
   id: string;

@@ -8,6 +8,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { useInventoryStore } from "@/stores/inventoryStore";
 import { useDailyStore } from "@/stores/dailyStore";
 import { useCommunityStore } from "@/stores/communityStore";
+import { useTelemetryStore } from "@/stores/telemetryStore";
 
 /** 마운트 후 persist 스토어(통화·지갑·설정·공정성 시드)를 적용한다. layout 에 한 번만 둔다. */
 export function CurrencyHydrator() {
@@ -18,6 +19,7 @@ export function CurrencyHydrator() {
     void useInventoryStore.persist.rehydrate();
     void useDailyStore.persist.rehydrate();
     void useCommunityStore.persist.rehydrate();
+    void useTelemetryStore.persist.rehydrate();
     void Promise.resolve(useFairStore.persist.rehydrate()).then(() => useFairStore.getState().ensureSeeds());
   }, []);
   return null;
