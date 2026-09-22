@@ -14,19 +14,20 @@ export default function FairnessPage() {
   const t = useTranslations();
   return (
     <main className="min-h-screen bg-canvas pb-24">
-      <header className="sticky top-0 z-40 flex items-center gap-5 border-b border-hairline bg-obsidian/90 px-[4%] py-4 backdrop-blur-md">
+      <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-hairline bg-obsidian/90 px-[4%] backdrop-blur-md sm:gap-5">
         <Link href="/" className="font-display text-xl font-bold uppercase leading-none tracking-tight text-crimson">
           Gachaflix
         </Link>
         <nav className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap text-[11px] text-muted [scrollbar-width:none] sm:gap-4 sm:text-xs">
-          <Link href="/" className="transition-colors hover:text-white">
+          {/* 모바일은 현재 페이지명만 — 나머지 이동은 하단 내비·푸터 */}
+          <Link href="/" className="hidden transition-colors hover:text-white md:inline">
             {t("nav.boxes")}
           </Link>
-          <Link href="/inventory" className="transition-colors hover:text-white">
+          <Link href="/inventory" className="hidden transition-colors hover:text-white md:inline">
             {t("nav.inventory")}
           </Link>
           <span className="font-semibold text-white">{t("nav.fairness")}</span>
-          <Link href="/community" className="transition-colors hover:text-white">
+          <Link href="/community" className="hidden transition-colors hover:text-white md:inline">
             {t("nav.community")}
           </Link>
         </nav>

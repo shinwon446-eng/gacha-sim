@@ -79,6 +79,11 @@ export default function InventoryPage() {
   const [bulk, setBulk] = useState<{ box: ProductBox; count: number } | null>(null);
   const [toast, setToast] = useState<{ id: number; text: string; tone: string } | null>(null);
 
+  /** 한 번에 그리는 카드 수 — 수백 건을 모바일에서 한꺼번에 렌더하지 않는다 */
+  const PAGE = 24;
+  const [shown, setShown] = useState(PAGE);
+  useEffect(() => setShown(PAGE), [tab, tier, sort]);
+
   const summary = useMemo(() => summarize(items), [items]);
   const visible = useMemo(() => {
     const list = items.filter((o) => (tab === "held" ? o.status === "IN_STORAGE" : DONE_STATUSES.includes(o.status)) && (tier === "all" || o.tier === tier));
@@ -178,7 +183,7 @@ export default function InventoryPage() {
 
   return (
     <main className="min-h-screen bg-canvas pb-28">
-      <header className="sticky top-0 z-40 flex items-center gap-3 border-b border-hairline bg-obsidian/90 px-[4%] py-3 backdrop-blur-md sm:gap-5">
+      <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-hairline bg-obsidian/90 px-[4%] backdrop-blur-md sm:gap-5">
         <Link href="/" className="font-display text-xl font-bold uppercase leading-none tracking-tight text-crimson">
           Gachaflix
         </Link>
@@ -187,10 +192,11 @@ export default function InventoryPage() {
             {t("nav.boxes")}
           </Link>
           <span className="font-semibold text-white">{t("nav.inventory")}</span>
-          <Link href="/fairness" className="hover:text-white">
+          {/* 모바일은 현재 페이지명만 — 나머지 이동은 하단 내비·푸터 */}
+          <Link href="/fairness" className="hidden hover:text-white md:inline">
             {t("nav.fairness")}
           </Link>
-          <Link href="/community" className="hover:text-white">
+          <Link href="/community" className="hidden hover:text-white md:inline">
             {t("nav.community")}
           </Link>
         </nav>
@@ -331,7 +337,7 @@ export default function InventoryPage() {
           )
         ) : (
           <ul className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-5">
-            {visible.map((o) => {
+            {visible.slice(0, shown).map((o) => {
               const item = itemOf(o);
               const box = BOX_BY_SLUG[o.boxSlug];
               const tierMeta = TIER_BY_KEY[o.tier];
@@ -434,12 +440,19 @@ export default function InventoryPage() {
             })}
           </ul>
         )}
+        {shown < visible.length && (
+          <div className="mt-6 flex justify-center">
+            <button type="button" onClick={() => setShown((n) => n + PAGE)} className="rounded-sm border border-[#555555] px-6 py-2.5 text-[13px] font-semibold text-white transition-colors duration-200 hover:border-white hover:bg-elevation">
+              {t("grid.loadMore", { n: visible.length - shown })}
+            </button>
+          </div>
+        )}
       </section>
 
-      {/* ── 플로팅 일괄 액션 바 ── */}
+      {/* ── 플로팅 일괄 액션 바 — 모바일은 하단 내비(h-14) 위에 뜬다 ── */}
       <AnimatePresence>
         {selectedItems.length > 0 && (
-          <motion.div className="fixed inset-x-0 bottom-0 z-40 px-[4%] pb-4" initial={{ y: 80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 80, opacity: 0 }} transition={{ duration: 0.25 }}>
+          <motion.div className="fixed inset-x-0 bottom-14 z-40 px-[4%] pb-3 md:bottom-0 md:pb-4" initial={{ y: 80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 80, opacity: 0 }} transition={{ duration: 0.25 }}>
             <div className="border-metallic-gold mx-auto flex max-w-3xl flex-wrap items-center gap-3 rounded-xl bg-obsidian/95 p-3 backdrop-blur-md">
               <div className="flex min-w-0 items-baseline gap-2 text-sm text-secondary">
                 <span>{t("inventory.selected", { n: selectedItems.length })}</span>

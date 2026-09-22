@@ -65,7 +65,7 @@ export default function CommunityPage() {
 
   return (
     <main className="min-h-screen bg-canvas pb-24">
-      <header className="sticky top-0 z-40 flex items-center gap-3 border-b border-hairline bg-obsidian/90 px-[4%] py-3 backdrop-blur-md sm:gap-5">
+      <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-hairline bg-obsidian/90 px-[4%] backdrop-blur-md sm:gap-5">
         <Link href="/" className="font-display text-xl font-bold uppercase leading-none tracking-tight text-crimson">
           Gachaflix
         </Link>
@@ -73,10 +73,11 @@ export default function CommunityPage() {
           <Link href="/" className="hidden hover:text-white sm:inline">
             {t("nav.boxes")}
           </Link>
-          <Link href="/inventory" className="hover:text-white">
+          {/* 모바일은 현재 페이지명만 — 나머지 이동은 하단 내비·푸터 */}
+          <Link href="/inventory" className="hidden hover:text-white md:inline">
             {t("nav.inventory")}
           </Link>
-          <Link href="/fairness" className="hover:text-white">
+          <Link href="/fairness" className="hidden hover:text-white md:inline">
             {t("nav.fairness")}
           </Link>
           <span className="font-semibold text-white">{t("nav.community")}</span>

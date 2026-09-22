@@ -21,7 +21,7 @@ export default async function LegalPage({ params: { locale, doc } }: { params: {
   const sections = t.raw(`${key}.sections`) as { h: string; p: string }[];
   return (
     <main className="min-h-screen bg-canvas pb-16">
-      <header className="sticky top-0 z-40 flex items-center gap-4 border-b border-hairline bg-obsidian/90 py-3 pl-[4%] backdrop-blur-md">
+      <header className="sticky top-0 z-40 flex h-14 items-center gap-4 border-b border-hairline bg-obsidian/90 pl-[4%] backdrop-blur-md">
         <Link href="/" className="flex-none font-display text-xl font-bold uppercase leading-none tracking-tight text-crimson">
           Gachaflix
         </Link>
