@@ -6,7 +6,7 @@ import { Crown, Gem, Truck, Flame } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
-import { BOX_BY_SLUG, formatRate } from "@/lib/products";
+import { BOX_BY_SLUG, formatRate, type ItemKind } from "@/lib/products";
 import { formatMultiple, tierOf } from "@/lib/tiers";
 import { buildLineupDrops, buildLocalDrops, localHandle, type LiveDrop } from "@/lib/liveDrops";
 import { isLive } from "@/lib/runtime";
@@ -27,13 +27,15 @@ function useRelative(locale: string) {
   };
 }
 
-/** 20px 썸네일 — 이미지가 없거나 깨지면 자리만 남긴다 */
-function Thumb({ src, alt, accent }: { src: string | null; alt: string; accent?: string }) {
+/** 20px 썸네일 — 이미지가 없으면 종류 글리프(₮ 캐시 · ▤ 기프트카드), 깨지면 자리만 남긴다 */
+function Thumb({ src, alt, accent, kind }: { src: string | null; alt: string; accent?: string; kind?: ItemKind }) {
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [src]);
+  const glyph = !src ? (kind === "cash" ? "₮" : kind === "digital" ? "▤" : null) : null;
   return (
-    <span className="relative h-5 w-5 flex-none overflow-hidden rounded-sm bg-elevation" style={accent ? { boxShadow: `inset 0 0 0 1px ${accent}66` } : undefined}>
+    <span className="relative flex h-5 w-5 flex-none items-center justify-center overflow-hidden rounded-sm bg-elevation" style={accent ? { boxShadow: `inset 0 0 0 1px ${accent}66` } : undefined}>
       {src && !failed && <img src={src} alt={alt} loading="lazy" decoding="async" className="h-full w-full object-cover" onError={() => setFailed(true)} />}
+      {glyph && <span aria-hidden className="font-display text-[11px] font-bold leading-none text-gold-champagne">{glyph}</span>}
     </span>
   );
 }
@@ -108,7 +110,7 @@ export function LiveTicker({ className }: { className?: string }) {
         {(d.kind === "win" || d.kind === "lineup" || d.kind === "ship") && item && box && (
           <span className="flex flex-none items-center gap-1">
             {d.kind !== "ship" && <Thumb src={box.imageUrl} alt={boxTitle(box)} />}
-            <Thumb src={item.imageUrl} alt={itemName(item)} accent={tier?.accent} />
+            <Thumb src={item.imageUrl} alt={itemName(item)} accent={tier?.accent} kind={item.kind} />
           </span>
         )}
         <span className={cn(royal ? "text-white" : "text-muted")}>
