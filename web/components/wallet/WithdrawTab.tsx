@@ -443,7 +443,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
         </div>
       </div>
 
-      {!amlOk && <p className="mt-3 break-keep rounded-md border border-crimson/40 bg-crimson/10 p-2.5 text-[11px] leading-relaxed text-crimson">{t("amlBlocked", { pct: amlPct })}</p>}
+      {!amlOk && <p className="mt-3 break-keep rounded-md border border-gold-champagne/40 bg-gold-champagne/10 p-2.5 text-[11px] leading-relaxed text-gold-champagne">{t("amlBlocked", { pct: amlPct })}</p>}
 
       <button
         type="button"

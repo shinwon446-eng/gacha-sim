@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import { Wallet, Truck, ShieldCheck, CheckSquare, Square, ArrowUpRight, ChevronDown, Coins } from "lucide-react";
 import { cn } from "@/lib/format";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
 import { BOX_BY_SLUG, REFUND_RATE, floorRatio, type ProductBox, type ProductItem } from "@/lib/products";
@@ -27,7 +27,8 @@ import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import { CurrencySelector } from "@/components/layout/CurrencySelector";
 import { Money } from "@/components/ui/Money";
 import { SellConfirmModal } from "@/components/inventory/SellConfirmModal";
-import { ShippingModal } from "@/components/inventory/ShippingModal";
+import { DeliveryModal } from "@/components/inventory/DeliveryModal";
+import { ShippingTicker } from "@/components/inventory/ShippingTicker";
 import { TrackingModal } from "@/components/inventory/TrackingModal";
 import { HotBoxes } from "@/components/inventory/HotBoxes";
 import { WithdrawalModal } from "@/components/wallet/WithdrawalModal";
@@ -77,6 +78,7 @@ export default function InventoryPage() {
   const [shipTarget, setShipTarget] = useState<string[] | null>(null);
   const [verify, setVerify] = useState<OwnedItem | null>(null);
   const [track, setTrack] = useState<OwnedItem | null>(null);
+  const router = useRouter();
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [detail, setDetail] = useState<ProductBox | null>(null);
   const [unbox, setUnbox] = useState<{ box: ProductBox; count: number; auto?: AutoplayConfig; funding?: FundingRatio } | null>(null);
@@ -272,7 +274,9 @@ export default function InventoryPage() {
           </div>
         </div>
 
-        {/* ── 2단 탭: 보유 중 / 처리 완료 ── */}
+        <ShippingTicker className="mx-[4%] mt-4" />
+
+      {/* ── 2단 탭: 보유 중 / 처리 완료 ── */}
         <div role="tablist" aria-label={t("inventory.title")} className="mt-5 grid grid-cols-2 gap-2 rounded-xl border border-hairline bg-obsidian p-1">
           {(
             [
@@ -486,7 +490,7 @@ export default function InventoryPage() {
       </AnimatePresence>
 
       <SellConfirmModal open={!!sellTarget} count={sellTarget?.length ?? 0} amountUsdt={sellTarget ? sellAmountFor(sellTarget) : 0} refundRate={REFUND_RATE} onClose={() => setSellTarget(null)} onConfirm={confirmSell} />
-      <ShippingModal open={!!shipTarget} itemCount={shipTarget?.length ?? 0} balanceUsdt={balance} onClose={() => setShipTarget(null)} onSubmit={submitShip} />
+      <DeliveryModal open={!!shipTarget} itemCount={shipTarget?.length ?? 0} balanceUsdt={balance} onClose={() => setShipTarget(null)} onSubmit={submitShip} />
       <TrackingModal item={track} onClose={() => setTrack(null)} />
       <WithdrawalModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onRequested={(amount) => say(t("withdraw.requestedToast", { amount: fmt(amount) }), "#E6CA65")} onBlocked={(pct) => say(t("withdraw.amlBlocked", { pct }), "#E50914")} />
       <VisualVerifyModal item={verify} onClose={() => setVerify(null)} />

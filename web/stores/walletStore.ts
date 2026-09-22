@@ -8,7 +8,8 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { CRYPTO_ONLY, planDebit, type FundingRatio, type FundingSplit } from "@/lib/funding";
 
-export const START_BALANCE_USDT = 1000;
+/** 시작 잔액 — 신규 유저는 0 에서 시작한다(체험용 가상 잔고 없음). 충전해야 개봉할 수 있다. */
+export const START_BALANCE_USDT = 0;
 /** 무료 체험 후 1회 지급되는 웰컴 보너스 (CLAUDE.md §4-A) */
 export const WELCOME_BONUS_USDT = 5;
 

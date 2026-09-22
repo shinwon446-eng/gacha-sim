@@ -134,3 +134,8 @@ test("배송비 같은 비개봉 지출(rolloverUsdt: 0)은 롤오버를 채우�
   w.addTransaction({ type: "open", amountUsdt: -15, ref: "shipping:KR", rolloverUsdt: 0 });
   assert.equal(useWalletStore.getState().totalWagered, 0);
 });
+
+test("신규 지갑은 잔고 0 에서 시작한다 — 체험용 가상 잔고를 주지 않는다", async () => {
+  const { START_BALANCE_USDT } = await import("../stores/walletStore");
+  assert.equal(START_BALANCE_USDT, 0);
+});

@@ -2,7 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { useInventoryStore, summarize, type OwnedItem } from "../stores/inventoryStore";
-import { COUNTRIES, SHIPPING_FEE_USDT, customsKindFor, isValidPccc, isValidResidentId, shippingFee, validateAddress } from "../lib/shipping";
+import { COUNTRIES, FREE_SHIPPING_EVENT, SHIPPING_FEE_USDT, customsKindFor, isValidPccc, isValidResidentId, shippingFee, validateAddress } from "../lib/shipping";
 
 const base = (over: Partial<Omit<OwnedItem, "id" | "status" | "acquiredAt">> = {}) => ({
   itemId: "ctd-cable",
@@ -71,7 +71,8 @@ test("주소 검증: 필수 필드와 국가별 통관 식별자", () => {
 
 test("배송비: 모든 국가에 정액이 있고 KR 이 가장 싸다", () => {
   for (const c of COUNTRIES) assert.ok(SHIPPING_FEE_USDT[c] > 0, c);
-  assert.equal(shippingFee("KR"), Math.min(...COUNTRIES.map((c) => SHIPPING_FEE_USDT[c])));
+  assert.equal(shippingFee("KR"), FREE_SHIPPING_EVENT ? 0 : Math.min(...COUNTRIES.map((c) => SHIPPING_FEE_USDT[c])), "무료 배송 이벤트 중에는 표기와 청구가 모두 0");
+  if (!FREE_SHIPPING_EVENT) assert.equal(shippingFee("KR"), SHIPPING_FEE_USDT.KR);
 });
 
 test("지갑: 출금 거래는 status 를 갖고 PENDING → BROADCASTING(TxID) → COMPLETED 로 갱신된다", async () => {

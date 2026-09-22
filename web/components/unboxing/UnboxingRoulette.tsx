@@ -22,7 +22,7 @@ import { UpgradeFX, UPGRADE_FX_MS } from "@/components/unboxing/UpgradeFX";
 import { ProductArt } from "@/components/box/ProductArt";
 import { Money } from "@/components/ui/Money";
 import { VisualVerifyModal } from "@/components/fairness/VisualVerifyModal";
-import { ShippingModal } from "@/components/inventory/ShippingModal";
+import { DeliveryModal } from "@/components/inventory/DeliveryModal";
 import { useInventoryStore, type OwnedItem } from "@/stores/inventoryStore";
 import { useTelemetryStore } from "@/stores/telemetryStore";
 import { CRYPTO_ONLY, type FundingRatio } from "@/lib/funding";
@@ -762,7 +762,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
           )}
         </AnimatePresence>
 
-        <ShippingModal
+        <DeliveryModal
           open={shipOpen}
           itemCount={results.length}
           balanceUsdt={balance}

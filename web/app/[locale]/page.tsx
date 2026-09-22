@@ -132,6 +132,9 @@ export default function BoxesPage() {
       const plan = debitSplit(cost);
       if (!plan) {
         pushToast({ title: t("unbox.insufficient", { price: fmt(cost) }), body: t("unbox.topUp"), tone: "#E50914" });
+        // 잔고가 없으면 바로 충전 탭을 띄워 준다
+        setWalletTab("usdt");
+        setDepositOpen(true);
         return;
       }
       // 롤오버 인정액 — 저위험(바닥 환전율 90%+) 상자는 30% 만 (lib/rollover.ts)
