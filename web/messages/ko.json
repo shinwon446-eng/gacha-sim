@@ -40,6 +40,7 @@
     "openFor": "🔥 {price}로 돌려보기",
     "badge": "1달러부터 명품 잭팟",
     "poolLabel": "LIVE JACKPOT POOL",
+    "poolLabelShort": "JACKPOT POOL",
     "poolNote": "지금 열려 있는 {n}개 박스의 최고 상품 가치 합계 (공개 라인업 기준)",
     "bigWin": "🔥 LIVE BIG WIN",
     "bigWinGoal": "🎯 이번 주 잭팟 도전 목표",

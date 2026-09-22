@@ -40,6 +40,7 @@
     "openFor": "🔥 {price} 开一发",
     "badge": "1 美元起的奢品头奖",
     "poolLabel": "LIVE JACKPOT POOL",
+    "poolLabelShort": "JACKPOT POOL",
     "poolNote": "当前开放的 {n} 个盲盒最高奖品价值合计（公开阵容）",
     "bigWin": "🔥 LIVE BIG WIN",
     "bigWinGoal": "🎯 本周头奖挑战目标",

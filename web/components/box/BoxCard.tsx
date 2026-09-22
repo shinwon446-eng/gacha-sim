@@ -29,11 +29,12 @@ export interface BoxCardProps {
 /**
  * 럭셔리 박스 카드 — 클린 쇼케이스 (2026-09-23 운영자 지시 전면 개편).
  *
- * 사진이 상품이다. 사진 위에 얹는 것은 **우상단 미니 뱃지 단 하나**뿐이다.
+ * 사진이 상품이다. 사진 위에 얹는 것은 TOP 3 일 때의 **🔥 HOT 뱃지 하나**뿐이다.
  *   · 삭제: 상단 '100% 꽝 없음 · 최소 N USDT 보장' 배너, '최소 N% 환급' 뱃지,
  *           '⚡ 전 품목 95% 즉시 정산' 배너, 무지개 등급 바(GameTierBar),
  *           호버 시 카드 밖으로 튀어나오던 대표 아이템 3D 팝아웃, 바닥 플로팅 확장 패널.
  *     (보장·환급·정밀 확률은 전부 상세 모달과 /fairness 에 그대로 남아 있다 — 숨기는 게 아니라 옮긴 것)
+ *   · 삭제(2차): 사진 우상단 배율 뱃지(×N배) — 하단 메타에 이미 '최고 N배'가 크게 있어 중복이었다.
  *   · 유지: 여백 + 다크 비네팅, 호버 시 사진 1.03x 줌과 은은한 골드 림라이트.
  *     시야를 가리는 팝업·돌출은 띄우지 않는다.
  *   · 메타: 박스명(화이트 볼드) / 1회 가격 / 최고 배수(샴페인 골드).
@@ -119,18 +120,12 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onInspect,
             />
             <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-surface to-transparent" />
 
-            {/* 사진 위의 유일한 요소 — 우상단 미니 뱃지 하나 */}
-            <span className="absolute right-2 top-2 z-10">
-              {hot ? (
-                <span className="hot-pulse whitespace-nowrap rounded-sm border border-crimson/60 bg-crimson/25 px-1.5 py-0.5 text-[9px] font-bold leading-none text-white backdrop-blur-sm">
-                  🔥 HOT
-                </span>
-              ) : (
-                <span className="whitespace-nowrap rounded-sm border border-gold-champagne/45 bg-obsidian/80 px-1.5 py-0.5 text-[9px] font-bold leading-none tabular-nums text-gold-champagne backdrop-blur-sm">
-                  {tr("tiers.multiple", { n: formatMultiple(meta.mult) })}
-                </span>
-              )}
-            </span>
+            {/* 사진 위에 얹는 것은 TOP 3 의 🔥 HOT 하나뿐. 배율은 하단 메타에 이미 크게 있으므로 사진 위에 중복하지 않는다 */}
+            {hot && (
+              <span className="hot-pulse absolute right-2 top-2 z-10 whitespace-nowrap rounded-sm border border-crimson/60 bg-crimson/25 px-1.5 py-0.5 text-[9px] font-bold leading-none text-white backdrop-blur-sm">
+                🔥 HOT
+              </span>
+            )}
           </div>
 
           {/* ── 메타 — 박스명 · 1회 가격 · 최고 배수 ── */}

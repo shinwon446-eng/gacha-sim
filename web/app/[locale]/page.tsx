@@ -8,9 +8,8 @@ import { rolloverContribution } from "@/lib/rollover";
 import { BillboardHero } from "@/components/home/BillboardHero";
 import { HotBoxes } from "@/components/home/HotBoxes";
 import { HallOfFame } from "@/components/home/HallOfFame";
-import { LiveCounters } from "@/components/home/LiveCounters";
 import { LiveTicker } from "@/components/home/LiveTicker";
-import { DailyFreeBoxModal, DailyFreeBoxPill, DailyFreeBoxStrip } from "@/components/home/DailyFreeBox";
+import { DailyFreeBoxModal, DailyFreeBoxPill } from "@/components/home/DailyFreeBox";
 import { QuickTabs, type CategoryTab } from "@/components/home/QuickTabs";
 import { VipBadge } from "@/components/layout/VipBadge";
 import { ProofFeed } from "@/components/fairness/ProofFeed";
@@ -346,8 +345,6 @@ export default function BoxesPage() {
       <HotBoxes onPick={setDetail} className="pt-8" />
       <HallOfFame onPick={setDetail} className="pt-8" />
 
-      <DailyFreeBoxStrip onOpen={() => setDailyOpen(true)} className="pt-8" />
-      <LiveCounters className="pt-6" />
 
       {/* 6. 실지급/실배송 라이브 피드 — 요약 4행, 전체는 /fairness */}
       <section className="px-[4%] pt-12">

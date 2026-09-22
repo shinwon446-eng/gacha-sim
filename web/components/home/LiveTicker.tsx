@@ -11,6 +11,7 @@ import { formatMultiple, tierOf } from "@/lib/tiers";
 import { buildLineupDrops, buildLocalDrops, localHandle, type LiveDrop } from "@/lib/liveDrops";
 import { isLive } from "@/lib/runtime";
 import { api } from "@/lib/api";
+import { JackpotPoolBadge } from "@/components/home/JackpotPoolBadge";
 import { useInventoryStore } from "@/stores/inventoryStore";
 import { useWalletStore } from "@/stores/walletStore";
 import { useFairStore } from "@/stores/fairStore";
@@ -82,7 +83,6 @@ export function LiveTicker({ className }: { className?: string }) {
     const local = remote ?? buildLocalDrops(items, transactions, localHandle(clientSeed));
     return local.length > 0 ? local : buildLineupDrops();
   }, [remote, items, transactions, clientSeed]);
-  if (now === null) return null;
 
   const render = (d: LiveDrop, dup: boolean) => {
     const box = d.boxSlug ? BOX_BY_SLUG[d.boxSlug] : undefined;
@@ -124,7 +124,7 @@ export function LiveTicker({ className }: { className?: string }) {
             {tier.label}
           </span>
         )}
-        {d.kind !== "lineup" && <span className="rounded-full bg-white/5 px-1.5 py-0.5 text-[9px] text-faint">{rel(d.at, now)}</span>}
+        {d.kind !== "lineup" && now !== null && <span className="rounded-full bg-white/5 px-1.5 py-0.5 text-[9px] text-faint">{rel(d.at, now)}</span>}
       </li>
     );
   };
@@ -134,6 +134,8 @@ export function LiveTicker({ className }: { className?: string }) {
 
   return (
     <div className={cn("relative flex items-center overflow-hidden border-b border-hairline bg-obsidian/90 px-[4%] py-2 backdrop-blur-md", className)} aria-label={t("label")}>
+      {/* 좌측 고정 — 🏆 잭팟 풀(히어로에서 이사) + LIVE 램프 */}
+      <JackpotPoolBadge className="mr-2 sm:mr-3" />
       <span className="z-10 hidden flex-none items-center gap-1.5 pr-3 text-[10px] font-bold uppercase tracking-[0.18em] text-crimson sm:flex">
         <span aria-hidden className="h-1.5 w-1.5 animate-pulse rounded-full bg-crimson" />
         {t("live")}
@@ -144,10 +146,12 @@ export function LiveTicker({ className }: { className?: string }) {
         onTouchEnd={() => setHeld(false)}
         onTouchCancel={() => setHeld(false)}
       >
-        <ul className={cn("ticker-track flex w-max items-center", held && "[animation-play-state:paused]")}>
-          {list.map((d, i) => render({ ...d, id: `${d.id}_${i}` }, false))}
-          {list.map((d, i) => render({ ...d, id: `${d.id}_${i}` }, true))}
-        </ul>
+        {now !== null && (
+          <ul className={cn("ticker-track flex w-max items-center", held && "[animation-play-state:paused]")}>
+            {list.map((d, i) => render({ ...d, id: `${d.id}_${i}` }, false))}
+            {list.map((d, i) => render({ ...d, id: `${d.id}_${i}` }, true))}
+          </ul>
+        )}
         <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-obsidian to-transparent" />
         <span aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-obsidian to-transparent" />
       </div>
