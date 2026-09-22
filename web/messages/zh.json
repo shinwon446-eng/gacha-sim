@@ -31,7 +31,11 @@
     "billboardPicker": "选择展示",
     "billboardOf": "{title} 展示",
     "headline": "1 美元，博劳力士和 iPhone。",
-    "sub": "中了 100% 归你，没中也立即折现 95%。",
+    "headline1": "1 美元，",
+    "headline2": "博劳力士和 iPhone。",
+    "sub": "中了 100% 真归你，没中也立即折现 95%！",
+    "sub1": "中了 100% 真归你，",
+    "sub2": "没中也立即折现 95%！",
     "freeTry": "免费试玩",
     "openFor": "🔥 {price} 开一发",
     "badge": "1 美元起的奢品头奖",
@@ -43,7 +47,9 @@
     "top": "最高",
     "guaranteedMinShort": "保底 {value}",
     "noBlankBadge": "100% 不落空 · 最低 {value} 保底",
+    "noBlankShort": "不落空 · 保底 {value}",
     "settleBadge": "全品类 95% USDT 即时结算",
+    "settleShort": "95% 即时结算",
     "upTo": "最高 {n} 头奖",
     "rtp": "RTP {rate}%",
     "floorPct": "最低 {pct}% 返还",
@@ -53,19 +59,17 @@
     "details": "{title} 详情",
     "expand": "展开"
   },
-  "rows": {
-    "trending": "🔥 开启最多的盲盒 TOP 10",
-    "dollar": "🔥 1 美元盲盒",
-    "techMobility": "⚡ 苹果与科技",
-    "luxuryWatch": "👑 奢品与腕表",
-    "guaranteed": "🚗 超跑与金条",
-    "prev": "上一页",
-    "next": "下一页"
-  },
   "grid": {
     "title": "全部盲盒",
     "sort": "排序",
     "loadMore": "加载更多（{n}）"
+  },
+  "mobileNav": {
+    "aria": "快捷导航",
+    "home": "首页",
+    "dollar": "1美元大奖",
+    "vault": "保管箱",
+    "deposit": "充值 (+)"
   },
   "categories": {
     "all": "全部",

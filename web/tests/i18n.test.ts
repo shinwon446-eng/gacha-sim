@@ -29,7 +29,11 @@ test("ko / en / zh 키 집합이 완전히 같다", () => {
 test("지정 문구가 정확히 들어 있다 (CLAUDE.md §2 구어체 카피)", () => {
   const spec: Record<string, [string, string, string]> = {
     "hero.headline": ["1달러로 롤렉스 & 아이폰, 긁어보세요.", "$1. A shot at a Rolex & an iPhone.", "1 美元，博劳力士和 iPhone。"],
-    "hero.sub": ["터지면 100% 내 것. 안 떠도 95% 즉시 환전해 드립니다.", "Hit, it's 100% yours. Miss, 95% cashed out instantly.", "中了 100% 归你，没中也立即折现 95%。"],
+    "hero.sub": ["터지면 100% 진짜 내 것. 안 떠도 95% 즉시 환전!", "Hit, it's 100% truly yours. Miss, 95% cashed out instantly!", "中了 100% 真归你，没中也立即折现 95%！"],
+    "mobileNav.home": ["홈", "Home", "首页"],
+    "mobileNav.dollar": ["1달러 잭팟", "$1 Jackpot", "1美元大奖"],
+    "mobileNav.vault": ["내 보관함", "Vault", "保管箱"],
+    "mobileNav.deposit": ["충전 (+)", "Deposit (+)", "充值 (+)"],
     "hero.viewContents": ["뭐 들었나 보기", "What's inside", "看看里面"],
     "hero.freeTry": ["손맛 보기 (무료)", "Try free", "免费试玩"],
     "inventory.sell": ["⚡ 95% USDT 즉시 회수", "⚡ Cash out 95% USDT", "⚡ 95% USDT 即时折现"],

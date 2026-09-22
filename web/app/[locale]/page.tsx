@@ -1,36 +1,19 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/format";
-import {
-  BOXES,
-  CATEGORY_FILTERS,
-  SORTS,
-  byCategory,
-  jackpotRow,
-  dollarRow,
-  heroBox,
-  luxuryRow,
-  sortBoxes,
-  techRow,
-  trending,
-  type BoxCategory,
-  type ProductBox,
-  type SortKey,
-} from "@/lib/products";
+import { BOXES, SORTS, byCategory, heroBox, sortBoxes, type ProductBox, type SortKey } from "@/lib/products";
 import { BillboardHero } from "@/components/home/BillboardHero";
 import { OnboardingStrip } from "@/components/home/OnboardingStrip";
 import { LiveCounters } from "@/components/home/LiveCounters";
 import { LiveTicker } from "@/components/home/LiveTicker";
 import { DailyFreeBoxModal, DailyFreeBoxPill, DailyFreeBoxStrip } from "@/components/home/DailyFreeBox";
-import { QuickTabs } from "@/components/home/QuickTabs";
+import { QuickTabs, type CategoryTab } from "@/components/home/QuickTabs";
 import { VipBadge } from "@/components/layout/VipBadge";
 import { ProofFeed } from "@/components/fairness/ProofFeed";
-import { NetflixRow } from "@/components/home/NetflixRow";
 import { BoxCard } from "@/components/box/BoxCard";
 import { DetailModal } from "@/components/box/DetailModal";
-import { TIERS, glow } from "@/lib/tiers";
 import { CurrencySelector } from "@/components/layout/CurrencySelector";
 import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
@@ -45,8 +28,12 @@ import { DepositModal } from "@/components/wallet/DepositModal";
 import { WithdrawalModal } from "@/components/wallet/WithdrawalModal";
 import { Money } from "@/components/ui/Money";
 import { glow as glowOf } from "@/lib/tiers";
+import { useUiStore } from "@/stores/uiStore";
+import { DEPOSIT_HASH } from "@/components/layout/MobileBottomNav";
 
 const PAGE_SIZE = 12;
+/** 해시 → 카테고리 탭 (하단 내비 [👑 1달러 잭팟] = #category-dollar) */
+const HASH_CATEGORY = /^#category-(all|dollar|tech|luxury|jackpot)$/;
 
 interface Toast {
   id: number;
@@ -59,12 +46,14 @@ export default function BoxesPage() {
   const t = useTranslations();
   const { fmt } = useCurrency();
   const [detail, setDetail] = useState<ProductBox | null>(null);
-  const [category, setCategory] = useState<BoxCategory | "all">("all");
+  const [category, setCategory] = useState<CategoryTab>("all");
+  const gridRef = useRef<HTMLElement>(null);
   const [sort, setSort] = useState<SortKey>("featured");
   const [shown, setShown] = useState(PAGE_SIZE);
   const [unbox, setUnbox] = useState<{ box: ProductBox; count: number; demo?: { itemId: string }; auto?: AutoplayConfig } | null>(null);
   const [bulk, setBulk] = useState<{ box: ProductBox; count: number } | null>(null);
-  const [depositOpen, setDepositOpen] = useState(false);
+  const depositOpen = useUiStore((s) => s.depositOpen);
+  const setDepositOpen = useCallback((on: boolean) => useUiStore.getState()[on ? "openDeposit" : "closeDeposit"](), []);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [dailyOpen, setDailyOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -79,6 +68,44 @@ export default function BoxesPage() {
     const id = Date.now() + Math.floor(Math.random() * 1000);
     setToasts((ts) => [...ts, { ...toast, id }]);
     setTimeout(() => setToasts((ts) => ts.filter((x) => x.id !== id)), 5200);
+  }, []);
+
+  // 탭 전환 — 그리드 즉시 교체 + 스티키 탭 아래로 그리드 스크롤 + 해시 동기화(하단 내비 활성 표시)
+  const pickCategory = useCallback((key: CategoryTab, scroll = true) => {
+    setCategory(key);
+    setShown(PAGE_SIZE);
+    const next = key === "dollar" ? "#category-dollar" : "";
+    if (window.location.hash !== next) {
+      window.history.replaceState(null, "", next || window.location.pathname + window.location.search);
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    }
+    if (scroll) gridRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+  }, []);
+
+  // 하단 내비 · 외부 링크: #category-x → 탭, #deposit → 충전 모달
+  useEffect(() => {
+    const apply = () => {
+      const h = window.location.hash;
+      const m = HASH_CATEGORY.exec(h);
+      if (m) {
+        setCategory(m[1] as CategoryTab);
+        setShown(PAGE_SIZE);
+        gridRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+      } else if (h === DEPOSIT_HASH) {
+        useUiStore.getState().openDeposit();
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+    };
+    apply();
+    window.addEventListener("hashchange", apply);
+    return () => window.removeEventListener("hashchange", apply);
+  }, []);
+
+  // 이 페이지가 충전 모달 호스트 — 하단 내비 [💳 충전]이 바로 연다
+  useEffect(() => {
+    const ui = useUiStore.getState();
+    ui.setDepositHost(true);
+    return () => ui.setDepositHost(false);
   }, []);
 
   // 오픈: 가격 × 횟수 차감 → 룰렛. 부족하면 토스트만.
@@ -136,13 +163,14 @@ export default function BoxesPage() {
   const visible = grid.slice(0, shown);
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-canvas pb-24">
-      {/* 상단 바 */}
-      <header className="sticky top-0 z-[60] flex items-center gap-3 border-b border-hairline bg-obsidian/90 px-[4%] py-3 backdrop-blur-md sm:gap-5">
-        <span className="font-display text-[22px] font-bold uppercase leading-none tracking-tight text-crimson">
+    <main className="min-h-screen bg-canvas pb-12 md:pb-24">
+      {/* 상단 바 — h-14 고정(스티키 퀵 탭이 top-14 로 이어 붙는다) */}
+      <header className="sticky top-0 z-[60] flex h-14 items-center gap-2 border-b border-hairline bg-obsidian/90 px-3 backdrop-blur-md sm:gap-5 sm:px-[4%]">
+        <span className="flex-none whitespace-nowrap font-display text-lg font-bold uppercase leading-none tracking-tight text-crimson sm:text-[22px]">
           Gachaflix
         </span>
-        <nav className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap text-[12px] text-muted [scrollbar-width:none] sm:gap-4">
+        {/* 데스크톱 텍스트 내비 — 모바일은 하단 고정 내비(MobileBottomNav)가 대신한다 */}
+        <nav className="hidden min-w-0 flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap text-[12px] text-muted [scrollbar-width:none] sm:gap-4 md:flex">
           <span className="font-semibold text-white">{t("nav.boxes")}</span>
           <span className="cursor-default opacity-60">{t("nav.battles")}</span>
           <Link href="/inventory" className="transition-colors hover:text-white">
@@ -170,7 +198,7 @@ export default function BoxesPage() {
           <button
             type="button"
             onClick={() => setDepositOpen(true)}
-            className="flex h-9 flex-none items-center gap-1.5 whitespace-nowrap rounded-md bg-crimson px-2.5 text-xs font-bold text-white shadow-[0_0_18px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600 sm:px-3"
+            className="hidden h-9 flex-none items-center gap-1.5 whitespace-nowrap rounded-md bg-crimson px-2.5 text-xs font-bold text-white shadow-[0_0_18px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600 sm:px-3 md:flex"
           >
             <Wallet className="h-3.5 w-3.5" strokeWidth={2.2} />
             <span className="hidden sm:inline">{t("header.deposit")}</span>
@@ -195,87 +223,25 @@ export default function BoxesPage() {
       {/* 2. 히어로 — 다이어트판 */}
       <BillboardHero boxes={billboard} onOpen={setDetail} onInspect={setDetail} onDemo={openDemo} />
 
-      {/* 3. 퀵 카테고리 탭 → 해당 캐러셀로 */}
-      <QuickTabs className="pt-5" />
+      {/* 3. 스티키 퀵 카테고리 탭 — 아래 그리드를 즉시 필터링 (TOP10·카테고리 캐러셀·전체 그리드 3중 나열을 하나로) */}
+      <QuickTabs value={category} onChange={pickCategory} />
 
-      {/* 4. 상품 우선 — TOP 10 을 히어로 바로 아래에 */}
-      <div className="pt-5">
-        <NetflixRow title={t("rows.trending")} boxes={trending()} variant="top10" onOpen={setDetail} onInspect={setDetail} />
-      </div>
-
-      {/* 데일리 프리 박스 — 첫 캐러셀 아래, 무위험 체험 */}
-      <DailyFreeBoxStrip onOpen={() => setDailyOpen(true)} className="pt-2" />
-
-      {/* 4. 안심 가이드 + 신뢰 지표 — 첫 캐러셀 아래 */}
-      <OnboardingStrip className="pt-6" />
-      <LiveCounters className="pt-4" />
-
-      {/* 5. 보조 큐레이션 캐러셀 */}
-      <div className="pt-10">
-        <NetflixRow id="category-dollar" title={t("rows.dollar")} boxes={dollarRow()} onOpen={setDetail} onInspect={setDetail} />
-        <NetflixRow id="category-tech" title={t("rows.techMobility")} boxes={techRow()} onOpen={setDetail} onInspect={setDetail} />
-        <NetflixRow id="category-luxury" title={t("rows.luxuryWatch")} boxes={luxuryRow()} onOpen={setDetail} onInspect={setDetail} />
-        <NetflixRow id="category-jackpot" title={t("rows.guaranteed")} boxes={jackpotRow()} onOpen={setDetail} onInspect={setDetail} />
-      </div>
-
-      {/* 등급 범례 — 배수 기준을 한 번만 설명한다 */}
-      <section className="mt-6 border-y border-line bg-surface px-[4%] py-2.5">
-        <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-          <li className="text-[10px] font-semibold uppercase tracking-[0.16em] text-faint">
-            {t("tiers.legendTitle")}
-          </li>
-          {TIERS.map((t2) => (
-            <li key={t2.key} className="flex items-center gap-1.5 text-[10px] leading-none">
-              <span
-                aria-hidden
-                className="h-2 w-2 rounded-[1px]"
-                style={{ background: t2.accent, boxShadow: `0 0 6px ${glow(t2.accent, 0.55)}` }}
-              />
-              <span className="font-semibold uppercase tracking-[0.1em]" style={{ color: t2.accent }}>
-                {t2.label}
-              </span>
-              <span className="tabular-nums text-faint">{t(`tiers.range.${t2.key}`)}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* 전체 그리드 */}
-      <section className="px-[4%] pt-6">
-        <div className="mb-4 flex flex-wrap items-center gap-3 border-b border-line pb-3">
-          <h2 className="text-[17px] font-bold text-white">
-            {t("grid.title")}
+      {/* 4. 박스 그리드 — 모바일 2열 고밀도(한 화면 4~6개) → sm 3열 → md 4열 → xl 5열 */}
+      <section ref={gridRef} id="boxes" className="scroll-mt-[118px] px-4 pt-4 sm:px-[4%] sm:pt-5">
+        <div className="mb-3 flex items-center gap-3 border-b border-line pb-2.5">
+          <h2 className="text-[15px] font-bold text-white sm:text-[17px]">
+            {category === "all" ? t("grid.title") : t(`categories.${category}`)}
             <span className="ml-2 font-mono text-[12px] font-normal tabular-nums text-faint">
               {grid.length} / {BOXES.length}
             </span>
           </h2>
 
-          <div className="flex flex-wrap items-center gap-1.5">
-            {CATEGORY_FILTERS.map((f) => (
-              <button
-                key={f.key}
-                type="button"
-                onClick={() => {
-                  setCategory(f.key);
-                  setShown(PAGE_SIZE);
-                }}
-                className={cn(
-                  "rounded-sm border px-2.5 py-1 text-[11px] font-semibold transition-colors duration-200",
-                  category === f.key
-                    ? "border-white bg-white text-canvas"
-                    : "border-line text-muted hover:border-white hover:text-white",
-                )}
-              >
-                {t(`categories.${f.key}`)}
-              </button>
-            ))}
-          </div>
-
-          <label className="ml-auto flex items-center gap-2 text-[11px] text-faint">
-            {t("grid.sort")}
+          <label className="ml-auto flex items-center gap-2 whitespace-nowrap text-[11px] text-faint">
+            <span className="hidden sm:inline">{t("grid.sort")}</span>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
+              aria-label={t("grid.sort")}
               className="rounded-sm border border-line bg-surface px-2 py-1 text-[11px] text-white outline-none focus:border-white"
             >
               {SORTS.map((s) => (
@@ -287,12 +253,12 @@ export default function BoxesPage() {
           </label>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-3 gap-y-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-x-3 sm:gap-y-5 md:grid-cols-4 xl:grid-cols-5">
           {visible.map((box, i) => (
             <BoxCard
               key={box.id}
               box={box}
-              edge={i % 5 === 0 ? "first" : i % 5 === 4 ? "last" : "middle"}
+              edge={i % 4 === 0 ? "first" : i % 4 === 3 ? "last" : "middle"}
               onInspect={setDetail}
               onOpen={setDetail}
             />
@@ -312,7 +278,12 @@ export default function BoxesPage() {
         )}
       </section>
 
-      {/* 실지급/실배송 라이브 피드 — 요약 4행, 전체는 /fairness */}
+      {/* 5. 데일리 프리 박스 · 3초 안심 가이드 · 신뢰 지표 */}
+      <DailyFreeBoxStrip onOpen={() => setDailyOpen(true)} className="pt-8" />
+      <OnboardingStrip className="pt-6" />
+      <LiveCounters className="pt-4" />
+
+      {/* 6. 실지급/실배송 라이브 피드 — 요약 4행, 전체는 /fairness */}
       <section className="px-[4%] pt-12">
         <div className="mb-3 flex items-center justify-between gap-3">
           <h2 className="text-[17px] font-bold text-white">{t("proof.title")}</h2>
@@ -341,7 +312,7 @@ export default function BoxesPage() {
       <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} demo={unbox?.demo} onDemoConvert={convertDemo} welcomeClaimed={welcomeClaimed} auto={unbox?.auto} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} onRespin={(b) => { setUnbox(null); setTimeout(() => openBox(b, 1), 60); }} />
 
       {/* 토스트 */}
-      <div className="pointer-events-none fixed bottom-4 right-4 z-[120] flex w-80 max-w-full flex-col gap-2">
+      <div className="pointer-events-none fixed bottom-20 right-4 z-[120] flex w-80 max-w-full flex-col gap-2 md:bottom-4">
         <AnimatePresence>
           {toasts.map((x) => (
             <motion.div

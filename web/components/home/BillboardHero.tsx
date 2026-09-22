@@ -110,31 +110,36 @@ export function BillboardHero({ boxes, onOpen, onInspect, onDemo, intervalMs = 9
               <span className="caption-luxury !text-gold-champagne">{t("hero.badge")}</span>
             </span>
 
-            <h1 className="mt-3 break-keep font-display text-3xl font-bold leading-[1.08] tracking-tight text-white sm:text-4xl lg:text-5xl">
-              {t("hero.headline")}
+            {/* 모바일 전용 줄바꿈 — 문장 단위로 끊는다 (단어 중간 '아이 / 폰' 방지) */}
+            <h1 className="mt-3 break-keep font-display text-2xl font-black leading-tight tracking-tight text-white sm:text-4xl md:text-5xl">
+              {t("hero.headline1")} <br className="sm:hidden" />
+              {t("hero.headline2")}
             </h1>
 
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-secondary/90 md:text-base">{t("hero.sub")}</p>
+            <p className="mt-2.5 max-w-xl break-keep text-sm leading-relaxed text-secondary/90 sm:mt-3 md:text-base">
+              {t("hero.sub1")} <br className="sm:hidden" />
+              {t("hero.sub2")}
+            </p>
 
             {/* 심플한 가격 칩 — 박스명 · 가격 · (최고 배수). 클릭하면 구성품 상세 */}
             <button
               type="button"
               onClick={() => onInspect?.(box)}
-              className="border-metallic-subtle group mt-4 inline-flex max-w-full items-baseline gap-2.5 rounded-full bg-obsidian/60 py-1.5 pl-4 pr-3 text-left backdrop-blur-sm transition-colors hover:border-gold-champagne/60 hover:bg-obsidian/80"
+              className="border-metallic-subtle group mt-3.5 inline-flex max-w-full items-baseline gap-2 whitespace-nowrap rounded-full bg-obsidian/60 py-1.5 pl-3.5 pr-2.5 text-left backdrop-blur-sm transition-colors hover:border-gold-champagne/60 hover:bg-obsidian/80 sm:mt-4 sm:gap-2.5 sm:pl-4 sm:pr-3"
               aria-label={t("hero.viewContents")}
             >
               <span className="truncate text-xs font-semibold text-secondary">{boxTitle(box)}</span>
               <Money value={box.price} size="sm" />
-              <span className="text-gold-gradient font-display text-sm font-bold tabular-nums">({t("hero.topMultipleShort", { n: t("tiers.multiple", { n: formatMultiple(topMultiple(box)) }) })})</span>
+              <span className="text-gold-gradient whitespace-nowrap font-display text-sm font-bold tabular-nums">({t("hero.topMultipleShort", { n: t("tiers.multiple", { n: formatMultiple(topMultiple(box)) }) })})</span>
               <Info className="h-3.5 w-3.5 self-center text-faint transition-colors group-hover:text-gold-champagne" strokeWidth={2.2} />
             </button>
 
             {/* 단 2개의 CTA */}
-            <div className="mt-5 flex flex-wrap items-center gap-3">
+            <div className="mt-4 flex flex-wrap items-center gap-2.5 sm:mt-5 sm:gap-3">
               <button
                 type="button"
                 onClick={() => onOpen?.(box)}
-                className="flex h-12 items-center gap-2 rounded-sm bg-crimson px-7 text-base font-bold text-white shadow-[0_0_28px_rgba(229,9,20,0.35)] transition-all duration-200 hover:scale-[1.03] hover:bg-red-600"
+                className="flex h-11 items-center gap-2 whitespace-nowrap rounded-sm bg-crimson px-5 text-sm font-bold text-white shadow-[0_0_28px_rgba(229,9,20,0.35)] transition-all duration-200 hover:scale-[1.03] hover:bg-red-600 sm:h-12 sm:px-7 sm:text-base"
               >
                 <Play className="h-5 w-5 fill-current" strokeWidth={0} />
                 {t("hero.openFor", { price: fmt(box.price) })}
@@ -142,7 +147,7 @@ export function BillboardHero({ boxes, onOpen, onInspect, onDemo, intervalMs = 9
               <button
                 type="button"
                 onClick={() => onDemo?.(box)}
-                className="border-gold-gradient flex h-12 items-center gap-2 rounded-sm bg-obsidian/60 px-6 text-base font-bold text-gold-champagne backdrop-blur-md transition-all duration-200 hover:scale-[1.03] hover:bg-gold-champagne/10"
+                className="border-gold-gradient flex h-11 items-center gap-2 whitespace-nowrap rounded-sm bg-obsidian/60 px-5 text-sm font-bold text-gold-champagne backdrop-blur-md transition-all duration-200 hover:scale-[1.03] hover:bg-gold-champagne/10 sm:h-12 sm:px-6 sm:text-base"
               >
                 <Sparkles className="h-5 w-5" strokeWidth={2} />
                 {t("hero.freeTry")}

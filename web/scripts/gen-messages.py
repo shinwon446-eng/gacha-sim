@@ -22,11 +22,11 @@ UI = {
       "noBlank": "100% 실물 지급 · 꽝 없음", "guaranteedMinLabel": "최소 보장 금액",
       "guaranteedMin": "최소 보장 금액 {value}", "aboveOpenPrice": "오픈가 이상",
       "openNow": "지금 오픈하기", "viewContents": "뭐 들었나 보기", "billboardPicker": "빌보드 선택", "billboardOf": "{title} 빌보드",
-      "headline": "1달러로 롤렉스 & 아이폰, 긁어보세요.", "sub": "터지면 100% 내 것. 안 떠도 95% 즉시 환전해 드립니다.", "freeTry": "손맛 보기 (무료)", "openFor": "🔥 {price}로 돌려보기", "badge": "1달러부터 명품 잭팟", "nowShowing": "지금 상영 중", "topMultipleShort": "최고 {n}"
+      "headline": "1달러로 롤렉스 & 아이폰, 긁어보세요.", "headline1": "1달러로 롤렉스 & 아이폰,", "headline2": "긁어보세요.", "sub": "터지면 100% 진짜 내 것. 안 떠도 95% 즉시 환전!", "sub1": "터지면 100% 진짜 내 것.", "sub2": "안 떠도 95% 즉시 환전!", "freeTry": "손맛 보기 (무료)", "openFor": "🔥 {price}로 돌려보기", "badge": "1달러부터 명품 잭팟", "nowShowing": "지금 상영 중", "topMultipleShort": "최고 {n}"
     },
-    "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "settleBadge": "전 품목 95% USDT 즉시 정산", "upTo": "최고 {n} 잭팟", "rtp": "RTP {rate}%", "floorPct": "최소 {pct}% 환급", "guaranteed": "보장", "openNow": "바로 열기", "contents": "상세 정보", "details": "{title} 상세 정보", "expand": "확대"},
-    "rows": {"trending": "🔥 지금 가장 많이 열리는 박스 TOP 10", "dollar": "🔥 1달러의 행복", "techMobility": "⚡ 애플&테크", "luxuryWatch": "👑 명품&시계", "guaranteed": "🚗 슈퍼카&골드바", "prev": "이전", "next": "다음"},
+    "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "noBlankShort": "꽝 없음 · 최소 {value}", "settleBadge": "전 품목 95% USDT 즉시 정산", "settleShort": "95% 즉시 정산", "upTo": "최고 {n} 잭팟", "rtp": "RTP {rate}%", "floorPct": "최소 {pct}% 환급", "guaranteed": "보장", "openNow": "바로 열기", "contents": "상세 정보", "details": "{title} 상세 정보", "expand": "확대"},
     "grid": {"title": "전체 박스", "sort": "정렬", "loadMore": "더 보기 ({n}개)"},
+    "mobileNav": {"aria": "빠른 이동", "home": "홈", "dollar": "1달러 잭팟", "vault": "내 보관함", "deposit": "충전 (+)"},
     "categories": {"all": "전체", "dollar": "🔥 1달러의 행복", "tech": "⚡ 애플&테크", "luxury": "👑 명품&시계", "jackpot": "🚗 슈퍼카&골드바"},
     "sorts": {"featured": "추천순", "price-asc": "가격 낮은순", "price-desc": "가격 높은순", "popularity": "인기순"},
     "tiers": {
@@ -232,11 +232,11 @@ UI = {
       "noBlank": "100% physical payout · No blanks", "guaranteedMinLabel": "Guaranteed Minimum",
       "guaranteedMin": "Guaranteed Minimum {value}", "aboveOpenPrice": "Above open price",
       "openNow": "Open Now", "viewContents": "What's inside", "billboardPicker": "Billboard picker", "billboardOf": "{title} billboard",
-      "headline": "$1. A shot at a Rolex & an iPhone.", "sub": "Hit, it's 100% yours. Miss, 95% cashed out instantly.", "freeTry": "Try free", "openFor": "🔥 Spin for {price}", "badge": "Luxury jackpots from $1", "nowShowing": "Now Showing", "topMultipleShort": "up to {n}"
+      "headline": "$1. A shot at a Rolex & an iPhone.", "headline1": "$1. A shot at", "headline2": "a Rolex & an iPhone.", "sub": "Hit, it's 100% truly yours. Miss, 95% cashed out instantly!", "sub1": "Hit, it's 100% truly yours.", "sub2": "Miss, 95% cashed out instantly!", "freeTry": "Try free", "openFor": "🔥 Spin for {price}", "badge": "Luxury jackpots from $1", "nowShowing": "Now Showing", "topMultipleShort": "up to {n}"
     },
-    "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "settleBadge": "Every item cashes out 95% in USDT", "upTo": "Up to {n} jackpot", "rtp": "RTP {rate}%", "floorPct": "Min {pct}% back", "guaranteed": "guaranteed", "openNow": "Open now", "contents": "Details", "details": "{title} details", "expand": "Expand"},
-    "rows": {"trending": "🔥 Most Opened Boxes TOP 10", "dollar": "🔥 $1 Boxes", "techMobility": "⚡ Apple & Tech", "luxuryWatch": "👑 Luxury & Watches", "guaranteed": "🚗 Supercars & Gold", "prev": "Previous", "next": "Next"},
+    "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "noBlankShort": "No blanks · Min {value}", "settleBadge": "Every item cashes out 95% in USDT", "settleShort": "95% cash-out", "upTo": "Up to {n} jackpot", "rtp": "RTP {rate}%", "floorPct": "Min {pct}% back", "guaranteed": "guaranteed", "openNow": "Open now", "contents": "Details", "details": "{title} details", "expand": "Expand"},
     "grid": {"title": "All Boxes", "sort": "Sort", "loadMore": "Load more ({n})"},
+    "mobileNav": {"aria": "Quick navigation", "home": "Home", "dollar": "$1 Jackpot", "vault": "Vault", "deposit": "Deposit (+)"},
     "categories": {"all": "All", "dollar": "🔥 $1 Boxes", "tech": "⚡ Apple & Tech", "luxury": "👑 Luxury & Watches", "jackpot": "🚗 Supercars & Gold"},
     "sorts": {"featured": "Featured", "price-asc": "Price: Low to High", "price-desc": "Price: High to Low", "popularity": "Popularity"},
     "tiers": {
@@ -442,11 +442,11 @@ UI = {
       "noBlank": "100% 实物发放 · 无空奖", "guaranteedMinLabel": "保底价值",
       "guaranteedMin": "保底价值 {value}", "aboveOpenPrice": "不低于开启价",
       "openNow": "立即开启", "viewContents": "看看里面", "billboardPicker": "选择展示", "billboardOf": "{title} 展示",
-      "headline": "1 美元，博劳力士和 iPhone。", "sub": "中了 100% 归你，没中也立即折现 95%。", "freeTry": "免费试玩", "openFor": "🔥 {price} 开一发", "badge": "1 美元起的奢品头奖", "nowShowing": "正在上映", "topMultipleShort": "最高 {n}"
+      "headline": "1 美元，博劳力士和 iPhone。", "headline1": "1 美元，", "headline2": "博劳力士和 iPhone。", "sub": "中了 100% 真归你，没中也立即折现 95%！", "sub1": "中了 100% 真归你，", "sub2": "没中也立即折现 95%！", "freeTry": "免费试玩", "openFor": "🔥 {price} 开一发", "badge": "1 美元起的奢品头奖", "nowShowing": "正在上映", "topMultipleShort": "最高 {n}"
     },
-    "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "settleBadge": "全品类 95% USDT 即时结算", "upTo": "最高 {n} 头奖", "rtp": "RTP {rate}%", "floorPct": "最低 {pct}% 返还", "guaranteed": "保底", "openNow": "立即开", "contents": "详情", "details": "{title} 详情", "expand": "展开"},
-    "rows": {"trending": "🔥 开启最多的盲盒 TOP 10", "dollar": "🔥 1 美元盲盒", "techMobility": "⚡ 苹果与科技", "luxuryWatch": "👑 奢品与腕表", "guaranteed": "🚗 超跑与金条", "prev": "上一页", "next": "下一页"},
+    "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "noBlankShort": "不落空 · 保底 {value}", "settleBadge": "全品类 95% USDT 即时结算", "settleShort": "95% 即时结算", "upTo": "最高 {n} 头奖", "rtp": "RTP {rate}%", "floorPct": "最低 {pct}% 返还", "guaranteed": "保底", "openNow": "立即开", "contents": "详情", "details": "{title} 详情", "expand": "展开"},
     "grid": {"title": "全部盲盒", "sort": "排序", "loadMore": "加载更多（{n}）"},
+    "mobileNav": {"aria": "快捷导航", "home": "首页", "dollar": "1美元大奖", "vault": "保管箱", "deposit": "充值 (+)"},
     "categories": {"all": "全部", "dollar": "🔥 1 美元盲盒", "tech": "⚡ 苹果与科技", "luxury": "👑 奢品与腕表", "jackpot": "🚗 超跑与金条"},
     "sorts": {"featured": "推荐", "price-asc": "价格从低到高", "price-desc": "价格从高到低", "popularity": "人气"},
     "tiers": {

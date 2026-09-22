@@ -31,7 +31,11 @@
     "billboardPicker": "Billboard picker",
     "billboardOf": "{title} billboard",
     "headline": "$1. A shot at a Rolex & an iPhone.",
-    "sub": "Hit, it's 100% yours. Miss, 95% cashed out instantly.",
+    "headline1": "$1. A shot at",
+    "headline2": "a Rolex & an iPhone.",
+    "sub": "Hit, it's 100% truly yours. Miss, 95% cashed out instantly!",
+    "sub1": "Hit, it's 100% truly yours.",
+    "sub2": "Miss, 95% cashed out instantly!",
     "freeTry": "Try free",
     "openFor": "🔥 Spin for {price}",
     "badge": "Luxury jackpots from $1",
@@ -43,7 +47,9 @@
     "top": "Top",
     "guaranteedMinShort": "Min {value}",
     "noBlankBadge": "100% No Blanks · Min {value} guaranteed",
+    "noBlankShort": "No blanks · Min {value}",
     "settleBadge": "Every item cashes out 95% in USDT",
+    "settleShort": "95% cash-out",
     "upTo": "Up to {n} jackpot",
     "rtp": "RTP {rate}%",
     "floorPct": "Min {pct}% back",
@@ -53,19 +59,17 @@
     "details": "{title} details",
     "expand": "Expand"
   },
-  "rows": {
-    "trending": "🔥 Most Opened Boxes TOP 10",
-    "dollar": "🔥 $1 Boxes",
-    "techMobility": "⚡ Apple & Tech",
-    "luxuryWatch": "👑 Luxury & Watches",
-    "guaranteed": "🚗 Supercars & Gold",
-    "prev": "Previous",
-    "next": "Next"
-  },
   "grid": {
     "title": "All Boxes",
     "sort": "Sort",
     "loadMore": "Load more ({n})"
+  },
+  "mobileNav": {
+    "aria": "Quick navigation",
+    "home": "Home",
+    "dollar": "$1 Jackpot",
+    "vault": "Vault",
+    "deposit": "Deposit (+)"
   },
   "categories": {
     "all": "All",

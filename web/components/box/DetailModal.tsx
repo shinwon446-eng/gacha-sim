@@ -303,7 +303,7 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
                   <button
                     type="button"
                     onClick={() => onOpen?.(box, qty)}
-                    className="flex h-11 items-center gap-2 rounded-sm bg-crimson px-5 text-[14px] font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors duration-200 hover:bg-red-600"
+                    className="flex h-11 items-center gap-2 whitespace-nowrap rounded-sm bg-crimson px-4 text-xs font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors duration-200 hover:bg-red-600 sm:px-5 sm:text-sm"
                   >
                     <Play className="h-4 w-4 fill-current" strokeWidth={0} />
                     {qty === 100 ? t("unbox.openAllIn", { n: qty, amount: fmt(box.price * qty) }) : qty >= BULK_THRESHOLD ? t("unbox.openBulk", { n: qty, amount: fmt(box.price * qty) }) : t("unbox.openNow", { n: qty, amount: fmt(box.price * qty) })}
@@ -315,7 +315,7 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
                       <button type="button" aria-label="−" onClick={() => setAutoIdx((i) => Math.max(0, i - 1))} className="flex h-full w-9 items-center justify-center text-gold-champagne hover:bg-gold-champagne/10">
                         <Minus className="h-4 w-4" strokeWidth={2.4} />
                       </button>
-                      <button type="button" onClick={() => setAutoOpen(true)} className="flex h-full items-center gap-1.5 border-x border-gold-champagne/30 px-3 text-[13px] font-bold text-gold-champagne hover:bg-gold-champagne/10">
+                      <button type="button" onClick={() => setAutoOpen(true)} className="flex h-full items-center gap-1.5 whitespace-nowrap border-x border-gold-champagne/30 px-3 text-xs font-bold text-gold-champagne hover:bg-gold-champagne/10 sm:text-sm">
                         <RefreshCw className="h-4 w-4" strokeWidth={2.4} />
                         {t("autoplay.button", { n: Number.isFinite(autoSpins) ? String(autoSpins) : "∞" })}
                       </button>
@@ -327,7 +327,7 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
 
                   <a
                     href="#provably-fair"
-                    className="flex h-11 items-center gap-2 rounded-sm border border-white/25 bg-[#282828]/80 px-4 text-[13px] font-semibold text-white transition-colors duration-200 hover:border-white hover:bg-[#333333]"
+                    className="flex h-11 items-center gap-2 whitespace-nowrap rounded-sm border border-white/25 bg-[#282828]/80 px-4 text-xs font-semibold text-white transition-colors duration-200 hover:border-white hover:bg-[#333333] sm:text-sm"
                   >
                     <Percent className="h-4 w-4" strokeWidth={2} />
                     {t("modal.viewOdds")}

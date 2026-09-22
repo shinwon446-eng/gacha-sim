@@ -5,6 +5,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { routing, type Locale } from "@/i18n/routing";
 import { LocaleHtmlLang } from "@/components/layout/LocaleHtmlLang";
 import { Footer } from "@/components/layout/Footer";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 
 /** 정적 export — 세 로케일을 전부 미리 생성한다. 목록 밖 로케일은 404. */
 export function generateStaticParams() {
@@ -59,8 +60,12 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <LocaleHtmlLang locale={locale as Locale} />
-      {children}
-      <Footer />
+      {/* 모바일 하단 고정 내비(h-14) 만큼 여백 — 푸터까지 가려지지 않는다 */}
+      <div className="pb-16 md:pb-0">
+        {children}
+        <Footer />
+      </div>
+      <MobileBottomNav />
     </NextIntlClientProvider>
   );
 }

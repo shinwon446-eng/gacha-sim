@@ -31,7 +31,11 @@
     "billboardPicker": "빌보드 선택",
     "billboardOf": "{title} 빌보드",
     "headline": "1달러로 롤렉스 & 아이폰, 긁어보세요.",
-    "sub": "터지면 100% 내 것. 안 떠도 95% 즉시 환전해 드립니다.",
+    "headline1": "1달러로 롤렉스 & 아이폰,",
+    "headline2": "긁어보세요.",
+    "sub": "터지면 100% 진짜 내 것. 안 떠도 95% 즉시 환전!",
+    "sub1": "터지면 100% 진짜 내 것.",
+    "sub2": "안 떠도 95% 즉시 환전!",
     "freeTry": "손맛 보기 (무료)",
     "openFor": "🔥 {price}로 돌려보기",
     "badge": "1달러부터 명품 잭팟",
@@ -43,7 +47,9 @@
     "top": "최고",
     "guaranteedMinShort": "최소 {value}",
     "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장",
+    "noBlankShort": "꽝 없음 · 최소 {value}",
     "settleBadge": "전 품목 95% USDT 즉시 정산",
+    "settleShort": "95% 즉시 정산",
     "upTo": "최고 {n} 잭팟",
     "rtp": "RTP {rate}%",
     "floorPct": "최소 {pct}% 환급",
@@ -53,19 +59,17 @@
     "details": "{title} 상세 정보",
     "expand": "확대"
   },
-  "rows": {
-    "trending": "🔥 지금 가장 많이 열리는 박스 TOP 10",
-    "dollar": "🔥 1달러의 행복",
-    "techMobility": "⚡ 애플&테크",
-    "luxuryWatch": "👑 명품&시계",
-    "guaranteed": "🚗 슈퍼카&골드바",
-    "prev": "이전",
-    "next": "다음"
-  },
   "grid": {
     "title": "전체 박스",
     "sort": "정렬",
     "loadMore": "더 보기 ({n}개)"
+  },
+  "mobileNav": {
+    "aria": "빠른 이동",
+    "home": "홈",
+    "dollar": "1달러 잭팟",
+    "vault": "내 보관함",
+    "deposit": "충전 (+)"
   },
   "categories": {
     "all": "전체",

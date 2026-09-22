@@ -9,8 +9,11 @@
 
 import { DEFAULT_RATES, type Currency } from "@/stores/currencyStore";
 
+/** 숫자와 단위 사이는 줄바꿈 금지 공백 — "1 / USDT" 로 쪼개지지 않는다 */
+export const NBSP = " ";
+
 const SPEC: Record<Currency, { decimals: number; render: (n: string) => string }> = {
-  USDT: { decimals: 2, render: (n) => `${n} USDT` },
+  USDT: { decimals: 2, render: (n) => `${n}${NBSP}USDT` },
   USD: { decimals: 2, render: (n) => `$${n}` },
   KRW: { decimals: 0, render: (n) => `₩${n}` },
 };
@@ -59,7 +62,7 @@ export function formatCurrencyCompact(
   const short =
     amount >= 1_000_000 ? `${+(amount / 1_000_000).toFixed(2)}M` : amount >= 10_000 ? `${+(amount / 1_000).toFixed(1)}K` : null;
   if (!short) return formatCurrency(baseUsdtAmount, selectedCurrency, rates);
-  return selectedCurrency === "USD" ? `$${short}` : `${short} USDT`;
+  return selectedCurrency === "USD" ? `$${short}` : `${short}${NBSP}USDT`;
 }
 
 /** 숫자와 통화 단위를 분리한 표기 — 타이포 위계(숫자 크게·단위 작게)를 컴포넌트가 잡을 수 있게 한다. */

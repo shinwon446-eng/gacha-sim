@@ -201,16 +201,20 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
           {/* 100% 꽝 없음 · 최소 보장 뱃지 — 고대비 (CLAUDE.md §4-C) */}
           <span
             className={cn(
-              "absolute left-2 right-2 top-2 z-10 truncate rounded-sm px-2 py-1 text-[10px] font-bold leading-none tracking-tight",
+              "absolute left-1.5 right-1.5 top-1.5 z-10 truncate whitespace-nowrap rounded-sm px-1.5 py-1 text-[10px] font-bold leading-none tracking-tight sm:left-2 sm:right-2 sm:top-2 sm:px-2",
               meta.guaranteed ? "border-metallic-gold bg-obsidian/90 text-gold-champagne" : "border-metallic-subtle bg-obsidian/90 text-white",
             )}
           >
-            {tr("card.noBlankBadge", { value: fmt(box.guaranteedMin) })}
-            {meta.guaranteed ? ` · ${tr("hero.aboveOpenPrice")}` : ""}
+            <span className="sm:hidden">{tr("card.noBlankShort", { value: fmt(box.guaranteedMin) })}</span>
+            <span className="hidden sm:inline">
+              {tr("card.noBlankBadge", { value: fmt(box.guaranteedMin) })}
+              {meta.guaranteed ? ` · ${tr("hero.aboveOpenPrice")}` : ""}
+            </span>
           </span>
           {/* ⚡ 전 품목 1클릭 95% USDT 즉시 정산 · 개인지갑 출금 보장 */}
-          <span className={cn("absolute bottom-2 left-2 z-10 flex items-center gap-1 rounded-sm border border-gold-champagne/50 bg-obsidian/85 px-1.5 py-0.5 text-[9px] font-bold leading-none text-gold-champagne shadow-[0_0_8px_rgba(230,202,101,0.25)] backdrop-blur-sm transition-opacity duration-200", hovered && "opacity-0")}>
-            ⚡ {tr("card.settleBadge")}
+          <span className={cn("absolute bottom-1.5 left-1.5 z-10 flex max-w-[calc(100%-12px)] items-center gap-1 rounded-sm border border-gold-champagne/50 bg-obsidian/85 px-1.5 py-0.5 text-[9px] sm:bottom-2 sm:left-2 font-bold leading-none text-gold-champagne shadow-[0_0_8px_rgba(230,202,101,0.25)] backdrop-blur-sm transition-opacity duration-200", hovered && "opacity-0")}>
+            <span className="whitespace-nowrap sm:hidden">⚡ {tr("card.settleShort")}</span>
+            <span className="hidden whitespace-nowrap sm:inline">⚡ {tr("card.settleBadge")}</span>
           </span>
 
           {/* 호버: 3px 등급 확률 바 */}
@@ -230,16 +234,16 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
         </div>
 
         {/* ── 메타 ── */}
-        <div className="border-t border-hairline px-3 pb-2 pt-3">
-          <div className="truncate text-sm font-bold leading-tight text-white">{boxTitle(box)}</div>
-          <div className="mt-1.5 flex items-end justify-between gap-2">
+        <div className="border-t border-hairline px-2 pb-1.5 pt-2 sm:px-3 sm:pb-2 sm:pt-3">
+          <div className="truncate text-[13px] font-bold leading-tight text-white sm:text-sm">{boxTitle(box)}</div>
+          <div className="mt-1 flex items-end justify-between gap-2 sm:mt-1.5">
             <div>
               <div className="caption-luxury">{tr("card.perOpen")}</div>
               <Money value={box.price} size="md" />
             </div>
             <div className="text-right">
               <div className="caption-luxury">{tr("card.top")}</div>
-              <div className={cn("font-display text-xl font-bold leading-none tracking-tight", royal && "text-gold-gradient")} style={royal ? undefined : { color: accent }}>
+              <div className={cn("whitespace-nowrap font-display text-lg font-bold leading-none tracking-tight tabular-nums sm:text-xl", royal && "text-gold-gradient")} style={royal ? undefined : { color: accent }}>
                 {tr("tiers.multiple", { n: formatMultiple(meta.mult) })}
               </div>
             </div>
@@ -281,7 +285,7 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
                 <button
                   type="button"
                   onClick={() => onOpen?.(box)}
-                  className="flex h-8 flex-1 items-center justify-center gap-1 rounded-sm bg-crimson text-xs font-bold text-white transition-colors hover:bg-red-600"
+                  className="flex h-8 flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-sm bg-crimson px-2 text-xs font-bold text-white transition-colors hover:bg-red-600"
                 >
                   <Play className="h-3 w-3 fill-current" strokeWidth={0} />
                   {tr("card.openNow")}
@@ -289,7 +293,7 @@ export function BoxCard({ box, edge = "middle", rank, onExpandChange, onOpen, on
                 <button
                   type="button"
                   onClick={() => onInspect?.(box)}
-                  className="glass flex h-8 flex-1 items-center justify-center gap-1 rounded-sm text-xs font-semibold text-white backdrop-blur-md hover:bg-white/15"
+                  className="glass flex h-8 flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-sm px-2 text-xs font-semibold text-white backdrop-blur-md hover:bg-white/15"
                 >
                   <Info className="h-3 w-3" strokeWidth={2} />
                   {tr("card.contents")}

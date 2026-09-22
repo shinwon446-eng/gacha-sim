@@ -20,7 +20,7 @@ export function formatPriceCompact(won: number): string {
 export const usd = (n: number, digits = 2): string =>
   "$" + n.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
 
-export const usdt = (n: number): string => usd(n) + " USDT";
+export const usdt = (n: number): string => usd(n) + " USDT";
 
 export const compactUsd = (n: number): string =>
   "$" + n.toLocaleString("en-US", { maximumFractionDigits: 0 });
