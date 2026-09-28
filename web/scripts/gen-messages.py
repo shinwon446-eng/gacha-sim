@@ -21,7 +21,7 @@ UI = {
     "hero": {
       "royalSelection": "로열 셀렉션", "top": "TOP {n}", "pricePerOpen": "1회 오픈", "topPull": "최고 구성",
       "noBlank": "100% 실물 지급 · 꽝 없음", "guaranteedMinLabel": "최소 보장 금액",
-      "guaranteedMin": "최소 보장 금액 {value}", "aboveOpenPrice": "오픈가 이상",
+      "guaranteedMin": "최소 보장 금액 {value}", "aboveOpenPrice": "박스 가격 이상",
       "openNow": "지금 오픈하기", "viewContents": "구성품 · 확률 보기", "billboardPicker": "빌보드 선택", "billboardOf": "{title} 빌보드",
       "headline": "1달러로 여는 롤렉스 & 아이폰, 지금 열어보세요.", "headline1": "1달러로 여는 롤렉스 & 아이폰,", "headline2": "지금 열어보세요.", "sub": "당첨되면 100% 정품 무료 배송, 다른 상품이어도 95% 바로 돌려받으세요.", "sub1": "당첨되면 100% 정품 무료 배송,", "sub2": "다른 상품이어도 95% 바로 돌려받으세요.", "freeTry": "무료로 미리 열어보기", "openFor": "📦 {price}로 상자 열기", "badge": "1달러부터 시작하는 럭셔리 언박싱", "poolLabel": "TOTAL PRIZE VALUE", "poolLabelShort": "PRIZE POOL", "poolNote": "현재 오픈 가능한 {n}개 박스의 최고 상품 정가 합계", "bigWin": "🔥 LIVE BIG WIN", "bigWinGoal": "🎯 이번 주 최고 도전 상품", "nowShowing": "지금 상영 중", "topMultipleShort": "최고 {n}"
     },
@@ -56,7 +56,7 @@ UI = {
     "sections": {"dollar": "🔥 1달러의 행복", "tech": "⚡ 애플 & 하이엔드 테크", "luxury": "👑 럭셔리 명품 & 스위스 워치", "jackpot": "🚗 슈퍼카 & 순금 골드바"},
     "sorts": {"featured": "추천순", "price-asc": "가격 낮은순", "price-desc": "가격 높은순", "popularity": "인기순"},
     "tiers": {
-      "legendTitle": "등급 = 실판매가 ÷ 오픈가",
+      "legendTitle": "등급 = 시중 정가 ÷ 박스 가격",
       "royal": "로열", "prestige": "프레스티지", "executive": "이그제큐티브", "curated": "큐레이티드",
       "range": {"royal": "20배 이상", "prestige": "6~20배", "executive": "2~6배", "curated": "기본 보장"},
       "multiple": "{n}배"
@@ -69,9 +69,9 @@ UI = {
       "guaranteedYes": "이 박스의 바닥 등급은 {min} 즉시 캐시백 — 개봉 즉시 100% 잔액에 적립됩니다.",
       "guaranteedNo": "이 박스의 바닥 등급은 {min} 즉시 캐시백입니다 — 개봉 즉시 100% 잔액에 적립됩니다.",
       "settleBadge": "⚡ 전 품목 1클릭 95% 즉시 페이백 · 개인지갑 출금 보장",
-      "settleBody": "실물·기프트카드는 실판매가의 95%를 1클릭에 USDT로, USDT 캐시백·인스턴트 드롭은 100%를 개봉 즉시 잔액에. 잔액은 TRC-20/BEP-20 개인지갑으로 출금됩니다.",
+      "settleBody": "실물·기프트카드는 시중 정가의 95%를 1클릭에 USDT로, USDT 페이백·인스턴트 드롭은 100%를 개봉 즉시 잔액에. 잔액은 TRC-20/BEP-20 개인지갑으로 출금됩니다.",
       
-      "allPrizes": "전체 당첨 가능 상품", "count": "{n}종", "sortedByValue": "실판매가 내림차순",
+      "allPrizes": "전체 당첨 가능 상품", "count": "{n}종", "sortedByValue": "시중 정가 내림차순",
       "marketValue": "시중 정가", "odds": "확률", "tierLabel": "등급", "tierBar": "등급 구성", "upToLabel": "최고 혜택", "rtpLabel": "기대 가치 비율", "floorLabel": "최소 페이백", "floorPct": "최소 {pct}%", "preciseOddsLink": "공정성 검증 (Provably Fair)", "preciseOdds": "정밀 확률표 · Provably Fair", "expand": "펼치기", "collapse": "접기", "openVerifier": "3-Step 비주얼 검증기 열기", "imageCredits": "이미지 출처"
     },
     "fairness": {
@@ -264,7 +264,7 @@ UI = {
     "hero": {
       "royalSelection": "Royal Selection", "top": "TOP {n}", "pricePerOpen": "Per Open", "topPull": "Top Pull",
       "noBlank": "100% physical payout · No blanks", "guaranteedMinLabel": "Guaranteed Minimum",
-      "guaranteedMin": "Guaranteed Minimum {value}", "aboveOpenPrice": "Above open price",
+      "guaranteedMin": "Guaranteed Minimum {value}", "aboveOpenPrice": "Above box price",
       "openNow": "Open Now", "viewContents": "Contents & odds", "billboardPicker": "Billboard picker", "billboardOf": "{title} billboard",
       "headline": "Open a Rolex or an iPhone, from $1.", "headline1": "Open a Rolex or an iPhone,", "headline2": "from $1.", "sub": "Win it and it ships free, 100% authentic. Get a different item and take 95% straight back.", "sub1": "Win it and it ships free, 100% authentic.", "sub2": "Get a different item and take 95% straight back.", "freeTry": "Try an unboxing, free", "openFor": "📦 Open a box for {price}", "badge": "Luxury unboxing from $1", "poolLabel": "TOTAL PRIZE VALUE", "poolLabelShort": "PRIZE POOL", "poolNote": "Combined retail value of the top item in all {n} boxes open now", "bigWin": "🔥 LIVE BIG WIN", "bigWinGoal": "🎯 Top item to chase this week", "nowShowing": "Now Showing", "topMultipleShort": "up to {n}"
     },
@@ -299,7 +299,7 @@ UI = {
     "sections": {"dollar": "🔥 $1 Happiness", "tech": "⚡ Apple & High-End Tech", "luxury": "👑 Luxury & Swiss Watches", "jackpot": "🚗 Supercars & Gold Bars"},
     "sorts": {"featured": "Featured", "price-asc": "Price: Low to High", "price-desc": "Price: High to Low", "popularity": "Popularity"},
     "tiers": {
-      "legendTitle": "Tier = market value ÷ open price",
+      "legendTitle": "Tier = market value ÷ box price",
       "royal": "Royal", "prestige": "Prestige", "executive": "Executive", "curated": "Curated",
       "range": {"royal": "20x and up", "prestige": "6–20x", "executive": "2–6x", "curated": "Guaranteed base"},
       "multiple": "{n}x"
@@ -507,7 +507,7 @@ UI = {
     "hero": {
       "royalSelection": "皇家精选", "top": "TOP {n}", "pricePerOpen": "单次开启", "topPull": "最高奖品",
       "noBlank": "100% 实物发放 · 无空奖", "guaranteedMinLabel": "保底价值",
-      "guaranteedMin": "保底价值 {value}", "aboveOpenPrice": "不低于开启价",
+      "guaranteedMin": "保底价值 {value}", "aboveOpenPrice": "不低于盲盒价格",
       "openNow": "立即开启", "viewContents": "查看商品与概率", "billboardPicker": "选择展示", "billboardOf": "{title} 展示",
       "headline": "1 美元开启劳力士与 iPhone，现在就开箱。", "headline1": "1 美元开启劳力士与 iPhone，", "headline2": "现在就开箱。", "sub": "中奖即 100% 正品免费送到家，开到其他商品也能立即拿回 95%。", "sub1": "中奖即 100% 正品免费送到家，", "sub2": "开到其他商品也能立即拿回 95%。", "freeTry": "免费试开一箱", "openFor": "📦 {price} 开启盲盒", "badge": "1 美元起的奢品开箱", "poolLabel": "TOTAL PRIZE VALUE", "poolLabelShort": "PRIZE POOL", "poolNote": "当前可开启的 {n} 个盲盒最高商品定价合计", "bigWin": "🔥 LIVE BIG WIN", "bigWinGoal": "🎯 本周最高挑战商品", "nowShowing": "正在上映", "topMultipleShort": "最高 {n}"
     },
@@ -542,7 +542,7 @@ UI = {
     "sections": {"dollar": "🔥 1 美元的幸福", "tech": "⚡ 苹果与高端科技", "luxury": "👑 奢侈名品与瑞士腕表", "jackpot": "🚗 超跑与纯金金条"},
     "sorts": {"featured": "推荐", "price-asc": "价格从低到高", "price-desc": "价格从高到低", "popularity": "人气"},
     "tiers": {
-      "legendTitle": "等级 = 市场价 ÷ 开启价",
+      "legendTitle": "等级 = 市场价 ÷ 盲盒价格",
       "royal": "皇家", "prestige": "尊享", "executive": "行政", "curated": "精选",
       "range": {"royal": "20倍以上", "prestige": "6~20倍", "executive": "2~6倍", "curated": "基础保底"},
       "multiple": "{n}倍"

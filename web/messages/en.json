@@ -107,7 +107,7 @@
     "noBlank": "100% physical payout · No blanks",
     "guaranteedMinLabel": "Guaranteed Minimum",
     "guaranteedMin": "Guaranteed Minimum {value}",
-    "aboveOpenPrice": "Above open price",
+    "aboveOpenPrice": "Above box price",
     "openNow": "Open Now",
     "viewContents": "Contents & odds",
     "billboardPicker": "Billboard picker",
@@ -239,7 +239,7 @@
     "popularity": "Popularity"
   },
   "tiers": {
-    "legendTitle": "Tier = market value ÷ open price",
+    "legendTitle": "Tier = market value ÷ box price",
     "royal": "Royal",
     "prestige": "Prestige",
     "executive": "Executive",

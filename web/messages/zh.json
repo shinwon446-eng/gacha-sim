@@ -107,7 +107,7 @@
     "noBlank": "100% 实物发放 · 无空奖",
     "guaranteedMinLabel": "保底价值",
     "guaranteedMin": "保底价值 {value}",
-    "aboveOpenPrice": "不低于开启价",
+    "aboveOpenPrice": "不低于盲盒价格",
     "openNow": "立即开启",
     "viewContents": "查看商品与概率",
     "billboardPicker": "选择展示",
@@ -239,7 +239,7 @@
     "popularity": "人气"
   },
   "tiers": {
-    "legendTitle": "等级 = 市场价 ÷ 开启价",
+    "legendTitle": "等级 = 市场价 ÷ 盲盒价格",
     "royal": "皇家",
     "prestige": "尊享",
     "executive": "行政",
