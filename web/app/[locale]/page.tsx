@@ -6,6 +6,7 @@ import { cn } from "@/lib/format";
 import { BOXES, CATEGORY_FILTERS, SORTS, byCategory, floorRatio, heroBox, sortBoxes, type BoxCategory, type ProductBox, type SortKey } from "@/lib/products";
 import { rolloverContribution } from "@/lib/rollover";
 import { BillboardHero } from "@/components/home/BillboardHero";
+import { AboutBanner } from "@/components/home/AboutBanner";
 import { HotBoxes } from "@/components/home/HotBoxes";
 import { HallOfFame } from "@/components/home/HallOfFame";
 import { LiveTicker } from "@/components/home/LiveTicker";
@@ -247,7 +248,7 @@ export default function BoxesPage() {
               setWalletTab("usdt");
               setDepositOpen(true);
             }}
-            className="hidden h-9 flex-none items-center gap-1.5 whitespace-nowrap rounded-md bg-crimson px-2.5 text-xs font-bold text-white shadow-[0_0_18px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600 sm:px-3 md:flex"
+            className="hidden h-9 flex-none items-center gap-1.5 whitespace-nowrap rounded-md bg-crimson px-2.5 text-xs font-bold text-white shadow-[0_0_18px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600 sm:px-3 lg:flex"
           >
             <Wallet className="h-3.5 w-3.5" strokeWidth={2.2} />
             <span className="hidden sm:inline">{t("header.deposit")}</span>
@@ -275,6 +276,9 @@ export default function BoxesPage() {
 
       {/* 2. 히어로 — 다이어트판 */}
       <BillboardHero boxes={billboard} onOpen={setDetail} onInspect={setDetail} onDemo={openDemo} />
+
+      {/* 2-b. 플랫폼 소개 한 줄 배너 — 모바일 헤더에 텍스트 내비가 없어 /about 으로 가는 길을 여기서 연다 */}
+      <AboutBanner />
 
       {/* 3. 스티키 퀵 카테고리 탭 — 아래 그리드를 즉시 필터링 (TOP10·카테고리 캐러셀·전체 그리드 3중 나열을 하나로) */}
       <QuickTabs value={category} onChange={pickCategory} />

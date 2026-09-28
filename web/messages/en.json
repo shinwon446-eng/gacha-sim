@@ -196,6 +196,11 @@
     "tickerInsured": "Shipping insurance included — reship or USDT compensation",
     "doneCta": "Done"
   },
+  "aboutBanner": {
+    "title": "How does VOILA work?",
+    "body": "SHA-256 on-chain fairness · 95% instant payback on every item · authenticated free shipping",
+    "cta": "About the platform"
+  },
   "hot": {
     "title": "🔥 Most popular boxes — TOP 3",
     "subtitle": "by popularity index",

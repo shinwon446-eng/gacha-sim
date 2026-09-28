@@ -50,6 +50,7 @@ UI = {
       "tickerTitle": "📦 실배송 출고 현황", "tickerFree": "무료 배송 이벤트 적용 — 국내 배송비 0.00 USDT", "tickerAuth": "출고 전 전문 감정 기관 정밀 검수 · 위조품 확인 시 300% 보상", "tickerInsured": "배송 보험 자동 가입 — 파손·분실 시 재발송 또는 USDT 보상",
       "doneCta": "확인"
     },
+    "aboutBanner": {"title": "VOILA는 어떻게 굴러가나요?", "body": "SHA-256 온체인 공정성 · 전 품목 95% 즉시 페이백 · 정품 보증 무료 배송", "cta": "플랫폼 소개"},
     "hot": {"title": "🔥 실시간 인기 박스 TOP 3", "subtitle": "인기 지수 기준", "heat": "{deg}°C HOT", "upTo": "최고 {n}배", "floor": "최소 {pct}% 환급"},
     "hall": {"title": "🏆 주간 명예의 전당 랭킹전", "pool": "총상금 {amount} USDT 상금 풀", "deadline": "이번 주 랭킹전 마감까지", "payout": "상위 5명에게 순차 상금 자동 지급", "prize": "💰 상금 {amount} USDT", "openSlot": "공석 — 이 자리를 노려보세요", "entryRule": "{n}배 이상 당첨부터 랭킹 진입", "goal": "목표 {n}배", "myRank": "내 현재 랭킹 {rank}위", "myOutside": "내 현재 랭킹 순위권 밖", "myBest": "· 이번 주 최고 {n}배", "myNone": "이번 주 기록이 아직 없습니다 · 상위 5위에 진입하여 상금을 획득하세요!", "cta": "🚀 박스 열고 순위 올리기", "scopeNote": "랭킹은 실제 개봉 기록만 집계합니다. 서버 집계가 연결되기 전에는 이 기기의 기록만 표시되며, 비어 있는 순위는 임의의 당첨자로 채우지 않습니다."},
     "categories": {"all": "전체", "dollar": "🔥 1달러의 행복", "tech": "⚡ 애플&테크", "luxury": "👑 명품&시계", "jackpot": "🚗 슈퍼카&골드바"},
@@ -293,6 +294,7 @@ UI = {
       "tickerTitle": "📦 Shipment status", "tickerFree": "Free-shipping event — 0.00 USDT domestically", "tickerAuth": "Expert authentication before dispatch · 300% if a counterfeit is found", "tickerInsured": "Shipping insurance included — reship or USDT compensation",
       "doneCta": "Done"
     },
+    "aboutBanner": {"title": "How does VOILA work?", "body": "SHA-256 on-chain fairness · 95% instant payback on every item · authenticated free shipping", "cta": "About the platform"},
     "hot": {"title": "🔥 Most popular boxes — TOP 3", "subtitle": "by popularity index", "heat": "{deg}°C HOT", "upTo": "up to {n}x", "floor": "min {pct}% back"},
     "hall": {"title": "🏆 Weekly Hall of Fame", "pool": "{amount} USDT prize pool", "deadline": "Season ends in", "payout": "Top 5 paid out in order, automatically", "prize": "💰 {amount} USDT", "openSlot": "Open seat — claim it", "entryRule": "{n}x or higher to enter the board", "goal": "target {n}x", "myRank": "Your rank: #{rank}", "myOutside": "Your rank: outside the top 5", "myBest": "· best {n}x this week", "myNone": "No wins yet this week · break into the top 5 to claim a prize!", "cta": "🚀 Open a box and climb", "scopeNote": "The board counts real openings only. Until server-side aggregation is connected it shows this device's records, and empty seats are never filled with invented winners."},
     "categories": {"all": "All", "dollar": "🔥 $1 Boxes", "tech": "⚡ Apple & Tech", "luxury": "👑 Luxury & Watches", "jackpot": "🚗 Supercars & Gold"},
@@ -536,6 +538,7 @@ UI = {
       "tickerTitle": "📦 实物配送状态", "tickerFree": "免运费活动 —— 境内运费 0.00 USDT", "tickerAuth": "出库前专业鉴定 · 确认仿品赔付 300%", "tickerInsured": "自动投保 —— 破损遗失可重发或 USDT 赔付",
       "doneCta": "确定"
     },
+    "aboutBanner": {"title": "VOILA 是怎么运作的？", "body": "SHA-256 链上公平 · 全品类 95% 即时返现 · 正品保障免费配送", "cta": "平台介绍"},
     "hot": {"title": "🔥 实时人气盲盒 TOP 3", "subtitle": "按人气指数", "heat": "{deg}°C HOT", "upTo": "最高 {n} 倍", "floor": "最低返还 {pct}%"},
     "hall": {"title": "🏆 每周名人堂排位赛", "pool": "总奖池 {amount} USDT", "deadline": "本周排位赛剩余", "payout": "前 5 名自动依次发放奖金", "prize": "💰 奖金 {amount} USDT", "openSlot": "空位 — 就等你来", "entryRule": "{n} 倍以上中奖方可上榜", "goal": "目标 {n} 倍", "myRank": "我的排名：第 {rank} 名", "myOutside": "我的排名：未进前 5", "myBest": "· 本周最高 {n} 倍", "myNone": "本周还没有记录 · 冲进前 5 领取奖金！", "cta": "🚀 开箱冲榜", "scopeNote": "排行榜只统计真实开箱记录。在服务器统计接入之前仅显示本设备的记录，空缺名次不会用虚构中奖者填充。"},
     "categories": {"all": "全部", "dollar": "🔥 1 美元盲盒", "tech": "⚡ 苹果与科技", "luxury": "👑 奢品与腕表", "jackpot": "🚗 超跑与金条"},

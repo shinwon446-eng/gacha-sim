@@ -196,6 +196,11 @@
     "tickerInsured": "배송 보험 자동 가입 — 파손·분실 시 재발송 또는 USDT 보상",
     "doneCta": "확인"
   },
+  "aboutBanner": {
+    "title": "VOILA는 어떻게 굴러가나요?",
+    "body": "SHA-256 온체인 공정성 · 전 품목 95% 즉시 페이백 · 정품 보증 무료 배송",
+    "cta": "플랫폼 소개"
+  },
   "hot": {
     "title": "🔥 실시간 인기 박스 TOP 3",
     "subtitle": "인기 지수 기준",

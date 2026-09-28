@@ -196,6 +196,11 @@
     "tickerInsured": "自动投保 —— 破损遗失可重发或 USDT 赔付",
     "doneCta": "确定"
   },
+  "aboutBanner": {
+    "title": "VOILA 是怎么运作的？",
+    "body": "SHA-256 链上公平 · 全品类 95% 即时返现 · 正品保障免费配送",
+    "cta": "平台介绍"
+  },
   "hot": {
     "title": "🔥 实时人气盲盒 TOP 3",
     "subtitle": "按人气指数",
