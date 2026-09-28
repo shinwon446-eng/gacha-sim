@@ -10,6 +10,43 @@
     "tech": "科技",
     "luxury": "奢侈品"
   },
+  "auth": {
+    "login": "登录",
+    "signup": "注册",
+    "logout": "退出登录",
+    "close": "关闭",
+    "tabLogin": "登录",
+    "tabSignup": "⚡ 1 秒注册",
+    "signupPerk": "✨ 无需账号密码，3 秒完成注册",
+    "titleLogin": "1 秒回到原来的进度",
+    "titleSignup": "3 秒就拥有自己的账户",
+    "subLogin": "不必记密码，用原来的账号直接进来。",
+    "subSignup": "没有要填的内容，一个按钮就生成账户。",
+    "googleLogin": "用 Google 一秒登录",
+    "googleSignup": "用 Google 一秒注册",
+    "appleLogin": "用 Apple 一秒登录",
+    "appleSignup": "用 Apple 一秒注册",
+    "orPhone": "或用手机号快速开始",
+    "phoneLabel": "手机号",
+    "phoneName": "手机号",
+    "sendCode": "获取验证码",
+    "quickFill": "快速填号",
+    "otpLabel": "6 位验证码",
+    "otpAutofill": "一键自动填入",
+    "codeSentTo": "验证码已发送至 {phone}",
+    "codeLocalHint": "在本设备验证 — 点一下下面的按钮即可完成",
+    "switchToSignupQ": "还没有账户？",
+    "switchToSignup": "直接切换到注册 →",
+    "switchToLoginQ": "已经有账户了？",
+    "switchToLogin": "切换到登录 →",
+    "accountLocal": "保存在本设备的账户",
+    "localNote": "目前该账户仅保存在本设备。清除浏览器数据时，余额与仓库也会一并消失。",
+    "toastLogin": "已用 {name} 账户一秒登录！",
+    "toastLoginLocal": "1 秒完成登录",
+    "toastSignup": "{name} 账户已创建完成！",
+    "toastSignupLocal": "欢迎！3 秒就注册好了",
+    "toastLogout": "已安全退出登录"
+  },
   "about": {
     "badge": "PLATFORM",
     "heroSlogan": "You never know what’s next. · OPEN IT, OWN IT",
@@ -913,15 +950,6 @@
     "amlRequired": "所需使用金额",
     "amlCurrent": "已达成使用金额",
     "amlGrinding": "最低返现 90% 以上的低风险盲盒，购买金额仅按 {pct}% 计入使用金额——无法用无风险刷量绕过标准。"
-  },
-  "vip": {
-    "title": "VIP 等级 {tier}",
-    "tiers": {
-      "member": "会员",
-      "silver": "白银",
-      "gold": "黄金",
-      "black": "黑金"
-    }
   },
   "footer": {
     "tagline": "You never know what’s next.",

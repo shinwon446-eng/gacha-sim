@@ -24,6 +24,7 @@ import { ProductArt } from "@/components/box/ProductArt";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import { CurrencySelector } from "@/components/layout/CurrencySelector";
+import { HeaderAuthControl } from "@/components/auth/HeaderAuthControl";
 import { Money } from "@/components/ui/Money";
 import { ReviewFormModal } from "@/components/community/ReviewFormModal";
 
@@ -87,6 +88,7 @@ export default function CommunityPage() {
           </div>
           <LanguageSelector />
           <CurrencySelector />
+          <HeaderAuthControl />
         </div>
       </header>
 

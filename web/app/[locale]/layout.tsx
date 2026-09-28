@@ -6,6 +6,7 @@ import { routing, type Locale } from "@/i18n/routing";
 import { LocaleHtmlLang } from "@/components/layout/LocaleHtmlLang";
 import { Footer } from "@/components/layout/Footer";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
+import { AuthHost } from "@/components/auth/AuthHost";
 
 /** 정적 export — 세 로케일을 전부 미리 생성한다. 목록 밖 로케일은 404. */
 export function generateStaticParams() {
@@ -66,6 +67,8 @@ export default async function LocaleLayout({
         <Footer />
       </div>
       <MobileBottomNav />
+      {/* 로그인·회원가입 모달과 확인 토스트 — 어느 페이지에서든 열린다 */}
+      <AuthHost />
     </NextIntlClientProvider>
   );
 }

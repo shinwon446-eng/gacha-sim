@@ -12,11 +12,11 @@ import { HallOfFame } from "@/components/home/HallOfFame";
 import { LiveTicker } from "@/components/home/LiveTicker";
 import { DailyFreeBoxModal, DailyFreeBoxPill } from "@/components/home/DailyFreeBox";
 import { QuickTabs, type CategoryTab } from "@/components/home/QuickTabs";
-import { VipBadge } from "@/components/layout/VipBadge";
 import { ProofFeed } from "@/components/fairness/ProofFeed";
 import { BoxCard } from "@/components/box/BoxCard";
 import { DetailModal } from "@/components/box/DetailModal";
 import { CurrencySelector } from "@/components/layout/CurrencySelector";
+import { HeaderAuthControl } from "@/components/auth/HeaderAuthControl";
 import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
@@ -267,7 +267,7 @@ export default function BoxesPage() {
           </button>
           <LanguageSelector />
           <CurrencySelector />
-          <VipBadge className="hidden lg:inline-flex" />
+          <HeaderAuthControl />
         </div>
       </header>
 

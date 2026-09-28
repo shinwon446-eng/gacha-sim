@@ -26,6 +26,7 @@ import { BULK_THRESHOLD, type AutoplayConfig } from "@/lib/autoplay";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import { CurrencySelector } from "@/components/layout/CurrencySelector";
+import { HeaderAuthControl } from "@/components/auth/HeaderAuthControl";
 import { Money } from "@/components/ui/Money";
 import { SellConfirmModal } from "@/components/inventory/SellConfirmModal";
 import { DeliveryModal } from "@/components/inventory/DeliveryModal";
@@ -221,6 +222,7 @@ export default function InventoryPage() {
           </button>
           <LanguageSelector />
           <CurrencySelector />
+          <HeaderAuthControl />
         </div>
       </header>
 

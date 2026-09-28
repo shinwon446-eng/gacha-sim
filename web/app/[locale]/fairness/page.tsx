@@ -9,6 +9,7 @@ import { ProofFeed } from "@/components/fairness/ProofFeed";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import { CurrencySelector } from "@/components/layout/CurrencySelector";
+import { HeaderAuthControl } from "@/components/auth/HeaderAuthControl";
 
 /** /fairness — Provably Fair 설명 + 검증기 (PROMPTS 3-1-2) */
 export default function FairnessPage() {
@@ -33,6 +34,7 @@ export default function FairnessPage() {
         <div className="ml-auto flex items-center gap-2">
           <LanguageSelector />
           <CurrencySelector />
+          <HeaderAuthControl />
         </div>
       </header>
 

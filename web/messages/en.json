@@ -10,6 +10,43 @@
     "tech": "Tech",
     "luxury": "Luxury"
   },
+  "auth": {
+    "login": "Log in",
+    "signup": "Sign up",
+    "logout": "Log out",
+    "close": "Close",
+    "tabLogin": "Log in",
+    "tabSignup": "⚡ 1-second sign-up",
+    "signupPerk": "✨ No username, no password. Done in three seconds.",
+    "titleLogin": "Pick up where you left off",
+    "titleSignup": "Three seconds and the account is yours",
+    "subLogin": "No password to remember. Come straight back in.",
+    "subSignup": "Nothing to fill in. One button and the account exists.",
+    "googleLogin": "Log in with Google",
+    "googleSignup": "Sign up with Google",
+    "appleLogin": "Log in with Apple",
+    "appleSignup": "Sign up with Apple",
+    "orPhone": "or start with a phone number",
+    "phoneLabel": "Phone number",
+    "phoneName": "Phone",
+    "sendCode": "Send code",
+    "quickFill": "Fill a number",
+    "otpLabel": "6-digit code",
+    "otpAutofill": "Fill in one tap",
+    "codeSentTo": "Code sent to {phone}",
+    "codeLocalHint": "Verified on this device — one tap below finishes it",
+    "switchToSignupQ": "No account yet?",
+    "switchToSignup": "Switch to sign-up →",
+    "switchToLoginQ": "Already have an account?",
+    "switchToLogin": "Switch to log in →",
+    "accountLocal": "Saved on this device",
+    "localNote": "For now this account lives only on this device. Clearing your browser data clears the balance and the vault with it.",
+    "toastLogin": "Logged in with {name} in one second!",
+    "toastLoginLocal": "Logged in, one second flat",
+    "toastSignup": "Your {name} account is ready!",
+    "toastSignupLocal": "Welcome. That took three seconds.",
+    "toastLogout": "Signed out safely"
+  },
   "about": {
     "badge": "PLATFORM",
     "heroSlogan": "You never know what’s next. · OPEN IT, OWN IT",
@@ -913,15 +950,6 @@
     "amlRequired": "Usage required",
     "amlCurrent": "Usage reached",
     "amlGrinding": "Low-risk boxes (minimum payback of 90% or more) count only {pct}% of what you spend toward the usage rule — risk-free grinding cannot bypass it."
-  },
-  "vip": {
-    "title": "VIP tier {tier}",
-    "tiers": {
-      "member": "Member",
-      "silver": "Silver",
-      "gold": "Gold",
-      "black": "Black"
-    }
   },
   "footer": {
     "tagline": "You never know what’s next.",

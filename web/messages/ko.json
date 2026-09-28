@@ -10,6 +10,43 @@
     "tech": "테크",
     "luxury": "럭셔리"
   },
+  "auth": {
+    "login": "로그인",
+    "signup": "회원가입",
+    "logout": "로그아웃",
+    "close": "닫기",
+    "tabLogin": "로그인",
+    "tabSignup": "⚡ 1초 회원가입",
+    "signupPerk": "✨ 아이디 · 비밀번호 설정 없이 3초 만에 가입 완료",
+    "titleLogin": "1초 만에 다시 시작하세요",
+    "titleSignup": "3초면 내 계정이 생깁니다",
+    "subLogin": "비밀번호를 외울 필요 없습니다. 쓰던 계정으로 바로 들어오세요.",
+    "subSignup": "입력할 것은 없습니다. 버튼 하나면 계정이 만들어집니다.",
+    "googleLogin": "Google로 1초 로그인",
+    "googleSignup": "Google로 1초 회원가입",
+    "appleLogin": "Apple로 1초 로그인",
+    "appleSignup": "Apple로 1초 회원가입",
+    "orPhone": "또는 휴대폰 번호로 빠른 시작",
+    "phoneLabel": "휴대폰 번호",
+    "phoneName": "휴대폰",
+    "sendCode": "인증번호 받기",
+    "quickFill": "번호 빠른 입력",
+    "otpLabel": "인증번호 6자리",
+    "otpAutofill": "1클릭 자동입력",
+    "codeSentTo": "{phone} 으로 인증번호를 보냈습니다",
+    "codeLocalHint": "이 기기에서 인증합니다 — 아래 버튼 한 번이면 끝납니다",
+    "switchToSignupQ": "아직 계정이 없으신가요?",
+    "switchToSignup": "회원가입으로 바로 전환 →",
+    "switchToLoginQ": "이미 계정이 있으신가요?",
+    "switchToLogin": "로그인으로 전환 →",
+    "accountLocal": "이 기기에 저장된 계정",
+    "localNote": "지금은 이 기기에만 저장되는 계정입니다. 브라우저 데이터를 지우면 잔액과 보관함도 함께 사라집니다.",
+    "toastLogin": "{name} 계정으로 1초 로그인 완료!",
+    "toastLoginLocal": "1초 만에 로그인되었습니다",
+    "toastSignup": "{name} 계정으로 가입이 끝났습니다!",
+    "toastSignupLocal": "환영합니다! 3초 만에 가입이 끝났습니다",
+    "toastLogout": "안전하게 로그아웃되었습니다"
+  },
   "about": {
     "badge": "PLATFORM",
     "heroSlogan": "You never know what’s next. · OPEN IT, OWN IT",
@@ -913,15 +950,6 @@
     "amlRequired": "필요 이용 금액",
     "amlCurrent": "달성 이용 금액",
     "amlGrinding": "최소 페이백이 90% 이상인 저위험 박스는 구매 금액의 {pct}% 만 이용 금액으로 인정됩니다 — 손실 없는 반복 구매로 기준을 우회할 수 없습니다."
-  },
-  "vip": {
-    "title": "VIP 등급 {tier}",
-    "tiers": {
-      "member": "멤버",
-      "silver": "실버",
-      "gold": "골드",
-      "black": "블랙"
-    }
   },
   "footer": {
     "tagline": "You never know what’s next.",

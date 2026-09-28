@@ -347,6 +347,39 @@
 - **SSR 안전** — `useScroll`/`useInView`/카운트업/해시는 전부 마운트 후에만 값이 바뀌고 첫 렌더는 서버와 동일한 상수다.
   `window` 직접 참조와 `Math.random()` 은 쓰지 않는다.
 
+## 11. 인증 — 원클릭 로그인 · 회원가입 · 로그아웃 (2026-09-28 운영자 지시)
+
+헤더의 VIP 등급 뱃지(`VipBadge.tsx`, `vip` 메시지 네임스페이스)를 삭제하고 그 자리에 인증 컨트롤을 넣었다.
+아이디·비밀번호 입력은 **만들지 않는다** — Google · Apple · 휴대폰 번호 세 갈래뿐이다.
+
+| 파일 | 역할 |
+|---|---|
+| `lib/auth.ts` | 순수 규칙 — 국가별 자동 하이픈(`formatPhone`), 완성 판정, 마스킹(`010-****-5678`), 로컬 OTP 생성, 공급자 연결 여부(`providerConfigured`) |
+| `stores/authStore.ts` | persist 키 **`voila-auth-v1`**, `skipHydration` + `AuthHost` 복원. `user / isModalOpen / modalMode / pending / toast` |
+| `components/auth/AuthModal.tsx` | 듀얼 탭(`layoutId="authTabPill"` 스프링) · 소셜 듀오 · 휴대폰 빠른 인증 |
+| `components/auth/HeaderAuthControl.tsx` | 헤더 5곳 공용. 비로그인 `[로그인]`+`[회원가입]`, 로그인 프로필 캡슐 + 드롭다운 |
+| `components/auth/AuthHost.tsx` | `app/[locale]/layout.tsx` 한 곳에 마운트 — 모달 + 전역 토스트 + 세션 복원 |
+
+- ⚠️ **로그아웃은 지갑·보관함을 건드리지 않는다.** `logout()` 은 세션만 지운다. 잔액(`gachaflix.wallet`)·보관함
+  (`gachaflix.inventory`)·시드(`gachaflix.fair`)는 별도 스토어·별도 키이며 `tests/auth.test.ts` 가 인증 스토어에
+  `gachaflix.` 참조가 없는지 검사한다(실측으로도 로그아웃 전후 세 키가 바이트 단위로 동일함을 확인).
+- ⚠️ **공급자가 연결되기 전에는 "실계정"이라고 말하지 않는다(부록 C).** `NEXT_PUBLIC_GOOGLE_CLIENT_ID` ·
+  `NEXT_PUBLIC_APPLE_CLIENT_ID` · `NEXT_PUBLIC_API_BASE` 가 비어 있으면 만들어지는 것은 **이 기기 로컬 세션**이다
+  (`user.local = true`). 그때는 ⑴ 토스트가 공급자 이름을 주장하지 않고(`toastLoginLocal`) ⑵ 문자를 보냈다고 하지 않으며
+  (`codeLocalHint`) ⑶ 모달 하단 `localNote` 가 **잔액이 이 브라우저에만 있다**는 사실을 적는다. 가짜 OAuth 토큰·가짜
+  서버 OTP 검증은 만들지 않는다 — 키가 들어오면 `lib/auth.ts` 한 곳만 실제 authorize/검증 경로로 바꾸면 된다.
+- **OTP 코드는 상수로 박지 않는다** — `newLocalOtp()` 가 요청마다 새로 만든다. 고정 코드를 코드에 남기면 실서버가
+  붙은 뒤에도 백도어처럼 남는다. 전체 번호는 저장하지 않고 **마스킹 문자열만** 세션에 들어간다.
+- **빠른 입력 번호**는 남의 번호가 아니라 자릿수만 맞춘 비실사용 번호다(`quickFill`, 테스트가 끝 4자리를 검사).
+- ⚠️ **`AnimatePresence` 조건부 자식에는 반드시 `key`** — `AuthModal` 오버레이에 key 가 없어 exit 완료를 놓치자
+  `opacity: 0` 인 전체 화면 `z-[100]` div 가 남아 **페이지 전체의 클릭을 조용히 먹었다**(2026-09-28 실측).
+  key 를 주고, 혹시 남더라도 무해하도록 `pointerEvents` 를 variant(`animate`/`exit`)에 함께 넣는다.
+- **헤더 폭 (375px 실측)** 비로그인 컨트롤은 sm 미만에서 **골드 아이콘 하나**로 접는다(`[로그인]`·`[회원가입]` 은
+  `hidden sm:flex`) — 모달 상단 듀얼 탭이 회원가입을 한 탭 거리로 유지한다. 로그인 후에는 캡슐이 라벨을 sm 이상에서만
+  보여 주고, 모바일 로그아웃은 드롭다운이 담당한다(`[로그아웃]` 퀵 버튼은 `lg:flex`).
+  `/about` 은 sm 미만에서 `[상자 열러 가기]` 를 접어 그 자리를 인증 컨트롤에 준다(히어로에 같은 CTA 가 크게 있다).
+  실측 최소폭: 메인 EN **356px**, 다섯 페이지 모두 `docW === winW`.
+
 ## 부록 A. 계승 규범 (v2~v4 → v5)
 
 v5 본문이 다루지 않는 항목은 이전 규범을 유지한다. 코드가 이미 이 값으로 구현되어 있다.

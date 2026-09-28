@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import { CurrencySelector } from "@/components/layout/CurrencySelector";
+import { HeaderAuthControl } from "@/components/auth/HeaderAuthControl";
 import { VaultHero } from "@/components/about/VaultHero";
 import { LineupShowcase } from "@/components/about/LineupShowcase";
 import { TrustScenes } from "@/components/about/TrustScenes";
@@ -52,11 +53,14 @@ export default function AboutPage() {
         </nav>
         <Link
           href="/"
-          className="flex h-8 flex-none items-center gap-1.5 whitespace-nowrap rounded-md bg-crimson px-2.5 text-[11px] font-bold text-white transition-colors hover:bg-red-600 sm:h-9 sm:px-3 sm:text-xs"
+          className="hidden h-8 flex-none items-center gap-1.5 whitespace-nowrap rounded-md bg-crimson px-2.5 text-[11px] font-bold text-white transition-colors hover:bg-red-600 sm:flex sm:h-9 sm:px-3 sm:text-xs"
         >
           <Rocket className="h-3.5 w-3.5" strokeWidth={2.4} />
           <span className="hidden sm:inline">{t("about.navOpen")}</span>
         </Link>
+        {/* sm 미만에서는 [상자 열러 가기] 를 접고 그 자리를 인증 컨트롤에 준다 —
+            히어로 바로 아래에 같은 CTA 가 크게 있고, 로그인은 여기가 유일한 길이다 */}
+        <HeaderAuthControl />
         <span className="hidden flex-none items-center gap-2 lg:flex">
           <LanguageSelector />
           <CurrencySelector />
