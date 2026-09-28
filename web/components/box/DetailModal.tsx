@@ -275,7 +275,7 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
                 </div>
 
                 <h2 className="mt-2.5 font-display text-[30px] font-bold uppercase leading-[0.95] tracking-tight text-white md:text-[46px]">
-                  {box.title}
+                  {boxTitle(box)}
                 </h2>
 
                 {/* 수량 프리셋 */}

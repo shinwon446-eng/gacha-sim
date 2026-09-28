@@ -16,7 +16,7 @@
     "heroLine2": "Just VOILA.",
     "heroSub": "Tamper-proof SHA-256 provable fairness, 95% instant USDT cashout, and free express shipping on items cleared by a professional authentication lab.",
     "scrollHint": "Scroll to open the vault",
-    "lineupTitle": "What is sitting in the vault",
+    "lineupTitle": "What is inside the boxes right now",
     "lineupSub": "{boxes} boxes open right now, across {categories} luxury lines",
     "catWatch": "Swiss Watches",
     "catTech": "High-End Tech",
@@ -32,30 +32,30 @@
     "s1AttemptsNote": "Effective attempts on the same budget",
     "s1Assume": "The comparison is a calculation from a stated assumption and does not name any company. The formula is right above, so check it yourself.",
     "s1MockTitle": "Opened",
-    "s1MockCta": "Cash out 95% in USDT",
+    "s1MockCta": "💰 Take 95% back",
     "s1MockWallet": "Wallet balance",
     "s2Eyebrow": "SHA-256 provably fair",
     "s2Title": "We do not ask for trust. Verify it with math.",
     "s2Body": "The hash of the server seed is published before the box opens. The operator can neither pick the outcome in advance nor change it afterwards.",
     "s2Step1": "Server seed hash, published first",
-    "s2Step1Sub": "It reaches your browser before the spin",
+    "s2Step1Sub": "It reaches your browser before the box opens",
     "s2Step2": "Your browser seed is mixed in",
     "s2Step2Sub": "Your randomness always enters the result",
     "s2Step3": "HMAC-SHA256 to the winning slot",
     "s2Step3Sub": "First 8 hex digits modulo {range}",
-    "s2Note": "Re-hash the server seed revealed after the spin: it must match the hash you were given before it. If it does not, it was tampered with.",
+    "s2Note": "Re-hash the server seed revealed after it opens: it must match the hash you were given before it. If it does not, it was tampered with.",
     "s2Verify": "Open the verifier",
     "feedTitle": "Global live feed",
     "feedSub": "Only real opens, cashouts and shipments flow here",
-    "feedLineup": "Published jackpot lineup",
+    "feedLineup": "Published prize lineup",
     "feedEmptyTitle": "No records on this device yet",
     "feedEmptyNote": "We do not fill this with invented wins from other people. Once server-side aggregation is connected, worldwide records flow here.",
     "feedNet": "USDT TRC-20 and BEP-20 supported",
     "feedShip": "Duties and shipping covered by the platform",
     "statsTitle": "VOILA in numbers",
-    "statJackpot": "Total jackpot value on the table right now",
+    "statJackpot": "Total retail value on the table right now",
     "statSellback": "Instant refund rate",
-    "statMutable": "Results the operator can change after a spin",
+    "statMutable": "Results the operator can change after a box opens",
     "statMutableSub": "Because the seed hash is published first",
     "statSla": "Target time to ship a physical item",
     "statSlaSub": "An operating target, not a measured average",
@@ -81,11 +81,11 @@
     "faqQ2": "What if an item turns out to be fake?",
     "faqA2": "Only items that pass a professional authentication lab ship out, and if one is confirmed fake you are compensated {n}x its value.",
     "faqQ3": "How fast is a cashout?",
-    "faqA3": "Hit [Cash out 95%] in your vault and it lands in your balance immediately. There is no approval queue.",
+    "faqA3": "Hit [Take 95% back] in your vault and it lands in your balance immediately. There is no approval queue.",
     "faqQ4": "How does withdrawal work?",
-    "faqA4": "USDT deposits withdraw over TRC-20 or BEP-20 once the rollover requirement is met. Card top-ups never leave on-chain; they are for opening, shipping and card refunds only.",
+    "faqA4": "USDT top-ups withdraw over TRC-20 or BEP-20 once the usage rule is met. Card top-ups never leave on-chain; they are for opening, shipping and card refunds only.",
     "faqQ5": "How do I know the results are not rigged?",
-    "faqA5": "You do not have to take our word for it. Compare the server seed hash you got before the spin with the server seed revealed after it. The verifier recomputes every record for you.",
+    "faqA5": "You do not have to take our word for it. Compare the server seed hash you got before it opened with the server seed revealed after. The verifier recomputes every record for you.",
     "ctaTitle": "The new standard for luxury. Start now.",
     "ctaSub": "From 1 USDT. Even a miss returns at least {min}% instantly.",
     "ctaButton": "Go open a box",
@@ -109,23 +109,23 @@
     "guaranteedMin": "Guaranteed Minimum {value}",
     "aboveOpenPrice": "Above open price",
     "openNow": "Open Now",
-    "viewContents": "What's inside",
+    "viewContents": "Contents & odds",
     "billboardPicker": "Billboard picker",
     "billboardOf": "{title} billboard",
-    "headline": "$1. A shot at a Rolex & an iPhone.",
-    "headline1": "$1. A shot at",
-    "headline2": "a Rolex & an iPhone.",
-    "sub": "Hit, it's 100% truly yours. Miss, 95% cashed out instantly!",
-    "sub1": "Hit, it's 100% truly yours.",
-    "sub2": "Miss, 95% cashed out instantly!",
-    "freeTry": "Try free",
-    "openFor": "🔥 Spin for {price}",
-    "badge": "Luxury jackpots from $1",
-    "poolLabel": "LIVE JACKPOT POOL",
-    "poolLabelShort": "JACKPOT POOL",
-    "poolNote": "Combined value of the top prize in all {n} open boxes (published lineup)",
+    "headline": "Open a Rolex or an iPhone, from $1.",
+    "headline1": "Open a Rolex or an iPhone,",
+    "headline2": "from $1.",
+    "sub": "Win it and it ships free, 100% authentic. Get a different item and take 95% straight back.",
+    "sub1": "Win it and it ships free, 100% authentic.",
+    "sub2": "Get a different item and take 95% straight back.",
+    "freeTry": "Try an unboxing, free",
+    "openFor": "📦 Open a box for {price}",
+    "badge": "Luxury unboxing from $1",
+    "poolLabel": "TOTAL PRIZE VALUE",
+    "poolLabelShort": "PRIZE POOL",
+    "poolNote": "Combined retail value of the top item in all {n} boxes open now",
     "bigWin": "🔥 LIVE BIG WIN",
-    "bigWinGoal": "🎯 Jackpot target this week",
+    "bigWinGoal": "🎯 Top item to chase this week",
     "nowShowing": "Now Showing",
     "topMultipleShort": "up to {n}"
   },
@@ -135,9 +135,9 @@
     "guaranteedMinShort": "Min {value}",
     "noBlankBadge": "100% No Blanks · Min {value} guaranteed",
     "noBlankShort": "No blanks · Min {value}",
-    "settleBadge": "Every item cashes out 95% in USDT",
-    "settleShort": "95% cash-out",
-    "upTo": "Up to {n} jackpot",
+    "settleBadge": "Every item pays back 95% instantly",
+    "settleShort": "95% payback",
+    "upTo": "Up to {n}",
     "rtp": "RTP {rate}%",
     "floorPct": "Min {pct}% back",
     "guaranteed": "guaranteed",
@@ -154,7 +154,7 @@
   "mobileNav": {
     "aria": "Quick navigation",
     "home": "Home",
-    "dollar": "$1 Jackpot",
+    "dollar": "$1 Boxes",
     "vault": "Vault",
     "deposit": "Deposit (+)",
     "wallet": "Wallet"
@@ -197,7 +197,7 @@
     "doneCta": "Done"
   },
   "hot": {
-    "title": "🔥 Hottest jackpot boxes — TOP 3",
+    "title": "🔥 Most popular boxes — TOP 3",
     "subtitle": "by popularity index",
     "heat": "{deg}°C HOT",
     "upTo": "up to {n}x",
@@ -216,7 +216,7 @@
     "myOutside": "Your rank: outside the top 5",
     "myBest": "· best {n}x this week",
     "myNone": "No wins yet this week · break into the top 5 to claim a prize!",
-    "cta": "🚀 Open a jackpot box",
+    "cta": "🚀 Open a box and climb",
     "scopeNote": "The board counts real openings only. Until server-side aggregation is connected it shows this device's records, and empty seats are never filled with invented winners."
   },
   "categories": {
@@ -258,7 +258,7 @@
     "topRank": "TOP {n}",
     "openNowPrice": "Open Now · {price}",
     "viewOdds": "View all odds",
-    "openPrice": "Open Price",
+    "openPrice": "Box price",
     "guaranteedMin": "Guaranteed Minimum",
     "topPrize": "Top Prize",
     "topMultiple": "Top Multiple",
@@ -267,8 +267,8 @@
     "explain": "Tiers are not stored values — they derive from market value ÷ open price. Expected market value per open is {ev}, which is {retail} of the open price. Instant sell-back pays {refund} of market value, so the cash-basis return is {cash}, below the open price.",
     "guaranteedYes": "This box's floor tier is a {min} instant cashback — credited 100% the moment you open.",
     "guaranteedNo": "This box's floor tier is a {min} instant cashback — credited 100% to your balance the moment you open.",
-    "settleBadge": "⚡ Every item settles to USDT in 1 click at 95% — withdraw to your own wallet, guaranteed",
-    "settleBody": "Physical items and gift cards cash out at 95% of market value in one click; USDT cashback and instant drops are credited at 100% on open. Balance withdraws to your TRC-20 / BEP-20 wallet.",
+    "settleBadge": "⚡ Every item pays back 95% in one click — withdraw to your own wallet, guaranteed",
+    "settleBody": "Physical items and gift cards pay back 95% of market value in one click; USDT cashback and instant drops are credited at 100% on open. Balance withdraws to your TRC-20 / BEP-20 wallet.",
     "allPrizes": "All possible prizes",
     "count": "{n} items",
     "sortedByValue": "By market value, descending",
@@ -276,9 +276,9 @@
     "odds": "Odds",
     "tierLabel": "Tier",
     "tierBar": "Tier lineup",
-    "upToLabel": "Top jackpot",
-    "rtpLabel": "RTP",
-    "floorLabel": "Floor",
+    "upToLabel": "Best case",
+    "rtpLabel": "Expected value ratio",
+    "floorLabel": "Minimum payback",
     "floorPct": "Min {pct}%",
     "preciseOddsLink": "Provably Fair",
     "preciseOdds": "Exact odds table · Provably Fair",
@@ -360,16 +360,16 @@
     "openN": "Open ×{n}",
     "upgrade": "UPGRADE!",
     "openBulk": "🚀 Bulk-open {n} at once ({amount})",
-    "openAllIn": "👑 All-in jackpot: open {n} ({amount})",
+    "openAllIn": "👑 Open {n} in bulk ({amount})",
     "openNow": "🔥 Open {n} now ({amount})",
     "preset": {
       "1": "Open 1",
       "5": "5-combo",
       "10": "10-combo",
       "50": "Bulk 50",
-      "100": "All-in 100"
+      "100": "Open 100 in bulk"
     },
-    "qtyNote": "Opens the selected quantity in one go — Epic / Jackpot wins trigger the 3D highlight.",
+    "qtyNote": "Opens the selected quantity in one go — top-tier wins trigger the 3D highlight.",
     "qty": "Quantity",
     "autoStop": "⏹ Stop ({n} left)",
     "autoSpent": "Spent",
@@ -377,7 +377,7 @@
     "autoNet": "Net",
     "autoStopped": {
       "spins": "Autoplay finished",
-      "jackpot": "👑 Jackpot hit — auto-stopped",
+      "jackpot": "👑 Top-tier item — auto-stopped",
       "multiple": "Target multiple reached — auto-stopped",
       "stopLoss": "Stop-loss reached — auto-stopped",
       "balance": "Insufficient balance — stopped",
@@ -388,20 +388,20 @@
     "trialBody": "Open real boxes with your {bonus} welcome bonus!",
     "trialCta": "Claim & Open Real Box",
     "trialCtaClaimed": "Open Real Box",
-    "trialNote": "Free-try results aren't shipped or cashed out. Use the button above for the real thing.",
+    "trialNote": "Free-try results aren't shipped or paid back. Use the button above for the real thing.",
     "spinning": "Opening…",
     "landing": "Result locked",
     "result": "You won",
     "results": "{n} results",
     "total": "Total value",
     "paid": "Paid {price}",
-    "sellBack": "Cash out 95% · {amount}",
-    "sellBackAll": "Cash out all · {amount}",
-    "cashoutCta": "⚡ Cash out 95% in USDT",
+    "sellBack": "Take 95% back · {amount}",
+    "sellBackAll": "Take 95% back on all · {amount}",
+    "cashoutCta": "💰 Take 95% back",
     "noFee": "0% fee",
     "shipSub": "Physical · free shipping",
     "cashCredited": "{amount} credited to your balance",
-    "respin": "🔥 Spin again for {price}",
+    "respin": "📦 Open another for {price}",
     "sellBackNote": "{rate} of market value is credited to your balance instantly",
     "sold": "Cashed out — {amount} credited",
     "claimShipping": "Ship to me",
@@ -534,46 +534,46 @@
     "summary": "{n} items · Total value in vault {value}",
     "storedCount": "In vault {n}",
     "shippingCount": "Shipping {n}",
-    "soldCount": "Sold {n}",
+    "soldCount": "Paid back {n}",
     "filterStatus": "Status",
     "filterTier": "Tier",
     "all": "All",
     "tabHeld": "Holding ({n})",
     "tabDone": "Settled ({n})",
-    "cashableValue": "Total cash-out value now",
+    "cashableValue": "Total you can take back now",
     "withdrawBalance": "🚀 Withdraw balance",
-    "doneSold": "Cashed out 95% +{amount}",
+    "doneSold": "95% paid back +{amount}",
     "doneCash": "Cashback credited +{amount}",
     "archived": "Settled",
     "doneShipping": "Shipped",
     "donePreparing": "Preparing shipment",
-    "emptyDone": "Nothing settled yet. Items you cash out or ship are archived here.",
+    "emptyDone": "Nothing settled yet. Items you sell back or ship are archived here.",
     "status": {
       "IN_STORAGE": "In Vault",
       "SHIPPING_REQUESTED": "Preparing shipment",
       "SHIPPING": "Shipping",
-      "SOLD": "Sold"
+      "SOLD": "Paid back"
     },
     "acquired": "Acquired {date}",
     "from": "{box}",
     "soldFor": "Refunded {amount}",
     "tracking": "Tracking",
     "trackingPending": "Awaiting tracking number",
-    "sell": "⚡ Cash out 95% USDT",
+    "sell": "💰 Take 95% back",
     "noFee": "0% fee",
     "ship": "📦 Ship to my door",
-    "sellShort": "⚡ Cash out 95%",
+    "sellShort": "💰 95% back",
     "shipShort": "📦 Ship home",
     "verify": "1-second fairness check",
     "select": "Select",
     "selected": "{n} selected",
     "selectAll": "Select all",
     "clearSelection": "Clear",
-    "sellSelected": "Cash out selected · {rate}",
+    "sellSelected": "Take {rate} back on selected",
     "selectedValue": "Total value:",
     "soldForLabel": "Refunded",
     "totalValue": "Total vault value",
-    "sellAll": "Cash out all",
+    "sellAll": "Take 95% back on all",
     "sort": "Sort",
     "sorts": {
       "newest": "Newest",
@@ -602,12 +602,12 @@
     "stepCurrent": "Current step",
     "trackingNote": "Once the parcel ships, the carrier and tracking number appear here with a live tracking link.",
     "trackingIssuedNote": "Your tracking number is issued. Follow the parcel live on the official {carrier} tracking page.",
-    "sellTitle": "95% Instant Cash-Out",
-    "sellBody": "Cash out this item? {rate} of market value — {amount} — is credited to your balance instantly.",
-    "sellBodyMulti": "Cash out {n} items? {rate} of market value — {amount} — is credited to your balance instantly.",
+    "sellTitle": "💰 Take 95% back",
+    "sellBody": "Sell this item back? {rate} of market value — {amount} — lands in your balance right away.",
+    "sellBodyMulti": "Sell {n} items back? {rate} of market value — {amount} — lands in your balance right away.",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "soldToast": "Sold — {amount} credited",
+    "soldToast": "Paid back — {amount} credited",
     "shipTitle": "Claim Shipping",
     "shipBody": "International shipping is deducted from your balance. Destination duties and VAT are billed on delivery.",
     "recipient": "Recipient name",
@@ -702,22 +702,22 @@
   },
   "autoplay": {
     "eyebrow": "Autoplay",
-    "title": "Autoplay settings",
+    "title": "Auto-open in a row",
     "close": "Close",
-    "perSpin": "spin",
-    "spins": "Number of spins",
+    "perSpin": "box",
+    "spins": "How many to open",
     "times": "{n}",
     "budget": "Max stake {amount}",
-    "autoSell": "⚡ Auto cash out every win at 95% USDT (balance auto-refills)",
-    "autoSellBody": "Physical items and gift cards are cashed out at 95% of market value right away. USDT cashback is credited 100% as always.",
-    "smartStop": "Smart stop",
-    "stopJackpot": "👑 Stop on Epic / Legendary (jackpot) win",
-    "stopMultiple": "Stop on a single win of N× or more",
+    "autoSell": "⚡ Auto sell back every win at 95% (balance auto-refills)",
+    "autoSellBody": "Physical items and gift cards are sold back at 95% of market value right away. USDT cashback is credited 100% as always.",
+    "smartStop": "Auto-stop rules",
+    "stopJackpot": "👑 Stop when a top-tier item lands",
+    "stopMultiple": "Stop when the target value is reached",
     "multipleUnit": "× or more",
-    "stopLoss": "Stop when the loss limit is reached",
-    "stopLossUnit": "net loss",
-    "start": "🔄 Start autoplay · {n}",
-    "button": "🔄 Autoplay {n}"
+    "stopLoss": "Stop at the spending limit",
+    "stopLossUnit": "spent so far",
+    "start": "🔄 Start · open {n}",
+    "button": "🔄 Open {n} in a row"
   },
   "bulk": {
     "eyebrow": "Bulk open · {n}",
@@ -725,15 +725,15 @@
     "spent": "Total stake",
     "won": "Total value won",
     "net": "Net",
-    "sellAll": "⚡ Cash out {n} at 95%",
+    "sellAll": "💰 Take 95% back on {n}",
     "keep": "Keep in vault"
   },
   "ticker": {
     "label": "Live drops",
     "live": "LIVE",
-    "lineup": "{box} · {item} {mult} jackpot",
+    "lineup": "{box} · {item} up to {mult}",
     "win": "{box} ➔ {item}",
-    "cashout": "cashed out {amount}",
+    "cashout": "took {amount} back",
     "ship": "requested shipping for {item}",
     "ago": "({s}s ago)"
   },
@@ -743,7 +743,7 @@
     "step1Desc": "From $1. Rolex, Tesla, Apple.",
     "step2Title": "Open it fair",
     "step2Desc": "Sealed by SHA-256. No tampering.",
-    "step3Title": "Ship or cash out 95%",
+    "step3Title": "Ship it or take 95% back",
     "step3Desc": "Free shipping, or USDT in a second."
   },
   "counters": {
@@ -754,7 +754,7 @@
     "verification": "Provably fair verification rate",
     "odds": "Published odds entries",
     "oddsUnit": "items",
-    "sellback": "Instant cash-out rate",
+    "sellback": "Instant payback rate",
     "verifiedOf": "{n} of my opens re-verified"
   },
   "proof": {
@@ -766,7 +766,7 @@
     },
     "kind": {
       "withdraw": "Withdrawal",
-      "sellback": "Instant sell-back"
+      "sellback": "Instant payback"
     },
     "viewOnExplorer": "View on {explorer}",
     "track": "Track parcel",
@@ -785,10 +785,10 @@
     "emptyShipments": "No shipments recorded yet.",
     "emptyCta": "Open a box",
     "factVerify": "Every result is sealed by a SHA-256 hash published before the box opens; once the server seed is revealed anyone can reproduce it.",
-    "factRefund": "Physical wins cash out at 95% of market value instantly; USDT cashback is credited at 100%.",
+    "factRefund": "Physical wins pay back 95% of market value right away; USDT payback is credited at 100%.",
     "factFee": "Withdrawals cost only the network fee — 1 USDT on TRC-20, 0.5 USDT on BEP-20 — and domestic shipping is free during the current event.",
     "pendingTx": "Awaiting broadcast",
-    "settledInstant": "Settled instantly"
+    "settledInstant": "Paid back instantly"
   },
   "withdraw": {
     "title": "Withdraw USDT",
@@ -846,18 +846,18 @@
     "quickMax": "Withdraw all",
     "submitAmount": "🚀 Withdraw {amount} to my wallet",
     "submitting": "Preparing the on-chain transfer…",
-    "amlTitle": "🛡️ Anti-Money-Laundering (AML) rule",
-    "amlRule": "Withdrawals unlock at 100% rollover",
+    "amlTitle": "🛡️ Safe withdrawal usage rule",
+    "amlRule": "Withdraw as soon as you have used 100% of what you topped up",
     "amlProgress": "Currently {pct}%",
-    "amlRemaining": "Open {amount} more to unlock withdrawals",
-    "amlMet": "✓ Rollover met (withdrawal approved)",
-    "amlBlocked": "Under our AML rule, withdrawals unlock at 100% rollover. (Currently: {pct}%)",
+    "amlRemaining": "Open {amount} more in boxes and you can withdraw right away",
+    "amlMet": "✓ Usage rule met (withdraw now)",
+    "amlBlocked": "Under our safe-trading rule, withdrawals unlock once you have used 100% of your top-up. (Currently: {pct}%)",
     "amlWhy": "This blocks scam and phishing funds from being deposited and pulled straight back out. Balances with no deposit history are not affected.",
-    "amlDeposited": "Deposited",
-    "amlWagered": "Wagered",
-    "amlRequired": "Required rollover",
-    "amlCurrent": "Completed",
-    "amlGrinding": "Ultra-low-risk boxes (guaranteed floor of 90% or more) count only {pct}% of what you open toward the rollover — risk-free grinding cannot bypass the rule."
+    "amlDeposited": "Total topped up",
+    "amlWagered": "Total spent on boxes",
+    "amlRequired": "Usage required",
+    "amlCurrent": "Usage reached",
+    "amlGrinding": "Low-risk boxes (minimum payback of 90% or more) count only {pct}% of what you spend toward the usage rule — risk-free grinding cannot bypass it."
   },
   "vip": {
     "title": "VIP tier {tier}",
@@ -877,18 +877,18 @@
     "support": "Support",
     "links": {
       "dollar": "$1 boxes",
-      "vault": "Luxury vault",
+      "vault": "Luxury collections",
       "feed": "Live payout feed",
       "verifier": "Fairness verifier",
       "terms": "Terms of Service",
       "privacy": "Privacy Policy",
-      "policy": "Shipping & 95% cash-out policy",
+      "policy": "Shipping & 95% payback policy",
       "faq": "FAQ",
       "telegram": "Telegram 24/7 live support",
       "discord": "Official Discord",
       "notice": "Announcements"
     },
-    "disclaimer": "VOILA is a global e-commerce mystery box platform. Every opening result is published transparently through a tamper-proof SHA-256 algorithm, and every winning item is guaranteed to ship as a physical product or to cash out instantly to USDT."
+    "disclaimer": "VOILA is a global e-commerce mystery box platform. Every opening result is published transparently through a tamper-proof SHA-256 algorithm, and every winning item is guaranteed to ship free as a genuine physical product or to pay back 95% instantly."
   },
   "legalDocs": {
     "eyebrow": "Help & Policies",
@@ -902,7 +902,7 @@
         },
         {
           "h": "2. Account and balance",
-          "p": "Balances are held in USDT. Deposits, withdrawals, openings and cash-outs are recorded as transactions and used for nothing other than purchases and withdrawals."
+          "p": "Balances are held in USDT. Top-ups, withdrawals, openings and paybacks are recorded as transactions and used for nothing other than purchases and withdrawals."
         },
         {
           "h": "3. Odds and fairness",
@@ -910,7 +910,7 @@
         },
         {
           "h": "4. Cancellation and refunds",
-          "p": "A box cannot be cancelled once opening starts. Any winning item can be cashed out at 95% or shipped at any time."
+          "p": "A box cannot be cancelled once opening starts. Any winning item can be sold back at 95% or shipped at any time."
         },
         {
           "h": "5. Responsibility",
@@ -947,8 +947,8 @@
       "title": "Shipping & 95% Cash-Out Policy",
       "sections": [
         {
-          "h": "1. Instant cash-out",
-          "p": "Any item in your vault can be cashed out instantly at 95% of market value in USDT, credited to your balance immediately."
+          "h": "1. Instant payback",
+          "p": "Any item in your vault pays back 95% of market value in USDT right away, credited to your balance immediately."
         },
         {
           "h": "2. Physical shipping",
@@ -960,7 +960,7 @@
         },
         {
           "h": "4. Floor value guarantee",
-          "p": "The lowest item in every box can be cashed out for at least 80% of the open price."
+          "p": "The lowest item in every box pays back at least 80% of the box price."
         }
       ]
     },
@@ -977,7 +977,7 @@
         },
         {
           "h": "Can I take cash instead of the item?",
-          "p": "Any time — cash out 95% of market value to USDT from your vault."
+          "p": "Any time — take 95% of market value back as USDT from your vault."
         },
         {
           "h": "How long do withdrawals take?",
@@ -987,12 +987,12 @@
     }
   },
   "actions": {
-    "sellBack": "Cash out 95%",
+    "sellBack": "💰 Take 95% back",
     "claimShipping": "Ship to me",
     "provablyFair": "Provably Fair"
   },
   "legal": {
-    "disclaimer": "Amounts shown are market value. Cashing out an item instantly pays {refund} of market value, so cash recovery is below the open price. Every probability is published in full under [See what's inside]."
+    "disclaimer": "Amounts shown are market value. Selling an item back pays {refund} of market value, so the payback is below the box price. Every probability is published in full under [See what's inside]."
   },
   "badges": {
     "dream": "Dream Box",
@@ -1009,63 +1009,63 @@
   "products": {
     "boxes": {
       "dollar-apple": {
-        "title": "One Dollar Apple Jackpot",
-        "tagline": "$1 for an iPhone 16 Pro. Miss, 0.85 USDT instant cashback.",
+        "title": "One Dollar Apple Box",
+        "tagline": "$1 for an iPhone 16 Pro. Miss, 0.85 USDT instant payback.",
         "badge": "$1"
       },
       "dollar-galaxy": {
-        "title": "One Dollar Galaxy Jackpot",
-        "tagline": "$1 for a Galaxy Z Fold8. Miss, 0.85 USDT instant cashback.",
+        "title": "One Dollar Galaxy Box",
+        "tagline": "$1 for a Galaxy Z Fold8. Miss, 0.85 USDT instant payback.",
         "badge": "$1"
       },
       "dollar-gaming": {
-        "title": "One Dollar Gaming Jackpot",
-        "tagline": "$1 for RTX 5090 or Switch 2. Miss, 0.85 USDT instant cashback.",
+        "title": "One Dollar Gaming Box",
+        "tagline": "$1 for RTX 5090 or Switch 2. Miss, 0.85 USDT instant payback.",
         "badge": "$1"
       },
       "starter-ps5": {
-        "title": "Coffee Ps5 Starter",
-        "tagline": "$3 for a PS5 Pro. Miss, 2.65 USDT instant cashback.",
+        "title": "PS5 Pro Starter Box",
+        "tagline": "$3 for a PS5 Pro. Miss, 2.65 USDT instant payback.",
         "badge": "Tech"
       },
       "starter-macbook": {
-        "title": "Coffee & Burger Macbook Jackpot",
-        "tagline": "$5 for a MacBook Pro M4 Max. Miss, 4.4 USDT instant cashback.",
+        "title": "MacBook Pro M4 Box",
+        "tagline": "$5 for a MacBook Pro M4 Max. Miss, 4.4 USDT instant payback.",
         "badge": "Tech"
       },
       "starter-phone": {
-        "title": "Five Dollar Iphone 17 Jackpot",
-        "tagline": "$5 for an iPhone 17 Pro Max. Miss, 4.4 USDT instant cashback.",
+        "title": "iPhone 17 Pro Box",
+        "tagline": "$5 for an iPhone 17 Pro Max. Miss, 4.4 USDT instant payback.",
         "badge": "Tech"
       },
       "vault-submariner": {
-        "title": "Rolex Submariner Vault",
-        "tagline": "$20 for a Rolex Submariner. Miss, 18.5 USDT instant cashback.",
+        "title": "Rolex Submariner Collection",
+        "tagline": "$20 for a Rolex Submariner. Miss, 18.5 USDT instant payback.",
         "badge": "Watches"
       },
       "vault-omega": {
-        "title": "Swiss Watch Vault",
-        "tagline": "$25 for Omega, Tudor, Tissot. Miss, 23 USDT instant cashback.",
+        "title": "Swiss Luxury Watch Collection",
+        "tagline": "$25 for Omega, Tudor, Tissot. Miss, 23 USDT instant payback.",
         "badge": "Watches"
       },
       "vault-handbag": {
-        "title": "Luxury Handbag Vault",
-        "tagline": "$30 for a Hermès Birkin. Miss, 27.5 USDT instant cashback.",
+        "title": "Hermès & Chanel Boutique",
+        "tagline": "$30 for a Hermès Birkin. Miss, 27.5 USDT instant payback.",
         "badge": "Luxury"
       },
       "vault-gold": {
-        "title": "Gold Bar Vault",
-        "tagline": "$50 for a 1kg gold bar. Miss, 46 USDT instant cashback.",
+        "title": "Pure Gold Bar Collection",
+        "tagline": "$50 for a 1kg gold bar. Miss, 46 USDT instant payback.",
         "badge": "Gold"
       },
       "jackpot-cybertruck": {
-        "title": "Cybertruck Jackpot",
-        "tagline": "$100 for a Cybertruck. Miss, 95 USDT instant cashback.",
+        "title": "Tesla Cybertruck Edition",
+        "tagline": "$100 for a Cybertruck. Miss, 95 USDT instant payback.",
         "badge": "Dream Box"
       },
       "jackpot-supercar": {
-        "title": "Supercar Jackpot",
-        "tagline": "$100 for a Porsche 911. Miss, 95 USDT instant cashback.",
+        "title": "Porsche 911 Supercar Edition",
+        "tagline": "$100 for a Porsche 911. Miss, 95 USDT instant payback.",
         "badge": "Dream Box"
       }
     },

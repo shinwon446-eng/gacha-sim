@@ -19,13 +19,14 @@ const BADGES = [
  */
 export function Footer() {
   const t = useTranslations("footer");
+  const tr = useTranslations();
   const year = 2026;
   return (
     <footer className="border-metallic-subtle mt-10 border-x-0 border-b-0 bg-obsidian px-[4%] pb-8 pt-8 text-xs text-muted md:mt-16 md:pt-10">
       <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-[1.3fr_2fr]">
         <div>
           <div className="font-display text-xl font-black uppercase leading-none tracking-wider text-white">Voila.gg</div>
-          {/* 2대 공식 슬로건 — 메인(영문) + 액션. 브랜드 슬로건이라 세 로케일 모두 원문 그대로다 */}
+          {/* 2대 공식 슬로건 — 브랜드 슬로건이라 세 로케일 모두 원문 그대로다 */}
           <div className="mt-1 text-xs font-semibold text-secondary">{t("tagline")}</div>
           <div className="mt-0.5 text-[11px] font-bold tracking-widest text-gold-champagne">{t("actionSlogan")}</div>
           <p className="mt-2.5 max-w-sm leading-relaxed text-secondary">{t("slogan")}</p>
@@ -46,6 +47,7 @@ export function Footer() {
               <li><Link href="/#category-luxury" className="hover:text-white">{t("links.vault")}</Link></li>
               <li><Link href="/fairness" className="hover:text-white">{t("links.feed")}</Link></li>
               <li><Link href="/fairness" className="hover:text-white">{t("links.verifier")}</Link></li>
+              <li><Link href="/about" className="hover:text-white">{tr("nav.about")}</Link></li>
             </ul>
           </div>
           <div>

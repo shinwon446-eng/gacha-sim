@@ -180,7 +180,7 @@ test("정렬 키가 원본을 변형하지 않고 올바르게 동작한다", ()
   assert.deepEqual(asc, [...asc].sort((a, b) => a - b));
   assert.deepEqual(desc, [...desc].sort((a, b) => b - a));
   assert.deepEqual(BOXES.map((b) => b.slug), before, "원본 배열이 변형됨");
-  assert.equal(getBoxBySlug("jackpot-cybertruck")?.titleEn, "CYBERTRUCK JACKPOT");
+  assert.equal(getBoxBySlug("jackpot-cybertruck")?.titleEn, "tesla cybertruck edition");
   assert.equal(getBoxBySlug("no-such-box"), undefined);
 });
 

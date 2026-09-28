@@ -16,18 +16,18 @@ sys.stdout.reconfigure(encoding="utf-8")
 UI = {
   "ko": {
     "nav": {"boxes": "박스", "battles": "배틀", "inventory": "보관함", "fairness": "공정성 검증", "community": "커뮤니티", "about": "플랫폼 소개", "highRoller": "하이롤러", "tech": "테크", "luxury": "럭셔리"},
-    "about": {"badge": "PLATFORM", "heroLine1": "확률을 의심할 필요 없이,", "heroLine2": "마침내 브왈라(VOILA) 하나로.", "heroSub": "조작 불가능한 SHA-256 온체인 공정성, 95% 즉시 테더 환전, 전문 감정 기관 정밀 검수를 거친 100% 정품 무료 특송.", "scrollHint": "스크롤하면 볼트가 열립니다", "lineupTitle": "볼트 안에 걸려 있는 것들", "lineupSub": "지금 열려 있는 {boxes}개 박스, {categories}대 럭셔리 라인업", "catWatch": "스위스 워치", "catTech": "하이엔드 테크", "catFashion": "럭셔리 패션", "catSuper": "슈퍼카 & 순금", "s1Eyebrow": "쓰레기 상품 0개", "s1Title": "95% 캐시백이 도전 횟수 자체를 바꿉니다", "s1Body": "꽝을 사은품으로 떠넘기면 쓴 돈은 그대로 사라집니다. 브왈라(VOILA)는 모든 구성품을 정가의 95%로 즉시 테더로 돌려받을 수 있고, 바닥 등급은 아예 현금성 캐시백입니다.", "s1Formula": "실질 도전 횟수 = 1 ÷ (1 − 환급률)", "s1RivalLabel": "환급 없는 사은품형 (환급률 {rate}% 가정)", "s1OursLabel": "브왈라(VOILA) (최소 보장 환급률 {min}~{max}%)", "s1Attempts": "{n}배", "s1AttemptsNote": "같은 예산으로 돌릴 수 있는 실질 횟수", "s1Assume": "비교값은 가정에 따른 계산이며 특정 업체를 지목하지 않습니다. 계산식이 위에 그대로 있으니 직접 검산해 보세요.", "s1MockTitle": "개봉 완료", "s1MockCta": "95% 즉시 USDT 환전", "s1MockWallet": "지갑 잔액", "s2Eyebrow": "SHA-256 프로버블리 페어", "s2Title": "신뢰를 강요하지 않습니다. 수학으로 직접 검증하세요.", "s2Body": "상자를 열기 전에 서버 시드의 해시가 먼저 공개됩니다. 운영자는 결과를 미리 고를 수도, 나중에 바꿀 수도 없습니다.", "s2Step1": "서버 시드 해시 선공개", "s2Step1Sub": "개봉 전에 브라우저에 먼저 내려옵니다", "s2Step2": "내 브라우저 시드 결합", "s2Step2Sub": "결과에 내 난수가 반드시 섞입니다", "s2Step3": "HMAC-SHA256 → 당첨 슬롯", "s2Step3Sub": "앞 8자리를 {range}로 나눠 구간에 맵핑", "s2Note": "개봉 뒤 공개되는 서버 시드를 다시 해시해 보면 개봉 전에 받은 해시와 같아야 합니다. 다르면 조작입니다.", "s2Verify": "공정성 검증기 열기", "feedTitle": "글로벌 라이브 피드", "feedSub": "실제로 일어난 개봉·환전·출고만 흐릅니다", "feedLineup": "공개 잭팟 라인업", "feedEmptyTitle": "아직 이 기기의 기록이 없습니다", "feedEmptyNote": "다른 사람의 당첨을 지어내 채우지 않습니다. 서버 집계가 연결되면 전 세계 기록이 이 자리에 흐릅니다.", "feedNet": "USDT TRC-20 · BEP-20 입출금 지원", "feedShip": "관부가세 · 배송비 플랫폼 부담", "statsTitle": "숫자로 보는 브왈라(VOILA)", "statJackpot": "지금 걸려 있는 총 잭팟 상품 가치", "statSellback": "즉시 환급률", "statMutable": "개봉 후 운영자가 바꿀 수 있는 결과", "statMutableSub": "서버 시드 해시 선공개 구조", "statSla": "실물 출고 운영 기준", "statSlaSub": "측정된 평균이 아니라 운영 기준입니다", "statOdds": "확률이 공개된 구성품", "statsNote": "카탈로그와 정책에서 계산한 값입니다. 누적 지급액 같은 운영 실적 집계는 서버가 연결된 뒤에 표시합니다.", "unitUsdt": "USDT", "unitPct": "%", "unitCount": "건", "unitRows": "개", "unitHour": "시간", "s3Eyebrow": "정품 보증 & 특송", "s3Title": "가품이면 {n}배로 보상합니다", "s3Body": "전문 감정 기관의 정밀 검수를 통과한 물건만 나갑니다. 관부가세와 배송비는 플랫폼이 부담합니다.", "s3Stamp": "정품 검수 완료", "s3Waybill": "운송장", "s3WaybillPending": "출고 시 실제 운송장 번호가 발급됩니다", "s3Track1": "검수 완료", "s3Track2": "포장 · 출고", "s3Track3": "배송 중", "faqTitle": "자주 묻는 질문", "faqQ1": "당첨된 실물은 어떻게 받나요?", "faqA1": "보관함에서 [집으로 배송]을 누르고 주소를 넣으면 검수 후 출고됩니다. 관부가세와 배송비는 플랫폼이 부담합니다.", "faqQ2": "정품이 아니면 어떻게 되나요?", "faqA2": "전문 감정 기관 검수를 통과한 물건만 출고하며, 가품으로 확인되면 상품가의 {n}배를 보상합니다.", "faqQ3": "환전은 얼마나 빨리 되나요?", "faqA3": "보관함에서 [95% 즉시 회수]를 누르면 잔액에 곧바로 반영됩니다. 별도 승인 대기가 없습니다.", "faqQ4": "출금은 어떤 절차인가요?", "faqA4": "USDT 입금분은 롤오버 조건을 채운 뒤 TRC-20 또는 BEP-20으로 출금합니다. 카드 결제분은 온체인 출금이 아니라 개봉 · 배송 · 카드 환불에만 쓰입니다.", "faqQ5": "결과가 조작되지 않는다는 걸 어떻게 믿죠?", "faqA5": "믿지 않아도 됩니다. 개봉 전에 받은 서버 시드 해시와 개봉 후 공개되는 서버 시드를 직접 대조해 보세요. 검증기가 모든 기록을 다시 계산해 줍니다.", "ctaTitle": "새로운 럭셔리의 기준, 지금 시작하세요.", "ctaSub": "1 USDT부터. 꽝이 나와도 최소 {min}% 즉시 환급.", "ctaButton": "지금 상자 열러 가기", "ctaFair": "모든 결과는 SHA-256으로 검증됩니다"},
+    "about": {"badge": "PLATFORM", "heroLine1": "확률을 의심할 필요 없이,", "heroLine2": "마침내 브왈라(VOILA) 하나로.", "heroSub": "조작 불가능한 SHA-256 온체인 공정성, 95% 즉시 페이백, 전문 감정 기관 정밀 검수를 거친 100% 정품 무료 특송.", "scrollHint": "스크롤하면 상자가 열립니다", "lineupTitle": "지금 상자에 들어 있는 것들", "lineupSub": "지금 열려 있는 {boxes}개 박스, {categories}대 럭셔리 라인업", "catWatch": "스위스 워치", "catTech": "하이엔드 테크", "catFashion": "럭셔리 패션", "catSuper": "슈퍼카 & 순금", "s1Eyebrow": "쓰레기 상품 0개", "s1Title": "95% 캐시백이 도전 횟수 자체를 바꿉니다", "s1Body": "꽝을 사은품으로 떠넘기면 쓴 돈은 그대로 사라집니다. 브왈라(VOILA)는 모든 구성품을 정가의 95%로 즉시 테더로 돌려받을 수 있고, 바닥 등급은 아예 현금성 캐시백입니다.", "s1Formula": "실질 도전 횟수 = 1 ÷ (1 − 환급률)", "s1RivalLabel": "환급 없는 사은품형 (환급률 {rate}% 가정)", "s1OursLabel": "브왈라(VOILA) (최소 보장 환급률 {min}~{max}%)", "s1Attempts": "{n}배", "s1AttemptsNote": "같은 예산으로 돌릴 수 있는 실질 횟수", "s1Assume": "비교값은 가정에 따른 계산이며 특정 업체를 지목하지 않습니다. 계산식이 위에 그대로 있으니 직접 검산해 보세요.", "s1MockTitle": "개봉 완료", "s1MockCta": "💰 95% 바로 돌려받기", "s1MockWallet": "지갑 잔액", "s2Eyebrow": "SHA-256 프로버블리 페어", "s2Title": "신뢰를 강요하지 않습니다. 수학으로 직접 검증하세요.", "s2Body": "상자를 열기 전에 서버 시드의 해시가 먼저 공개됩니다. 운영자는 결과를 미리 고를 수도, 나중에 바꿀 수도 없습니다.", "s2Step1": "서버 시드 해시 선공개", "s2Step1Sub": "개봉 전에 브라우저에 먼저 내려옵니다", "s2Step2": "내 브라우저 시드 결합", "s2Step2Sub": "결과에 내 난수가 반드시 섞입니다", "s2Step3": "HMAC-SHA256 → 당첨 슬롯", "s2Step3Sub": "앞 8자리를 {range}로 나눠 구간에 맵핑", "s2Note": "개봉 뒤 공개되는 서버 시드를 다시 해시해 보면 개봉 전에 받은 해시와 같아야 합니다. 다르면 조작입니다.", "s2Verify": "공정성 검증기 열기", "feedTitle": "글로벌 라이브 피드", "feedSub": "실제로 일어난 개봉·페이백·출고만 흐릅니다", "feedLineup": "공개 상품 라인업", "feedEmptyTitle": "아직 이 기기의 기록이 없습니다", "feedEmptyNote": "다른 사람의 당첨을 지어내 채우지 않습니다. 서버 집계가 연결되면 전 세계 기록이 이 자리에 흐릅니다.", "feedNet": "USDT TRC-20 · BEP-20 입출금 지원", "feedShip": "관부가세 · 배송비 플랫폼 부담", "statsTitle": "숫자로 보는 브왈라(VOILA)", "statJackpot": "지금 걸려 있는 상품 정가 총액", "statSellback": "즉시 환급률", "statMutable": "개봉 후 운영자가 바꿀 수 있는 결과", "statMutableSub": "서버 시드 해시 선공개 구조", "statSla": "실물 출고 운영 기준", "statSlaSub": "측정된 평균이 아니라 운영 기준입니다", "statOdds": "확률이 공개된 구성품", "statsNote": "카탈로그와 정책에서 계산한 값입니다. 누적 지급액 같은 운영 실적 집계는 서버가 연결된 뒤에 표시합니다.", "unitUsdt": "USDT", "unitPct": "%", "unitCount": "건", "unitRows": "개", "unitHour": "시간", "s3Eyebrow": "정품 보증 & 특송", "s3Title": "가품이면 {n}배로 보상합니다", "s3Body": "전문 감정 기관의 정밀 검수를 통과한 물건만 나갑니다. 관부가세와 배송비는 플랫폼이 부담합니다.", "s3Stamp": "정품 검수 완료", "s3Waybill": "운송장", "s3WaybillPending": "출고 시 실제 운송장 번호가 발급됩니다", "s3Track1": "검수 완료", "s3Track2": "포장 · 출고", "s3Track3": "배송 중", "faqTitle": "자주 묻는 질문", "faqQ1": "당첨된 실물은 어떻게 받나요?", "faqA1": "보관함에서 [집으로 배송]을 누르고 주소를 넣으면 검수 후 출고됩니다. 관부가세와 배송비는 플랫폼이 부담합니다.", "faqQ2": "정품이 아니면 어떻게 되나요?", "faqA2": "전문 감정 기관 검수를 통과한 물건만 출고하며, 가품으로 확인되면 상품가의 {n}배를 보상합니다.", "faqQ3": "돌려받는 건 얼마나 빠른가요?", "faqA3": "보관함에서 [95% 바로 돌려받기]를 누르면 잔액에 곧바로 적립됩니다. 별도 승인 대기가 없습니다.", "faqQ4": "출금은 어떤 절차인가요?", "faqA4": "USDT 충전분은 기본 이용 기준을 채운 뒤 TRC-20 또는 BEP-20으로 출금합니다. 카드 결제분은 온체인 출금이 아니라 개봉 · 배송 · 카드 환불에만 쓰입니다.", "faqQ5": "결과가 조작되지 않는다는 걸 어떻게 믿죠?", "faqA5": "믿지 않아도 됩니다. 개봉 전에 받은 서버 시드 해시와 개봉 후 공개되는 서버 시드를 직접 대조해 보세요. 검증기가 모든 기록을 다시 계산해 줍니다.", "ctaTitle": "새로운 럭셔리의 기준, 지금 시작하세요.", "ctaSub": "1 USDT부터. 꽝이 나와도 최소 {min}% 즉시 환급.", "ctaButton": "지금 상자 열러 가기", "ctaFair": "모든 결과는 SHA-256으로 검증됩니다"},
     "header": {"balance": "잔액", "language": "언어", "currency": "통화", "deposit": "충전하기", "withdraw": "출금", "welcomeToast": "웰컴 보너스 {amount} 지급 완료 — 실제 박스를 열어보세요"},
     "hero": {
       "royalSelection": "로열 셀렉션", "top": "TOP {n}", "pricePerOpen": "1회 오픈", "topPull": "최고 구성",
       "noBlank": "100% 실물 지급 · 꽝 없음", "guaranteedMinLabel": "최소 보장 금액",
       "guaranteedMin": "최소 보장 금액 {value}", "aboveOpenPrice": "오픈가 이상",
-      "openNow": "지금 오픈하기", "viewContents": "뭐 들었나 보기", "billboardPicker": "빌보드 선택", "billboardOf": "{title} 빌보드",
-      "headline": "1달러로 롤렉스 & 아이폰, 긁어보세요.", "headline1": "1달러로 롤렉스 & 아이폰,", "headline2": "긁어보세요.", "sub": "터지면 100% 진짜 내 것. 안 떠도 95% 즉시 환전!", "sub1": "터지면 100% 진짜 내 것.", "sub2": "안 떠도 95% 즉시 환전!", "freeTry": "손맛 보기 (무료)", "openFor": "🔥 {price}로 돌려보기", "badge": "1달러부터 명품 잭팟", "poolLabel": "LIVE JACKPOT POOL", "poolLabelShort": "JACKPOT POOL", "poolNote": "지금 열려 있는 {n}개 박스의 최고 상품 가치 합계 (공개 라인업 기준)", "bigWin": "🔥 LIVE BIG WIN", "bigWinGoal": "🎯 이번 주 잭팟 도전 목표", "nowShowing": "지금 상영 중", "topMultipleShort": "최고 {n}"
+      "openNow": "지금 오픈하기", "viewContents": "구성품 · 확률 보기", "billboardPicker": "빌보드 선택", "billboardOf": "{title} 빌보드",
+      "headline": "1달러로 여는 롤렉스 & 아이폰, 지금 열어보세요.", "headline1": "1달러로 여는 롤렉스 & 아이폰,", "headline2": "지금 열어보세요.", "sub": "당첨되면 100% 정품 무료 배송, 다른 상품이어도 95% 바로 돌려받으세요.", "sub1": "당첨되면 100% 정품 무료 배송,", "sub2": "다른 상품이어도 95% 바로 돌려받으세요.", "freeTry": "무료로 미리 열어보기", "openFor": "📦 {price}로 상자 열기", "badge": "1달러부터 시작하는 럭셔리 언박싱", "poolLabel": "TOTAL PRIZE VALUE", "poolLabelShort": "PRIZE POOL", "poolNote": "현재 오픈 가능한 {n}개 박스의 최고 상품 정가 합계", "bigWin": "🔥 LIVE BIG WIN", "bigWinGoal": "🎯 이번 주 최고 도전 상품", "nowShowing": "지금 상영 중", "topMultipleShort": "최고 {n}"
     },
-    "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "noBlankShort": "꽝 없음 · 최소 {value}", "settleBadge": "전 품목 95% USDT 즉시 정산", "settleShort": "95% 즉시 정산", "upTo": "최고 {n} 잭팟", "rtp": "RTP {rate}%", "floorPct": "최소 {pct}% 환급", "guaranteed": "보장", "openNow": "바로 열기", "contents": "상세 정보", "details": "{title} 상세 정보", "expand": "확대"},
+    "card": {"perOpen": "1회", "top": "최고", "guaranteedMinShort": "최소 {value}", "noBlankBadge": "100% 꽝 없음 · 최소 {value} 상당 보장", "noBlankShort": "꽝 없음 · 최소 {value}", "settleBadge": "전 품목 95% 즉시 페이백 보장", "settleShort": "95% 즉시 페이백", "upTo": "최고 {n}", "rtp": "RTP {rate}%", "floorPct": "최소 {pct}% 환급", "guaranteed": "보장", "openNow": "바로 열기", "contents": "상세 정보", "details": "{title} 상세 정보", "expand": "확대"},
     "grid": {"title": "전체 박스", "sort": "정렬", "loadMore": "더 보기 ({n}개)"},
-    "mobileNav": {"aria": "빠른 이동", "home": "홈", "dollar": "1달러 잭팟", "vault": "내 보관함", "deposit": "충전 (+)", "wallet": "지갑 (입출금)"},
+    "mobileNav": {"aria": "빠른 이동", "home": "홈", "dollar": "1달러 박스", "vault": "내 보관함", "deposit": "충전 (+)", "wallet": "지갑 (입출금)"},
     "delivery": {
       "title": "실물 배송 신청", "close": "닫기",
       "body": "당첨된 실물을 집까지 보내 드립니다. 통관·정품 검수·보험이 모두 포함됩니다.",
@@ -50,10 +50,10 @@ UI = {
       "tickerTitle": "📦 실배송 출고 현황", "tickerFree": "무료 배송 이벤트 적용 — 국내 배송비 0.00 USDT", "tickerAuth": "출고 전 전문 감정 기관 정밀 검수 · 위조품 확인 시 300% 보상", "tickerInsured": "배송 보험 자동 가입 — 파손·분실 시 재발송 또는 USDT 보상",
       "doneCta": "확인"
     },
-    "hot": {"title": "🔥 실시간 핫 잭팟 박스 TOP 3", "subtitle": "인기 지수 기준", "heat": "{deg}°C HOT", "upTo": "최고 {n}배", "floor": "최소 {pct}% 환급"},
-    "hall": {"title": "🏆 주간 명예의 전당 랭킹전", "pool": "총상금 {amount} USDT 상금 풀", "deadline": "이번 주 랭킹전 마감까지", "payout": "상위 5명에게 순차 상금 자동 지급", "prize": "💰 상금 {amount} USDT", "openSlot": "공석 — 이 자리를 노려보세요", "entryRule": "{n}배 이상 당첨부터 랭킹 진입", "goal": "목표 {n}배", "myRank": "내 현재 랭킹 {rank}위", "myOutside": "내 현재 랭킹 순위권 밖", "myBest": "· 이번 주 최고 {n}배", "myNone": "이번 주 기록이 아직 없습니다 · 상위 5위에 진입하여 상금을 획득하세요!", "cta": "🚀 잭팟 박스 열고 순위 올리기", "scopeNote": "랭킹은 실제 개봉 기록만 집계합니다. 서버 집계가 연결되기 전에는 이 기기의 기록만 표시되며, 비어 있는 순위는 임의의 당첨자로 채우지 않습니다."},
+    "hot": {"title": "🔥 실시간 인기 박스 TOP 3", "subtitle": "인기 지수 기준", "heat": "{deg}°C HOT", "upTo": "최고 {n}배", "floor": "최소 {pct}% 환급"},
+    "hall": {"title": "🏆 주간 명예의 전당 랭킹전", "pool": "총상금 {amount} USDT 상금 풀", "deadline": "이번 주 랭킹전 마감까지", "payout": "상위 5명에게 순차 상금 자동 지급", "prize": "💰 상금 {amount} USDT", "openSlot": "공석 — 이 자리를 노려보세요", "entryRule": "{n}배 이상 당첨부터 랭킹 진입", "goal": "목표 {n}배", "myRank": "내 현재 랭킹 {rank}위", "myOutside": "내 현재 랭킹 순위권 밖", "myBest": "· 이번 주 최고 {n}배", "myNone": "이번 주 기록이 아직 없습니다 · 상위 5위에 진입하여 상금을 획득하세요!", "cta": "🚀 박스 열고 순위 올리기", "scopeNote": "랭킹은 실제 개봉 기록만 집계합니다. 서버 집계가 연결되기 전에는 이 기기의 기록만 표시되며, 비어 있는 순위는 임의의 당첨자로 채우지 않습니다."},
     "categories": {"all": "전체", "dollar": "🔥 1달러의 행복", "tech": "⚡ 애플&테크", "luxury": "👑 명품&시계", "jackpot": "🚗 슈퍼카&골드바"},
-    "sections": {"dollar": "🔥 1달러의 행복", "tech": "⚡ 애플 & 하이엔드 테크", "luxury": "👑 럭셔리 명품 & 스위스 워치", "jackpot": "🚗 슈퍼카 & 순금 골드바 잭팟"},
+    "sections": {"dollar": "🔥 1달러의 행복", "tech": "⚡ 애플 & 하이엔드 테크", "luxury": "👑 럭셔리 명품 & 스위스 워치", "jackpot": "🚗 슈퍼카 & 순금 골드바"},
     "sorts": {"featured": "추천순", "price-asc": "가격 낮은순", "price-desc": "가격 높은순", "popularity": "인기순"},
     "tiers": {
       "legendTitle": "등급 = 실판매가 ÷ 오픈가",
@@ -63,16 +63,16 @@ UI = {
     },
     "modal": {
       "details": "{title} 상세 정보", "close": "닫기", "topRank": "TOP {n}", "openNowPrice": "지금 오픈하기 · {price}", "viewOdds": "확률 전체 보기",
-      "openPrice": "오픈 가격", "guaranteedMin": "최소 보장 금액", "topPrize": "최고 당첨", "topMultiple": "최고 배수",
-      "tierOdds": "등급별 당첨 확률", "breakEven": "본전({price}) 이상 {rate}",
-      "explain": "등급은 저장값이 아니라 실판매가 ÷ 오픈 가격 배수에서 파생됩니다. 기대 수령 실판매가 {ev} — 오픈 가격의 {retail}입니다. 다만 받은 실물을 즉시 판매하면 실판매가의 {refund}만 지급되므로, 현금 기준 회수율은 {cash}로 오픈 가격보다 낮습니다.",
+      "openPrice": "박스 가격", "guaranteedMin": "최소 보장 금액", "topPrize": "최고 당첨", "topMultiple": "최고 배수",
+      "tierOdds": "등급별 당첨 확률", "breakEven": "구매가({price}) 이상 확률 {rate}",
+      "explain": "등급은 저장값이 아니라 시중 정가 ÷ 박스 가격 배수에서 파생됩니다. 기대 수령 정가 {ev} — 박스 가격의 {retail}입니다. 다만 받은 상품을 바로 되팔면 정가의 {refund}만 지급되므로, 현금 기준 페이백 비율은 {cash}로 박스 가격보다 낮습니다.",
       "guaranteedYes": "이 박스의 바닥 등급은 {min} 즉시 캐시백 — 개봉 즉시 100% 잔액에 적립됩니다.",
       "guaranteedNo": "이 박스의 바닥 등급은 {min} 즉시 캐시백입니다 — 개봉 즉시 100% 잔액에 적립됩니다.",
-      "settleBadge": "⚡ 전 품목 1클릭 95% USDT 즉시 정산 및 개인지갑 출금 보장",
+      "settleBadge": "⚡ 전 품목 1클릭 95% 즉시 페이백 · 개인지갑 출금 보장",
       "settleBody": "실물·기프트카드는 실판매가의 95%를 1클릭에 USDT로, USDT 캐시백·인스턴트 드롭은 100%를 개봉 즉시 잔액에. 잔액은 TRC-20/BEP-20 개인지갑으로 출금됩니다.",
       
       "allPrizes": "전체 당첨 가능 상품", "count": "{n}종", "sortedByValue": "실판매가 내림차순",
-      "marketValue": "실판매가", "odds": "확률", "tierLabel": "등급", "tierBar": "등급 구성", "upToLabel": "최고 잭팟", "rtpLabel": "환수율 RTP", "floorLabel": "바닥 환급", "floorPct": "최소 {pct}%", "preciseOddsLink": "공정성 검증 (Provably Fair)", "preciseOdds": "정밀 확률표 · Provably Fair", "expand": "펼치기", "collapse": "접기", "openVerifier": "3-Step 비주얼 검증기 열기", "imageCredits": "이미지 출처"
+      "marketValue": "시중 정가", "odds": "확률", "tierLabel": "등급", "tierBar": "등급 구성", "upToLabel": "최고 혜택", "rtpLabel": "기대 가치 비율", "floorLabel": "최소 페이백", "floorPct": "최소 {pct}%", "preciseOddsLink": "공정성 검증 (Provably Fair)", "preciseOdds": "정밀 확률표 · Provably Fair", "expand": "펼치기", "collapse": "접기", "openVerifier": "3-Step 비주얼 검증기 열기", "imageCredits": "이미지 출처"
     },
     "fairness": {
       "title": "공정성 검증", "eyebrow": "Provably Fair · HMAC-SHA256",
@@ -103,10 +103,10 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "1회 오픈", "open5": "5회 연속 오픈", "openN": "{n}회 연속 오픈", "upgrade": "UPGRADE!", "openBulk": "🚀 {n}개 한 번에 대량 개봉하기 ({amount})", "openAllIn": "👑 {n}개 올인 잭팟 대량 개봉 ({amount})", "openNow": "🔥 {n}개 지금 개봉하기 ({amount})", "preset": {"1": "1개 오픈", "5": "5연타 오픈", "10": "10연타 오픈", "50": "50개 대량 개봉", "100": "100개 올인 잭팟"}, "qtyNote": "선택한 수량만큼 한 번에 개봉하며, 에픽/잭팟 당첨 시 3D 하이라이트가 발동합니다.", "qty": "개봉 수량", "autoStop": "⏹ 정지 (남은 {n}회)", "autoSpent": "투입", "autoWon": "획득", "autoNet": "순손익", "autoStopped": {"spins": "오토플레이 완료", "jackpot": "👑 잭팟 당첨 — 자동 정지", "multiple": "목표 배수 달성 — 자동 정지", "stopLoss": "손실 한도 도달 — 자동 정지", "balance": "잔고 부족 — 정지", "manual": "수동 정지"}, "trialLabel": "손맛 보기 · 무료 체험", "trialCongrats": "{item} ({n}) 손맛 적중!", "trialBody": "웰컴 보너스 {bonus} 받고 진짜로 열어보세요.", "trialCta": "보너스 받고 진짜 열기", "trialCtaClaimed": "실제 박스 열기", "trialNote": "무료 체험 결과는 배송·환전 대상이 아닙니다. 진짜 오픈은 위 버튼으로.", "spinning": "개봉 중…", "landing": "결과 확정",
+      "open1": "1회 오픈", "open5": "5회 연속 오픈", "openN": "{n}회 연속 오픈", "upgrade": "UPGRADE!", "openBulk": "🚀 {n}개 한 번에 열기 ({amount})", "openAllIn": "👑 {n}개 대량 열기 ({amount})", "openNow": "📦 {n}개 상자 열기 ({amount})", "preset": {"1": "1개 열기", "5": "5개 연속 열기", "10": "10개 연속 열기", "50": "50개 한 번에 열기", "100": "100개 대량 열기"}, "qtyNote": "선택한 수량만큼 한 번에 열며, 최상위 등급 당첨 시 3D 하이라이트가 발동합니다.", "qty": "개봉 수량", "autoStop": "⏹ 정지 (남은 {n}회)", "autoSpent": "투입", "autoWon": "획득", "autoNet": "순손익", "autoStopped": {"spins": "연속 열기 완료", "jackpot": "👑 최상위 등급 당첨 — 자동 멈춤", "multiple": "목표 가치 달성 — 자동 멈춤", "stopLoss": "예산 한도 도달 — 자동 멈춤", "balance": "잔고 부족 — 정지", "manual": "수동 정지"}, "trialLabel": "무료 언박싱 체험", "trialCongrats": "{item} ({n}) 당첨 체험!", "trialBody": "웰컴 보너스 {bonus} 받고 진짜로 열어보세요.", "trialCta": "보너스 받고 진짜 열기", "trialCtaClaimed": "실제 박스 열기", "trialNote": "무료 체험 결과는 배송·페이백 대상이 아닙니다. 실제 개봉은 위 버튼으로.", "spinning": "개봉 중…", "landing": "결과 확정",
       "result": "당첨", "results": "{n}회 결과", "total": "합계 가치", "paid": "지불 {price}",
-      "sellBack": "95% 즉시 회수 · {amount}", "sellBackAll": "전부 95% 회수 · {amount}", "cashoutCta": "⚡ 95% USDT 즉시 회수", "noFee": "수수료 0%", "shipSub": "실물 · 무료 배송", "cashCredited": "{amount} 잔액에 즉시 적립됨", "respin": "🔥 {price}로 다시 돌리기", "sellBackNote": "실판매가의 {rate}가 잔액으로 즉시 반영됩니다",
-      "sold": "회수 완료 — {amount} 잔액 반영", "claimShipping": "집으로 배송",
+      "sellBack": "💰 95% 바로 돌려받기 · {amount}", "sellBackAll": "전체 95% 바로 돌려받기 · {amount}", "cashoutCta": "💰 95% 바로 돌려받기", "noFee": "수수료 0%", "shipSub": "실물 · 무료 배송", "cashCredited": "{amount} 잔액에 즉시 적립됨", "respin": "📦 {price}로 한 번 더 열기", "sellBackNote": "시중 정가의 {rate}가 잔액으로 바로 적립됩니다",
+      "sold": "페이백 완료 — {amount} 잔액 적립", "claimShipping": "집으로 배송",
       "shippingNotice": "국제 배송비 및 세관 수수료 안내", "shippingBody": "수취국 관세·부가세와 국제 배송비(DHL/FedEx 실비)가 별도 청구됩니다.",
       "verify": "공정성 1초 검증", "close": "닫기", "keep": "보관함으로", "kept": "보관함에 저장됐습니다 — 팝업을 닫아도 유지됩니다",
       "insufficient": "잔액 부족 — {price} 필요", "topUp": "충전하기", "toppedUp": "+{amount} 잔액 반영",
@@ -139,21 +139,21 @@ UI = {
     },
     "inventory": {
       "title": "보관함", "eyebrow": "My Vault", "empty": "보관 중인 아이템이 없습니다. 박스를 열어 채워보세요.", "goBoxes": "박스 보러 가기",
-      "summary": "총 아이템 {n}개 · 보관 중인 총 가치 {value}", "storedCount": "보관 중 {n}", "shippingCount": "배송 {n}", "soldCount": "환전 완료 {n}",
-      "filterStatus": "상태", "filterTier": "등급", "all": "전체", "tabHeld": "보유 중 ({n})", "tabDone": "처리 완료 ({n})", "cashableValue": "즉시 환전 가능한 총 가치", "withdrawBalance": "🚀 잔액 출금하기", "doneSold": "95% 환전 완료 +{amount}", "doneCash": "캐시백 적립 +{amount}", "archived": "처리 완료", "doneShipping": "배송 출발", "donePreparing": "출고 준비", "emptyDone": "아직 처리 완료된 내역이 없습니다. 환전하거나 배송한 상품이 여기에 보관됩니다.",
-      "status": {"IN_STORAGE": "보관 중", "SHIPPING_REQUESTED": "배송 준비 중", "SHIPPING": "배송 중", "SOLD": "환전 완료"},
+      "summary": "총 아이템 {n}개 · 보관 중인 총 가치 {value}", "storedCount": "보관 중 {n}", "shippingCount": "배송 {n}", "soldCount": "페이백 완료 {n}",
+      "filterStatus": "상태", "filterTier": "등급", "all": "전체", "tabHeld": "보유 중 ({n})", "tabDone": "처리 완료 ({n})", "cashableValue": "바로 돌려받을 수 있는 총 금액", "withdrawBalance": "🚀 잔액 출금하기", "doneSold": "95% 페이백 완료 +{amount}", "doneCash": "캐시백 적립 +{amount}", "archived": "처리 완료", "doneShipping": "배송 출발", "donePreparing": "출고 준비", "emptyDone": "아직 처리 완료된 내역이 없습니다. 돌려받거나 배송한 상품이 여기에 보관됩니다.",
+      "status": {"IN_STORAGE": "보관 중", "SHIPPING_REQUESTED": "배송 준비 중", "SHIPPING": "배송 중", "SOLD": "페이백 완료"},
       "acquired": "획득 {date}", "from": "{box}", "soldFor": "환급 {amount}", "tracking": "운송장", "trackingPending": "운송장 발급 대기",
-      "sell": "⚡ 95% USDT 즉시 회수", "noFee": "수수료 0%", "ship": "📦 우리 집으로 배송", "sellShort": "⚡ 95% 즉시 회수", "shipShort": "📦 집으로 배송", "verify": "공정성 1초 검증", "select": "선택", "selected": "{n}개 선택", "selectAll": "전체 선택", "clearSelection": "선택 해제",
-      "sellSelected": "선택 {rate} 회수", "selectedValue": "총 가치:", "soldForLabel": "환급",
-      "totalValue": "총 보관 자산", "sellAll": "전부 95% 회수", "sort": "정렬", "sorts": {"newest": "최신순", "valueDesc": "높은 가치순", "valueAsc": "낮은 가치순"},
+      "sell": "💰 95% 바로 돌려받기", "noFee": "수수료 0%", "ship": "📦 우리 집으로 배송", "sellShort": "💰 95% 돌려받기", "shipShort": "📦 집으로 배송", "verify": "공정성 1초 검증", "select": "선택", "selected": "{n}개 선택", "selectAll": "전체 선택", "clearSelection": "선택 해제",
+      "sellSelected": "선택 상품 {rate} 돌려받기", "selectedValue": "총 가치:", "soldForLabel": "환급",
+      "totalValue": "총 보관 자산", "sellAll": "전체 95% 바로 돌려받기", "sort": "정렬", "sorts": {"newest": "최신순", "valueDesc": "높은 가치순", "valueAsc": "낮은 가치순"},
       "emptyFiltered": "조건에 맞는 아이템이 없습니다.", "hotTitle": "지금 가장 핫한 박스 TOP 3", "hotTop": "최고 배수",
       "track": "배송 조회", "trackingTitle": "배송 현황", "copyTracking": "운송장 복사", "trackOnCarrier": "{carrier} 실시간 배송조회",
       "carriers": {"CJ": "CJ대한통운", "EPOST": "우체국택배", "DHL": "DHL", "FEDEX": "FedEx"},
       "steps": {"requested": "배송 신청 접수", "label": "운송장 발급", "transit": "운송 중", "delivered": "배송 완료"}, "stepCurrent": "현재 단계",
       "trackingNote": "출고가 완료되면 택배사와 운송장 번호가 여기에 표시되고, 실시간 배송조회 링크가 열립니다.", "trackingIssuedNote": "운송장이 발급되었습니다. {carrier} 공식 조회 페이지에서 실시간 배송 현황을 확인하세요.",
-      "sellTitle": "95% 즉시 회수", "sellBody": "이 아이템을 회수할까요? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
-      "sellBodyMulti": "{n}개 아이템을 회수할까요? 정가의 {rate}인 {amount}가 계정 잔액으로 즉시 환급됩니다.",
-      "confirm": "확인", "cancel": "취소", "soldToast": "판매 완료 — {amount} 잔액 반영",
+      "sellTitle": "💰 95% 바로 돌려받기", "sellBody": "이 상품을 되팔까요? 시중 정가의 {rate}인 {amount}가 잔액으로 바로 적립됩니다.",
+      "sellBodyMulti": "{n}개 상품을 되팔까요? 시중 정가의 {rate}인 {amount}가 잔액으로 바로 적립됩니다.",
+      "confirm": "확인", "cancel": "취소", "soldToast": "페이백 완료 — {amount} 잔액 적립",
       "shipTitle": "실물 배송 신청", "shipBody": "국제 배송비는 잔액에서 차감되며 수취국 관세·부가세는 수령 시 별도입니다.",
       "recipient": "수령인 이름", "country": "국가", "phone": "연락처", "postalCode": "우편번호", "address": "상세 주소",
       "pccc": "개인통관고유부호 (PCCC)", "pcccHint": "P + 숫자 12자리", "residentId": "중국 주민신분증 번호", "residentIdHint": "18자리",
@@ -182,23 +182,23 @@ UI = {
       "empty": "아직 게시된 후기가 없습니다. 실물을 받으셨다면 첫 후기를 남기고 10 USDT를 받아가세요.", "emptyCta": "박스 열러 가기", "close": "닫기"
     },
     "gate": {"stage1": "금고 휠 잠금 해제", "stage2": "봉인 해제 중"},
-    "autoplay": {"eyebrow": "Autoplay", "title": "오토플레이 설정", "close": "닫기", "perSpin": "회", "spins": "회전 수", "times": "{n}회", "budget": "최대 투입 {amount}", "autoSell": "⚡ 모든 당첨품 95% USDT 즉시 자동 환전 (잔고 자동 재충전)", "autoSellBody": "실물·기프트카드는 실판매가의 95%로 바로 회수해 잔고를 채웁니다. USDT 캐시백은 원래 100% 즉시 적립.", "smartStop": "스마트 정지 조건", "stopJackpot": "👑 에픽/레전더리(잭팟) 당첨 시 즉시 회전 멈춤", "stopMultiple": "단일 승리 N배 이상 시 중단", "multipleUnit": "배 이상", "stopLoss": "손실 한도(Stop Loss) 도달 시 중단", "stopLossUnit": "누적 손실", "start": "🔄 오토플레이 시작 · {n}회", "button": "🔄 오토플레이 {n}회"},
-    "bulk": {"eyebrow": "대량 개봉 · {n}개", "opening": "고속 개봉 중…", "spent": "총 투입 비용", "won": "총 획득 가치", "net": "순손익", "sellAll": "⚡ {n}개 95% 즉시 회수", "keep": "보관함에 두기"},
-    "ticker": {"label": "실시간 라이브 드랍", "live": "LIVE", "lineup": "{box} · {item} {mult} 잭팟", "win": "{box} ➔ {item} 획득", "cashout": "{amount} 즉시 환전", "ship": "{item} 출고 신청", "ago": "({s}초 전)"},
+    "autoplay": {"eyebrow": "Autoplay", "title": "자동 연속 열기", "close": "닫기", "perSpin": "회", "spins": "열기 횟수", "times": "{n}회", "budget": "최대 투입 {amount}", "autoSell": "⚡ 당첨 상품 95% 자동 되팔기 (잔액 자동 페이백)", "autoSellBody": "실물·기프트카드는 시중 정가의 95%로 바로 되팔아 잔액을 채웁니다. USDT 페이백은 원래 100% 즉시 적립.", "smartStop": "자동 멈춤 조건", "stopJackpot": "👑 최상위 등급 상품 당첨 시 자동 멈춤", "stopMultiple": "목표 가치(배수) 달성 시 자동 멈춤", "multipleUnit": "배 이상", "stopLoss": "사용 예산 한도 도달 시 멈춤", "stopLossUnit": "누적 사용액", "start": "🔄 연속 열기 시작 · {n}회", "button": "🔄 연속 열기 {n}회"},
+    "bulk": {"eyebrow": "대량 개봉 · {n}개", "opening": "고속 개봉 중…", "spent": "총 투입 비용", "won": "총 획득 가치", "net": "순손익", "sellAll": "💰 {n}개 95% 바로 돌려받기", "keep": "보관함에 두기"},
+    "ticker": {"label": "실시간 라이브 드랍", "live": "LIVE", "lineup": "{box} · {item} 최고 {mult}", "win": "{box} ➔ {item} 획득", "cashout": "{amount} 즉시 페이백", "ship": "{item} 출고 신청", "ago": "({s}초 전)"},
     "onboarding": {
       "title": "3초 안심 가이드",
       "step1Title": "박스 고르기", "step1Desc": "1달러부터. 롤렉스·테슬라·애플.",
       "step2Title": "공정하게 열기", "step2Desc": "SHA-256으로 봉인, 조작 불가.",
-      "step3Title": "배송 or 95% 환전", "step3Desc": "무료 배송받거나, 1초 만에 USDT로."
+      "step3Title": "배송 or 95% 페이백", "step3Desc": "무료 배송받거나, 1초 만에 USDT로."
     },
-    "counters": {"label": "신뢰 지표", "shipments": "오늘 출고된 실물 명품", "shipmentsUnit": "건", "cashouts": "오늘 즉시 환전된 자산", "verification": "공정성 검증 완료율", "odds": "공개된 확률 항목", "oddsUnit": "개", "sellback": "즉시 현금 회수율", "verifiedOf": "내 개봉 {n}건 재검증"},
+    "counters": {"label": "신뢰 지표", "shipments": "오늘 출고된 실물 명품", "shipmentsUnit": "건", "cashouts": "오늘 바로 돌려받은 금액", "verification": "공정성 검증 완료율", "odds": "공개된 확률 항목", "oddsUnit": "개", "sellback": "즉시 페이백 비율", "verifiedOf": "내 개봉 {n}건 재검증"},
     "proof": {
       "title": "실지급 & 실배송 라이브 인증", "live": "LIVE", "tab": {"payouts": "USDT 실지급", "shipments": "실물 출고"},
-      "kind": {"withdraw": "출금", "sellback": "즉시 환전"}, "viewOnExplorer": "{explorer} 조회", "track": "운송장 추적",
+      "kind": {"withdraw": "출금", "sellback": "즉시 페이백"}, "viewOnExplorer": "{explorer} 조회", "track": "운송장 추적",
       "carriers": {"CJ": "CJ대한통운", "EPOST": "우체국택배", "DHL": "DHL", "FEDEX": "FedEx"},
       "reserveEyebrow": "Proof of Reserves · 지급 준비금", "reserveBody": "VOILA는 유저 자산 보호와 즉시 출금을 위해 유동성 지급 준비금을 온체인 지갑에 보유하며, 아래 주소에서 누구나 잔고를 확인할 수 있습니다.",
       "reserveWallet": "리저브 지갑", "reserveBalance": "현재 보유", "copyAddress": "주소 복사",
-      "emptyPayouts": "아직 지급 기록이 없습니다.", "emptyShipments": "아직 출고 기록이 없습니다.", "emptyCta": "박스 열러 가기", "factVerify": "모든 개봉 결과는 개봉 전 공개된 SHA-256 해시로 봉인되며, 서버 시드가 공개되면 누구나 같은 결과를 재현할 수 있습니다.", "factRefund": "당첨 상품은 실판매가의 95%로 즉시 USDT 회수, USDT 캐시백은 100% 즉시 적립됩니다.", "factFee": "출금 수수료는 네트워크 실비만 — TRC-20 1 USDT / BEP-20 0.5 USDT, 국내 배송비는 무료 이벤트 적용 중입니다.", "pendingTx": "전송 대기", "settledInstant": "즉시 정산"
+      "emptyPayouts": "아직 지급 기록이 없습니다.", "emptyShipments": "아직 출고 기록이 없습니다.", "emptyCta": "박스 열러 가기", "factVerify": "모든 개봉 결과는 개봉 전 공개된 SHA-256 해시로 봉인되며, 서버 시드가 공개되면 누구나 같은 결과를 재현할 수 있습니다.", "factRefund": "당첨 상품은 시중 정가의 95%로 바로 돌려받고, USDT 페이백은 100% 즉시 적립됩니다.", "factFee": "출금 수수료는 네트워크 실비만 — TRC-20 1 USDT / BEP-20 0.5 USDT, 국내 배송비는 무료 이벤트 적용 중입니다.", "pendingTx": "전송 대기", "settledInstant": "즉시 페이백"
     },
     "withdraw": {
       "title": "USDT 출금", "close": "닫기", "available": "출금 가능 잔액", "availableCrypto": "출금 가능 잔액 (USDT 입금분)", "cardLocked": "플레이·배송 전용 잔액 (카드 충전분)", "cardLockedNote": "카드로 충전한 금액과 그 환급금은 상자 개봉·실물 배송·카드 환불에만 쓰이며 온체인 출금은 되지 않습니다.", "network": "출금 네트워크", "address": "받는 지갑 주소", "addressHint": "{hint} 로 시작하는 주소",
@@ -210,27 +210,27 @@ UI = {
       "processingNote": "출금은 보안 검토 후 서명·브로드캐스트됩니다. 완료되면 TxID와 익스플로러 링크가 여기에 표시됩니다.", "networkNote": "출금 신청 즉시 블록체인 네트워크로 전송되며, 온체인 트랜잭션이 TronScan/BscScan에서 실시간 조회됩니다.",
       "requestedToast": "출금 신청 완료 — {amount} 차감",
       "quick25": "+25%", "quick50": "+50%", "quickMax": "전액 출금", "submitAmount": "🚀 {amount} 내 지갑으로 즉시 출금 신청", "submitting": "블록체인 네트워크 전송 준비 중…",
-      "amlTitle": "🛡️ 자금세탁 방지(AML) 규정", "amlRule": "롤오버 달성률 100% 도달 시 출금 가능", "amlProgress": "현재 달성률 {pct}%", "amlRemaining": "출금까지 {amount} 더 개봉하면 됩니다",
-      "amlMet": "✓ 롤오버 충족 (출금 승인 가능)",
-      "amlBlocked": "자금세탁 방지 규정에 따라 롤오버 100% 달성 후 출금 가능합니다. (현재: {pct}%)",
+      "amlTitle": "🛡️ 안전 출금 이용 기준", "amlRule": "기본 구매 이용률 100% 달성 시 즉시 출금 가능", "amlProgress": "현재 달성률 {pct}%", "amlRemaining": "박스를 {amount} 더 열어보시면 바로 출금할 수 있습니다",
+      "amlMet": "✓ 이용 기준 충족 (즉시 출금 가능)",
+      "amlBlocked": "안전 거래 규정에 따라 충전금 기본 이용(100%) 완료 후 출금 가능합니다. (현재: {pct}%)",
       "amlWhy": "입금 직후 그대로 빠져나가는 보이스피싱·삼자사기 자금을 막기 위한 규정입니다. 입금 이력이 없는 잔액에는 적용되지 않습니다.",
-      "amlDeposited": "총 입금", "amlWagered": "총 개봉", "amlRequired": "필요 롤오버", "amlCurrent": "달성 롤오버", "amlGrinding": "최저 보장 환전율이 90% 이상인 초저위험 상자는 개봉 금액의 {pct}% 만 롤오버로 인정됩니다 — 손실 없는 반복 개봉으로 규정을 우회할 수 없습니다."
+      "amlDeposited": "총 충전 금액", "amlWagered": "총 구매 금액", "amlRequired": "필요 이용 금액", "amlCurrent": "달성 이용 금액", "amlGrinding": "최소 페이백이 90% 이상인 저위험 박스는 구매 금액의 {pct}% 만 이용 금액으로 인정됩니다 — 손실 없는 반복 구매로 기준을 우회할 수 없습니다."
     },
     "vip": {"title": "VIP 등급 {tier}", "tiers": {"member": "멤버", "silver": "실버", "gold": "골드", "black": "블랙"}},
     "footer": {
       "tagline": "You never know what’s next.", "actionSlogan": "OPEN IT, OWN IT",
       "slogan": "블록체인 기반의 가장 투명한 실물 럭셔리 랜덤박스 플랫폼",
       "service": "서비스", "guide": "이용 안내", "support": "고객지원",
-      "links": {"dollar": "1달러 박스", "vault": "명품 볼트", "feed": "실시간 라이브 피드", "verifier": "공정성 검증기", "terms": "서비스 이용약관", "privacy": "개인정보처리방침", "policy": "배송 및 95% 환전 정책", "faq": "자주 묻는 질문(FAQ)", "telegram": "텔레그램 24/7 실시간 상담", "discord": "공식 디스코드", "notice": "공지 채널"},
-      "disclaimer": "VOILA는 전 세계 유저를 위한 글로벌 이커머스 랜덤박스 플랫폼입니다. 모든 개봉 결과는 조작 불가능한 SHA-256 알고리즘을 통해 투명하게 공개되며, 당첨된 상품은 100% 실물 배송 또는 즉시 현금(USDT) 환전이 보장됩니다."
+      "links": {"dollar": "1달러 박스", "vault": "명품 컬렉션", "feed": "실시간 라이브 피드", "verifier": "공정성 검증기", "terms": "서비스 이용약관", "privacy": "개인정보처리방침", "policy": "배송 및 95% 페이백 정책", "faq": "자주 묻는 질문(FAQ)", "telegram": "텔레그램 24/7 실시간 상담", "discord": "공식 디스코드", "notice": "공지 채널"},
+      "disclaimer": "VOILA는 전 세계 유저를 위한 글로벌 이커머스 랜덤박스 플랫폼입니다. 모든 개봉 결과는 조작 불가능한 SHA-256 알고리즘을 통해 투명하게 공개되며, 당첨된 상품은 100% 실물 무료 배송 또는 95% 즉시 페이백이 보장됩니다."
     },
     "legalDocs": {
       "eyebrow": "이용 안내", "updated": "최종 개정 2026년 9월 18일",
       "terms": {"title": "서비스 이용약관", "sections": [
-        {"h": "1. 서비스", "p": "VOILA는 확률이 전량 공개된 랜덤박스를 판매하고, 당첨 상품을 실물로 배송하거나 실판매가의 95%를 USDT로 즉시 환전해 드리는 이커머스 서비스입니다."},
-        {"h": "2. 계정과 잔액", "p": "잔액은 USDT로 관리되며 입금·출금·오픈·회수 내역은 거래 기록으로 남습니다. 잔액은 상품 구매와 출금 외의 용도로 쓰이지 않습니다."},
+        {"h": "1. 서비스", "p": "VOILA는 확률이 전량 공개된 랜덤박스를 판매하고, 당첨 상품을 실물로 배송하거나 시중 정가의 95%를 USDT로 바로 돌려드리는 이커머스 서비스입니다."},
+        {"h": "2. 계정과 잔액", "p": "잔액은 USDT로 관리되며 충전·출금·개봉·페이백 내역은 거래 기록으로 남습니다. 잔액은 상품 구매와 출금 외의 용도로 쓰이지 않습니다."},
         {"h": "3. 확률과 공정성", "p": "모든 박스의 항목별 확률은 오픈 전에 공개됩니다. 결과는 개봉 전 공개된 서버 시드 해시와 이용자의 클라이언트 시드로 결정되며 누구나 재현·검증할 수 있습니다."},
-        {"h": "4. 취소와 환불", "p": "개봉이 시작된 박스는 취소할 수 없습니다. 당첨 상품은 언제든 95% 즉시 회수 또는 실물 배송 중 하나를 선택할 수 있습니다."},
+        {"h": "4. 취소와 환불", "p": "개봉이 시작된 박스는 취소할 수 없습니다. 당첨 상품은 언제든 95% 바로 돌려받기 또는 실물 배송 중 하나를 선택할 수 있습니다."},
         {"h": "5. 책임", "p": "이용자는 거주 지역의 법령을 준수할 책임이 있으며, 회사는 서비스 장애 시 거래 기록을 기준으로 잔액을 복구합니다."}
       ]},
       "privacy": {"title": "개인정보처리방침", "sections": [
@@ -240,37 +240,37 @@ UI = {
         {"h": "4. 제3자 제공", "p": "택배사(배송 정보), 결제 대행사(결제 정보)에 필요한 최소한의 정보만 제공합니다."},
         {"h": "5. 이용자 권리", "p": "고객지원 채널을 통해 언제든 열람·정정·삭제를 요청할 수 있습니다."}
       ]},
-      "policy": {"title": "배송 및 95% 환전 정책", "sections": [
-        {"h": "1. 즉시 환전", "p": "당첨 상품은 보관함에서 실판매가의 95%를 USDT로 즉시 회수할 수 있으며, 회수액은 곧바로 잔액에 반영됩니다."},
+      "policy": {"title": "배송 및 95% 페이백 정책", "sections": [
+        {"h": "1. 즉시 페이백", "p": "당첨 상품은 보관함에서 시중 정가의 95%를 USDT로 바로 돌려받을 수 있으며, 페이백 금액은 곧바로 잔액에 적립됩니다."},
         {"h": "2. 실물 배송", "p": "국제 배송비는 신청 시 잔액에서 차감되며 수취국 관세·부가세는 수령 시 별도입니다. 대한민국은 CJ대한통운, 해외는 DHL/FedEx로 출고되며 운송장 번호가 발급되면 보관함에 표시됩니다."},
         {"h": "3. 출금", "p": "USDT 출금은 TRC-20(수수료 1.00 USDT) 또는 BEP-20(수수료 0.80 USDT)로 처리되며 최소 20 USDT입니다. 브로드캐스트 후 TxID와 익스플로러 링크가 제공됩니다."},
-        {"h": "4. 바닥 가치 보장", "p": "모든 박스의 최저 구성은 오픈 가격의 80% 이상을 즉시 회수할 수 있는 가치를 가집니다."}
+        {"h": "4. 바닥 가치 보장", "p": "모든 박스의 최저 구성은 박스 가격의 80% 이상을 바로 돌려받을 수 있는 가치를 가집니다."}
       ]},
       "faq": {"title": "자주 묻는 질문", "sections": [
         {"h": "정말 1 USDT로 시작할 수 있나요?", "p": "네. 1달러의 행복 카테고리는 1.00 USDT에 열리며, 꽝이어도 0.85 USDT가 즉시 돌아옵니다."},
         {"h": "결과가 조작되지 않았다는 걸 어떻게 확인하나요?", "p": "결과 팝업과 보관함 카드의 [공정성 1초 검증]을 누르면 사전 봉인 해시·롤 넘버·구간 매칭을 3단계로 재현해 보여줍니다."},
-        {"h": "실물 대신 현금으로 받을 수 있나요?", "p": "언제든 보관함에서 실판매가의 95%를 USDT로 즉시 회수할 수 있습니다."},
+        {"h": "실물 대신 현금으로 받을 수 있나요?", "p": "언제든 보관함에서 시중 정가의 95%를 USDT로 바로 돌려받을 수 있습니다."},
         {"h": "출금은 얼마나 걸리나요?", "p": "보안 검토 후 브로드캐스트되며, 완료되면 TxID와 TronScan/BscScan 링크가 표시됩니다."}
       ]}
     },
-    "actions": {"sellBack": "95% 즉시 회수", "claimShipping": "집으로 배송", "provablyFair": "공정성 검증"},
-    "legal": {"disclaimer": "표기 금액은 실판매가 기준입니다. 받은 실물을 즉시 현금으로 회수하면 실판매가의 {refund}를 돌려받으므로 회수액은 오픈 가격보다 낮습니다. 모든 확률은 [뭐 들어있는지 보기]에서 전량 공개됩니다."},
+    "actions": {"sellBack": "💰 95% 바로 돌려받기", "claimShipping": "집으로 배송", "provablyFair": "공정성 검증"},
+    "legal": {"disclaimer": "표기 금액은 시중 정가 기준입니다. 받은 상품을 바로 되팔면 정가의 {refund}를 돌려받으므로 페이백 금액은 박스 가격보다 낮습니다. 모든 확률은 [구성품 · 확률 보기]에서 전량 공개됩니다."},
     "badges": {"dream": "드림 박스", "mobility": "모빌리티", "tech": "테크", "audio": "오디오", "watch": "워치", "luxury": "럭셔리", "lifestyle": "라이프스타일", "guaranteed": "가치 보장", "dollar": "1달러", "gold": "골드"},
   },
   "en": {
     "nav": {"boxes": "Boxes", "battles": "Battles", "inventory": "Inventory", "fairness": "Provably Fair", "community": "Community", "about": "About", "highRoller": "High-Roller", "tech": "Tech", "luxury": "Luxury"},
-    "about": {"badge": "PLATFORM", "heroLine1": "No more doubting the odds.", "heroLine2": "Just VOILA.", "heroSub": "Tamper-proof SHA-256 provable fairness, 95% instant USDT cashout, and free express shipping on items cleared by a professional authentication lab.", "scrollHint": "Scroll to open the vault", "lineupTitle": "What is sitting in the vault", "lineupSub": "{boxes} boxes open right now, across {categories} luxury lines", "catWatch": "Swiss Watches", "catTech": "High-End Tech", "catFashion": "Luxury Fashion", "catSuper": "Supercars & Gold", "s1Eyebrow": "Zero junk prizes", "s1Title": "95% cashback changes how many shots you actually get", "s1Body": "When a miss hands you a freebie, your money is simply gone. Every item here converts to USDT at 95% of retail on the spot, and the floor tier is cash to begin with.", "s1Formula": "Effective attempts = 1 / (1 - refund rate)", "s1RivalLabel": "Freebie-style box (assumed {rate}% refund)", "s1OursLabel": "VOILA (guaranteed floor {min}-{max}%)", "s1Attempts": "{n}x", "s1AttemptsNote": "Effective attempts on the same budget", "s1Assume": "The comparison is a calculation from a stated assumption and does not name any company. The formula is right above, so check it yourself.", "s1MockTitle": "Opened", "s1MockCta": "Cash out 95% in USDT", "s1MockWallet": "Wallet balance", "s2Eyebrow": "SHA-256 provably fair", "s2Title": "We do not ask for trust. Verify it with math.", "s2Body": "The hash of the server seed is published before the box opens. The operator can neither pick the outcome in advance nor change it afterwards.", "s2Step1": "Server seed hash, published first", "s2Step1Sub": "It reaches your browser before the spin", "s2Step2": "Your browser seed is mixed in", "s2Step2Sub": "Your randomness always enters the result", "s2Step3": "HMAC-SHA256 to the winning slot", "s2Step3Sub": "First 8 hex digits modulo {range}", "s2Note": "Re-hash the server seed revealed after the spin: it must match the hash you were given before it. If it does not, it was tampered with.", "s2Verify": "Open the verifier", "feedTitle": "Global live feed", "feedSub": "Only real opens, cashouts and shipments flow here", "feedLineup": "Published jackpot lineup", "feedEmptyTitle": "No records on this device yet", "feedEmptyNote": "We do not fill this with invented wins from other people. Once server-side aggregation is connected, worldwide records flow here.", "feedNet": "USDT TRC-20 and BEP-20 supported", "feedShip": "Duties and shipping covered by the platform", "statsTitle": "VOILA in numbers", "statJackpot": "Total jackpot value on the table right now", "statSellback": "Instant refund rate", "statMutable": "Results the operator can change after a spin", "statMutableSub": "Because the seed hash is published first", "statSla": "Target time to ship a physical item", "statSlaSub": "An operating target, not a measured average", "statOdds": "Items with published odds", "statsNote": "These come from the catalogue and from policy. Operating totals such as lifetime payouts appear once the backend is connected.", "unitUsdt": "USDT", "unitPct": "%", "unitCount": "", "unitRows": "", "unitHour": "h", "s3Eyebrow": "Authenticity & express shipping", "s3Title": "If it is not genuine, you get {n}x back", "s3Body": "Only items cleared by a professional authentication lab ship out. Duties and shipping are on the platform.", "s3Stamp": "Authentication passed", "s3Waybill": "Waybill", "s3WaybillPending": "A real tracking number is issued when it ships", "s3Track1": "Authenticated", "s3Track2": "Packed and dispatched", "s3Track3": "In transit", "faqTitle": "Frequently asked", "faqQ1": "How do I receive a physical win?", "faqA1": "Hit [Ship to my door] in your vault and enter an address. It ships after authentication, with duties and shipping covered by the platform.", "faqQ2": "What if an item turns out to be fake?", "faqA2": "Only items that pass a professional authentication lab ship out, and if one is confirmed fake you are compensated {n}x its value.", "faqQ3": "How fast is a cashout?", "faqA3": "Hit [Cash out 95%] in your vault and it lands in your balance immediately. There is no approval queue.", "faqQ4": "How does withdrawal work?", "faqA4": "USDT deposits withdraw over TRC-20 or BEP-20 once the rollover requirement is met. Card top-ups never leave on-chain; they are for opening, shipping and card refunds only.", "faqQ5": "How do I know the results are not rigged?", "faqA5": "You do not have to take our word for it. Compare the server seed hash you got before the spin with the server seed revealed after it. The verifier recomputes every record for you.", "ctaTitle": "The new standard for luxury. Start now.", "ctaSub": "From 1 USDT. Even a miss returns at least {min}% instantly.", "ctaButton": "Go open a box", "ctaFair": "Every result is verifiable with SHA-256"},
+    "about": {"badge": "PLATFORM", "heroLine1": "No more doubting the odds.", "heroLine2": "Just VOILA.", "heroSub": "Tamper-proof SHA-256 provable fairness, 95% instant USDT cashout, and free express shipping on items cleared by a professional authentication lab.", "scrollHint": "Scroll to open the vault", "lineupTitle": "What is inside the boxes right now", "lineupSub": "{boxes} boxes open right now, across {categories} luxury lines", "catWatch": "Swiss Watches", "catTech": "High-End Tech", "catFashion": "Luxury Fashion", "catSuper": "Supercars & Gold", "s1Eyebrow": "Zero junk prizes", "s1Title": "95% cashback changes how many shots you actually get", "s1Body": "When a miss hands you a freebie, your money is simply gone. Every item here converts to USDT at 95% of retail on the spot, and the floor tier is cash to begin with.", "s1Formula": "Effective attempts = 1 / (1 - refund rate)", "s1RivalLabel": "Freebie-style box (assumed {rate}% refund)", "s1OursLabel": "VOILA (guaranteed floor {min}-{max}%)", "s1Attempts": "{n}x", "s1AttemptsNote": "Effective attempts on the same budget", "s1Assume": "The comparison is a calculation from a stated assumption and does not name any company. The formula is right above, so check it yourself.", "s1MockTitle": "Opened", "s1MockCta": "💰 Take 95% back", "s1MockWallet": "Wallet balance", "s2Eyebrow": "SHA-256 provably fair", "s2Title": "We do not ask for trust. Verify it with math.", "s2Body": "The hash of the server seed is published before the box opens. The operator can neither pick the outcome in advance nor change it afterwards.", "s2Step1": "Server seed hash, published first", "s2Step1Sub": "It reaches your browser before the box opens", "s2Step2": "Your browser seed is mixed in", "s2Step2Sub": "Your randomness always enters the result", "s2Step3": "HMAC-SHA256 to the winning slot", "s2Step3Sub": "First 8 hex digits modulo {range}", "s2Note": "Re-hash the server seed revealed after it opens: it must match the hash you were given before it. If it does not, it was tampered with.", "s2Verify": "Open the verifier", "feedTitle": "Global live feed", "feedSub": "Only real opens, cashouts and shipments flow here", "feedLineup": "Published prize lineup", "feedEmptyTitle": "No records on this device yet", "feedEmptyNote": "We do not fill this with invented wins from other people. Once server-side aggregation is connected, worldwide records flow here.", "feedNet": "USDT TRC-20 and BEP-20 supported", "feedShip": "Duties and shipping covered by the platform", "statsTitle": "VOILA in numbers", "statJackpot": "Total retail value on the table right now", "statSellback": "Instant refund rate", "statMutable": "Results the operator can change after a box opens", "statMutableSub": "Because the seed hash is published first", "statSla": "Target time to ship a physical item", "statSlaSub": "An operating target, not a measured average", "statOdds": "Items with published odds", "statsNote": "These come from the catalogue and from policy. Operating totals such as lifetime payouts appear once the backend is connected.", "unitUsdt": "USDT", "unitPct": "%", "unitCount": "", "unitRows": "", "unitHour": "h", "s3Eyebrow": "Authenticity & express shipping", "s3Title": "If it is not genuine, you get {n}x back", "s3Body": "Only items cleared by a professional authentication lab ship out. Duties and shipping are on the platform.", "s3Stamp": "Authentication passed", "s3Waybill": "Waybill", "s3WaybillPending": "A real tracking number is issued when it ships", "s3Track1": "Authenticated", "s3Track2": "Packed and dispatched", "s3Track3": "In transit", "faqTitle": "Frequently asked", "faqQ1": "How do I receive a physical win?", "faqA1": "Hit [Ship to my door] in your vault and enter an address. It ships after authentication, with duties and shipping covered by the platform.", "faqQ2": "What if an item turns out to be fake?", "faqA2": "Only items that pass a professional authentication lab ship out, and if one is confirmed fake you are compensated {n}x its value.", "faqQ3": "How fast is a cashout?", "faqA3": "Hit [Take 95% back] in your vault and it lands in your balance immediately. There is no approval queue.", "faqQ4": "How does withdrawal work?", "faqA4": "USDT top-ups withdraw over TRC-20 or BEP-20 once the usage rule is met. Card top-ups never leave on-chain; they are for opening, shipping and card refunds only.", "faqQ5": "How do I know the results are not rigged?", "faqA5": "You do not have to take our word for it. Compare the server seed hash you got before it opened with the server seed revealed after. The verifier recomputes every record for you.", "ctaTitle": "The new standard for luxury. Start now.", "ctaSub": "From 1 USDT. Even a miss returns at least {min}% instantly.", "ctaButton": "Go open a box", "ctaFair": "Every result is verifiable with SHA-256"},
     "header": {"balance": "Balance", "language": "Language", "currency": "Currency", "deposit": "Deposit", "withdraw": "Withdraw", "welcomeToast": "Welcome bonus {amount} credited — open a real box"},
     "hero": {
       "royalSelection": "Royal Selection", "top": "TOP {n}", "pricePerOpen": "Per Open", "topPull": "Top Pull",
       "noBlank": "100% physical payout · No blanks", "guaranteedMinLabel": "Guaranteed Minimum",
       "guaranteedMin": "Guaranteed Minimum {value}", "aboveOpenPrice": "Above open price",
-      "openNow": "Open Now", "viewContents": "What's inside", "billboardPicker": "Billboard picker", "billboardOf": "{title} billboard",
-      "headline": "$1. A shot at a Rolex & an iPhone.", "headline1": "$1. A shot at", "headline2": "a Rolex & an iPhone.", "sub": "Hit, it's 100% truly yours. Miss, 95% cashed out instantly!", "sub1": "Hit, it's 100% truly yours.", "sub2": "Miss, 95% cashed out instantly!", "freeTry": "Try free", "openFor": "🔥 Spin for {price}", "badge": "Luxury jackpots from $1", "poolLabel": "LIVE JACKPOT POOL", "poolLabelShort": "JACKPOT POOL", "poolNote": "Combined value of the top prize in all {n} open boxes (published lineup)", "bigWin": "🔥 LIVE BIG WIN", "bigWinGoal": "🎯 Jackpot target this week", "nowShowing": "Now Showing", "topMultipleShort": "up to {n}"
+      "openNow": "Open Now", "viewContents": "Contents & odds", "billboardPicker": "Billboard picker", "billboardOf": "{title} billboard",
+      "headline": "Open a Rolex or an iPhone, from $1.", "headline1": "Open a Rolex or an iPhone,", "headline2": "from $1.", "sub": "Win it and it ships free, 100% authentic. Get a different item and take 95% straight back.", "sub1": "Win it and it ships free, 100% authentic.", "sub2": "Get a different item and take 95% straight back.", "freeTry": "Try an unboxing, free", "openFor": "📦 Open a box for {price}", "badge": "Luxury unboxing from $1", "poolLabel": "TOTAL PRIZE VALUE", "poolLabelShort": "PRIZE POOL", "poolNote": "Combined retail value of the top item in all {n} boxes open now", "bigWin": "🔥 LIVE BIG WIN", "bigWinGoal": "🎯 Top item to chase this week", "nowShowing": "Now Showing", "topMultipleShort": "up to {n}"
     },
-    "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "noBlankShort": "No blanks · Min {value}", "settleBadge": "Every item cashes out 95% in USDT", "settleShort": "95% cash-out", "upTo": "Up to {n} jackpot", "rtp": "RTP {rate}%", "floorPct": "Min {pct}% back", "guaranteed": "guaranteed", "openNow": "Open now", "contents": "Details", "details": "{title} details", "expand": "Expand"},
+    "card": {"perOpen": "Open", "top": "Top", "guaranteedMinShort": "Min {value}", "noBlankBadge": "100% No Blanks · Min {value} guaranteed", "noBlankShort": "No blanks · Min {value}", "settleBadge": "Every item pays back 95% instantly", "settleShort": "95% payback", "upTo": "Up to {n}", "rtp": "RTP {rate}%", "floorPct": "Min {pct}% back", "guaranteed": "guaranteed", "openNow": "Open now", "contents": "Details", "details": "{title} details", "expand": "Expand"},
     "grid": {"title": "All Boxes", "sort": "Sort", "loadMore": "Load more ({n})"},
-    "mobileNav": {"aria": "Quick navigation", "home": "Home", "dollar": "$1 Jackpot", "vault": "Vault", "deposit": "Deposit (+)", "wallet": "Wallet"},
+    "mobileNav": {"aria": "Quick navigation", "home": "Home", "dollar": "$1 Boxes", "vault": "Vault", "deposit": "Deposit (+)", "wallet": "Wallet"},
     "delivery": {
       "title": "Ship my item", "close": "Close",
       "body": "We deliver your physical win to your door — customs, authentication and insurance included.",
@@ -293,8 +293,8 @@ UI = {
       "tickerTitle": "📦 Shipment status", "tickerFree": "Free-shipping event — 0.00 USDT domestically", "tickerAuth": "Expert authentication before dispatch · 300% if a counterfeit is found", "tickerInsured": "Shipping insurance included — reship or USDT compensation",
       "doneCta": "Done"
     },
-    "hot": {"title": "🔥 Hottest jackpot boxes — TOP 3", "subtitle": "by popularity index", "heat": "{deg}°C HOT", "upTo": "up to {n}x", "floor": "min {pct}% back"},
-    "hall": {"title": "🏆 Weekly Hall of Fame", "pool": "{amount} USDT prize pool", "deadline": "Season ends in", "payout": "Top 5 paid out in order, automatically", "prize": "💰 {amount} USDT", "openSlot": "Open seat — claim it", "entryRule": "{n}x or higher to enter the board", "goal": "target {n}x", "myRank": "Your rank: #{rank}", "myOutside": "Your rank: outside the top 5", "myBest": "· best {n}x this week", "myNone": "No wins yet this week · break into the top 5 to claim a prize!", "cta": "🚀 Open a jackpot box", "scopeNote": "The board counts real openings only. Until server-side aggregation is connected it shows this device's records, and empty seats are never filled with invented winners."},
+    "hot": {"title": "🔥 Most popular boxes — TOP 3", "subtitle": "by popularity index", "heat": "{deg}°C HOT", "upTo": "up to {n}x", "floor": "min {pct}% back"},
+    "hall": {"title": "🏆 Weekly Hall of Fame", "pool": "{amount} USDT prize pool", "deadline": "Season ends in", "payout": "Top 5 paid out in order, automatically", "prize": "💰 {amount} USDT", "openSlot": "Open seat — claim it", "entryRule": "{n}x or higher to enter the board", "goal": "target {n}x", "myRank": "Your rank: #{rank}", "myOutside": "Your rank: outside the top 5", "myBest": "· best {n}x this week", "myNone": "No wins yet this week · break into the top 5 to claim a prize!", "cta": "🚀 Open a box and climb", "scopeNote": "The board counts real openings only. Until server-side aggregation is connected it shows this device's records, and empty seats are never filled with invented winners."},
     "categories": {"all": "All", "dollar": "🔥 $1 Boxes", "tech": "⚡ Apple & Tech", "luxury": "👑 Luxury & Watches", "jackpot": "🚗 Supercars & Gold"},
     "sections": {"dollar": "🔥 $1 Happiness", "tech": "⚡ Apple & High-End Tech", "luxury": "👑 Luxury & Swiss Watches", "jackpot": "🚗 Supercars & Gold Bars"},
     "sorts": {"featured": "Featured", "price-asc": "Price: Low to High", "price-desc": "Price: High to Low", "popularity": "Popularity"},
@@ -306,16 +306,16 @@ UI = {
     },
     "modal": {
       "details": "{title} details", "close": "Close", "topRank": "TOP {n}", "openNowPrice": "Open Now · {price}", "viewOdds": "View all odds",
-      "openPrice": "Open Price", "guaranteedMin": "Guaranteed Minimum", "topPrize": "Top Prize", "topMultiple": "Top Multiple",
+      "openPrice": "Box price", "guaranteedMin": "Guaranteed Minimum", "topPrize": "Top Prize", "topMultiple": "Top Multiple",
       "tierOdds": "Odds by tier", "breakEven": "At or above {price}: {rate}",
       "explain": "Tiers are not stored values — they derive from market value ÷ open price. Expected market value per open is {ev}, which is {retail} of the open price. Instant sell-back pays {refund} of market value, so the cash-basis return is {cash}, below the open price.",
       "guaranteedYes": "This box's floor tier is a {min} instant cashback — credited 100% the moment you open.",
       "guaranteedNo": "This box's floor tier is a {min} instant cashback — credited 100% to your balance the moment you open.",
-      "settleBadge": "⚡ Every item settles to USDT in 1 click at 95% — withdraw to your own wallet, guaranteed",
-      "settleBody": "Physical items and gift cards cash out at 95% of market value in one click; USDT cashback and instant drops are credited at 100% on open. Balance withdraws to your TRC-20 / BEP-20 wallet.",
+      "settleBadge": "⚡ Every item pays back 95% in one click — withdraw to your own wallet, guaranteed",
+      "settleBody": "Physical items and gift cards pay back 95% of market value in one click; USDT cashback and instant drops are credited at 100% on open. Balance withdraws to your TRC-20 / BEP-20 wallet.",
       
       "allPrizes": "All possible prizes", "count": "{n} items", "sortedByValue": "By market value, descending",
-      "marketValue": "Market value", "odds": "Odds", "tierLabel": "Tier", "tierBar": "Tier lineup", "upToLabel": "Top jackpot", "rtpLabel": "RTP", "floorLabel": "Floor", "floorPct": "Min {pct}%", "preciseOddsLink": "Provably Fair", "preciseOdds": "Exact odds table · Provably Fair", "expand": "Expand", "collapse": "Collapse", "openVerifier": "Open the 3-step visual verifier", "imageCredits": "Image credits"
+      "marketValue": "Market value", "odds": "Odds", "tierLabel": "Tier", "tierBar": "Tier lineup", "upToLabel": "Best case", "rtpLabel": "Expected value ratio", "floorLabel": "Minimum payback", "floorPct": "Min {pct}%", "preciseOddsLink": "Provably Fair", "preciseOdds": "Exact odds table · Provably Fair", "expand": "Expand", "collapse": "Collapse", "openVerifier": "Open the 3-step visual verifier", "imageCredits": "Image credits"
     },
     "fairness": {
       "title": "Provably Fair", "eyebrow": "Provably Fair · HMAC-SHA256",
@@ -346,9 +346,9 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "Open ×1", "open5": "Open ×5", "openN": "Open ×{n}", "upgrade": "UPGRADE!", "openBulk": "🚀 Bulk-open {n} at once ({amount})", "openAllIn": "👑 All-in jackpot: open {n} ({amount})", "openNow": "🔥 Open {n} now ({amount})", "preset": {"1": "Open 1", "5": "5-combo", "10": "10-combo", "50": "Bulk 50", "100": "All-in 100"}, "qtyNote": "Opens the selected quantity in one go — Epic / Jackpot wins trigger the 3D highlight.", "qty": "Quantity", "autoStop": "⏹ Stop ({n} left)", "autoSpent": "Spent", "autoWon": "Won", "autoNet": "Net", "autoStopped": {"spins": "Autoplay finished", "jackpot": "👑 Jackpot hit — auto-stopped", "multiple": "Target multiple reached — auto-stopped", "stopLoss": "Stop-loss reached — auto-stopped", "balance": "Insufficient balance — stopped", "manual": "Stopped manually"}, "trialLabel": "Free try", "trialCongrats": "Nice hit — {item} ({n}) on your free try!", "trialBody": "Open real boxes with your {bonus} welcome bonus!", "trialCta": "Claim & Open Real Box", "trialCtaClaimed": "Open Real Box", "trialNote": "Free-try results aren't shipped or cashed out. Use the button above for the real thing.", "spinning": "Opening…", "landing": "Result locked",
+      "open1": "Open ×1", "open5": "Open ×5", "openN": "Open ×{n}", "upgrade": "UPGRADE!", "openBulk": "🚀 Bulk-open {n} at once ({amount})", "openAllIn": "👑 Open {n} in bulk ({amount})", "openNow": "🔥 Open {n} now ({amount})", "preset": {"1": "Open 1", "5": "5-combo", "10": "10-combo", "50": "Bulk 50", "100": "Open 100 in bulk"}, "qtyNote": "Opens the selected quantity in one go — top-tier wins trigger the 3D highlight.", "qty": "Quantity", "autoStop": "⏹ Stop ({n} left)", "autoSpent": "Spent", "autoWon": "Won", "autoNet": "Net", "autoStopped": {"spins": "Autoplay finished", "jackpot": "👑 Top-tier item — auto-stopped", "multiple": "Target multiple reached — auto-stopped", "stopLoss": "Stop-loss reached — auto-stopped", "balance": "Insufficient balance — stopped", "manual": "Stopped manually"}, "trialLabel": "Free try", "trialCongrats": "Nice hit — {item} ({n}) on your free try!", "trialBody": "Open real boxes with your {bonus} welcome bonus!", "trialCta": "Claim & Open Real Box", "trialCtaClaimed": "Open Real Box", "trialNote": "Free-try results aren't shipped or paid back. Use the button above for the real thing.", "spinning": "Opening…", "landing": "Result locked",
       "result": "You won", "results": "{n} results", "total": "Total value", "paid": "Paid {price}",
-      "sellBack": "Cash out 95% · {amount}", "sellBackAll": "Cash out all · {amount}", "cashoutCta": "⚡ Cash out 95% in USDT", "noFee": "0% fee", "shipSub": "Physical · free shipping", "cashCredited": "{amount} credited to your balance", "respin": "🔥 Spin again for {price}", "sellBackNote": "{rate} of market value is credited to your balance instantly",
+      "sellBack": "Take 95% back · {amount}", "sellBackAll": "Take 95% back on all · {amount}", "cashoutCta": "💰 Take 95% back", "noFee": "0% fee", "shipSub": "Physical · free shipping", "cashCredited": "{amount} credited to your balance", "respin": "📦 Open another for {price}", "sellBackNote": "{rate} of market value is credited to your balance instantly",
       "sold": "Cashed out — {amount} credited", "claimShipping": "Ship to me",
       "shippingNotice": "International shipping & customs notice", "shippingBody": "Destination duties/VAT and international shipping (DHL/FedEx at cost) are billed separately.",
       "verify": "1-second fairness check", "close": "Close", "keep": "Keep in inventory", "kept": "Saved to your vault — it stays after you close this",
@@ -382,21 +382,21 @@ UI = {
     },
     "inventory": {
       "title": "Inventory", "eyebrow": "My Vault", "empty": "Nothing in your vault yet. Open a box to fill it.", "goBoxes": "Browse boxes",
-      "summary": "{n} items · Total value in vault {value}", "storedCount": "In vault {n}", "shippingCount": "Shipping {n}", "soldCount": "Sold {n}",
-      "filterStatus": "Status", "filterTier": "Tier", "all": "All", "tabHeld": "Holding ({n})", "tabDone": "Settled ({n})", "cashableValue": "Total cash-out value now", "withdrawBalance": "🚀 Withdraw balance", "doneSold": "Cashed out 95% +{amount}", "doneCash": "Cashback credited +{amount}", "archived": "Settled", "doneShipping": "Shipped", "donePreparing": "Preparing shipment", "emptyDone": "Nothing settled yet. Items you cash out or ship are archived here.",
-      "status": {"IN_STORAGE": "In Vault", "SHIPPING_REQUESTED": "Preparing shipment", "SHIPPING": "Shipping", "SOLD": "Sold"},
+      "summary": "{n} items · Total value in vault {value}", "storedCount": "In vault {n}", "shippingCount": "Shipping {n}", "soldCount": "Paid back {n}",
+      "filterStatus": "Status", "filterTier": "Tier", "all": "All", "tabHeld": "Holding ({n})", "tabDone": "Settled ({n})", "cashableValue": "Total you can take back now", "withdrawBalance": "🚀 Withdraw balance", "doneSold": "95% paid back +{amount}", "doneCash": "Cashback credited +{amount}", "archived": "Settled", "doneShipping": "Shipped", "donePreparing": "Preparing shipment", "emptyDone": "Nothing settled yet. Items you sell back or ship are archived here.",
+      "status": {"IN_STORAGE": "In Vault", "SHIPPING_REQUESTED": "Preparing shipment", "SHIPPING": "Shipping", "SOLD": "Paid back"},
       "acquired": "Acquired {date}", "from": "{box}", "soldFor": "Refunded {amount}", "tracking": "Tracking", "trackingPending": "Awaiting tracking number",
-      "sell": "⚡ Cash out 95% USDT", "noFee": "0% fee", "ship": "📦 Ship to my door", "sellShort": "⚡ Cash out 95%", "shipShort": "📦 Ship home", "verify": "1-second fairness check", "select": "Select", "selected": "{n} selected", "selectAll": "Select all", "clearSelection": "Clear",
-      "sellSelected": "Cash out selected · {rate}", "selectedValue": "Total value:", "soldForLabel": "Refunded",
-      "totalValue": "Total vault value", "sellAll": "Cash out all", "sort": "Sort", "sorts": {"newest": "Newest", "valueDesc": "Highest value", "valueAsc": "Lowest value"},
+      "sell": "💰 Take 95% back", "noFee": "0% fee", "ship": "📦 Ship to my door", "sellShort": "💰 95% back", "shipShort": "📦 Ship home", "verify": "1-second fairness check", "select": "Select", "selected": "{n} selected", "selectAll": "Select all", "clearSelection": "Clear",
+      "sellSelected": "Take {rate} back on selected", "selectedValue": "Total value:", "soldForLabel": "Refunded",
+      "totalValue": "Total vault value", "sellAll": "Take 95% back on all", "sort": "Sort", "sorts": {"newest": "Newest", "valueDesc": "Highest value", "valueAsc": "Lowest value"},
       "emptyFiltered": "No items match these filters.", "hotTitle": "Hottest boxes right now — TOP 3", "hotTop": "top multiplier",
       "track": "Track", "trackingTitle": "Shipment status", "copyTracking": "Copy tracking number", "trackOnCarrier": "Live tracking on {carrier}",
       "carriers": {"CJ": "CJ Logistics", "EPOST": "Korea Post", "DHL": "DHL", "FEDEX": "FedEx"},
       "steps": {"requested": "Shipping requested", "label": "Label issued", "transit": "In transit", "delivered": "Delivered"}, "stepCurrent": "Current step",
       "trackingNote": "Once the parcel ships, the carrier and tracking number appear here with a live tracking link.", "trackingIssuedNote": "Your tracking number is issued. Follow the parcel live on the official {carrier} tracking page.",
-      "sellTitle": "95% Instant Cash-Out", "sellBody": "Cash out this item? {rate} of market value — {amount} — is credited to your balance instantly.",
-      "sellBodyMulti": "Cash out {n} items? {rate} of market value — {amount} — is credited to your balance instantly.",
-      "confirm": "Confirm", "cancel": "Cancel", "soldToast": "Sold — {amount} credited",
+      "sellTitle": "💰 Take 95% back", "sellBody": "Sell this item back? {rate} of market value — {amount} — lands in your balance right away.",
+      "sellBodyMulti": "Sell {n} items back? {rate} of market value — {amount} — lands in your balance right away.",
+      "confirm": "Confirm", "cancel": "Cancel", "soldToast": "Paid back — {amount} credited",
       "shipTitle": "Claim Shipping", "shipBody": "International shipping is deducted from your balance. Destination duties and VAT are billed on delivery.",
       "recipient": "Recipient name", "country": "Country", "phone": "Phone", "postalCode": "Postal code", "address": "Street address",
       "pccc": "Personal Customs Clearance Code (PCCC)", "pcccHint": "P + 12 digits", "residentId": "Resident ID number", "residentIdHint": "18 characters",
@@ -425,23 +425,23 @@ UI = {
       "empty": "No reviews yet. Received your item? Post the first review and take the 10 USDT bonus.", "emptyCta": "Open a box", "close": "Close"
     },
     "gate": {"stage1": "Unlocking the vault wheel", "stage2": "Breaking the seal"},
-    "autoplay": {"eyebrow": "Autoplay", "title": "Autoplay settings", "close": "Close", "perSpin": "spin", "spins": "Number of spins", "times": "{n}", "budget": "Max stake {amount}", "autoSell": "⚡ Auto cash out every win at 95% USDT (balance auto-refills)", "autoSellBody": "Physical items and gift cards are cashed out at 95% of market value right away. USDT cashback is credited 100% as always.", "smartStop": "Smart stop", "stopJackpot": "👑 Stop on Epic / Legendary (jackpot) win", "stopMultiple": "Stop on a single win of N× or more", "multipleUnit": "× or more", "stopLoss": "Stop when the loss limit is reached", "stopLossUnit": "net loss", "start": "🔄 Start autoplay · {n}", "button": "🔄 Autoplay {n}"},
-    "bulk": {"eyebrow": "Bulk open · {n}", "opening": "Fast-opening…", "spent": "Total stake", "won": "Total value won", "net": "Net", "sellAll": "⚡ Cash out {n} at 95%", "keep": "Keep in vault"},
-    "ticker": {"label": "Live drops", "live": "LIVE", "lineup": "{box} · {item} {mult} jackpot", "win": "{box} ➔ {item}", "cashout": "cashed out {amount}", "ship": "requested shipping for {item}", "ago": "({s}s ago)"},
+    "autoplay": {"eyebrow": "Autoplay", "title": "Auto-open in a row", "close": "Close", "perSpin": "box", "spins": "How many to open", "times": "{n}", "budget": "Max stake {amount}", "autoSell": "⚡ Auto sell back every win at 95% (balance auto-refills)", "autoSellBody": "Physical items and gift cards are sold back at 95% of market value right away. USDT cashback is credited 100% as always.", "smartStop": "Auto-stop rules", "stopJackpot": "👑 Stop when a top-tier item lands", "stopMultiple": "Stop when the target value is reached", "multipleUnit": "× or more", "stopLoss": "Stop at the spending limit", "stopLossUnit": "spent so far", "start": "🔄 Start · open {n}", "button": "🔄 Open {n} in a row"},
+    "bulk": {"eyebrow": "Bulk open · {n}", "opening": "Fast-opening…", "spent": "Total stake", "won": "Total value won", "net": "Net", "sellAll": "💰 Take 95% back on {n}", "keep": "Keep in vault"},
+    "ticker": {"label": "Live drops", "live": "LIVE", "lineup": "{box} · {item} up to {mult}", "win": "{box} ➔ {item}", "cashout": "took {amount} back", "ship": "requested shipping for {item}", "ago": "({s}s ago)"},
     "onboarding": {
       "title": "How it works in 3 steps",
       "step1Title": "Pick a box", "step1Desc": "From $1. Rolex, Tesla, Apple.",
       "step2Title": "Open it fair", "step2Desc": "Sealed by SHA-256. No tampering.",
-      "step3Title": "Ship or cash out 95%", "step3Desc": "Free shipping, or USDT in a second."
+      "step3Title": "Ship it or take 95% back", "step3Desc": "Free shipping, or USDT in a second."
     },
-    "counters": {"label": "Trust metrics", "shipments": "Physical items shipped today", "shipmentsUnit": "items", "cashouts": "Settled cashouts today", "verification": "Provably fair verification rate", "odds": "Published odds entries", "oddsUnit": "items", "sellback": "Instant cash-out rate", "verifiedOf": "{n} of my opens re-verified"},
+    "counters": {"label": "Trust metrics", "shipments": "Physical items shipped today", "shipmentsUnit": "items", "cashouts": "Settled cashouts today", "verification": "Provably fair verification rate", "odds": "Published odds entries", "oddsUnit": "items", "sellback": "Instant payback rate", "verifiedOf": "{n} of my opens re-verified"},
     "proof": {
       "title": "Live Proof of Payout & Delivery", "live": "LIVE", "tab": {"payouts": "USDT Payouts", "shipments": "Shipments"},
-      "kind": {"withdraw": "Withdrawal", "sellback": "Instant sell-back"}, "viewOnExplorer": "View on {explorer}", "track": "Track parcel",
+      "kind": {"withdraw": "Withdrawal", "sellback": "Instant payback"}, "viewOnExplorer": "View on {explorer}", "track": "Track parcel",
       "carriers": {"CJ": "CJ Logistics", "EPOST": "Korea Post", "DHL": "DHL", "FEDEX": "FedEx"},
       "reserveEyebrow": "Proof of Reserves", "reserveBody": "VOILA keeps liquid payout reserves in an on-chain wallet to protect user assets and guarantee instant withdrawals. Anyone can check the balance at the address below.",
       "reserveWallet": "Reserve wallet", "reserveBalance": "Current balance", "copyAddress": "Copy address",
-      "emptyPayouts": "No payouts recorded yet.", "emptyShipments": "No shipments recorded yet.", "emptyCta": "Open a box", "factVerify": "Every result is sealed by a SHA-256 hash published before the box opens; once the server seed is revealed anyone can reproduce it.", "factRefund": "Physical wins cash out at 95% of market value instantly; USDT cashback is credited at 100%.", "factFee": "Withdrawals cost only the network fee — 1 USDT on TRC-20, 0.5 USDT on BEP-20 — and domestic shipping is free during the current event.", "pendingTx": "Awaiting broadcast", "settledInstant": "Settled instantly"
+      "emptyPayouts": "No payouts recorded yet.", "emptyShipments": "No shipments recorded yet.", "emptyCta": "Open a box", "factVerify": "Every result is sealed by a SHA-256 hash published before the box opens; once the server seed is revealed anyone can reproduce it.", "factRefund": "Physical wins pay back 95% of market value right away; USDT payback is credited at 100%.", "factFee": "Withdrawals cost only the network fee — 1 USDT on TRC-20, 0.5 USDT on BEP-20 — and domestic shipping is free during the current event.", "pendingTx": "Awaiting broadcast", "settledInstant": "Paid back instantly"
     },
     "withdraw": {
       "title": "Withdraw USDT", "close": "Close", "available": "Available balance", "availableCrypto": "Withdrawable (USDT deposits)", "cardLocked": "Play & shipping only (card top-ups)", "cardLockedNote": "Card top-ups and any refunds from them can only be used to open boxes, ship items or be refunded to the card — never withdrawn on-chain.", "network": "Withdrawal network", "address": "Destination wallet address", "addressHint": "Address starting with {hint}",
@@ -453,27 +453,27 @@ UI = {
       "processingNote": "Withdrawals are signed and broadcast after a security review. The TxID and explorer link appear here once complete.", "networkNote": "Withdrawals are sent to the blockchain network as soon as they are requested, and the on-chain transaction can be viewed live on TronScan / BscScan.",
       "requestedToast": "Withdrawal submitted — {amount} deducted",
       "quick25": "+25%", "quick50": "+50%", "quickMax": "Withdraw all", "submitAmount": "🚀 Withdraw {amount} to my wallet", "submitting": "Preparing the on-chain transfer…",
-      "amlTitle": "🛡️ Anti-Money-Laundering (AML) rule", "amlRule": "Withdrawals unlock at 100% rollover", "amlProgress": "Currently {pct}%", "amlRemaining": "Open {amount} more to unlock withdrawals",
-      "amlMet": "✓ Rollover met (withdrawal approved)",
-      "amlBlocked": "Under our AML rule, withdrawals unlock at 100% rollover. (Currently: {pct}%)",
+      "amlTitle": "🛡️ Safe withdrawal usage rule", "amlRule": "Withdraw as soon as you have used 100% of what you topped up", "amlProgress": "Currently {pct}%", "amlRemaining": "Open {amount} more in boxes and you can withdraw right away",
+      "amlMet": "✓ Usage rule met (withdraw now)",
+      "amlBlocked": "Under our safe-trading rule, withdrawals unlock once you have used 100% of your top-up. (Currently: {pct}%)",
       "amlWhy": "This blocks scam and phishing funds from being deposited and pulled straight back out. Balances with no deposit history are not affected.",
-      "amlDeposited": "Deposited", "amlWagered": "Wagered", "amlRequired": "Required rollover", "amlCurrent": "Completed", "amlGrinding": "Ultra-low-risk boxes (guaranteed floor of 90% or more) count only {pct}% of what you open toward the rollover — risk-free grinding cannot bypass the rule."
+      "amlDeposited": "Total topped up", "amlWagered": "Total spent on boxes", "amlRequired": "Usage required", "amlCurrent": "Usage reached", "amlGrinding": "Low-risk boxes (minimum payback of 90% or more) count only {pct}% of what you spend toward the usage rule — risk-free grinding cannot bypass it."
     },
     "vip": {"title": "VIP tier {tier}", "tiers": {"member": "Member", "silver": "Silver", "gold": "Gold", "black": "Black"}},
     "footer": {
       "tagline": "You never know what’s next.", "actionSlogan": "OPEN IT, OWN IT",
       "slogan": "The most transparent blockchain-based luxury mystery box platform for real goods",
       "service": "Service", "guide": "Help & Policies", "support": "Support",
-      "links": {"dollar": "$1 boxes", "vault": "Luxury vault", "feed": "Live payout feed", "verifier": "Fairness verifier", "terms": "Terms of Service", "privacy": "Privacy Policy", "policy": "Shipping & 95% cash-out policy", "faq": "FAQ", "telegram": "Telegram 24/7 live support", "discord": "Official Discord", "notice": "Announcements"},
-      "disclaimer": "VOILA is a global e-commerce mystery box platform. Every opening result is published transparently through a tamper-proof SHA-256 algorithm, and every winning item is guaranteed to ship as a physical product or to cash out instantly to USDT."
+      "links": {"dollar": "$1 boxes", "vault": "Luxury collections", "feed": "Live payout feed", "verifier": "Fairness verifier", "terms": "Terms of Service", "privacy": "Privacy Policy", "policy": "Shipping & 95% payback policy", "faq": "FAQ", "telegram": "Telegram 24/7 live support", "discord": "Official Discord", "notice": "Announcements"},
+      "disclaimer": "VOILA is a global e-commerce mystery box platform. Every opening result is published transparently through a tamper-proof SHA-256 algorithm, and every winning item is guaranteed to ship free as a genuine physical product or to pay back 95% instantly."
     },
     "legalDocs": {
       "eyebrow": "Help & Policies", "updated": "Last updated September 18, 2026",
       "terms": {"title": "Terms of Service", "sections": [
         {"h": "1. The service", "p": "VOILA sells mystery boxes with fully published odds and either ships the winning item or cashes it out instantly at 95% of market value in USDT."},
-        {"h": "2. Account and balance", "p": "Balances are held in USDT. Deposits, withdrawals, openings and cash-outs are recorded as transactions and used for nothing other than purchases and withdrawals."},
+        {"h": "2. Account and balance", "p": "Balances are held in USDT. Top-ups, withdrawals, openings and paybacks are recorded as transactions and used for nothing other than purchases and withdrawals."},
         {"h": "3. Odds and fairness", "p": "Every box publishes its per-item odds before opening. Results are fixed by a server seed hash published in advance and the user's client seed, and anyone can reproduce and verify them."},
-        {"h": "4. Cancellation and refunds", "p": "A box cannot be cancelled once opening starts. Any winning item can be cashed out at 95% or shipped at any time."},
+        {"h": "4. Cancellation and refunds", "p": "A box cannot be cancelled once opening starts. Any winning item can be sold back at 95% or shipped at any time."},
         {"h": "5. Responsibility", "p": "Users are responsible for complying with local law. In case of a service failure balances are restored from the transaction record."}
       ]},
       "privacy": {"title": "Privacy Policy", "sections": [
@@ -484,36 +484,36 @@ UI = {
         {"h": "5. Your rights", "p": "You can request access, correction or deletion at any time through support."}
       ]},
       "policy": {"title": "Shipping & 95% Cash-Out Policy", "sections": [
-        {"h": "1. Instant cash-out", "p": "Any item in your vault can be cashed out instantly at 95% of market value in USDT, credited to your balance immediately."},
+        {"h": "1. Instant payback", "p": "Any item in your vault pays back 95% of market value in USDT right away, credited to your balance immediately."},
         {"h": "2. Physical shipping", "p": "International shipping is deducted from your balance on request; destination duties and VAT are paid on delivery. Korea ships via CJ Logistics, international via DHL/FedEx, and the tracking number appears in your vault once issued."},
         {"h": "3. Withdrawals", "p": "USDT withdrawals run on TRC-20 (1.00 USDT fee) or BEP-20 (0.80 USDT fee) with a 20 USDT minimum. The TxID and explorer link are provided after broadcast."},
-        {"h": "4. Floor value guarantee", "p": "The lowest item in every box can be cashed out for at least 80% of the open price."}
+        {"h": "4. Floor value guarantee", "p": "The lowest item in every box pays back at least 80% of the box price."}
       ]},
       "faq": {"title": "FAQ", "sections": [
         {"h": "Can I really start with 1 USDT?", "p": "Yes. The $1 category opens for 1.00 USDT, and even a miss returns 0.85 USDT instantly."},
         {"h": "How do I know a result wasn't rigged?", "p": "Press the 1-second fairness check on any result or vault card. It replays the pre-committed hash, the roll number and the bracket match in three steps."},
-        {"h": "Can I take cash instead of the item?", "p": "Any time — cash out 95% of market value to USDT from your vault."},
+        {"h": "Can I take cash instead of the item?", "p": "Any time — take 95% of market value back as USDT from your vault."},
         {"h": "How long do withdrawals take?", "p": "They are broadcast after a security review; the TxID and TronScan/BscScan link appear once complete."}
       ]}
     },
-    "actions": {"sellBack": "Cash out 95%", "claimShipping": "Ship to me", "provablyFair": "Provably Fair"},
-    "legal": {"disclaimer": "Amounts shown are market value. Cashing out an item instantly pays {refund} of market value, so cash recovery is below the open price. Every probability is published in full under [See what's inside]."},
+    "actions": {"sellBack": "💰 Take 95% back", "claimShipping": "Ship to me", "provablyFair": "Provably Fair"},
+    "legal": {"disclaimer": "Amounts shown are market value. Selling an item back pays {refund} of market value, so the payback is below the box price. Every probability is published in full under [See what's inside]."},
     "badges": {"dream": "Dream Box", "mobility": "Mobility", "tech": "Tech", "audio": "Audio", "watch": "Watches", "luxury": "Luxury", "lifestyle": "Lifestyle", "guaranteed": "Guaranteed", "dollar": "$1", "gold": "Gold"},
   },
   "zh": {
     "nav": {"boxes": "盲盒", "battles": "对战", "inventory": "仓库", "fairness": "公平性验证", "community": "社区", "about": "平台介绍", "highRoller": "高额玩家", "tech": "科技", "luxury": "奢侈品"},
-    "about": {"badge": "PLATFORM", "heroLine1": "不必再怀疑概率，", "heroLine2": "一个 VOILA 就够了。", "heroSub": "无法篡改的 SHA-256 链上公平性、95% USDT 极速兑现，以及通过专业鉴定机构精密检验后的 100% 正品免费特快配送。", "scrollHint": "向下滚动，金库将开启", "lineupTitle": "金库里摆着什么", "lineupSub": "当前开放 {boxes} 个盲盒，{categories} 大奢品阵容", "catWatch": "瑞士腕表", "catTech": "高端科技", "catFashion": "奢品时尚", "catSuper": "超跑与足金", "s1Eyebrow": "零垃圾奖品", "s1Title": "95% 返还，直接改变你能挑战的次数", "s1Body": "把没中的人用赠品打发掉，钱就真的没了。这里每一件商品都能按零售价的 95% 立刻换成 USDT，而保底档本身就是现金返还。", "s1Formula": "实际挑战次数 = 1 ÷ (1 − 返还率)", "s1RivalLabel": "赠品型盲盒（假设返还率 {rate}%）", "s1OursLabel": "VOILA（保底返还率 {min}~{max}%）", "s1Attempts": "{n} 倍", "s1AttemptsNote": "同样预算下的实际挑战次数", "s1Assume": "对比值基于明示假设计算，不指向任何具体公司。公式就在上方，欢迎自行验算。", "s1MockTitle": "开箱完成", "s1MockCta": "95% USDT 即时兑现", "s1MockWallet": "钱包余额", "s2Eyebrow": "SHA-256 可证明公平", "s2Title": "我们不要求信任，请用数学亲自验证。", "s2Body": "开箱之前，服务器种子的哈希已经先行公开。运营方既无法事先选定结果，也无法事后更改。", "s2Step1": "先公开服务器种子哈希", "s2Step1Sub": "开箱前就已送达你的浏览器", "s2Step2": "混入你的浏览器种子", "s2Step2Sub": "你的随机数必定参与结果", "s2Step3": "HMAC-SHA256 映射到中奖格", "s2Step3Sub": "取前 8 位十六进制对 {range} 取模", "s2Note": "把开箱后公开的服务器种子重新哈希，应当与开箱前拿到的哈希完全一致。不一致就是被动过手脚。", "s2Verify": "打开公平性验证器", "feedTitle": "全球实时动态", "feedSub": "这里只流动真实发生的开箱、兑现与发货", "feedLineup": "公开头奖阵容", "feedEmptyTitle": "本设备暂无记录", "feedEmptyNote": "我们不会用虚构的他人中奖来填充。服务器统计接入后，全球记录将在此流动。", "feedNet": "支持 USDT TRC-20 与 BEP-20 出入金", "feedShip": "关税与运费由平台承担", "statsTitle": "用数字看 VOILA", "statJackpot": "当前投放的头奖商品总价值", "statSellback": "即时返还率", "statMutable": "开箱后运营方可更改的结果", "statMutableSub": "因为种子哈希已先行公开", "statSla": "实物发货运营标准", "statSlaSub": "这是运营目标，而非实测平均值", "statOdds": "已公开概率的商品条目", "statsNote": "以上数值来自商品目录与既定政策。累计派彩等运营统计将在后端接入后显示。", "unitUsdt": "USDT", "unitPct": "%", "unitCount": "件", "unitRows": "条", "unitHour": "小时", "s3Eyebrow": "正品保证与特快配送", "s3Title": "若为仿品，按 {n} 倍赔付", "s3Body": "只有通过专业鉴定机构精密检验的商品才会发出。关税与运费由平台承担。", "s3Stamp": "鉴定通过", "s3Waybill": "运单", "s3WaybillPending": "发货时将签发真实运单号", "s3Track1": "鉴定完成", "s3Track2": "打包发出", "s3Track3": "运输中", "faqTitle": "常见问题", "faqQ1": "中到的实物怎么拿到手？", "faqA1": "在仓库点击［寄到我家］并填写地址，通过鉴定后即发出。关税与运费由平台承担。", "faqQ2": "如果商品不是正品怎么办？", "faqA2": "只有通过专业鉴定机构检验的商品才会发出；一旦确认为仿品，按商品价值的 {n} 倍赔付。", "faqQ3": "兑现有多快？", "faqA3": "在仓库点击［95% 即时折现］，余额立刻到账，没有审批排队。", "faqQ4": "提现流程是怎样的？", "faqA4": "USDT 充值部分在满足流水要求后可经 TRC-20 或 BEP-20 提现。银行卡充值部分不会上链提出，仅用于开箱、配送与退卡。", "faqQ5": "怎么确信结果没有被操纵？", "faqA5": "不必相信我们。把开箱前拿到的服务器种子哈希，与开箱后公开的服务器种子亲自比对即可。验证器会为你重新计算每一条记录。", "ctaTitle": "奢侈的新标准，现在就开始。", "ctaSub": "1 USDT 起。即使没中，也至少立刻返还 {min}%。", "ctaButton": "去开一箱", "ctaFair": "每个结果都可用 SHA-256 验证"},
+    "about": {"badge": "PLATFORM", "heroLine1": "不必再怀疑概率，", "heroLine2": "一个 VOILA 就够了。", "heroSub": "无法篡改的 SHA-256 链上公平性、95% USDT 极速兑现，以及通过专业鉴定机构精密检验后的 100% 正品免费特快配送。", "scrollHint": "向下滚动，盲盒将开启", "lineupTitle": "盲盒里现在有什么", "lineupSub": "当前开放 {boxes} 个盲盒，{categories} 大奢品阵容", "catWatch": "瑞士腕表", "catTech": "高端科技", "catFashion": "奢品时尚", "catSuper": "超跑与足金", "s1Eyebrow": "零垃圾奖品", "s1Title": "95% 返还，直接改变你能挑战的次数", "s1Body": "把没中的人用赠品打发掉，钱就真的没了。这里每一件商品都能按零售价的 95% 立刻换成 USDT，而保底档本身就是现金返还。", "s1Formula": "实际挑战次数 = 1 ÷ (1 − 返还率)", "s1RivalLabel": "赠品型盲盒（假设返还率 {rate}%）", "s1OursLabel": "VOILA（保底返还率 {min}~{max}%）", "s1Attempts": "{n} 倍", "s1AttemptsNote": "同样预算下的实际挑战次数", "s1Assume": "对比值基于明示假设计算，不指向任何具体公司。公式就在上方，欢迎自行验算。", "s1MockTitle": "开箱完成", "s1MockCta": "💰 立即拿回 95%", "s1MockWallet": "钱包余额", "s2Eyebrow": "SHA-256 可证明公平", "s2Title": "我们不要求信任，请用数学亲自验证。", "s2Body": "开箱之前，服务器种子的哈希已经先行公开。运营方既无法事先选定结果，也无法事后更改。", "s2Step1": "先公开服务器种子哈希", "s2Step1Sub": "开箱前就已送达你的浏览器", "s2Step2": "混入你的浏览器种子", "s2Step2Sub": "你的随机数必定参与结果", "s2Step3": "HMAC-SHA256 映射到中奖格", "s2Step3Sub": "取前 8 位十六进制对 {range} 取模", "s2Note": "把开箱后公开的服务器种子重新哈希，应当与开箱前拿到的哈希完全一致。不一致就是被动过手脚。", "s2Verify": "打开公平性验证器", "feedTitle": "全球实时动态", "feedSub": "这里只流动真实发生的开箱、兑现与发货", "feedLineup": "公开商品阵容", "feedEmptyTitle": "本设备暂无记录", "feedEmptyNote": "我们不会用虚构的他人中奖来填充。服务器统计接入后，全球记录将在此流动。", "feedNet": "支持 USDT TRC-20 与 BEP-20 出入金", "feedShip": "关税与运费由平台承担", "statsTitle": "用数字看 VOILA", "statJackpot": "当前投放的商品定价总额", "statSellback": "即时返还率", "statMutable": "开箱后运营方可更改的结果", "statMutableSub": "因为种子哈希已先行公开", "statSla": "实物发货运营标准", "statSlaSub": "这是运营目标，而非实测平均值", "statOdds": "已公开概率的商品条目", "statsNote": "以上数值来自商品目录与既定政策。累计派彩等运营统计将在后端接入后显示。", "unitUsdt": "USDT", "unitPct": "%", "unitCount": "件", "unitRows": "条", "unitHour": "小时", "s3Eyebrow": "正品保证与特快配送", "s3Title": "若为仿品，按 {n} 倍赔付", "s3Body": "只有通过专业鉴定机构精密检验的商品才会发出。关税与运费由平台承担。", "s3Stamp": "鉴定通过", "s3Waybill": "运单", "s3WaybillPending": "发货时将签发真实运单号", "s3Track1": "鉴定完成", "s3Track2": "打包发出", "s3Track3": "运输中", "faqTitle": "常见问题", "faqQ1": "中到的实物怎么拿到手？", "faqA1": "在仓库点击［寄到我家］并填写地址，通过鉴定后即发出。关税与运费由平台承担。", "faqQ2": "如果商品不是正品怎么办？", "faqA2": "只有通过专业鉴定机构检验的商品才会发出；一旦确认为仿品，按商品价值的 {n} 倍赔付。", "faqQ3": "兑现有多快？", "faqA3": "在仓库点击［立即拿回 95%］，余额立刻到账，没有审批排队。", "faqQ4": "提现流程是怎样的？", "faqA4": "USDT 充值部分在满足基础使用标准后可经 TRC-20 或 BEP-20 提现。银行卡充值部分不会上链提出，仅用于开箱、配送与退卡。", "faqQ5": "怎么确信结果没有被操纵？", "faqA5": "不必相信我们。把开箱前拿到的服务器种子哈希，与开箱后公开的服务器种子亲自比对即可。验证器会为你重新计算每一条记录。", "ctaTitle": "奢侈的新标准，现在就开始。", "ctaSub": "1 USDT 起。即使没中，也至少立刻返还 {min}%。", "ctaButton": "去开一箱", "ctaFair": "每个结果都可用 SHA-256 验证"},
     "header": {"balance": "余额", "language": "语言", "currency": "货币", "deposit": "充值", "withdraw": "提现", "welcomeToast": "新人奖励 {amount} 已到账 — 开启真实盲盒吧"},
     "hero": {
       "royalSelection": "皇家精选", "top": "TOP {n}", "pricePerOpen": "单次开启", "topPull": "最高奖品",
       "noBlank": "100% 实物发放 · 无空奖", "guaranteedMinLabel": "保底价值",
       "guaranteedMin": "保底价值 {value}", "aboveOpenPrice": "不低于开启价",
-      "openNow": "立即开启", "viewContents": "看看里面", "billboardPicker": "选择展示", "billboardOf": "{title} 展示",
-      "headline": "1 美元，博劳力士和 iPhone。", "headline1": "1 美元，", "headline2": "博劳力士和 iPhone。", "sub": "中了 100% 真归你，没中也立即折现 95%！", "sub1": "中了 100% 真归你，", "sub2": "没中也立即折现 95%！", "freeTry": "免费试玩", "openFor": "🔥 {price} 开一发", "badge": "1 美元起的奢品头奖", "poolLabel": "LIVE JACKPOT POOL", "poolLabelShort": "JACKPOT POOL", "poolNote": "当前开放的 {n} 个盲盒最高奖品价值合计（公开阵容）", "bigWin": "🔥 LIVE BIG WIN", "bigWinGoal": "🎯 本周头奖挑战目标", "nowShowing": "正在上映", "topMultipleShort": "最高 {n}"
+      "openNow": "立即开启", "viewContents": "查看商品与概率", "billboardPicker": "选择展示", "billboardOf": "{title} 展示",
+      "headline": "1 美元开启劳力士与 iPhone，现在就开箱。", "headline1": "1 美元开启劳力士与 iPhone，", "headline2": "现在就开箱。", "sub": "中奖即 100% 正品免费送到家，开到其他商品也能立即拿回 95%。", "sub1": "中奖即 100% 正品免费送到家，", "sub2": "开到其他商品也能立即拿回 95%。", "freeTry": "免费试开一箱", "openFor": "📦 {price} 开启盲盒", "badge": "1 美元起的奢品开箱", "poolLabel": "TOTAL PRIZE VALUE", "poolLabelShort": "PRIZE POOL", "poolNote": "当前可开启的 {n} 个盲盒最高商品定价合计", "bigWin": "🔥 LIVE BIG WIN", "bigWinGoal": "🎯 本周最高挑战商品", "nowShowing": "正在上映", "topMultipleShort": "最高 {n}"
     },
-    "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "noBlankShort": "不落空 · 保底 {value}", "settleBadge": "全品类 95% USDT 即时结算", "settleShort": "95% 即时结算", "upTo": "最高 {n} 头奖", "rtp": "RTP {rate}%", "floorPct": "最低 {pct}% 返还", "guaranteed": "保底", "openNow": "立即开", "contents": "详情", "details": "{title} 详情", "expand": "展开"},
+    "card": {"perOpen": "单次", "top": "最高", "guaranteedMinShort": "保底 {value}", "noBlankBadge": "100% 不落空 · 最低 {value} 保底", "noBlankShort": "不落空 · 保底 {value}", "settleBadge": "全品类 95% 即时返现保障", "settleShort": "95% 即时返现", "upTo": "最高 {n}", "rtp": "RTP {rate}%", "floorPct": "最低 {pct}% 返还", "guaranteed": "保底", "openNow": "立即开", "contents": "详情", "details": "{title} 详情", "expand": "展开"},
     "grid": {"title": "全部盲盒", "sort": "排序", "loadMore": "加载更多（{n}）"},
-    "mobileNav": {"aria": "快捷导航", "home": "首页", "dollar": "1美元大奖", "vault": "保管箱", "deposit": "充值 (+)", "wallet": "钱包(存提)"},
+    "mobileNav": {"aria": "快捷导航", "home": "首页", "dollar": "1 美元盲盒", "vault": "保管箱", "deposit": "充值 (+)", "wallet": "钱包(存提)"},
     "delivery": {
       "title": "申请实物配送", "close": "关闭",
       "body": "我们将中奖实物寄送到府，含清关、正品鉴定与保险。",
@@ -536,10 +536,10 @@ UI = {
       "tickerTitle": "📦 实物配送状态", "tickerFree": "免运费活动 —— 境内运费 0.00 USDT", "tickerAuth": "出库前专业鉴定 · 确认仿品赔付 300%", "tickerInsured": "自动投保 —— 破损遗失可重发或 USDT 赔付",
       "doneCta": "确定"
     },
-    "hot": {"title": "🔥 实时最热头奖盲盒 TOP 3", "subtitle": "按人气指数", "heat": "{deg}°C HOT", "upTo": "最高 {n} 倍", "floor": "最低返还 {pct}%"},
-    "hall": {"title": "🏆 每周名人堂排位赛", "pool": "总奖池 {amount} USDT", "deadline": "本周排位赛剩余", "payout": "前 5 名自动依次发放奖金", "prize": "💰 奖金 {amount} USDT", "openSlot": "空位 — 就等你来", "entryRule": "{n} 倍以上中奖方可上榜", "goal": "目标 {n} 倍", "myRank": "我的排名：第 {rank} 名", "myOutside": "我的排名：未进前 5", "myBest": "· 本周最高 {n} 倍", "myNone": "本周还没有记录 · 冲进前 5 领取奖金！", "cta": "🚀 开启头奖盲盒冲榜", "scopeNote": "排行榜只统计真实开箱记录。在服务器统计接入之前仅显示本设备的记录，空缺名次不会用虚构中奖者填充。"},
+    "hot": {"title": "🔥 实时人气盲盒 TOP 3", "subtitle": "按人气指数", "heat": "{deg}°C HOT", "upTo": "最高 {n} 倍", "floor": "最低返还 {pct}%"},
+    "hall": {"title": "🏆 每周名人堂排位赛", "pool": "总奖池 {amount} USDT", "deadline": "本周排位赛剩余", "payout": "前 5 名自动依次发放奖金", "prize": "💰 奖金 {amount} USDT", "openSlot": "空位 — 就等你来", "entryRule": "{n} 倍以上中奖方可上榜", "goal": "目标 {n} 倍", "myRank": "我的排名：第 {rank} 名", "myOutside": "我的排名：未进前 5", "myBest": "· 本周最高 {n} 倍", "myNone": "本周还没有记录 · 冲进前 5 领取奖金！", "cta": "🚀 开箱冲榜", "scopeNote": "排行榜只统计真实开箱记录。在服务器统计接入之前仅显示本设备的记录，空缺名次不会用虚构中奖者填充。"},
     "categories": {"all": "全部", "dollar": "🔥 1 美元盲盒", "tech": "⚡ 苹果与科技", "luxury": "👑 奢品与腕表", "jackpot": "🚗 超跑与金条"},
-    "sections": {"dollar": "🔥 1 美元的幸福", "tech": "⚡ 苹果与高端科技", "luxury": "👑 奢侈名品与瑞士腕表", "jackpot": "🚗 超跑与纯金金条头奖"},
+    "sections": {"dollar": "🔥 1 美元的幸福", "tech": "⚡ 苹果与高端科技", "luxury": "👑 奢侈名品与瑞士腕表", "jackpot": "🚗 超跑与纯金金条"},
     "sorts": {"featured": "推荐", "price-asc": "价格从低到高", "price-desc": "价格从高到低", "popularity": "人气"},
     "tiers": {
       "legendTitle": "等级 = 市场价 ÷ 开启价",
@@ -549,16 +549,16 @@ UI = {
     },
     "modal": {
       "details": "{title} 详情", "close": "关闭", "topRank": "TOP {n}", "openNowPrice": "立即开启 · {price}", "viewOdds": "查看全部概率",
-      "openPrice": "开启价", "guaranteedMin": "保底价值", "topPrize": "最高奖品", "topMultiple": "最高倍数",
+      "openPrice": "盲盒价格", "guaranteedMin": "保底价值", "topPrize": "最高奖品", "topMultiple": "最高倍数",
       "tierOdds": "各等级中奖概率", "breakEven": "不低于 {price} 的概率 {rate}",
-      "explain": "等级并非存储值，而是由市场价 ÷ 开启价的倍数推导。每次开启的期望市场价为 {ev}，相当于开启价的 {retail}。若即时回收，仅按市场价的 {refund} 支付，因此按现金计算的回收率为 {cash}，低于开启价。",
+      "explain": "等级并非存储值，而是由市场价 ÷ 盲盒价格的倍数推导。每次开启的期望市场价为 {ev}，相当于盲盒价格的 {retail}。若即时返现，仅按市场价的 {refund} 支付，因此按现金计算的回收率为 {cash}，低于开启价。",
       "guaranteedYes": "本盲盒的保底档为 {min} 即时返现——开箱即刻 100% 计入余额。",
       "guaranteedNo": "本盲盒的保底档为 {min} 即时返现——开箱即刻 100% 计入余额。",
-      "settleBadge": "⚡ 全品类一键 95% USDT 即时结算，可提现至个人钱包",
-      "settleBody": "实物与礼品卡可一键按市场价 95% 折现为 USDT；USDT 返现与即时到账在开箱时 100% 计入余额。余额可提现至 TRC-20 / BEP-20 个人钱包。",
+      "settleBadge": "⚡ 全品类一键 95% 即时返现 · 保证可提现至个人钱包",
+      "settleBody": "实物与礼品卡可一键按市场价 95% 返现；USDT 返现与即时到账在开箱时 100% 计入余额。余额可提现至 TRC-20 / BEP-20 个人钱包。",
       
       "allPrizes": "全部可得商品", "count": "{n} 件", "sortedByValue": "按市场价降序",
-      "marketValue": "市场价", "odds": "概率", "tierLabel": "等级", "tierBar": "等级构成", "upToLabel": "最高头奖", "rtpLabel": "返还率 RTP", "floorLabel": "保底", "floorPct": "最低 {pct}%", "preciseOddsLink": "公平性验证 (Provably Fair)", "preciseOdds": "精确概率表 · Provably Fair", "expand": "展开", "collapse": "收起", "openVerifier": "打开 3 步可视化验证器", "imageCredits": "图片来源"
+      "marketValue": "市场价", "odds": "概率", "tierLabel": "等级", "tierBar": "等级构成", "upToLabel": "最高回报", "rtpLabel": "期望价值比", "floorLabel": "最低返现", "floorPct": "最低 {pct}%", "preciseOddsLink": "公平性验证 (Provably Fair)", "preciseOdds": "精确概率表 · Provably Fair", "expand": "展开", "collapse": "收起", "openVerifier": "打开 3 步可视化验证器", "imageCredits": "图片来源"
     },
     "fairness": {
       "title": "公平性验证", "eyebrow": "Provably Fair · HMAC-SHA256",
@@ -589,10 +589,10 @@ UI = {
       }
     },
     "unbox": {
-      "open1": "开启 ×1", "open5": "连续开启 ×5", "openN": "连续开启 ×{n}", "upgrade": "UPGRADE!", "openBulk": "🚀 一次批量开启 {n} 个 ({amount})", "openAllIn": "👑 {n} 个全押头奖批量开启 ({amount})", "openNow": "🔥 立即开启 {n} 个 ({amount})", "preset": {"1": "开 1 个", "5": "5 连开", "10": "10 连开", "50": "批量开 50 个", "100": "全押 100 个"}, "qtyNote": "按所选数量一次性开启；命中史诗/头奖时触发 3D 高亮。", "qty": "开启数量", "autoStop": "⏹ 停止（剩余 {n} 次）", "autoSpent": "投入", "autoWon": "获得", "autoNet": "净损益", "autoStopped": {"spins": "自动旋转完成", "jackpot": "👑 命中头奖 — 自动停止", "multiple": "达到目标倍数 — 自动停止", "stopLoss": "达到止损 — 自动停止", "balance": "余额不足 — 停止", "manual": "手动停止"}, "trialLabel": "免费过把瘾", "trialCongrats": "手感不错！免费试玩抽中 {item}（{n}）", "trialBody": "用 {bonus} 新人奖励开启真实盲盒吧！", "trialCta": "领取奖励并开启真实盲盒", "trialCtaClaimed": "开启真实盲盒", "trialNote": "免费试玩结果不参与配送与折现。真正开箱请点上方按钮。", "spinning": "开启中…", "landing": "结果已锁定",
+      "open1": "开启 ×1", "open5": "连续开启 ×5", "openN": "连续开启 ×{n}", "upgrade": "UPGRADE!", "openBulk": "🚀 一次批量开启 {n} 个 ({amount})", "openAllIn": "👑 {n} 个批量开启 ({amount})", "openNow": "🔥 立即开启 {n} 个 ({amount})", "preset": {"1": "开 1 个", "5": "5 连开", "10": "10 连开", "50": "批量开 50 个", "100": "全押 100 个"}, "qtyNote": "按所选数量一次性开启；开出最高等级商品时触发 3D 高亮。", "qty": "开启数量", "autoStop": "⏹ 停止（剩余 {n} 次）", "autoSpent": "投入", "autoWon": "获得", "autoNet": "净损益", "autoStopped": {"spins": "连续开箱完成", "jackpot": "👑 开出最高等级商品 — 自动停止", "multiple": "达到目标倍数 — 自动停止", "stopLoss": "达到止损 — 自动停止", "balance": "余额不足 — 停止", "manual": "手动停止"}, "trialLabel": "免费过把瘾", "trialCongrats": "手感不错！免费试玩抽中 {item}（{n}）", "trialBody": "用 {bonus} 新人奖励开启真实盲盒吧！", "trialCta": "领取奖励并开启真实盲盒", "trialCtaClaimed": "开启真实盲盒", "trialNote": "免费试开结果不参与配送与返现。真正开箱请点上方按钮。", "spinning": "开启中…", "landing": "结果已锁定",
       "result": "获得", "results": "{n} 次结果", "total": "总价值", "paid": "已支付 {price}",
-      "sellBack": "95% 立即折现 · {amount}", "sellBackAll": "全部 95% 立即折现 · {amount}", "cashoutCta": "⚡ 95% USDT 即时折现", "noFee": "0 手续费", "shipSub": "实物 · 免费配送", "cashCredited": "{amount} 已即时计入余额", "respin": "🔥 {price} 再来一发", "sellBackNote": "按市场价的 {rate} 即时计入余额",
-      "sold": "已折现 — 余额 +{amount}", "claimShipping": "寄到家",
+      "sellBack": "立即拿回 95% · {amount}", "sellBackAll": "全部 立即拿回 95% · {amount}", "cashoutCta": "💰 立即拿回 95%", "noFee": "0 手续费", "shipSub": "实物 · 免费配送", "cashCredited": "{amount} 已即时计入余额", "respin": "🔥 {price} 再来一发", "sellBackNote": "按市场价的 {rate} 即时计入余额",
+      "sold": "已返现 — 余额 +{amount}", "claimShipping": "寄到家",
       "shippingNotice": "国际运费与关税说明", "shippingBody": "目的地关税/增值税及国际运费（DHL/FedEx 实付）另行收取。",
       "verify": "1 秒公平性验证", "close": "关闭", "keep": "存入仓库", "kept": "已存入仓库 — 关闭后仍会保留",
       "insufficient": "余额不足 — 需要 {price}", "topUp": "充值", "toppedUp": "+{amount} 已计入",
@@ -621,25 +621,25 @@ UI = {
       "declined": "卡片被拒绝", "declinedHint": "发卡行拒绝了此卡，请换一张卡重试。",
       "receipt": "收据", "receiptId": "交易编号", "receiptAt": "批准时间", "receiptCard": "卡片", "receiptPaid": "支付金额", "receiptCredited": "计入余额", "receiptProvider": "支付方式",
       "done": "完成", "creditedToast": "+{amount} 已计入余额（信用卡）", "history": "最近充值记录", "noHistory": "暂无充值记录",
-      "txDepositCard": "信用卡充值", "txDepositUsdt": "USDT 充值", "txOpen": "开启盲盒", "txSellback": "即时回收"
+      "txDepositCard": "信用卡充值", "txDepositUsdt": "USDT 充值", "txOpen": "开启盲盒", "txSellback": "即时返现"
     },
     "inventory": {
       "title": "仓库", "eyebrow": "My Vault", "empty": "仓库还是空的。开启盲盒来填满它吧。", "goBoxes": "浏览盲盒",
-      "summary": "共 {n} 件 · 仓库总价值 {value}", "storedCount": "保管中 {n}", "shippingCount": "发货 {n}", "soldCount": "已回收 {n}",
-      "filterStatus": "状态", "filterTier": "等级", "all": "全部", "tabHeld": "持有中 ({n})", "tabDone": "已处理 ({n})", "cashableValue": "可即时折现总价值", "withdrawBalance": "🚀 提现余额", "doneSold": "95% 折现完成 +{amount}", "doneCash": "返现已计入 +{amount}", "archived": "已处理", "doneShipping": "已发货", "donePreparing": "备货中", "emptyDone": "暂无已处理记录。折现或发货的商品会归档在这里。",
-      "status": {"IN_STORAGE": "保管中", "SHIPPING_REQUESTED": "备货中", "SHIPPING": "运输中", "SOLD": "已回收"},
+      "summary": "共 {n} 件 · 仓库总价值 {value}", "storedCount": "保管中 {n}", "shippingCount": "发货 {n}", "soldCount": "已返现 {n}",
+      "filterStatus": "状态", "filterTier": "等级", "all": "全部", "tabHeld": "持有中 ({n})", "tabDone": "已处理 ({n})", "cashableValue": "可立即拿回的总金额", "withdrawBalance": "🚀 提现余额", "doneSold": "95% 返现完成 +{amount}", "doneCash": "返现已计入 +{amount}", "archived": "已处理", "doneShipping": "已发货", "donePreparing": "备货中", "emptyDone": "暂无已处理记录。回售或发货的商品会归档在这里。",
+      "status": {"IN_STORAGE": "保管中", "SHIPPING_REQUESTED": "备货中", "SHIPPING": "运输中", "SOLD": "已返现"},
       "acquired": "获得于 {date}", "from": "{box}", "soldFor": "已退回 {amount}", "tracking": "运单号", "trackingPending": "等待运单号",
-      "sell": "⚡ 95% USDT 即时折现", "noFee": "0 手续费", "ship": "📦 寄到我家", "sellShort": "⚡ 95% 即时折现", "shipShort": "📦 寄到家", "verify": "1 秒公平性验证", "select": "选择", "selected": "已选 {n} 件", "selectAll": "全选", "clearSelection": "取消选择",
-      "sellSelected": "所选按 {rate} 批量折现", "selectedValue": "总价值：", "soldForLabel": "已退回",
-      "totalValue": "仓库总资产", "sellAll": "全部 95% 折现", "sort": "排序", "sorts": {"newest": "最新", "valueDesc": "价值从高到低", "valueAsc": "价值从低到高"},
+      "sell": "💰 立即拿回 95%", "noFee": "0 手续费", "ship": "📦 寄到我家", "sellShort": "💰 拿回 95%", "shipShort": "📦 寄到家", "verify": "1 秒公平性验证", "select": "选择", "selected": "已选 {n} 件", "selectAll": "全选", "clearSelection": "取消选择",
+      "sellSelected": "所选商品拿回 {rate}", "selectedValue": "总价值：", "soldForLabel": "已退回",
+      "totalValue": "仓库总资产", "sellAll": "全部立即拿回 95%", "sort": "排序", "sorts": {"newest": "最新", "valueDesc": "价值从高到低", "valueAsc": "价值从低到高"},
       "emptyFiltered": "没有符合条件的商品。", "hotTitle": "当前最热盲盒 TOP 3", "hotTop": "最高倍数",
       "track": "查看物流", "trackingTitle": "物流状态", "copyTracking": "复制运单号", "trackOnCarrier": "在 {carrier} 实时查询",
       "carriers": {"CJ": "CJ大韩通运", "EPOST": "韩国邮政", "DHL": "DHL", "FEDEX": "FedEx"},
       "steps": {"requested": "已受理发货申请", "label": "已出运单", "transit": "运输中", "delivered": "已签收"}, "stepCurrent": "当前环节",
       "trackingNote": "出库完成后，物流公司与运单号会显示在此，并开放实时查询链接。", "trackingIssuedNote": "运单已生成。可在 {carrier} 官方查询页面实时查看配送状态。",
-      "sellTitle": "95% 即时回收", "sellBody": "确定回收该商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
-      "sellBodyMulti": "确定回收 {n} 件商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
-      "confirm": "确认", "cancel": "取消", "soldToast": "已回收 — 余额 +{amount}",
+      "sellTitle": "💰 立即拿回 95%", "sellBody": "确定回售该商品？市场价的 {rate}（{amount}）将立即计入余额。",
+      "sellBodyMulti": "确定回售 {n} 件商品？市场价的 {rate}（{amount}）将立即计入余额。",
+      "confirm": "确认", "cancel": "取消", "soldToast": "已返现 — 余额 +{amount}",
       "shipTitle": "申请发货", "shipBody": "国际运费从余额中扣除，目的地关税与增值税在签收时另行支付。",
       "recipient": "收件人姓名", "country": "国家/地区", "phone": "联系电话", "postalCode": "邮政编码", "address": "详细地址",
       "pccc": "个人通关固有编码 (PCCC)", "pcccHint": "P + 12 位数字", "residentId": "居民身份证号", "residentIdHint": "18 位",
@@ -667,27 +667,27 @@ UI = {
       "bonusNote": "晒单发布后，{bonus} 奖励立即计入您的账户余额。",
       "empty": "还没有晒单。收到实物了？发第一条晒单领取 10 USDT 奖励。", "emptyCta": "去开盲盒", "close": "关闭"
     },
-    "gate": {"stage1": "解锁金库转轮", "stage2": "正在解除封印"},
-    "autoplay": {"eyebrow": "Autoplay", "title": "自动旋转设置", "close": "关闭", "perSpin": "次", "spins": "旋转次数", "times": "{n} 次", "budget": "最多投入 {amount}", "autoSell": "⚡ 所有中奖品 95% USDT 即时自动折现（余额自动补充）", "autoSellBody": "实物与礼品卡按市场价 95% 立即折现补充余额。USDT 返现一如既往 100% 即时计入。", "smartStop": "智能停止条件", "stopJackpot": "👑 命中史诗/传说（头奖）时立即停止", "stopMultiple": "单次赢得 N 倍以上时停止", "multipleUnit": "倍以上", "stopLoss": "达到止损额度时停止", "stopLossUnit": "累计亏损", "start": "🔄 开始自动旋转 · {n} 次", "button": "🔄 自动旋转 {n} 次"},
-    "bulk": {"eyebrow": "批量开启 · {n} 个", "opening": "极速开启中…", "spent": "总投入", "won": "总获得价值", "net": "净损益", "sellAll": "⚡ {n} 件 95% 即时折现", "keep": "留在仓库"},
-    "ticker": {"label": "实时开箱动态", "live": "LIVE", "lineup": "{box} · {item} {mult} 头奖", "win": "{box} ➔ 开出 {item}", "cashout": "已折现 {amount}", "ship": "申请发货 {item}", "ago": "（{s} 秒前）"},
+    "gate": {"stage1": "解锁盲盒转盘", "stage2": "正在解除封印"},
+    "autoplay": {"eyebrow": "Autoplay", "title": "自动连续开箱", "close": "关闭", "perSpin": "次", "spins": "开箱次数", "times": "{n} 次", "budget": "最多投入 {amount}", "autoSell": "⚡ 中奖商品 95% 自动回售（余额自动返现）", "autoSellBody": "实物与礼品卡按市场价 95% 立即回售补充余额。USDT 返现一如既往 100% 即时计入。", "smartStop": "自动停止条件", "stopJackpot": "👑 开出最高等级商品时自动停止", "stopMultiple": "达到目标价值（倍数）时自动停止", "multipleUnit": "倍以上", "stopLoss": "达到预算上限时停止", "stopLossUnit": "累计消费", "start": "🔄 开始连续开箱 · {n} 次", "button": "🔄 连续开箱 {n} 次"},
+    "bulk": {"eyebrow": "批量开启 · {n} 个", "opening": "极速开启中…", "spent": "总投入", "won": "总获得价值", "net": "净损益", "sellAll": "💰 {n} 件立即拿回 95%", "keep": "留在仓库"},
+    "ticker": {"label": "实时开箱动态", "live": "LIVE", "lineup": "{box} · {item} 最高 {mult}", "win": "{box} ➔ 开出 {item}", "cashout": "已返现 {amount}", "ship": "申请发货 {item}", "ago": "（{s} 秒前）"},
     "onboarding": {
       "title": "3 秒看懂流程",
       "step1Title": "选盲盒", "step1Desc": "1 美元起。劳力士、特斯拉、苹果。",
       "step2Title": "公平开箱", "step2Desc": "SHA-256 封存，无法篡改。",
-      "step3Title": "发货或 95% 折现", "step3Desc": "免费寄到家，或 1 秒折现 USDT。"
+      "step3Title": "发货或拿回 95%", "step3Desc": "免费寄到家，或 1 秒拿回 USDT。"
     },
-    "counters": {"label": "信任指标", "shipments": "今日已出库实物", "shipmentsUnit": "件", "cashouts": "今日已结算折现", "verification": "公平性验证完成率", "odds": "已公开概率项", "oddsUnit": "项", "sellback": "即时折现率", "verifiedOf": "我的 {n} 次开箱已复核"},
+    "counters": {"label": "信任指标", "shipments": "今日已出库实物", "shipmentsUnit": "件", "cashouts": "今日已返现金额", "verification": "公平性验证完成率", "odds": "已公开概率项", "oddsUnit": "项", "sellback": "即时返现率", "verifiedOf": "我的 {n} 次开箱已复核"},
     "proof": {
       "title": "实付与实发实时证明", "live": "LIVE", "tab": {"payouts": "USDT 实付", "shipments": "实物发货"},
-      "kind": {"withdraw": "提现", "sellback": "即时回收"}, "viewOnExplorer": "在 {explorer} 查看", "track": "运单追踪",
+      "kind": {"withdraw": "提现", "sellback": "即时返现"}, "viewOnExplorer": "在 {explorer} 查看", "track": "运单追踪",
       "carriers": {"CJ": "CJ大韩通运", "EPOST": "韩国邮政", "DHL": "DHL", "FEDEX": "FedEx"},
       "reserveEyebrow": "Proof of Reserves · 储备金", "reserveBody": "为保护用户资产并保证即时提现，VOILA 在链上钱包持有流动性储备金，任何人都可通过下方地址查询余额。",
       "reserveWallet": "储备钱包", "reserveBalance": "当前持有", "copyAddress": "复制地址",
-      "emptyPayouts": "暂无支付记录。", "emptyShipments": "暂无发货记录。", "emptyCta": "去开盲盒", "factVerify": "每次开箱结果都由开箱前公开的 SHA-256 哈希封存；公开服务器种子后任何人都可复现。", "factRefund": "中奖实物可按市场价 95% 即时折现为 USDT，USDT 返现 100% 即时入账。", "factFee": "提现仅收网络实费 —— TRC-20 1 USDT / BEP-20 0.5 USDT；境内运费当前免费。", "pendingTx": "等待广播", "settledInstant": "即时结算"
+      "emptyPayouts": "暂无支付记录。", "emptyShipments": "暂无发货记录。", "emptyCta": "去开盲盒", "factVerify": "每次开箱结果都由开箱前公开的 SHA-256 哈希封存；公开服务器种子后任何人都可复现。", "factRefund": "中奖实物可按市场价 95% 立即拿回 USDT，USDT 返现 100% 即时入账。", "factFee": "提现仅收网络实费 —— TRC-20 1 USDT / BEP-20 0.5 USDT；境内运费当前免费。", "pendingTx": "等待广播", "settledInstant": "即时返现"
     },
     "withdraw": {
-      "title": "USDT 提现", "close": "关闭", "available": "可提现余额", "availableCrypto": "可提现余额（USDT 充值）", "cardLocked": "仅限开箱与配送（信用卡充值）", "cardLockedNote": "信用卡充值及其折现金额只能用于开启盲盒、实物配送或原卡退款，不可链上提现。", "network": "提现网络", "address": "收款钱包地址", "addressHint": "以 {hint} 开头的地址",
+      "title": "USDT 提现", "close": "关闭", "available": "可提现余额", "availableCrypto": "可提现余额（USDT 充值）", "cardLocked": "仅限开箱与配送（信用卡充值）", "cardLockedNote": "信用卡充值及其返现金额只能用于开启盲盒、实物配送或原卡退款，不可链上提现。", "network": "提现网络", "address": "收款钱包地址", "addressHint": "以 {hint} 开头的地址",
       "amount": "提现数量", "min": "最低 {min}", "max": "全部", "fee": "网络手续费", "feeShort": "手续费", "net": "实际到账", "netLabel": "实际到账金额",
       "submit": "提交提现申请", "requested": "提现申请已受理", "txId": "交易 ID", "at": "申请时间", "another": "再次提现", "done": "确定", "history": "最近提现",
       "reviewTitle": "PENDING_ADMIN_REVIEW · 安全审核中", "reviewNote": "根据安全政策，管理员将在 24 小时内完成安全审批，随后在链上完成转账。", "riskScore": "风险分 {score}（自动通过标准为 {threshold} 分以下）", "circuitTitle": "每小时自动提现额度", "circuitNote": "每小时额度 {limit} 中剩余 {remaining} —— 超出后热钱包自动提现暂停，所有提现转为人工审批。", "circuitTripped": "⛔ 熔断已触发 —— 自动提现暂停", "circuitTrippedNote": "1 小时累计提现超过额度，热钱包自动转账已暂停。现在提交的提现将由管理员人工审批（资金安全保管）。", "status": {"PENDING": "审核中", "PENDING_ADMIN_REVIEW": "安全审核", "BROADCASTING": "广播中", "COMPLETED": "已完成"},
@@ -696,27 +696,27 @@ UI = {
       "processingNote": "提现经安全审核后签名并广播，完成后 TxID 与浏览器链接会显示在此。", "networkNote": "提现申请后立即发送至区块链网络，链上交易可在 TronScan / BscScan 实时查询。",
       "requestedToast": "提现申请已提交 — 已扣除 {amount}",
       "quick25": "+25%", "quick50": "+50%", "quickMax": "全额提现", "submitAmount": "🚀 立即提现 {amount} 到我的钱包", "submitting": "正在准备链上转账…",
-      "amlTitle": "🛡️ 反洗钱(AML)规定", "amlRule": "流水进度达到 100% 方可提现", "amlProgress": "当前进度 {pct}%", "amlRemaining": "再开启 {amount} 即可提现",
-      "amlMet": "✓ 流水已达标（可提现）",
-      "amlBlocked": "根据反洗钱规定，流水达到 100% 后方可提现。（当前：{pct}%）",
+      "amlTitle": "🛡️ 安全提现使用标准", "amlRule": "充值金额基础使用率达到 100% 即可立即提现", "amlProgress": "当前进度 {pct}%", "amlRemaining": "再开启 {amount} 的盲盒即可立即提现",
+      "amlMet": "✓ 使用标准已达成（可立即提现）",
+      "amlBlocked": "根据安全交易规定，完成充值金额的基础使用（100%）后方可提现。（当前：{pct}%）",
       "amlWhy": "此规定用于阻断充值后立刻转出的诈骗与洗钱资金。没有充值记录的余额不受影响。",
-      "amlDeposited": "累计充值", "amlWagered": "累计开启", "amlRequired": "所需流水", "amlCurrent": "已完成流水", "amlGrinding": "保底折现率 90% 以上的超低风险盲盒，开启金额仅按 {pct}% 计入流水——无法用无风险刷量绕过规定。"
+      "amlDeposited": "累计充值金额", "amlWagered": "累计购买金额", "amlRequired": "所需使用金额", "amlCurrent": "已达成使用金额", "amlGrinding": "最低返现 90% 以上的低风险盲盒，购买金额仅按 {pct}% 计入使用金额——无法用无风险刷量绕过标准。"
     },
     "vip": {"title": "VIP 等级 {tier}", "tiers": {"member": "会员", "silver": "白银", "gold": "黄金", "black": "黑金"}},
     "footer": {
       "tagline": "You never know what’s next.", "actionSlogan": "OPEN IT, OWN IT",
       "slogan": "基于区块链、最透明的实物奢品盲盒平台",
       "service": "服务", "guide": "使用指南", "support": "客户支持",
-      "links": {"dollar": "1 美元盲盒", "vault": "奢品金库", "feed": "实时支付动态", "verifier": "公平性验证器", "terms": "服务条款", "privacy": "隐私政策", "policy": "发货与 95% 折现政策", "faq": "常见问题", "telegram": "Telegram 24/7 在线客服", "discord": "官方 Discord", "notice": "公告频道"},
-      "disclaimer": "VOILA 是面向全球用户的电商盲盒平台。所有开箱结果均通过不可篡改的 SHA-256 算法透明公开，中奖商品保证 100% 实物发货或即时折现为 USDT。"
+      "links": {"dollar": "1 美元盲盒", "vault": "奢品系列", "feed": "实时支付动态", "verifier": "公平性验证器", "terms": "服务条款", "privacy": "隐私政策", "policy": "发货与 95% 返现政策", "faq": "常见问题", "telegram": "Telegram 24/7 在线客服", "discord": "官方 Discord", "notice": "公告频道"},
+      "disclaimer": "VOILA 是面向全球用户的电商盲盒平台。所有开箱结果均通过不可篡改的 SHA-256 算法透明公开，中奖商品保证 100% 实物免费配送或 95% 即时返现。"
     },
     "legalDocs": {
       "eyebrow": "使用指南", "updated": "最近更新 2026 年 9 月 18 日",
       "terms": {"title": "服务条款", "sections": [
-        {"h": "1. 服务", "p": "VOILA 销售概率完全公开的盲盒，中奖商品可实物发货，或按市场价 95% 即时折现为 USDT。"},
-        {"h": "2. 账户与余额", "p": "余额以 USDT 计。充值、提现、开箱与折现均记录为交易，仅用于购买与提现。"},
+        {"h": "1. 服务", "p": "VOILA 销售概率完全公开的盲盒，中奖商品可实物发货，或按市场价 95% 立即拿回 USDT。"},
+        {"h": "2. 账户与余额", "p": "余额以 USDT 计。充值、提现、开箱与返现均记录为交易，仅用于购买与提现。"},
         {"h": "3. 概率与公平", "p": "每个盲盒在开启前公开各商品概率。结果由事先公布的服务器种子哈希与用户客户端种子决定，任何人都可复现验证。"},
-        {"h": "4. 取消与退款", "p": "开箱开始后不可取消。中奖商品可随时选择 95% 折现或实物发货。"},
+        {"h": "4. 取消与退款", "p": "开箱开始后不可取消。中奖商品可随时选择 95% 返现或实物发货。"},
         {"h": "5. 责任", "p": "用户须遵守所在地法律。服务故障时以交易记录为准恢复余额。"}
       ]},
       "privacy": {"title": "隐私政策", "sections": [
@@ -726,21 +726,21 @@ UI = {
         {"h": "4. 第三方提供", "p": "仅向物流公司（发货信息）与支付机构（支付信息）提供最少必要信息。"},
         {"h": "5. 用户权利", "p": "可随时通过客服申请查阅、更正或删除。"}
       ]},
-      "policy": {"title": "发货与 95% 折现政策", "sections": [
-        {"h": "1. 即时折现", "p": "仓库中的中奖商品可随时按市场价 95% 即时折现为 USDT，即刻计入余额。"},
+      "policy": {"title": "发货与 95% 返现政策", "sections": [
+        {"h": "1. 即时返现", "p": "仓库中的中奖商品可随时按市场价 95% 立即拿回 USDT，即刻计入余额。"},
         {"h": "2. 实物发货", "p": "国际运费在申请时从余额扣除，目的地关税与增值税在签收时另付。韩国由 CJ 大韩通运发货，海外由 DHL/FedEx 发货，运单号生成后显示在仓库中。"},
         {"h": "3. 提现", "p": "USDT 提现支持 TRC-20（手续费 1.00 USDT）或 BEP-20（手续费 0.80 USDT），最低 20 USDT。广播后提供 TxID 与浏览器链接。"},
-        {"h": "4. 保底价值", "p": "每个盲盒的最低商品都能以开启价 80% 以上的价值即时折现。"}
+        {"h": "4. 保底价值", "p": "每个盲盒的最低商品都能以盲盒价格 80% 以上的价值立即返现。"}
       ]},
       "faq": {"title": "常见问题", "sections": [
         {"h": "真的能从 1 USDT 开始吗？", "p": "是的。1 美元盲盒以 1.00 USDT 开启，即使落空也立即返还 0.85 USDT。"},
         {"h": "如何确认结果没有被操控？", "p": "在结果弹窗或仓库卡片点击「1 秒公平性验证」，会分三步复现事前封存哈希、掷点数字与区间匹配。"},
-        {"h": "可以不要实物直接拿现金吗？", "p": "随时可以 — 在仓库中按市场价 95% 折现为 USDT。"},
+        {"h": "可以不要实物直接拿现金吗？", "p": "随时可以 — 在仓库中按市场价 95% 拿回 USDT。"},
         {"h": "提现需要多久？", "p": "经安全审核后广播，完成后显示 TxID 与 TronScan/BscScan 链接。"}
       ]}
     },
-    "actions": {"sellBack": "95% 即时回收", "claimShipping": "寄到家", "provablyFair": "公平性验证"},
-    "legal": {"disclaimer": "所示金额均为市场价。即时折现按市场价的 {refund} 支付，因此现金回收额低于开启价。全部概率在「看看里面有什么」中完整公开。"},
+    "actions": {"sellBack": "💰 立即拿回 95%", "claimShipping": "寄到家", "provablyFair": "公平性验证"},
+    "legal": {"disclaimer": "所示金额均为市场价。回售按市场价的 {refund} 支付，因此返现金额低于盲盒价格。全部概率在「查看商品与概率」中完整公开。"},
     "badges": {"dream": "梦想盲盒", "mobility": "出行", "tech": "科技", "audio": "音频", "watch": "腕表", "luxury": "奢侈品", "lifestyle": "生活方式", "guaranteed": "保底", "dollar": "1 美元", "gold": "黄金"},
   },
 }
@@ -749,18 +749,18 @@ UI = {
 BADGE_KEY = {"드림 박스": "dream", "모빌리티": "mobility", "테크": "tech", "오디오": "audio", "워치": "watch", "럭셔리": "luxury", "라이프스타일": "lifestyle", "가치 보장": "guaranteed", "1달러": "dollar", "골드": "gold"}
 
 ZH_BOX = {
-  "dollar-apple": ("1 美元苹果大奖", "1 美元博 iPhone 16 Pro。没中退 0.85 USDT。"),
-  "dollar-galaxy": ("1 美元 Galaxy 大奖", "1 美元博 Galaxy Z Fold8。没中退 0.85 USDT。"),
-  "dollar-gaming": ("1 美元游戏大奖", "1 美元博 RTX 5090、Switch 2。没中退 0.85 USDT。"),
-  "starter-ps5": ("咖啡价 PS5 入门", "3 美元博 PS5 Pro。没中退 2.5 USDT。"),
-  "starter-macbook": ("咖啡汉堡 MacBook 大奖", "5 美元博 MacBook Pro M4 Max。没中退 4.2 USDT。"),
-  "starter-phone": ("5 美元 iPhone 17 大奖", "5 美元博 iPhone 17 Pro Max。没中退 4.2 USDT。"),
-  "vault-submariner": ("劳力士潜航者金库", "20 美元博劳力士潜航者。没中退 17.5 USDT。"),
-  "vault-omega": ("瑞士腕表金库", "25 美元博欧米茄、帝舵、天梭。没中退 21.8 USDT。"),
-  "vault-handbag": ("奢侈手袋金库", "30 美元博爱马仕 Birkin。没中退 26 USDT。"),
-  "vault-gold": ("金条金库", "50 美元博 1kg 金条。没中退 43.7 USDT。"),
-  "jackpot-cybertruck": ("Cybertruck 头奖", "100 美元博 Cybertruck。没中退 95 USDT。"),
-  "jackpot-supercar": ("超跑头奖", "100 美元博保时捷 911。没中退 95 USDT。"),
+  "dollar-apple": ("1 美元苹果盒", "1 美元挑战 iPhone 16 Pro。未中奖立即返还 0.85 USDT。"),
+  "dollar-galaxy": ("1 美元 Galaxy 盒", "1 美元挑战 Galaxy Z Fold8。未中奖立即返还 0.85 USDT。"),
+  "dollar-gaming": ("1 美元游戏盒", "1 美元挑战 RTX 5090、Switch 2。未中奖立即返还 0.85 USDT。"),
+  "starter-ps5": ("PS5 Pro 入门盒", "3 美元挑战 PS5 Pro。未中奖立即返还 2.65 USDT。"),
+  "starter-macbook": ("MacBook Pro M4 盒", "5 美元挑战 MacBook Pro M4 Max。未中奖立即返还 4.4 USDT。"),
+  "starter-phone": ("iPhone 17 Pro 盒", "5 美元挑战 iPhone 17 Pro Max。未中奖立即返还 4.4 USDT。"),
+  "vault-submariner": ("劳力士潜航者系列", "20 美元挑战劳力士潜航者。未中奖立即返还 18.5 USDT。"),
+  "vault-omega": ("瑞士奢华腕表系列", "25 美元挑战欧米茄、帝舵、天梭。未中奖立即返还 23 USDT。"),
+  "vault-handbag": ("爱马仕与香奈儿精品店", "30 美元挑战爱马仕 Birkin。未中奖立即返还 27.5 USDT。"),
+  "vault-gold": ("足金金条系列", "50 美元挑战 1kg 金条。未中奖立即返还 46 USDT。"),
+  "jackpot-cybertruck": ("特斯拉 Cybertruck 版", "100 美元挑战 Cybertruck。未中奖立即返还 95 USDT。"),
+  "jackpot-supercar": ("保时捷 911 超跑版", "100 美元挑战保时捷 911。未中奖立即返还 95 USDT。"),
   "cybertruck-dream": ("赛博皮卡梦想", "以一辆特斯拉 Cybertruck 为顶配的出行组合。最低档商品同样实物发货。"),
   "urban-mobility": ("都市出行", "以城市通勤工具为核心。电动滑板车与折叠自行车位于上层。"),
   "apex-workstation": ("巅峰工作站", "以 MacBook Pro M4 Max 为顶配的生产力装备组合，外设亦实物发货。"),
@@ -852,7 +852,7 @@ def build(locale, boxes, items):
         if locale == "ko":
             prod["boxes"][slug] = {"title": b["ko"], "tagline": b["tagline"], "badge": ui["badges"][badge_key]}
         elif locale == "en":
-            title = b["en"].title().replace("Gpu", "GPU")
+            title = b["en"].title().replace("Gpu", "GPU").replace("Ps5", "PS5").replace("Iphone", "iPhone").replace("Macbook", "MacBook").replace("Rtx", "RTX").replace("Hermes And Chanel", "Hermès & Chanel").replace("M4", "M4")
             prod["boxes"][slug] = {"title": title, "tagline": EN_TAGLINE[slug], "badge": ui["badges"][badge_key]}
         else:
             zt, ztag = ZH_BOX[slug]
@@ -863,18 +863,18 @@ def build(locale, boxes, items):
 
 
 EN_TAGLINE = {
-  "dollar-apple": "$1 for an iPhone 16 Pro. Miss, 0.85 USDT instant cashback.",
-  "dollar-galaxy": "$1 for a Galaxy Z Fold8. Miss, 0.85 USDT instant cashback.",
-  "dollar-gaming": "$1 for RTX 5090 or Switch 2. Miss, 0.85 USDT instant cashback.",
-  "starter-ps5": "$3 for a PS5 Pro. Miss, 2.65 USDT instant cashback.",
-  "starter-macbook": "$5 for a MacBook Pro M4 Max. Miss, 4.4 USDT instant cashback.",
-  "starter-phone": "$5 for an iPhone 17 Pro Max. Miss, 4.4 USDT instant cashback.",
-  "vault-submariner": "$20 for a Rolex Submariner. Miss, 18.5 USDT instant cashback.",
-  "vault-omega": "$25 for Omega, Tudor, Tissot. Miss, 23 USDT instant cashback.",
-  "vault-handbag": "$30 for a Hermès Birkin. Miss, 27.5 USDT instant cashback.",
-  "vault-gold": "$50 for a 1kg gold bar. Miss, 46 USDT instant cashback.",
-  "jackpot-cybertruck": "$100 for a Cybertruck. Miss, 95 USDT instant cashback.",
-  "jackpot-supercar": "$100 for a Porsche 911. Miss, 95 USDT instant cashback.",
+  "dollar-apple": "$1 for an iPhone 16 Pro. Miss, 0.85 USDT instant payback.",
+  "dollar-galaxy": "$1 for a Galaxy Z Fold8. Miss, 0.85 USDT instant payback.",
+  "dollar-gaming": "$1 for RTX 5090 or Switch 2. Miss, 0.85 USDT instant payback.",
+  "starter-ps5": "$3 for a PS5 Pro. Miss, 2.65 USDT instant payback.",
+  "starter-macbook": "$5 for a MacBook Pro M4 Max. Miss, 4.4 USDT instant payback.",
+  "starter-phone": "$5 for an iPhone 17 Pro Max. Miss, 4.4 USDT instant payback.",
+  "vault-submariner": "$20 for a Rolex Submariner. Miss, 18.5 USDT instant payback.",
+  "vault-omega": "$25 for Omega, Tudor, Tissot. Miss, 23 USDT instant payback.",
+  "vault-handbag": "$30 for a Hermès Birkin. Miss, 27.5 USDT instant payback.",
+  "vault-gold": "$50 for a 1kg gold bar. Miss, 46 USDT instant payback.",
+  "jackpot-cybertruck": "$100 for a Cybertruck. Miss, 95 USDT instant payback.",
+  "jackpot-supercar": "$100 for a Porsche 911. Miss, 95 USDT instant payback.",
   "cybertruck-dream": "A mobility lineup topped by one Tesla Cybertruck. Even the lowest tier ships as a physical item.",
   "urban-mobility": "Built around city commuting. E-scooters and folding bikes sit at the top.",
   "apex-workstation": "A workstation lineup topped by the MacBook Pro M4 Max. Peripherals ship as physical items too.",

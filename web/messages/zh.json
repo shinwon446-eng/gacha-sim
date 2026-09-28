@@ -15,8 +15,8 @@
     "heroLine1": "不必再怀疑概率，",
     "heroLine2": "一个 VOILA 就够了。",
     "heroSub": "无法篡改的 SHA-256 链上公平性、95% USDT 极速兑现，以及通过专业鉴定机构精密检验后的 100% 正品免费特快配送。",
-    "scrollHint": "向下滚动，金库将开启",
-    "lineupTitle": "金库里摆着什么",
+    "scrollHint": "向下滚动，盲盒将开启",
+    "lineupTitle": "盲盒里现在有什么",
     "lineupSub": "当前开放 {boxes} 个盲盒，{categories} 大奢品阵容",
     "catWatch": "瑞士腕表",
     "catTech": "高端科技",
@@ -32,7 +32,7 @@
     "s1AttemptsNote": "同样预算下的实际挑战次数",
     "s1Assume": "对比值基于明示假设计算，不指向任何具体公司。公式就在上方，欢迎自行验算。",
     "s1MockTitle": "开箱完成",
-    "s1MockCta": "95% USDT 即时兑现",
+    "s1MockCta": "💰 立即拿回 95%",
     "s1MockWallet": "钱包余额",
     "s2Eyebrow": "SHA-256 可证明公平",
     "s2Title": "我们不要求信任，请用数学亲自验证。",
@@ -47,13 +47,13 @@
     "s2Verify": "打开公平性验证器",
     "feedTitle": "全球实时动态",
     "feedSub": "这里只流动真实发生的开箱、兑现与发货",
-    "feedLineup": "公开头奖阵容",
+    "feedLineup": "公开商品阵容",
     "feedEmptyTitle": "本设备暂无记录",
     "feedEmptyNote": "我们不会用虚构的他人中奖来填充。服务器统计接入后，全球记录将在此流动。",
     "feedNet": "支持 USDT TRC-20 与 BEP-20 出入金",
     "feedShip": "关税与运费由平台承担",
     "statsTitle": "用数字看 VOILA",
-    "statJackpot": "当前投放的头奖商品总价值",
+    "statJackpot": "当前投放的商品定价总额",
     "statSellback": "即时返还率",
     "statMutable": "开箱后运营方可更改的结果",
     "statMutableSub": "因为种子哈希已先行公开",
@@ -81,9 +81,9 @@
     "faqQ2": "如果商品不是正品怎么办？",
     "faqA2": "只有通过专业鉴定机构检验的商品才会发出；一旦确认为仿品，按商品价值的 {n} 倍赔付。",
     "faqQ3": "兑现有多快？",
-    "faqA3": "在仓库点击［95% 即时折现］，余额立刻到账，没有审批排队。",
+    "faqA3": "在仓库点击［立即拿回 95%］，余额立刻到账，没有审批排队。",
     "faqQ4": "提现流程是怎样的？",
-    "faqA4": "USDT 充值部分在满足流水要求后可经 TRC-20 或 BEP-20 提现。银行卡充值部分不会上链提出，仅用于开箱、配送与退卡。",
+    "faqA4": "USDT 充值部分在满足基础使用标准后可经 TRC-20 或 BEP-20 提现。银行卡充值部分不会上链提出，仅用于开箱、配送与退卡。",
     "faqQ5": "怎么确信结果没有被操纵？",
     "faqA5": "不必相信我们。把开箱前拿到的服务器种子哈希，与开箱后公开的服务器种子亲自比对即可。验证器会为你重新计算每一条记录。",
     "ctaTitle": "奢侈的新标准，现在就开始。",
@@ -109,23 +109,23 @@
     "guaranteedMin": "保底价值 {value}",
     "aboveOpenPrice": "不低于开启价",
     "openNow": "立即开启",
-    "viewContents": "看看里面",
+    "viewContents": "查看商品与概率",
     "billboardPicker": "选择展示",
     "billboardOf": "{title} 展示",
-    "headline": "1 美元，博劳力士和 iPhone。",
-    "headline1": "1 美元，",
-    "headline2": "博劳力士和 iPhone。",
-    "sub": "中了 100% 真归你，没中也立即折现 95%！",
-    "sub1": "中了 100% 真归你，",
-    "sub2": "没中也立即折现 95%！",
-    "freeTry": "免费试玩",
-    "openFor": "🔥 {price} 开一发",
-    "badge": "1 美元起的奢品头奖",
-    "poolLabel": "LIVE JACKPOT POOL",
-    "poolLabelShort": "JACKPOT POOL",
-    "poolNote": "当前开放的 {n} 个盲盒最高奖品价值合计（公开阵容）",
+    "headline": "1 美元开启劳力士与 iPhone，现在就开箱。",
+    "headline1": "1 美元开启劳力士与 iPhone，",
+    "headline2": "现在就开箱。",
+    "sub": "中奖即 100% 正品免费送到家，开到其他商品也能立即拿回 95%。",
+    "sub1": "中奖即 100% 正品免费送到家，",
+    "sub2": "开到其他商品也能立即拿回 95%。",
+    "freeTry": "免费试开一箱",
+    "openFor": "📦 {price} 开启盲盒",
+    "badge": "1 美元起的奢品开箱",
+    "poolLabel": "TOTAL PRIZE VALUE",
+    "poolLabelShort": "PRIZE POOL",
+    "poolNote": "当前可开启的 {n} 个盲盒最高商品定价合计",
     "bigWin": "🔥 LIVE BIG WIN",
-    "bigWinGoal": "🎯 本周头奖挑战目标",
+    "bigWinGoal": "🎯 本周最高挑战商品",
     "nowShowing": "正在上映",
     "topMultipleShort": "最高 {n}"
   },
@@ -135,9 +135,9 @@
     "guaranteedMinShort": "保底 {value}",
     "noBlankBadge": "100% 不落空 · 最低 {value} 保底",
     "noBlankShort": "不落空 · 保底 {value}",
-    "settleBadge": "全品类 95% USDT 即时结算",
-    "settleShort": "95% 即时结算",
-    "upTo": "最高 {n} 头奖",
+    "settleBadge": "全品类 95% 即时返现保障",
+    "settleShort": "95% 即时返现",
+    "upTo": "最高 {n}",
     "rtp": "RTP {rate}%",
     "floorPct": "最低 {pct}% 返还",
     "guaranteed": "保底",
@@ -154,7 +154,7 @@
   "mobileNav": {
     "aria": "快捷导航",
     "home": "首页",
-    "dollar": "1美元大奖",
+    "dollar": "1 美元盲盒",
     "vault": "保管箱",
     "deposit": "充值 (+)",
     "wallet": "钱包(存提)"
@@ -197,7 +197,7 @@
     "doneCta": "确定"
   },
   "hot": {
-    "title": "🔥 实时最热头奖盲盒 TOP 3",
+    "title": "🔥 实时人气盲盒 TOP 3",
     "subtitle": "按人气指数",
     "heat": "{deg}°C HOT",
     "upTo": "最高 {n} 倍",
@@ -216,7 +216,7 @@
     "myOutside": "我的排名：未进前 5",
     "myBest": "· 本周最高 {n} 倍",
     "myNone": "本周还没有记录 · 冲进前 5 领取奖金！",
-    "cta": "🚀 开启头奖盲盒冲榜",
+    "cta": "🚀 开箱冲榜",
     "scopeNote": "排行榜只统计真实开箱记录。在服务器统计接入之前仅显示本设备的记录，空缺名次不会用虚构中奖者填充。"
   },
   "categories": {
@@ -230,7 +230,7 @@
     "dollar": "🔥 1 美元的幸福",
     "tech": "⚡ 苹果与高端科技",
     "luxury": "👑 奢侈名品与瑞士腕表",
-    "jackpot": "🚗 超跑与纯金金条头奖"
+    "jackpot": "🚗 超跑与纯金金条"
   },
   "sorts": {
     "featured": "推荐",
@@ -258,17 +258,17 @@
     "topRank": "TOP {n}",
     "openNowPrice": "立即开启 · {price}",
     "viewOdds": "查看全部概率",
-    "openPrice": "开启价",
+    "openPrice": "盲盒价格",
     "guaranteedMin": "保底价值",
     "topPrize": "最高奖品",
     "topMultiple": "最高倍数",
     "tierOdds": "各等级中奖概率",
     "breakEven": "不低于 {price} 的概率 {rate}",
-    "explain": "等级并非存储值，而是由市场价 ÷ 开启价的倍数推导。每次开启的期望市场价为 {ev}，相当于开启价的 {retail}。若即时回收，仅按市场价的 {refund} 支付，因此按现金计算的回收率为 {cash}，低于开启价。",
+    "explain": "等级并非存储值，而是由市场价 ÷ 盲盒价格的倍数推导。每次开启的期望市场价为 {ev}，相当于盲盒价格的 {retail}。若即时返现，仅按市场价的 {refund} 支付，因此按现金计算的回收率为 {cash}，低于开启价。",
     "guaranteedYes": "本盲盒的保底档为 {min} 即时返现——开箱即刻 100% 计入余额。",
     "guaranteedNo": "本盲盒的保底档为 {min} 即时返现——开箱即刻 100% 计入余额。",
-    "settleBadge": "⚡ 全品类一键 95% USDT 即时结算，可提现至个人钱包",
-    "settleBody": "实物与礼品卡可一键按市场价 95% 折现为 USDT；USDT 返现与即时到账在开箱时 100% 计入余额。余额可提现至 TRC-20 / BEP-20 个人钱包。",
+    "settleBadge": "⚡ 全品类一键 95% 即时返现 · 保证可提现至个人钱包",
+    "settleBody": "实物与礼品卡可一键按市场价 95% 返现；USDT 返现与即时到账在开箱时 100% 计入余额。余额可提现至 TRC-20 / BEP-20 个人钱包。",
     "allPrizes": "全部可得商品",
     "count": "{n} 件",
     "sortedByValue": "按市场价降序",
@@ -276,9 +276,9 @@
     "odds": "概率",
     "tierLabel": "等级",
     "tierBar": "等级构成",
-    "upToLabel": "最高头奖",
-    "rtpLabel": "返还率 RTP",
-    "floorLabel": "保底",
+    "upToLabel": "最高回报",
+    "rtpLabel": "期望价值比",
+    "floorLabel": "最低返现",
     "floorPct": "最低 {pct}%",
     "preciseOddsLink": "公平性验证 (Provably Fair)",
     "preciseOdds": "精确概率表 · Provably Fair",
@@ -360,7 +360,7 @@
     "openN": "连续开启 ×{n}",
     "upgrade": "UPGRADE!",
     "openBulk": "🚀 一次批量开启 {n} 个 ({amount})",
-    "openAllIn": "👑 {n} 个全押头奖批量开启 ({amount})",
+    "openAllIn": "👑 {n} 个批量开启 ({amount})",
     "openNow": "🔥 立即开启 {n} 个 ({amount})",
     "preset": {
       "1": "开 1 个",
@@ -369,15 +369,15 @@
       "50": "批量开 50 个",
       "100": "全押 100 个"
     },
-    "qtyNote": "按所选数量一次性开启；命中史诗/头奖时触发 3D 高亮。",
+    "qtyNote": "按所选数量一次性开启；开出最高等级商品时触发 3D 高亮。",
     "qty": "开启数量",
     "autoStop": "⏹ 停止（剩余 {n} 次）",
     "autoSpent": "投入",
     "autoWon": "获得",
     "autoNet": "净损益",
     "autoStopped": {
-      "spins": "自动旋转完成",
-      "jackpot": "👑 命中头奖 — 自动停止",
+      "spins": "连续开箱完成",
+      "jackpot": "👑 开出最高等级商品 — 自动停止",
       "multiple": "达到目标倍数 — 自动停止",
       "stopLoss": "达到止损 — 自动停止",
       "balance": "余额不足 — 停止",
@@ -388,22 +388,22 @@
     "trialBody": "用 {bonus} 新人奖励开启真实盲盒吧！",
     "trialCta": "领取奖励并开启真实盲盒",
     "trialCtaClaimed": "开启真实盲盒",
-    "trialNote": "免费试玩结果不参与配送与折现。真正开箱请点上方按钮。",
+    "trialNote": "免费试开结果不参与配送与返现。真正开箱请点上方按钮。",
     "spinning": "开启中…",
     "landing": "结果已锁定",
     "result": "获得",
     "results": "{n} 次结果",
     "total": "总价值",
     "paid": "已支付 {price}",
-    "sellBack": "95% 立即折现 · {amount}",
-    "sellBackAll": "全部 95% 立即折现 · {amount}",
-    "cashoutCta": "⚡ 95% USDT 即时折现",
+    "sellBack": "立即拿回 95% · {amount}",
+    "sellBackAll": "全部 立即拿回 95% · {amount}",
+    "cashoutCta": "💰 立即拿回 95%",
     "noFee": "0 手续费",
     "shipSub": "实物 · 免费配送",
     "cashCredited": "{amount} 已即时计入余额",
     "respin": "🔥 {price} 再来一发",
     "sellBackNote": "按市场价的 {rate} 即时计入余额",
-    "sold": "已折现 — 余额 +{amount}",
+    "sold": "已返现 — 余额 +{amount}",
     "claimShipping": "寄到家",
     "shippingNotice": "国际运费与关税说明",
     "shippingBody": "目的地关税/增值税及国际运费（DHL/FedEx 实付）另行收取。",
@@ -524,7 +524,7 @@
     "txDepositCard": "信用卡充值",
     "txDepositUsdt": "USDT 充值",
     "txOpen": "开启盲盒",
-    "txSellback": "即时回收"
+    "txSellback": "即时返现"
   },
   "inventory": {
     "title": "仓库",
@@ -534,46 +534,46 @@
     "summary": "共 {n} 件 · 仓库总价值 {value}",
     "storedCount": "保管中 {n}",
     "shippingCount": "发货 {n}",
-    "soldCount": "已回收 {n}",
+    "soldCount": "已返现 {n}",
     "filterStatus": "状态",
     "filterTier": "等级",
     "all": "全部",
     "tabHeld": "持有中 ({n})",
     "tabDone": "已处理 ({n})",
-    "cashableValue": "可即时折现总价值",
+    "cashableValue": "可立即拿回的总金额",
     "withdrawBalance": "🚀 提现余额",
-    "doneSold": "95% 折现完成 +{amount}",
+    "doneSold": "95% 返现完成 +{amount}",
     "doneCash": "返现已计入 +{amount}",
     "archived": "已处理",
     "doneShipping": "已发货",
     "donePreparing": "备货中",
-    "emptyDone": "暂无已处理记录。折现或发货的商品会归档在这里。",
+    "emptyDone": "暂无已处理记录。回售或发货的商品会归档在这里。",
     "status": {
       "IN_STORAGE": "保管中",
       "SHIPPING_REQUESTED": "备货中",
       "SHIPPING": "运输中",
-      "SOLD": "已回收"
+      "SOLD": "已返现"
     },
     "acquired": "获得于 {date}",
     "from": "{box}",
     "soldFor": "已退回 {amount}",
     "tracking": "运单号",
     "trackingPending": "等待运单号",
-    "sell": "⚡ 95% USDT 即时折现",
+    "sell": "💰 立即拿回 95%",
     "noFee": "0 手续费",
     "ship": "📦 寄到我家",
-    "sellShort": "⚡ 95% 即时折现",
+    "sellShort": "💰 拿回 95%",
     "shipShort": "📦 寄到家",
     "verify": "1 秒公平性验证",
     "select": "选择",
     "selected": "已选 {n} 件",
     "selectAll": "全选",
     "clearSelection": "取消选择",
-    "sellSelected": "所选按 {rate} 批量折现",
+    "sellSelected": "所选商品拿回 {rate}",
     "selectedValue": "总价值：",
     "soldForLabel": "已退回",
     "totalValue": "仓库总资产",
-    "sellAll": "全部 95% 折现",
+    "sellAll": "全部立即拿回 95%",
     "sort": "排序",
     "sorts": {
       "newest": "最新",
@@ -602,12 +602,12 @@
     "stepCurrent": "当前环节",
     "trackingNote": "出库完成后，物流公司与运单号会显示在此，并开放实时查询链接。",
     "trackingIssuedNote": "运单已生成。可在 {carrier} 官方查询页面实时查看配送状态。",
-    "sellTitle": "95% 即时回收",
-    "sellBody": "确定回收该商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
-    "sellBodyMulti": "确定回收 {n} 件商品？市场价的 {rate}（{amount}）将即时计入账户余额。",
+    "sellTitle": "💰 立即拿回 95%",
+    "sellBody": "确定回售该商品？市场价的 {rate}（{amount}）将立即计入余额。",
+    "sellBodyMulti": "确定回售 {n} 件商品？市场价的 {rate}（{amount}）将立即计入余额。",
     "confirm": "确认",
     "cancel": "取消",
-    "soldToast": "已回收 — 余额 +{amount}",
+    "soldToast": "已返现 — 余额 +{amount}",
     "shipTitle": "申请发货",
     "shipBody": "国际运费从余额中扣除，目的地关税与增值税在签收时另行支付。",
     "recipient": "收件人姓名",
@@ -697,27 +697,27 @@
     "close": "关闭"
   },
   "gate": {
-    "stage1": "解锁金库转轮",
+    "stage1": "解锁盲盒转盘",
     "stage2": "正在解除封印"
   },
   "autoplay": {
     "eyebrow": "Autoplay",
-    "title": "自动旋转设置",
+    "title": "自动连续开箱",
     "close": "关闭",
     "perSpin": "次",
-    "spins": "旋转次数",
+    "spins": "开箱次数",
     "times": "{n} 次",
     "budget": "最多投入 {amount}",
-    "autoSell": "⚡ 所有中奖品 95% USDT 即时自动折现（余额自动补充）",
-    "autoSellBody": "实物与礼品卡按市场价 95% 立即折现补充余额。USDT 返现一如既往 100% 即时计入。",
-    "smartStop": "智能停止条件",
-    "stopJackpot": "👑 命中史诗/传说（头奖）时立即停止",
-    "stopMultiple": "单次赢得 N 倍以上时停止",
+    "autoSell": "⚡ 中奖商品 95% 自动回售（余额自动返现）",
+    "autoSellBody": "实物与礼品卡按市场价 95% 立即回售补充余额。USDT 返现一如既往 100% 即时计入。",
+    "smartStop": "自动停止条件",
+    "stopJackpot": "👑 开出最高等级商品时自动停止",
+    "stopMultiple": "达到目标价值（倍数）时自动停止",
     "multipleUnit": "倍以上",
-    "stopLoss": "达到止损额度时停止",
-    "stopLossUnit": "累计亏损",
-    "start": "🔄 开始自动旋转 · {n} 次",
-    "button": "🔄 自动旋转 {n} 次"
+    "stopLoss": "达到预算上限时停止",
+    "stopLossUnit": "累计消费",
+    "start": "🔄 开始连续开箱 · {n} 次",
+    "button": "🔄 连续开箱 {n} 次"
   },
   "bulk": {
     "eyebrow": "批量开启 · {n} 个",
@@ -725,15 +725,15 @@
     "spent": "总投入",
     "won": "总获得价值",
     "net": "净损益",
-    "sellAll": "⚡ {n} 件 95% 即时折现",
+    "sellAll": "💰 {n} 件立即拿回 95%",
     "keep": "留在仓库"
   },
   "ticker": {
     "label": "实时开箱动态",
     "live": "LIVE",
-    "lineup": "{box} · {item} {mult} 头奖",
+    "lineup": "{box} · {item} 最高 {mult}",
     "win": "{box} ➔ 开出 {item}",
-    "cashout": "已折现 {amount}",
+    "cashout": "已返现 {amount}",
     "ship": "申请发货 {item}",
     "ago": "（{s} 秒前）"
   },
@@ -743,18 +743,18 @@
     "step1Desc": "1 美元起。劳力士、特斯拉、苹果。",
     "step2Title": "公平开箱",
     "step2Desc": "SHA-256 封存，无法篡改。",
-    "step3Title": "发货或 95% 折现",
-    "step3Desc": "免费寄到家，或 1 秒折现 USDT。"
+    "step3Title": "发货或拿回 95%",
+    "step3Desc": "免费寄到家，或 1 秒拿回 USDT。"
   },
   "counters": {
     "label": "信任指标",
     "shipments": "今日已出库实物",
     "shipmentsUnit": "件",
-    "cashouts": "今日已结算折现",
+    "cashouts": "今日已返现金额",
     "verification": "公平性验证完成率",
     "odds": "已公开概率项",
     "oddsUnit": "项",
-    "sellback": "即时折现率",
+    "sellback": "即时返现率",
     "verifiedOf": "我的 {n} 次开箱已复核"
   },
   "proof": {
@@ -766,7 +766,7 @@
     },
     "kind": {
       "withdraw": "提现",
-      "sellback": "即时回收"
+      "sellback": "即时返现"
     },
     "viewOnExplorer": "在 {explorer} 查看",
     "track": "运单追踪",
@@ -785,10 +785,10 @@
     "emptyShipments": "暂无发货记录。",
     "emptyCta": "去开盲盒",
     "factVerify": "每次开箱结果都由开箱前公开的 SHA-256 哈希封存；公开服务器种子后任何人都可复现。",
-    "factRefund": "中奖实物可按市场价 95% 即时折现为 USDT，USDT 返现 100% 即时入账。",
+    "factRefund": "中奖实物可按市场价 95% 立即拿回 USDT，USDT 返现 100% 即时入账。",
     "factFee": "提现仅收网络实费 —— TRC-20 1 USDT / BEP-20 0.5 USDT；境内运费当前免费。",
     "pendingTx": "等待广播",
-    "settledInstant": "即时结算"
+    "settledInstant": "即时返现"
   },
   "withdraw": {
     "title": "USDT 提现",
@@ -796,7 +796,7 @@
     "available": "可提现余额",
     "availableCrypto": "可提现余额（USDT 充值）",
     "cardLocked": "仅限开箱与配送（信用卡充值）",
-    "cardLockedNote": "信用卡充值及其折现金额只能用于开启盲盒、实物配送或原卡退款，不可链上提现。",
+    "cardLockedNote": "信用卡充值及其返现金额只能用于开启盲盒、实物配送或原卡退款，不可链上提现。",
     "network": "提现网络",
     "address": "收款钱包地址",
     "addressHint": "以 {hint} 开头的地址",
@@ -846,18 +846,18 @@
     "quickMax": "全额提现",
     "submitAmount": "🚀 立即提现 {amount} 到我的钱包",
     "submitting": "正在准备链上转账…",
-    "amlTitle": "🛡️ 反洗钱(AML)规定",
-    "amlRule": "流水进度达到 100% 方可提现",
+    "amlTitle": "🛡️ 安全提现使用标准",
+    "amlRule": "充值金额基础使用率达到 100% 即可立即提现",
     "amlProgress": "当前进度 {pct}%",
-    "amlRemaining": "再开启 {amount} 即可提现",
-    "amlMet": "✓ 流水已达标（可提现）",
-    "amlBlocked": "根据反洗钱规定，流水达到 100% 后方可提现。（当前：{pct}%）",
+    "amlRemaining": "再开启 {amount} 的盲盒即可立即提现",
+    "amlMet": "✓ 使用标准已达成（可立即提现）",
+    "amlBlocked": "根据安全交易规定，完成充值金额的基础使用（100%）后方可提现。（当前：{pct}%）",
     "amlWhy": "此规定用于阻断充值后立刻转出的诈骗与洗钱资金。没有充值记录的余额不受影响。",
-    "amlDeposited": "累计充值",
-    "amlWagered": "累计开启",
-    "amlRequired": "所需流水",
-    "amlCurrent": "已完成流水",
-    "amlGrinding": "保底折现率 90% 以上的超低风险盲盒，开启金额仅按 {pct}% 计入流水——无法用无风险刷量绕过规定。"
+    "amlDeposited": "累计充值金额",
+    "amlWagered": "累计购买金额",
+    "amlRequired": "所需使用金额",
+    "amlCurrent": "已达成使用金额",
+    "amlGrinding": "最低返现 90% 以上的低风险盲盒，购买金额仅按 {pct}% 计入使用金额——无法用无风险刷量绕过标准。"
   },
   "vip": {
     "title": "VIP 等级 {tier}",
@@ -877,18 +877,18 @@
     "support": "客户支持",
     "links": {
       "dollar": "1 美元盲盒",
-      "vault": "奢品金库",
+      "vault": "奢品系列",
       "feed": "实时支付动态",
       "verifier": "公平性验证器",
       "terms": "服务条款",
       "privacy": "隐私政策",
-      "policy": "发货与 95% 折现政策",
+      "policy": "发货与 95% 返现政策",
       "faq": "常见问题",
       "telegram": "Telegram 24/7 在线客服",
       "discord": "官方 Discord",
       "notice": "公告频道"
     },
-    "disclaimer": "VOILA 是面向全球用户的电商盲盒平台。所有开箱结果均通过不可篡改的 SHA-256 算法透明公开，中奖商品保证 100% 实物发货或即时折现为 USDT。"
+    "disclaimer": "VOILA 是面向全球用户的电商盲盒平台。所有开箱结果均通过不可篡改的 SHA-256 算法透明公开，中奖商品保证 100% 实物免费配送或 95% 即时返现。"
   },
   "legalDocs": {
     "eyebrow": "使用指南",
@@ -898,11 +898,11 @@
       "sections": [
         {
           "h": "1. 服务",
-          "p": "VOILA 销售概率完全公开的盲盒，中奖商品可实物发货，或按市场价 95% 即时折现为 USDT。"
+          "p": "VOILA 销售概率完全公开的盲盒，中奖商品可实物发货，或按市场价 95% 立即拿回 USDT。"
         },
         {
           "h": "2. 账户与余额",
-          "p": "余额以 USDT 计。充值、提现、开箱与折现均记录为交易，仅用于购买与提现。"
+          "p": "余额以 USDT 计。充值、提现、开箱与返现均记录为交易，仅用于购买与提现。"
         },
         {
           "h": "3. 概率与公平",
@@ -910,7 +910,7 @@
         },
         {
           "h": "4. 取消与退款",
-          "p": "开箱开始后不可取消。中奖商品可随时选择 95% 折现或实物发货。"
+          "p": "开箱开始后不可取消。中奖商品可随时选择 95% 返现或实物发货。"
         },
         {
           "h": "5. 责任",
@@ -944,11 +944,11 @@
       ]
     },
     "policy": {
-      "title": "发货与 95% 折现政策",
+      "title": "发货与 95% 返现政策",
       "sections": [
         {
-          "h": "1. 即时折现",
-          "p": "仓库中的中奖商品可随时按市场价 95% 即时折现为 USDT，即刻计入余额。"
+          "h": "1. 即时返现",
+          "p": "仓库中的中奖商品可随时按市场价 95% 立即拿回 USDT，即刻计入余额。"
         },
         {
           "h": "2. 实物发货",
@@ -960,7 +960,7 @@
         },
         {
           "h": "4. 保底价值",
-          "p": "每个盲盒的最低商品都能以开启价 80% 以上的价值即时折现。"
+          "p": "每个盲盒的最低商品都能以盲盒价格 80% 以上的价值立即返现。"
         }
       ]
     },
@@ -977,7 +977,7 @@
         },
         {
           "h": "可以不要实物直接拿现金吗？",
-          "p": "随时可以 — 在仓库中按市场价 95% 折现为 USDT。"
+          "p": "随时可以 — 在仓库中按市场价 95% 拿回 USDT。"
         },
         {
           "h": "提现需要多久？",
@@ -987,12 +987,12 @@
     }
   },
   "actions": {
-    "sellBack": "95% 即时回收",
+    "sellBack": "💰 立即拿回 95%",
     "claimShipping": "寄到家",
     "provablyFair": "公平性验证"
   },
   "legal": {
-    "disclaimer": "所示金额均为市场价。即时折现按市场价的 {refund} 支付，因此现金回收额低于开启价。全部概率在「看看里面有什么」中完整公开。"
+    "disclaimer": "所示金额均为市场价。回售按市场价的 {refund} 支付，因此返现金额低于盲盒价格。全部概率在「查看商品与概率」中完整公开。"
   },
   "badges": {
     "dream": "梦想盲盒",
@@ -1009,63 +1009,63 @@
   "products": {
     "boxes": {
       "dollar-apple": {
-        "title": "1 美元苹果大奖",
-        "tagline": "1 美元博 iPhone 16 Pro。没中退 0.85 USDT。",
+        "title": "1 美元苹果盒",
+        "tagline": "1 美元挑战 iPhone 16 Pro。未中奖立即返还 0.85 USDT。",
         "badge": "1 美元"
       },
       "dollar-galaxy": {
-        "title": "1 美元 Galaxy 大奖",
-        "tagline": "1 美元博 Galaxy Z Fold8。没中退 0.85 USDT。",
+        "title": "1 美元 Galaxy 盒",
+        "tagline": "1 美元挑战 Galaxy Z Fold8。未中奖立即返还 0.85 USDT。",
         "badge": "1 美元"
       },
       "dollar-gaming": {
-        "title": "1 美元游戏大奖",
-        "tagline": "1 美元博 RTX 5090、Switch 2。没中退 0.85 USDT。",
+        "title": "1 美元游戏盒",
+        "tagline": "1 美元挑战 RTX 5090、Switch 2。未中奖立即返还 0.85 USDT。",
         "badge": "1 美元"
       },
       "starter-ps5": {
-        "title": "咖啡价 PS5 入门",
-        "tagline": "3 美元博 PS5 Pro。没中退 2.5 USDT。",
+        "title": "PS5 Pro 入门盒",
+        "tagline": "3 美元挑战 PS5 Pro。未中奖立即返还 2.65 USDT。",
         "badge": "科技"
       },
       "starter-macbook": {
-        "title": "咖啡汉堡 MacBook 大奖",
-        "tagline": "5 美元博 MacBook Pro M4 Max。没中退 4.2 USDT。",
+        "title": "MacBook Pro M4 盒",
+        "tagline": "5 美元挑战 MacBook Pro M4 Max。未中奖立即返还 4.4 USDT。",
         "badge": "科技"
       },
       "starter-phone": {
-        "title": "5 美元 iPhone 17 大奖",
-        "tagline": "5 美元博 iPhone 17 Pro Max。没中退 4.2 USDT。",
+        "title": "iPhone 17 Pro 盒",
+        "tagline": "5 美元挑战 iPhone 17 Pro Max。未中奖立即返还 4.4 USDT。",
         "badge": "科技"
       },
       "vault-submariner": {
-        "title": "劳力士潜航者金库",
-        "tagline": "20 美元博劳力士潜航者。没中退 17.5 USDT。",
+        "title": "劳力士潜航者系列",
+        "tagline": "20 美元挑战劳力士潜航者。未中奖立即返还 18.5 USDT。",
         "badge": "腕表"
       },
       "vault-omega": {
-        "title": "瑞士腕表金库",
-        "tagline": "25 美元博欧米茄、帝舵、天梭。没中退 21.8 USDT。",
+        "title": "瑞士奢华腕表系列",
+        "tagline": "25 美元挑战欧米茄、帝舵、天梭。未中奖立即返还 23 USDT。",
         "badge": "腕表"
       },
       "vault-handbag": {
-        "title": "奢侈手袋金库",
-        "tagline": "30 美元博爱马仕 Birkin。没中退 26 USDT。",
+        "title": "爱马仕与香奈儿精品店",
+        "tagline": "30 美元挑战爱马仕 Birkin。未中奖立即返还 27.5 USDT。",
         "badge": "奢侈品"
       },
       "vault-gold": {
-        "title": "金条金库",
-        "tagline": "50 美元博 1kg 金条。没中退 43.7 USDT。",
+        "title": "足金金条系列",
+        "tagline": "50 美元挑战 1kg 金条。未中奖立即返还 46 USDT。",
         "badge": "黄金"
       },
       "jackpot-cybertruck": {
-        "title": "Cybertruck 头奖",
-        "tagline": "100 美元博 Cybertruck。没中退 95 USDT。",
+        "title": "特斯拉 Cybertruck 版",
+        "tagline": "100 美元挑战 Cybertruck。未中奖立即返还 95 USDT。",
         "badge": "梦想盲盒"
       },
       "jackpot-supercar": {
-        "title": "超跑头奖",
-        "tagline": "100 美元博保时捷 911。没中退 95 USDT。",
+        "title": "保时捷 911 超跑版",
+        "tagline": "100 美元挑战保时捷 911。未中奖立即返还 95 USDT。",
         "badge": "梦想盲盒"
       }
     },

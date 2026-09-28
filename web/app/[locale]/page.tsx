@@ -197,7 +197,9 @@ export default function BoxesPage() {
         {/* 데스크톱 텍스트 내비 — 모바일은 하단 고정 내비(MobileBottomNav)가 대신한다 */}
         <nav className="hidden min-w-0 flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap text-[12px] text-muted [scrollbar-width:none] sm:gap-4 md:flex">
           <span className="font-semibold text-white">{t("nav.boxes")}</span>
-          <span className="cursor-default opacity-60">{t("nav.battles")}</span>
+          <Link href="/about" className="transition-colors hover:text-white">
+            {t("nav.about")}
+          </Link>
           <Link href="/inventory" className="transition-colors hover:text-white">
             {t("nav.inventory")}
           </Link>

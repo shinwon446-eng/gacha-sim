@@ -19,9 +19,9 @@ import { imageFor } from "@/lib/productImages";
 
 /** 볼트 안에서 떠오르는 3점 — id 는 lib/productImages.ts 의 실제 자산 키 */
 const REVEALS = [
-  { id: "vault-submariner", x: "-26%", y: "-6%", size: "w-[38%] max-w-[240px]", from: 0.18, rot: -8, delay: 0 },
-  { id: "jackpot-cybertruck", x: "0%", y: "4%", size: "w-[54%] max-w-[380px]", from: 0.1, rot: 0, delay: 0.4 },
-  { id: "vault-gold", x: "27%", y: "-2%", size: "w-[36%] max-w-[230px]", from: 0.26, rot: 9, delay: 0.8 },
+  { id: "vault-submariner", x: "-30%", y: "0%", size: "w-[30%] max-w-[190px]", from: 0.18, rot: -8, delay: 0 },
+  { id: "jackpot-cybertruck", x: "0%", y: "6%", size: "w-[42%] max-w-[300px]", from: 0.1, rot: 0, delay: 0.4 },
+  { id: "vault-gold", x: "31%", y: "2%", size: "w-[30%] max-w-[190px]", from: 0.26, rot: 9, delay: 0.8 },
 ] as const;
 
 function Reveal({ progress, spec }: { progress: MotionValue<number>; spec: (typeof REVEALS)[number] }) {
@@ -32,7 +32,7 @@ function Reveal({ progress, spec }: { progress: MotionValue<number>; spec: (type
   return (
     <motion.div
       className={cn("absolute", spec.size)}
-      style={{ left: `calc(50% + ${spec.x})`, top: `calc(46% + ${spec.y})`, x: "-50%", y, scale, opacity, rotate: spec.rot }}
+      style={{ left: `calc(50% + ${spec.x})`, top: `calc(62% + ${spec.y})`, x: "-50%", y, scale, opacity, rotate: spec.rot }}
     >
       {/* 부유 — 스크롤과 무관한 상시 루프 */}
       <motion.div animate={{ y: [0, -14, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: spec.delay }}>
@@ -110,7 +110,8 @@ export function VaultHero({ className }: { className?: string }) {
         </motion.div>
 
         {/* 헤드라인 — 문이 열린 뒤 떠오른다 */}
-        <motion.div className="relative z-30 mx-auto max-w-4xl px-6 text-center" style={{ y: copyY, opacity: copyOpacity }}>
+        <motion.div className="absolute inset-x-0 top-[12%] z-30 mx-auto max-w-4xl px-6 text-center" style={{ y: copyY, opacity: copyOpacity }}>
+          <span aria-hidden className="pointer-events-none absolute inset-x-0 -inset-y-8 -z-10" style={{ background: "radial-gradient(60% 70% at 50% 45%, rgba(11,11,11,0.92) 0%, rgba(11,11,11,0.7) 55%, transparent 100%)" }} />
           <span className="border-metallic-gold inline-flex items-center rounded-full bg-obsidian/70 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-gold-champagne backdrop-blur-sm">
             {t("badge")}
           </span>

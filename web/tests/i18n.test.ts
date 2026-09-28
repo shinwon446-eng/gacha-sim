@@ -28,18 +28,18 @@ test("ko / en / zh 키 집합이 완전히 같다", () => {
 
 test("지정 문구가 정확히 들어 있다 (CLAUDE.md §2 구어체 카피)", () => {
   const spec: Record<string, [string, string, string]> = {
-    "hero.headline": ["1달러로 롤렉스 & 아이폰, 긁어보세요.", "$1. A shot at a Rolex & an iPhone.", "1 美元，博劳力士和 iPhone。"],
-    "hero.sub": ["터지면 100% 진짜 내 것. 안 떠도 95% 즉시 환전!", "Hit, it's 100% truly yours. Miss, 95% cashed out instantly!", "中了 100% 真归你，没中也立即折现 95%！"],
+    "hero.headline": ["1달러로 여는 롤렉스 & 아이폰, 지금 열어보세요.", "Open a Rolex or an iPhone, from $1.", "1 美元开启劳力士与 iPhone，现在就开箱。"],
+    "hero.sub": ["당첨되면 100% 정품 무료 배송, 다른 상품이어도 95% 바로 돌려받으세요.", "Win it and it ships free, 100% authentic. Get a different item and take 95% straight back.", "中奖即 100% 正品免费送到家，开到其他商品也能立即拿回 95%。"],
     "mobileNav.home": ["홈", "Home", "首页"],
-    "mobileNav.dollar": ["1달러 잭팟", "$1 Jackpot", "1美元大奖"],
+    "mobileNav.dollar": ["1달러 박스", "$1 Boxes", "1 美元盲盒"],
     "mobileNav.vault": ["내 보관함", "Vault", "保管箱"],
     "mobileNav.deposit": ["충전 (+)", "Deposit (+)", "充值 (+)"],
-    "hero.viewContents": ["뭐 들었나 보기", "What's inside", "看看里面"],
-    "hero.freeTry": ["손맛 보기 (무료)", "Try free", "免费试玩"],
-    "inventory.sell": ["⚡ 95% USDT 즉시 회수", "⚡ Cash out 95% USDT", "⚡ 95% USDT 即时折现"],
+    "hero.viewContents": ["구성품 · 확률 보기", "Contents & odds", "查看商品与概率"],
+    "hero.freeTry": ["무료로 미리 열어보기", "Try an unboxing, free", "免费试开一箱"],
+    "inventory.sell": ["💰 95% 바로 돌려받기", "💰 Take 95% back", "💰 立即拿回 95%"],
     "inventory.ship": ["📦 우리 집으로 배송", "📦 Ship to my door", "📦 寄到我家"],
     "hero.guaranteedMinLabel": ["최소 보장 금액", "Guaranteed Minimum", "保底价值"],
-    "actions.sellBack": ["95% 즉시 회수", "Cash out 95%", "95% 即时回收"],
+    "actions.sellBack": ["💰 95% 바로 돌려받기", "💰 Take 95% back", "💰 立即拿回 95%"],
     "actions.claimShipping": ["집으로 배송", "Ship to me", "寄到家"],
     "actions.provablyFair": ["공정성 검증", "Provably Fair", "公平性验证"],
   };
@@ -47,6 +47,21 @@ test("지정 문구가 정확히 들어 있다 (CLAUDE.md §2 구어체 카피)"
     assert.equal(get(ko, k), k1, k);
     assert.equal(get(en, k), e1, k);
     assert.equal(get(zh, k), z1, k);
+  }
+});
+
+test("도박장 용어가 사전에 남아 있지 않다 (CLAUDE.md §2 — 2026-09-28 운영자 지시)", () => {
+  const banned: Record<string, string[]> = {
+    ko: ["환전", "회수", "정산", "롤오버", "긁어", "돌려보기", "손맛", "잭팟", "볼트", "연타", "올인", "본전", "환수율", "오토플레이"],
+    en: ["cash out", "Cash out", "cashed out", "cash-out", "rollover", "jackpot", "Jackpot", "All-in"],
+    zh: ["折现", "头奖", "金库", "自动旋转", "流水"],
+  };
+  for (const [loc, dict] of [["ko", ko], ["en", en], ["zh", zh]] as const) {
+    for (const k of keys(dict)) {
+      if (k.startsWith("products.")) continue;
+      const v = get(dict, k);
+      for (const w of banned[loc]) assert.ok(!v.includes(w), `${loc}.${k} 에 금지어 "${w}": ${v}`);
+    }
   }
 });
 
