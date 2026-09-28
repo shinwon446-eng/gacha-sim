@@ -14,6 +14,9 @@ export const INSTANT_SELLBACK_RATE = REFUND_RATE;
 /** 정품이 아닐 경우 보상 배율 — 운영자 정책. 집행하지 않을 거면 이 상수를 내린다. */
 export const AUTHENTICITY_COMPENSATION_MULTIPLE = 3;
 
+/** 무료 특송(관부가세 포함)이 닿는 국가 수 — 운영자 정책. 실제 커버리지가 바뀌면 이 상수만 고친다. */
+export const SHIPPING_COUNTRIES = 140;
+
 /** 실물 출고 목표 시간(시간). 측정된 평균이 아니라 **운영 기준(SLA)** 이다 — 화면에도 그렇게 적는다. */
 export const SHIPPING_SLA_HOURS = 24;
 

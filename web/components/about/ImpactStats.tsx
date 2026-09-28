@@ -33,7 +33,7 @@ export function ImpactStats({ className }: { className?: string }) {
       { key: "jackpot", value: totalJackpotValueUsdt(), decimals: 0, unit: t("unitUsdt"), label: t("statJackpot"), sub: "" },
       { key: "sellback", value: INSTANT_SELLBACK_RATE * 100, decimals: 1, unit: t("unitPct"), label: t("statSellback"), sub: "" },
       { key: "mutable", value: MUTABLE_RESULTS, decimals: 0, unit: t("unitCount"), label: t("statMutable"), sub: t("statMutableSub") },
-      { key: "sla", value: SHIPPING_SLA_HOURS, decimals: 0, unit: t("unitHour"), label: t("statSla"), sub: t("statSlaSub") },
+      { key: "sla", value: SHIPPING_SLA_HOURS, decimals: 0, unit: t("unitHour"), label: t("statSla"), sub: "" },
     ],
     [t],
   );
@@ -61,7 +61,7 @@ export function ImpactStats({ className }: { className?: string }) {
         ))}
       </ul>
       <p className="mt-3 break-keep text-[10px] leading-relaxed text-faint">
-        {t("statsNote")} · {t("statOdds")}: {publishedOddsRows()}
+        {t("statOdds")}: {publishedOddsRows()}
       </p>
     </section>
   );
@@ -136,7 +136,9 @@ export function FinaleCta({ className }: { className?: string }) {
           <Rocket className="h-5 w-5" strokeWidth={2.3} />
           {t("ctaButton")}
         </Link>
-        <p className="mt-4 text-[11px] text-faint">{t("ctaFair")}</p>
+        {/* 공식 슬로건 — 골드 포인트 */}
+        <p className="mt-6 text-[11px] font-bold tracking-widest text-gold-champagne sm:text-xs">{t("ctaSlogan")}</p>
+        <p className="mt-2 text-[11px] text-faint">{t("ctaFair")}</p>
       </motion.div>
     </section>
   );

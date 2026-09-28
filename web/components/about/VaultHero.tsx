@@ -3,39 +3,41 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { ChevronDown } from "lucide-react";
+import { Rocket } from "lucide-react";
 import { cn } from "@/lib/format";
+import { Link } from "@/i18n/navigation";
 import { imageFor } from "@/lib/productImages";
 
 /**
- * Section 1 — 스크롤 반응형 시네마틱 볼트 리빌.
+ * Section 1 — 히어로.
  *
- * 스크롤 트랙(220vh) 안에 화면 하나를 sticky 로 고정하고, 진행률 0→1 에 맞춰
- * 금고 문 두 짝이 좌우로 열리며 롤렉스 · 사이버트럭 · 골드바가 스케일업하며 부유한다.
+ * **진입 즉시 전부 보인다.** 이전 버전은 스크롤 0 에서 카피와 상품이 `opacity: 0` 이고 CSS 금고 문만 덮여 있어
+ * 시커먼 빈 화면처럼 보였다(2026-09-28 운영자 지적). 문짝 오버레이는 제거했고, 슬로건·헤드라인·CTA·상품 4점이
+ * 처음부터 `opacity: 1` 로 서 있다. 스크롤은 **패럴랙스(스케일업 + 시차 이동)** 로만 쓰고 무엇도 숨기지 않는다.
  *
- * SSR 안전: `useScroll` 은 마운트 후에야 값을 채우고 초기값은 항상 0 이라 서버 렌더와 첫 클라이언트 렌더가 같다.
- * `window` 를 직접 읽지 않고, 좌표·지연은 전부 고정 상수다(Math.random 금지).
+ * SSR 안전: `useScroll` 초기값은 항상 0 이라 서버·클라 첫 렌더가 같고, 좌표·지연은 고정 상수다(Math.random 금지).
  */
 
-/** 볼트 안에서 떠오르는 3점 — id 는 lib/productImages.ts 의 실제 자산 키 */
-const REVEALS = [
-  { id: "vault-submariner", x: "-32%", y: "0%", size: "w-[34%] max-w-[150px] md:w-[30%] md:max-w-[190px]", from: 0.06, rot: -8, delay: 0 },
-  { id: "jackpot-cybertruck", x: "0%", y: "5%", size: "w-[50%] max-w-[220px] md:w-[42%] md:max-w-[300px]", from: 0.03, rot: 0, delay: 0.4 },
-  { id: "vault-gold", x: "32%", y: "2%", size: "w-[34%] max-w-[150px] md:w-[30%] md:max-w-[190px]", from: 0.1, rot: 9, delay: 0.8 },
+/** 카피 아래 한 줄로 세우는 실물 4점 — id 는 lib/productImages.ts 의 실제 자산 키 */
+const FLOATS = [
+  { id: "vault-submariner", cls: "w-[26%] max-w-[170px] md:w-[17%]", rot: -10, depth: 0.22, delay: 0 },
+  { id: "jackpot-cybertruck", cls: "w-[34%] max-w-[240px] md:w-[21%]", rot: 0, depth: 0.34, delay: 0.5 },
+  { id: "vault-gold", cls: "w-[26%] max-w-[170px] md:w-[17%]", rot: 10, depth: 0.22, delay: 1 },
+  { id: "vault-handbag", cls: "hidden w-[15%] max-w-[130px] rotate-3 md:block", rot: 5, depth: 0.16, delay: 1.5 },
 ] as const;
 
-function Reveal({ progress, spec }: { progress: MotionValue<number>; spec: (typeof REVEALS)[number] }) {
+function Float({ progress, spec }: { progress: MotionValue<number>; spec: (typeof FLOATS)[number] }) {
   const img = imageFor(spec.id);
-  const scale = useTransform(progress, [spec.from, 0.44], [0.55, 1]);
-  const opacity = useTransform(progress, [spec.from, spec.from + 0.2], [0, 1]);
-  const y = useTransform(progress, [spec.from, 0.5], [70, 0]);
+  // 패럴랙스 — 깊이가 클수록 더 크게 자라고 더 많이 밀린다
+  const scale = useTransform(progress, [0, 1], [1, 1 + spec.depth]);
+  const y = useTransform(progress, [0, 1], [0, -120 * spec.depth]);
   return (
-    <motion.div
-      className={cn("absolute", spec.size)}
-      style={{ left: `calc(50% + ${spec.x})`, top: `calc(50% + ${spec.y})`, x: "-50%", y, scale, opacity, rotate: spec.rot }}
-    >
-      {/* 부유 — 스크롤과 무관한 상시 루프 */}
-      <motion.div animate={{ y: [0, -14, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: spec.delay }}>
+    <motion.div className={cn("flex-none", spec.cls)} style={{ scale, y, rotate: spec.rot }}>
+      <motion.div
+        animate={{ y: [0, -14, 0] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: spec.delay }}
+        style={{ filter: "drop-shadow(0 34px 60px rgba(0,0,0,0.85))" }}
+      >
         {img.src ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -46,7 +48,7 @@ function Reveal({ progress, spec }: { progress: MotionValue<number>; spec: (type
             decoding="async"
             referrerPolicy="no-referrer"
             className="aspect-square w-full rounded-2xl object-cover"
-            style={{ filter: "drop-shadow(0 30px 60px rgba(0,0,0,0.85))", boxShadow: "0 0 0 1px rgba(230,202,101,0.35), 0 0 70px rgba(230,202,101,0.22)" }}
+            style={{ boxShadow: "0 0 0 1px rgba(230,202,101,0.45), 0 0 80px rgba(230,202,101,0.28)" }}
           />
         ) : (
           <div className="aspect-square w-full rounded-2xl bg-surface" />
@@ -61,80 +63,58 @@ export function VaultHero({ className }: { className?: string }) {
   const track = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: track, offset: ["start start", "end start"] });
 
-  // 금고 문 두 짝 — 0 → 0.55 구간에서 완전히 열린다
-  const leftX = useTransform(scrollYProgress, [0, 0.32], ["0%", "-104%"]);
-  const rightX = useTransform(scrollYProgress, [0, 0.32], ["0%", "104%"]);
-  const doorFade = useTransform(scrollYProgress, [0.22, 0.36], [1, 0]);
-  const glow = useTransform(scrollYProgress, [0.03, 0.34], [0, 1]);
-  const copyY = useTransform(scrollYProgress, [0.12, 0.4], [40, 0]);
-  const copyOpacity = useTransform(scrollYProgress, [0.12, 0.3], [0, 1]);
-  const hintOpacity = useTransform(scrollYProgress, [0.04, 0.16], [1, 0]);
+  // 스크롤은 숨기는 데 쓰지 않는다 — 카피는 끝까지 읽히고 살짝 위로만 떠오른다
+  const copyY = useTransform(scrollYProgress, [0, 1], [0, -70]);
+  const glow = useTransform(scrollYProgress, [0, 0.6], [1, 0.35]);
 
   return (
-    <div ref={track} className={cn("relative h-[180vh] md:h-[220vh]", className)}>
-      <div className="sticky top-0 flex h-[calc(100vh-56px)] w-full items-center justify-center overflow-hidden bg-obsidian md:h-screen">
-        {/* 볼트 내부 — 문 뒤에서 피어오르는 샴페인 골드 */}
+    <div ref={track} className={cn("relative h-[150vh] md:h-[170vh]", className)}>
+      <div className="sticky top-0 flex h-[calc(100vh-56px)] w-full flex-col items-center justify-center overflow-hidden bg-obsidian md:h-screen">
+        {/* 골드 스포트라이트 — 무대 조명 */}
         <motion.span
           aria-hidden
           className="pointer-events-none absolute inset-0"
-          style={{ opacity: glow, background: "radial-gradient(60% 50% at 50% 46%, rgba(230,202,101,0.20) 0%, transparent 70%)" }}
+          style={{ opacity: glow, background: "radial-gradient(64% 52% at 50% 44%, rgba(230,202,101,0.22) 0%, transparent 72%)" }}
         />
+        <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-obsidian to-transparent" />
 
-        {REVEALS.map((spec) => (
-          <Reveal key={spec.id} progress={scrollYProgress} spec={spec} />
-        ))}
-
-        {/* 금고 문 — 좌우 두 짝. 열리면서 투명해진다 */}
-        <motion.div aria-hidden className="pointer-events-none absolute inset-0 z-20" style={{ opacity: doorFade }}>
-          {(["left", "right"] as const).map((side) => (
-            <motion.div
-              key={side}
-              className={cn("absolute inset-y-0 w-1/2 bg-obsidian", side === "left" ? "left-0" : "right-0")}
-              style={{
-                x: side === "left" ? leftX : rightX,
-                background: "linear-gradient(135deg, #17171a 0%, #0B0B0B 45%, #1d1a13 100%)",
-                boxShadow: side === "left" ? "inset -1px 0 0 rgba(230,202,101,0.5)" : "inset 1px 0 0 rgba(230,202,101,0.5)",
-              }}
-            >
-              {/* 금고 휠 — 문 안쪽 가장자리에 반씩 걸린다 */}
-              <span
-                className={cn(
-                  "absolute top-1/2 h-40 w-40 -translate-y-1/2 rounded-full border-2 border-gold-champagne/25 sm:h-56 sm:w-56",
-                  side === "left" ? "right-0 translate-x-1/2" : "left-0 -translate-x-1/2",
-                )}
-                style={{ boxShadow: "inset 0 0 40px rgba(230,202,101,0.12)" }}
-              />
-              <span className={cn("absolute inset-y-0 w-px bg-gold-champagne/20", side === "left" ? "right-6" : "left-6")} />
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* 헤드라인 — 문이 열린 뒤 떠오른다 */}
-        <motion.div className="absolute inset-x-0 top-[12%] z-30 mx-auto max-w-4xl px-6 text-center" style={{ y: copyY, opacity: copyOpacity }}>
-          <span aria-hidden className="pointer-events-none absolute inset-x-0 -inset-y-4 -z-10" style={{ background: "radial-gradient(52% 58% at 50% 45%, rgba(11,11,11,0.86) 0%, rgba(11,11,11,0.4) 62%, transparent 100%)" }} />
-          <span className="border-metallic-gold inline-flex items-center rounded-full bg-obsidian/70 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-gold-champagne backdrop-blur-sm">
-            {t("badge")}
+        {/* 카피 — 진입 즉시 100% 선명 */}
+        <motion.div className="relative z-30 mx-auto w-full max-w-4xl px-6 text-center" style={{ y: copyY }}>
+          <span
+            className="border-metallic-gold inline-flex items-center rounded-full bg-obsidian/80 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-gold-champagne backdrop-blur-sm sm:text-[10px] sm:tracking-[0.2em]"
+            style={{ boxShadow: "0 0 24px rgba(230,202,101,0.28)" }}
+          >
+            {t("heroSlogan")}
           </span>
-          <h1 className="mt-5 break-keep font-display text-[28px] font-black leading-[1.14] tracking-[-0.03em] text-white sm:text-4xl md:text-6xl" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.92)" }}>
+          <h1
+            className="mt-5 break-keep font-display text-[28px] font-black leading-[1.14] tracking-[-0.03em] text-white sm:text-4xl md:text-6xl"
+            style={{ textShadow: "0 2px 24px rgba(0,0,0,0.95)" }}
+          >
             {t("heroLine1")}
             <br />
             <span className="text-gold-gradient">{t("heroLine2")}</span>
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl break-keep text-[13px] leading-relaxed text-secondary sm:text-sm md:text-base" style={{ textShadow: "0 2px 14px rgba(0,0,0,0.9)" }}>
+          <p
+            className="mx-auto mt-4 max-w-2xl break-keep text-[13px] leading-relaxed text-secondary sm:text-sm md:text-base"
+            style={{ textShadow: "0 2px 16px rgba(0,0,0,0.92)" }}
+          >
             {t("heroSub")}
           </p>
+          <Link
+            href="/"
+            className="mt-7 inline-flex h-12 items-center gap-2 rounded-lg bg-crimson px-6 text-sm font-bold text-white shadow-[0_0_34px_rgba(229,9,20,0.42)] transition-transform duration-200 hover:scale-[1.04] sm:h-14 sm:px-8 sm:text-base"
+          >
+            <Rocket className="h-5 w-5" strokeWidth={2.3} />
+            {t("heroCta")}
+          </Link>
         </motion.div>
 
-        {/* 스크롤 힌트 — 문이 열리기 시작하면 사라진다 */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 z-30 flex -translate-x-1/2 flex-col items-center gap-1.5 md:bottom-10"
-          style={{ opacity: hintOpacity }}
-        >
-          <span className="whitespace-nowrap text-[11px] font-semibold tracking-wide text-faint">{t("scrollHint")}</span>
-          <motion.span animate={{ y: [0, 6, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}>
-            <ChevronDown className="h-4 w-4 text-gold-champagne" strokeWidth={2.4} />
-          </motion.span>
-        </motion.div>
+        {/* 실물 4점 — 카피 아래 한 줄. 절대 좌표를 쓰지 않으므로 어느 폭에서도 글자와 겹치지 않는다 */}
+        <div className="relative z-10 mt-8 flex w-full items-center justify-center gap-2.5 px-4 sm:gap-4 md:mt-10">
+          {FLOATS.map((spec) => (
+            <Float key={spec.id} progress={scrollYProgress} spec={spec} />
+          ))}
+        </div>
       </div>
     </div>
   );
