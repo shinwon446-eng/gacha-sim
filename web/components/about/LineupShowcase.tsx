@@ -12,6 +12,7 @@ import { boxTopTier, glow } from "@/lib/tiers";
 import { imageFor } from "@/lib/productImages";
 import { BOX_COUNT, CATEGORY_COUNT } from "@/lib/aboutStats";
 import { Money } from "@/components/ui/Money";
+import { Approx } from "@/components/ui/Approx";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -109,11 +110,14 @@ export function LineupShowcase({ className }: { className?: string }) {
                   <span className="min-w-0">
                     <span className="caption-luxury block">{t("lineupPrice")}</span>
                     <Money value={c.box.price} size="md" />
+                    {/* 현지 통화 병기 — 선택 통화가 이미 그 통화면 렌더하지 않는다 */}
+                    <Approx usdt={c.box.price} className="mt-0.5 block text-[10px]" />
                     <span className="mt-0.5 block truncate text-[11px] text-faint">{boxTitle(c.box)}</span>
                   </span>
                   <span className="flex-none text-right">
                     <span className="caption-luxury block">{t("lineupTop")}</span>
                     <Money value={c.grail.value} size="md" numberClassName="text-gold-gradient" />
+                    <Approx usdt={c.grail.value} compact className="mt-0.5 block text-[10px]" />
                   </span>
                 </div>
 

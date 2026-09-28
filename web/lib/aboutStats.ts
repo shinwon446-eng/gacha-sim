@@ -74,6 +74,9 @@ export function attemptsRange(): { minRate: number; maxRate: number; min: number
  */
 export const GIFT_BOX_ASSUMED_REFUND_RATE = 0.005;
 
+/** 가장 싼 박스의 1회 오픈 가격 — "부담 없는 최소 시작 금액" 타일의 근거(카탈로그 실측) */
+export const MIN_ENTRY_USDT = Math.min(...BOXES.map((b) => b.price));
+
 /** 박스·카테고리 수 */
 export const BOX_COUNT = BOXES.length;
 export const CATEGORY_COUNT = new Set(BOXES.map((b) => b.category)).size;

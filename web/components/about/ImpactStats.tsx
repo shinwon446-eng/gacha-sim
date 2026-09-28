@@ -9,33 +9,75 @@ import { Link } from "@/i18n/navigation";
 import {
   AUTHENTICITY_COMPENSATION_MULTIPLE,
   INSTANT_SELLBACK_RATE,
+  MIN_ENTRY_USDT,
   MUTABLE_RESULTS,
   SHIPPING_SLA_HOURS,
   attemptsRange,
   publishedOddsRows,
   totalJackpotValueUsdt,
 } from "@/lib/aboutStats";
+import { formatCurrency } from "@/lib/formatCurrency";
+import { useLocalFiat } from "@/lib/localFiat";
 import { CountUp } from "@/components/about/TrustScenes";
+import { Approx } from "@/components/ui/Approx";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 /**
- * Section 3 — 임팩트 숫자 그리드.
+ * Section 5 — 임팩트 숫자 그리드.
  *
  * 네 수치 전부 **카탈로그 실측이거나 운영자가 집행하는 정책 상수**다.
- * "총 누적 지급액 1,482,920 USDT" 같은 운영 실적은 우리가 가진 적이 없으므로 쓰지 않는다(부록 C) —
- * `statsNote` 가 그 사실을 화면에 그대로 적고, 백엔드가 붙으면 실적이 이 자리에 들어간다.
+ * "총 누적 지급액 1,482,920 USDT" 같은 운영 실적은 우리가 가진 적이 없으므로 쓰지 않는다(부록 C).
+ *
+ * 각 타일은 USDT 기준값 아래에 **현지 통화 환산액을 골드 배지로 병기**한다(`<Approx always>`) — "455,714 USDT" 만으로는
+ * 규모가 체감되지 않기 때문이다(2026-09-28 운영자 지시). 환산은 표시 전용이고 항상 `≈` 를 붙인다(`lib/localFiat.ts`).
  */
 export function ImpactStats({ className }: { className?: string }) {
   const t = useTranslations("about");
+  const { approxCompact, approx } = useLocalFiat();
+  const total = useMemo(() => totalJackpotValueUsdt(), []);
+  const payback = +(100 * INSTANT_SELLBACK_RATE).toFixed(2);
+
   const tiles = useMemo(
     () => [
-      { key: "jackpot", value: totalJackpotValueUsdt(), decimals: 0, unit: t("unitUsdt"), label: t("statJackpot"), sub: "" },
-      { key: "sellback", value: INSTANT_SELLBACK_RATE * 100, decimals: 1, unit: t("unitPct"), label: t("statSellback"), sub: "" },
-      { key: "mutable", value: MUTABLE_RESULTS, decimals: 0, unit: t("unitCount"), label: t("statMutable"), sub: t("statMutableSub") },
-      { key: "sla", value: SHIPPING_SLA_HOURS, decimals: 0, unit: t("unitHour"), label: t("statSla"), sub: "" },
+      {
+        key: "jackpot",
+        value: total,
+        decimals: 0,
+        unit: t("unitUsdt"),
+        label: t("statJackpot"),
+        approx: total,
+        sub: t("statJackpotSub", { c: approxCompact(total) }),
+      },
+      {
+        key: "sellback",
+        value: INSTANT_SELLBACK_RATE * 100,
+        decimals: 1,
+        unit: t("unitPct"),
+        label: t("statSellback"),
+        approx: null,
+        sub: t("statSellbackSub", { back: `${formatCurrency(payback, "USDT")} (≈ ${approx(payback)})` }),
+      },
+      {
+        key: "entry",
+        value: MIN_ENTRY_USDT,
+        decimals: 2,
+        unit: t("unitUsdt"),
+        label: t("statEntry"),
+        approx: MIN_ENTRY_USDT,
+        sub: t("statEntrySub"),
+      },
+      {
+        key: "sla",
+        value: SHIPPING_SLA_HOURS,
+        decimals: 0,
+        unit: t("unitHour"),
+        label: t("statSla"),
+        approx: null,
+        sub: t("statSlaSub"),
+      },
     ],
-    [t],
+    [t, total, payback, approx, approxCompact],
   );
 
   return (
@@ -55,13 +97,16 @@ export function ImpactStats({ className }: { className?: string }) {
               <CountUp value={tile.value} decimals={tile.decimals} />
               {tile.unit && <span className="ml-1 text-[12px] font-semibold text-muted">{tile.unit}</span>}
             </div>
-            <div className="mt-2.5 break-keep text-[11px] font-semibold leading-snug text-secondary">{tile.label}</div>
+            {/* 현지 통화 병기 — USDT 만으로는 규모가 체감되지 않는다 */}
+            {tile.approx !== null && <Approx usdt={tile.approx} always className="mt-1.5 block text-[10.5px] font-bold" />}
+            <div className="mt-2 break-keep text-[11px] font-semibold leading-snug text-secondary">{tile.label}</div>
             {tile.sub && <div className="mt-1 break-keep text-[10px] leading-relaxed text-faint">{tile.sub}</div>}
           </motion.li>
         ))}
       </ul>
       <p className="mt-3 break-keep text-[10px] leading-relaxed text-faint">
-        {t("statOdds")}: {publishedOddsRows()}
+        {t("statOdds")}: {publishedOddsRows()} · {t("statMutable")}: {MUTABLE_RESULTS}
+        {t("unitCount")} ({t("statMutableSub")})
       </p>
     </section>
   );
