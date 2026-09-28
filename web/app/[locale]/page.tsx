@@ -206,7 +206,7 @@ export default function BoxesPage() {
           <Link href="/fairness" className="transition-colors hover:text-white">
             {t("nav.fairness")}
           </Link>
-          <Link href="/community" className="transition-colors hover:text-white">
+          <Link href="/community" className="hidden transition-colors hover:text-white lg:inline">
             {t("nav.community")}
           </Link>
         </nav>

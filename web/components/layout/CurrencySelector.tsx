@@ -47,7 +47,8 @@ export function CurrencySelector({ className }: { className?: string }) {
         className="glass-dark flex h-9 items-center gap-1.5 rounded-md px-2 text-xs font-semibold text-white transition-colors hover:border-gold-champagne sm:px-3"
       >
         <span className="text-gold-champagne">{SYMBOL[currency]}</span>
-        <span className="hidden tracking-wide sm:inline">{LABEL[currency]}</span>
+        {/* 헤더 폭이 빠듯한 md~lg 구간에서는 기호만 — 목록을 열면 전체 이름이 보인다 */}
+        <span className="hidden tracking-wide lg:inline">{LABEL[currency]}</span>
         <ChevronDown className={cn("hidden h-3.5 w-3.5 text-muted transition-transform sm:block", open && "rotate-180")} strokeWidth={2} />
       </button>
 
