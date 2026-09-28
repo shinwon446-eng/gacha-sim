@@ -37,7 +37,7 @@ function CountUp({ value, decimals = 0, className }: { value: number; decimals?:
   }, [inView, value]);
   return (
     <span ref={ref} className={className}>
-      {shown.toFixed(decimals)}
+      {shown.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}
     </span>
   );
 }

@@ -19,20 +19,20 @@ import { imageFor } from "@/lib/productImages";
 
 /** 볼트 안에서 떠오르는 3점 — id 는 lib/productImages.ts 의 실제 자산 키 */
 const REVEALS = [
-  { id: "vault-submariner", x: "-30%", y: "0%", size: "w-[30%] max-w-[190px]", from: 0.18, rot: -8, delay: 0 },
-  { id: "jackpot-cybertruck", x: "0%", y: "6%", size: "w-[42%] max-w-[300px]", from: 0.1, rot: 0, delay: 0.4 },
-  { id: "vault-gold", x: "31%", y: "2%", size: "w-[30%] max-w-[190px]", from: 0.26, rot: 9, delay: 0.8 },
+  { id: "vault-submariner", x: "-32%", y: "0%", size: "w-[34%] max-w-[150px] md:w-[30%] md:max-w-[190px]", from: 0.06, rot: -8, delay: 0 },
+  { id: "jackpot-cybertruck", x: "0%", y: "5%", size: "w-[50%] max-w-[220px] md:w-[42%] md:max-w-[300px]", from: 0.03, rot: 0, delay: 0.4 },
+  { id: "vault-gold", x: "32%", y: "2%", size: "w-[34%] max-w-[150px] md:w-[30%] md:max-w-[190px]", from: 0.1, rot: 9, delay: 0.8 },
 ] as const;
 
 function Reveal({ progress, spec }: { progress: MotionValue<number>; spec: (typeof REVEALS)[number] }) {
   const img = imageFor(spec.id);
-  const scale = useTransform(progress, [spec.from, 0.72], [0.55, 1]);
+  const scale = useTransform(progress, [spec.from, 0.44], [0.55, 1]);
   const opacity = useTransform(progress, [spec.from, spec.from + 0.2], [0, 1]);
-  const y = useTransform(progress, [spec.from, 0.85], [90, 0]);
+  const y = useTransform(progress, [spec.from, 0.5], [70, 0]);
   return (
     <motion.div
       className={cn("absolute", spec.size)}
-      style={{ left: `calc(50% + ${spec.x})`, top: `calc(62% + ${spec.y})`, x: "-50%", y, scale, opacity, rotate: spec.rot }}
+      style={{ left: `calc(50% + ${spec.x})`, top: `calc(50% + ${spec.y})`, x: "-50%", y, scale, opacity, rotate: spec.rot }}
     >
       {/* 부유 — 스크롤과 무관한 상시 루프 */}
       <motion.div animate={{ y: [0, -14, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: spec.delay }}>
@@ -62,17 +62,17 @@ export function VaultHero({ className }: { className?: string }) {
   const { scrollYProgress } = useScroll({ target: track, offset: ["start start", "end start"] });
 
   // 금고 문 두 짝 — 0 → 0.55 구간에서 완전히 열린다
-  const leftX = useTransform(scrollYProgress, [0, 0.55], ["0%", "-104%"]);
-  const rightX = useTransform(scrollYProgress, [0, 0.55], ["0%", "104%"]);
-  const doorFade = useTransform(scrollYProgress, [0.4, 0.62], [1, 0]);
-  const glow = useTransform(scrollYProgress, [0.05, 0.6], [0, 1]);
-  const copyY = useTransform(scrollYProgress, [0.35, 0.8], [40, 0]);
-  const copyOpacity = useTransform(scrollYProgress, [0.35, 0.62], [0, 1]);
-  const hintOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
+  const leftX = useTransform(scrollYProgress, [0, 0.32], ["0%", "-104%"]);
+  const rightX = useTransform(scrollYProgress, [0, 0.32], ["0%", "104%"]);
+  const doorFade = useTransform(scrollYProgress, [0.22, 0.36], [1, 0]);
+  const glow = useTransform(scrollYProgress, [0.03, 0.34], [0, 1]);
+  const copyY = useTransform(scrollYProgress, [0.12, 0.4], [40, 0]);
+  const copyOpacity = useTransform(scrollYProgress, [0.12, 0.3], [0, 1]);
+  const hintOpacity = useTransform(scrollYProgress, [0.04, 0.16], [1, 0]);
 
   return (
-    <div ref={track} className={cn("relative h-[220vh]", className)}>
-      <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden bg-obsidian">
+    <div ref={track} className={cn("relative h-[180vh] md:h-[220vh]", className)}>
+      <div className="sticky top-0 flex h-[calc(100vh-56px)] w-full items-center justify-center overflow-hidden bg-obsidian md:h-screen">
         {/* 볼트 내부 — 문 뒤에서 피어오르는 샴페인 골드 */}
         <motion.span
           aria-hidden
@@ -111,21 +111,23 @@ export function VaultHero({ className }: { className?: string }) {
 
         {/* 헤드라인 — 문이 열린 뒤 떠오른다 */}
         <motion.div className="absolute inset-x-0 top-[12%] z-30 mx-auto max-w-4xl px-6 text-center" style={{ y: copyY, opacity: copyOpacity }}>
-          <span aria-hidden className="pointer-events-none absolute inset-x-0 -inset-y-8 -z-10" style={{ background: "radial-gradient(60% 70% at 50% 45%, rgba(11,11,11,0.92) 0%, rgba(11,11,11,0.7) 55%, transparent 100%)" }} />
+          <span aria-hidden className="pointer-events-none absolute inset-x-0 -inset-y-4 -z-10" style={{ background: "radial-gradient(52% 58% at 50% 45%, rgba(11,11,11,0.86) 0%, rgba(11,11,11,0.4) 62%, transparent 100%)" }} />
           <span className="border-metallic-gold inline-flex items-center rounded-full bg-obsidian/70 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-gold-champagne backdrop-blur-sm">
             {t("badge")}
           </span>
-          <h1 className="mt-5 break-keep font-display text-4xl font-black leading-[1.12] tracking-[-0.03em] text-white md:text-6xl">
+          <h1 className="mt-5 break-keep font-display text-[28px] font-black leading-[1.14] tracking-[-0.03em] text-white sm:text-4xl md:text-6xl" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.92)" }}>
             {t("heroLine1")}
             <br />
             <span className="text-gold-gradient">{t("heroLine2")}</span>
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl break-keep text-sm leading-relaxed text-secondary md:text-base">{t("heroSub")}</p>
+          <p className="mx-auto mt-4 max-w-2xl break-keep text-[13px] leading-relaxed text-secondary sm:text-sm md:text-base" style={{ textShadow: "0 2px 14px rgba(0,0,0,0.9)" }}>
+            {t("heroSub")}
+          </p>
         </motion.div>
 
         {/* 스크롤 힌트 — 문이 열리기 시작하면 사라진다 */}
         <motion.div
-          className="absolute bottom-10 left-1/2 z-30 flex -translate-x-1/2 flex-col items-center gap-1.5"
+          className="absolute bottom-8 left-1/2 z-30 flex -translate-x-1/2 flex-col items-center gap-1.5 md:bottom-10"
           style={{ opacity: hintOpacity }}
         >
           <span className="whitespace-nowrap text-[11px] font-semibold tracking-wide text-faint">{t("scrollHint")}</span>

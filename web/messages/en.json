@@ -87,7 +87,7 @@
     "faqQ5": "How do I know the results are not rigged?",
     "faqA5": "You do not have to take our word for it. Compare the server seed hash you got before it opened with the server seed revealed after. The verifier recomputes every record for you.",
     "ctaTitle": "The new standard for luxury. Start now.",
-    "ctaSub": "From 1 USDT. Even a miss returns at least {min}% instantly.",
+    "ctaSub": "From 1 USDT. Even a different item pays back at least {min}% right away.",
     "ctaButton": "Go open a box",
     "ctaFair": "Every result is verifiable with SHA-256"
   },

@@ -30,7 +30,7 @@ export function ImpactStats({ className }: { className?: string }) {
   const t = useTranslations("about");
   const tiles = useMemo(
     () => [
-      { key: "jackpot", value: totalJackpotValueUsdt(), decimals: 2, unit: t("unitUsdt"), label: t("statJackpot"), sub: "" },
+      { key: "jackpot", value: totalJackpotValueUsdt(), decimals: 0, unit: t("unitUsdt"), label: t("statJackpot"), sub: "" },
       { key: "sellback", value: INSTANT_SELLBACK_RATE * 100, decimals: 1, unit: t("unitPct"), label: t("statSellback"), sub: "" },
       { key: "mutable", value: MUTABLE_RESULTS, decimals: 0, unit: t("unitCount"), label: t("statMutable"), sub: t("statMutableSub") },
       { key: "sla", value: SHIPPING_SLA_HOURS, decimals: 0, unit: t("unitHour"), label: t("statSla"), sub: t("statSlaSub") },
@@ -51,7 +51,7 @@ export function ImpactStats({ className }: { className?: string }) {
             transition={{ duration: 0.55, ease: EASE, delay: i * 0.08 }}
             className="border-metallic-subtle rounded-2xl bg-surface px-4 py-5"
           >
-            <div className="text-gold-gradient font-display text-[26px] font-black leading-none tracking-tight tabular-nums md:text-[34px]">
+            <div className="text-gold-gradient whitespace-nowrap font-display text-[18px] font-black leading-none tracking-tight tabular-nums sm:text-[26px] md:text-[32px]">
               <CountUp value={tile.value} decimals={tile.decimals} />
               {tile.unit && <span className="ml-1 text-[12px] font-semibold text-muted">{tile.unit}</span>}
             </div>
