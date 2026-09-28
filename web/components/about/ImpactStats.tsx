@@ -51,7 +51,7 @@ export function ImpactStats({ className }: { className?: string }) {
             transition={{ duration: 0.55, ease: EASE, delay: i * 0.08 }}
             className="border-metallic-subtle rounded-2xl bg-surface px-4 py-5"
           >
-            <div className="text-gold-gradient whitespace-nowrap font-display text-[18px] font-black leading-none tracking-tight tabular-nums sm:text-[26px] md:text-[32px]">
+            <div className="text-gold-gradient whitespace-nowrap font-display text-[18px] font-black leading-none tracking-tight tabular-nums sm:text-[24px] lg:text-[30px]">
               <CountUp value={tile.value} decimals={tile.decimals} />
               {tile.unit && <span className="ml-1 text-[12px] font-semibold text-muted">{tile.unit}</span>}
             </div>

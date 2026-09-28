@@ -21,8 +21,9 @@ import { ImpactStats, FaqAccordion, FinaleCta } from "@/components/about/ImpactS
  */
 export default function AboutPage() {
   const t = useTranslations();
+  // 피날레 CTA 가 자체 py-24/32 를 갖고 푸터도 mt/pt 를 갖는다 — main 이 또 pb 를 더하면 빈 띠가 겹친다(부록 A ⑥)
   return (
-    <main className="min-h-screen bg-canvas pb-0 md:pb-24">
+    <main className="min-h-screen bg-canvas pb-0">
       <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-hairline bg-obsidian/90 px-[4%] backdrop-blur-md sm:gap-5">
         <BrandLogo />
         <nav className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap text-[11px] text-muted [scrollbar-width:none] sm:gap-4 sm:text-xs">
