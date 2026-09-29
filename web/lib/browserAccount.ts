@@ -1,4 +1,5 @@
-import { AccountError, browserAccountsEnabled, normalizeNickname, validAccountEmail, validNickname, validAccountPassword, type ServerAccount } from "./account";
+import { AccountError, ProfileError, browserAccountsEnabled, normalizeNickname, validAccountEmail, validAccountPassword, type ServerAccount } from "./account";
+import { nicknameIssue, nicknameKey, nextNicknameChangeAt, validAvatarData, NICKNAME_CHANGE_INTERVAL_MS } from "./profilePolicy";
 import { newTotpSecret } from "./totp";
 import { HOLD_MS, maskEmail } from "./withdrawHold";
 
@@ -94,18 +95,38 @@ async function request(path: string, input?: unknown): Promise<Record<string, un
   if (path === "/auth/logout") { localStorage.removeItem(SESSION); return { loggedOut: true }; }
   const account = accounts.find(x => x.user.id === localStorage.getItem(SESSION));
   if (!account) throw new AccountError("credentials");
-  const persist = () => save(accounts);
+  const persist = () => {
+    try { save(accounts); }
+    catch (cause) {
+      if (path.startsWith("/account/profile")) throw new ProfileError("storage_unavailable");
+      throw cause;
+    }
+  };
+  if (path.startsWith("/account/profile") && body.accountId !== undefined && body.accountId !== account.user.id) throw new AccountError("credentials");
   if (path === "/account/closure") {
     if (!body.password || body.confirm !== true) throw new AccountError("invalid");
     save(accounts.filter(x => x !== account)); localStorage.removeItem(SESSION);
     return { deleted: true };
   }
   if (path === "/auth/session") return { user: publicUser(account) };
-  if (path === "/account/profile") {
+  if (path === "/account/profile" || path === "/account/profile/nickname/check") {
     const nickname = normalizeNickname(String(body.nickname ?? ""));
-    if (!validNickname(nickname)) throw new AccountError("invalid");
-    if (accounts.some(x => x.user.id !== account.user.id && x.user.nickname === nickname)) throw new AccountError("conflict");
-    account.user.nickname = nickname; persist(); return { user: publicUser(account) };
+    const issue = nicknameIssue(String(body.nickname ?? ""));
+    if (issue) throw new ProfileError(issue);
+    const taken = accounts.some(x => x.user.id !== account.user.id && x.user.nickname && nicknameKey(x.user.nickname) === nicknameKey(nickname));
+    if (path.endsWith("/check")) return { nickname, available: !taken };
+    if (nickname === account.user.nickname) return { user: publicUser(account) };
+    const next = nextNicknameChangeAt(account.user);
+    if (next && Date.parse(next) > Date.now()) throw new ProfileError("nickname_cooldown", next);
+    if (taken) throw new ProfileError("nickname_taken");
+    const now = Date.now();
+    account.user = { ...account.user, nickname, nicknameChangedAt: new Date(now).toISOString(), nextNicknameChangeAt: new Date(now + NICKNAME_CHANGE_INTERVAL_MS).toISOString() };
+    persist(); return { user: publicUser(account) };
+  }
+  if (path === "/account/profile/avatar") {
+    if (body.avatar !== null && !validAvatarData(body.avatar)) throw new ProfileError("avatar_invalid");
+    account.user.avatarUrl = body.avatar as string | null;
+    persist(); return { user: publicUser(account) };
   }
   const security = () => ({ twoFactorEnabled: Boolean(account.secret), enabledAt: account.enabledAt ?? null });
   if (path === "/account/security") return security();
@@ -169,7 +190,9 @@ async function request(path: string, input?: unknown): Promise<Record<string, un
 }
 let queue = Promise.resolve();
 export function browserAccountRequest(path: string, input?: unknown) {
-  const result = queue.then(() => request(path, input));
+  // Serialize across tabs as well as within this module: check + save is one critical section.
+  const result = queue.then(async () => typeof navigator !== "undefined" && navigator.locks
+    ? await navigator.locks.request(KEY, () => request(path, input)) : await request(path, input));
   queue = result.then(() => undefined, () => undefined);
   return result;
 }

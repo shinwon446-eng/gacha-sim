@@ -18,7 +18,7 @@ test("security and nickname clients require validated server responses and bind 
   };
   try {
     const user = { id: "a", email: "alice@example.test", emailVerified: true, createdAt: new Date().toISOString(), nickname: "Alice" };
-    response = { user };
+    response = { user: { ...user, nicknameChangedAt: user.createdAt, nextNicknameChangeAt: new Date(Date.parse(user.createdAt) + 14 * 86400000).toISOString() } };
     assert.equal((await account.updateAccountNickname(" Alice ")).nickname, "Alice");
     assert.deepEqual(posted, { nickname: "Alice" });
     await assert.rejects(account.updateAccountNickname("!"));

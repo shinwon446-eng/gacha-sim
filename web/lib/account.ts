@@ -1,6 +1,14 @@
 /** Shared account contract; browser and HTTP transports use the same routes. */
+import { normalizeNickname, nicknameIssue, validAvatarData, validAvatarUrl, type NicknameIssue } from "./profilePolicy";
+export { normalizeNickname, validNickname } from "./profilePolicy";
+export type ProfileErrorReason = NicknameIssue | "nickname_taken" | "nickname_cooldown" | "avatar_invalid" | "storage_unavailable";
 export class AccountError extends Error {
   constructor(public readonly code: "unavailable" | "network" | "invalid" | "credentials" | "rateLimit" | "conflict") { super(code); }
+}
+export class ProfileError extends AccountError {
+  constructor(public readonly reason: ProfileErrorReason, public readonly nextChangeAt?: string) {
+    super(reason === "nickname_taken" || reason === "nickname_cooldown" ? "conflict" : "invalid");
+  }
 }
 
 export function validAuthBase(raw: string): string {
@@ -19,20 +27,36 @@ export const validPassword = (value: string) => value.length >= 12 && value.leng
 export const validAccountEmail = (value: string) => browserAccountsEnabled() ? value.trim().length > 0 && value.length <= 254 : validEmail(value);
 export const validAccountPassword = (value: string) => browserAccountsEnabled() ? value.length > 0 && value.length <= 128 : validPassword(value);
 
-export const normalizeNickname = (value: string) => value.normalize("NFC").trim();
-const nicknamePattern = new RegExp("^[\\p{L}\\p{N}_-]{2,20}$", "u");
-export const validNickname = (value: string) => nicknamePattern.test(normalizeNickname(value));
-export interface ServerAccount { id: string; email: string; createdAt: string; emailVerified: boolean; nickname?: string; local?: boolean }
+export interface ServerAccount { id: string; email: string; createdAt: string; emailVerified: boolean; nickname?: string; nicknameChangedAt?: string; nextNicknameChangeAt?: string; avatarUrl?: string | null; local?: boolean }
 function accountFrom(data: unknown): ServerAccount {
   const user = (data as { user?: ServerAccount })?.user;
   if (!user || typeof user.id !== "string" || !user.id || typeof user.email !== "string" || !(browserAccountsEnabled() && user.local === true ? validAccountEmail(user.email) : validEmail(user.email)) || typeof user.createdAt !== "string" || !Number.isFinite(Date.parse(user.createdAt)) || (user.emailVerified !== true && !(browserAccountsEnabled() && user.local === true))) throw new AccountError("invalid");
-  if (user.nickname !== undefined && (typeof user.nickname !== "string" || !validNickname(user.nickname))) throw new AccountError("invalid");
+  // Existing names may predate the moderation policy; do not lock those users out of their account.
+  if (user.nickname !== undefined && (typeof user.nickname !== "string" || user.nickname.length > 100)) throw new AccountError("invalid");
+  for (const value of [user.nicknameChangedAt, user.nextNicknameChangeAt]) if (value !== undefined && !Number.isFinite(Date.parse(value))) throw new AccountError("invalid");
+  if (user.avatarUrl != null && !validAvatarUrl(user.avatarUrl)) throw new AccountError("invalid");
   return user;
 }
 
-export async function updateAccountNickname(nickname: string) {
-  if (!validNickname(nickname)) throw new AccountError("invalid");
-  return accountFrom(await accountRequest("/account/profile", { nickname: normalizeNickname(nickname) }));
+export async function updateAccountNickname(nickname: string, accountId?: string) {
+  const issue = nicknameIssue(nickname);
+  if (issue) throw new ProfileError(issue);
+  const user = accountFrom(await accountRequest("/account/profile", { nickname: normalizeNickname(nickname), ...(accountId ? { accountId } : {}) }));
+  if (user.nickname !== normalizeNickname(nickname) || !user.nicknameChangedAt || !user.nextNicknameChangeAt) throw new AccountError("invalid");
+  return user;
+}
+export async function checkAccountNickname(nickname: string) {
+  const issue = nicknameIssue(nickname);
+  if (issue) throw new ProfileError(issue);
+  const result = await accountRequest("/account/profile/nickname/check", { nickname: normalizeNickname(nickname) });
+  if (typeof result.available !== "boolean" || result.nickname !== normalizeNickname(nickname)) throw new AccountError("invalid");
+  return result.available;
+}
+export async function updateAccountAvatar(avatar: string | null, accountId?: string) {
+  if (avatar !== null && !validAvatarData(avatar)) throw new ProfileError("avatar_invalid");
+  const user = accountFrom(await accountRequest("/account/profile/avatar", { avatar, ...(accountId ? { accountId } : {}) }));
+  if (avatar === null ? user.avatarUrl !== null : !user.avatarUrl) throw new AccountError("invalid");
+  return user;
 }
 
 /** Cookie session + server-issued CSRF token. Backend must enforce Origin, rate limits and current asset balances. */
@@ -43,7 +67,15 @@ export async function accountRequest(path: string, body?: unknown, base = AUTH_A
     let response: Response;
     try { response = await fetch(`${base}${route}`, { ...init, credentials: "include", cache: "no-store", signal: AbortSignal.timeout(15000) }); }
     catch { throw new AccountError("network"); }
-    if (!response.ok) throw new AccountError(response.status === 429 ? "rateLimit" : response.status === 409 ? "conflict" : response.status === 401 || response.status === 403 ? "credentials" : "network");
+    if (!response.ok) {
+      if (route.startsWith("/account/profile") && [400, 409, 422].includes(response.status)) {
+        const detail = await response.json().catch(() => ({})) as { code?: ProfileErrorReason; nextNicknameChangeAt?: string };
+        if (detail.code && ["nickname_length", "nickname_format", "nickname_prohibited", "nickname_reserved", "nickname_taken", "nickname_cooldown", "avatar_invalid"].includes(detail.code)) {
+          throw new ProfileError(detail.code, typeof detail.nextNicknameChangeAt === "string" && Number.isFinite(Date.parse(detail.nextNicknameChangeAt)) ? detail.nextNicknameChangeAt : undefined);
+        }
+      }
+      throw new AccountError(response.status === 429 ? "rateLimit" : response.status === 409 ? "conflict" : response.status === 401 || response.status === 403 ? "credentials" : "network");
+    }
     try {
       const data: unknown = await response.json();
       if (!data || typeof data !== "object" || Array.isArray(data)) throw new AccountError("invalid");

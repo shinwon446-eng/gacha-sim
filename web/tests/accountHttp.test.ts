@@ -31,7 +31,9 @@ test("configured clients complete account and withdrawal contracts over real HTT
       "/auth/password/reset-request": { accepted: true },
       "/auth/password/reset": { updated: true },
       "/auth/oauth/start": { redirectUrl },
-      "/account/profile": { user: { ...user, nickname: body.nickname } },
+      "/account/profile": { user: { ...user, nickname: body.nickname, nicknameChangedAt: user.createdAt, nextNicknameChangeAt: new Date(Date.parse(user.createdAt) + 14 * 86400000).toISOString() } },
+      "/account/profile/nickname/check": { nickname: body.nickname, available: body.nickname !== "TakenName" },
+      "/account/profile/avatar": { user: { ...user, avatarUrl: body.avatar === null ? null : "https://cdn.example.test/avatar.jpg" } },
       "/account/security/totp/setup": { setupId: "setup-1", secret: "A".repeat(32) },
       "/account/security/totp/enable": { twoFactorEnabled: true, enabledAt: user.createdAt },
       "/account/security/withdrawal/otp": { authorization: "otp-proof", method: "2FA_OTP" },
@@ -64,6 +66,10 @@ test("configured clients complete account and withdrawal contracts over real HTT
     assert.equal((await account.loginAccount(user.email, "a-long-password")).id, user.id);
     assert.equal((await account.getAccountSession()).id, user.id);
     assert.equal((await account.updateAccountNickname("SavedName")).nickname, "SavedName");
+    assert.equal(await account.checkAccountNickname("SavedName"), true);
+    assert.equal(await account.checkAccountNickname("TakenName"), false);
+    assert.equal((await account.updateAccountAvatar("data:image/jpeg;base64,/9j/AA==")).avatarUrl, "https://cdn.example.test/avatar.jpg");
+    assert.equal((await account.updateAccountAvatar(null)).avatarUrl, null);
     await account.recoverAccount(user.email, "ko");
     await account.completePasswordRecovery(user.email, "654321", "new-long-password");
     assert.equal((await account.beginSocialLogin("google", "https://site.example/ko/")).redirectUrl, redirectUrl);

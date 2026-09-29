@@ -2,15 +2,16 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { AuthMode, AuthProvider } from "@/lib/auth";
-import { accountConfigured, browserAccountsEnabled, getAccountSession, logoutAccount, updateAccountNickname, type ServerAccount } from "@/lib/account";
+import { accountConfigured, browserAccountsEnabled, getAccountSession, logoutAccount, updateAccountNickname, updateAccountAvatar, type ServerAccount } from "@/lib/account";
 import { useSecurityStore } from "@/stores/securityStore";
-export interface AuthUser { id: string; provider: AuthProvider; label: string; subLabel: string; createdAt: string; local: boolean; email?: string; nickname?: string }
+export interface AuthUser { id: string; provider: AuthProvider; label: string; subLabel: string; createdAt: string; local: boolean; email?: string; nickname?: string; nicknameChangedAt?: string; nextNicknameChangeAt?: string; avatarUrl?: string | null }
 export interface AuthToast { id: number; text: string; tone: "gold" | "neutral" }
 interface AuthState {
   user: AuthUser | null; isModalOpen: boolean; modalMode: AuthMode; toast: AuthToast | null; hydrated: boolean;
   openAuthModal: (mode?: AuthMode) => void; closeAuthModal: () => void; setModalMode: (mode: AuthMode) => void;
   acceptSession: (user: ServerAccount) => void; clearSession: () => void; logout: (text: string) => Promise<void>;
   updateNickname: (nickname: string) => Promise<boolean>;
+  updateAvatar: (avatar: string | null) => Promise<boolean>;
   pushToast: (text: string, tone?: AuthToast["tone"]) => void; clearToast: (id: number) => void;
 }
 let sequence = 0;
@@ -20,12 +21,20 @@ export const useAuthStore = create<AuthState>()(persist((set, get) => ({
   closeAuthModal: () => set({ isModalOpen: false }), setModalMode: (modalMode) => set({ modalMode }),
   acceptSession: (user) => {
     if (get().user?.id !== user.id) useSecurityStore.getState().reset(user.id);
-    set({ user: { id: user.id, label: user.nickname || user.email, nickname: user.nickname, email: user.email, provider: "email", subLabel: user.email, createdAt: user.createdAt, local: browserAccountsEnabled() && user.local === true }, isModalOpen: false });
+    set({ user: { id: user.id, label: user.nickname || user.email, nickname: user.nickname, nicknameChangedAt: user.nicknameChangedAt, nextNicknameChangeAt: user.nextNicknameChangeAt, avatarUrl: user.avatarUrl, email: user.email, provider: "email", subLabel: user.email, createdAt: user.createdAt, local: browserAccountsEnabled() && user.local === true }, isModalOpen: false });
   },
   updateNickname: async (nickname) => {
     const id = get().user?.id;
     if (!id) return false;
-    const updated = await updateAccountNickname(nickname);
+    const updated = await updateAccountNickname(nickname, id);
+    if (get().user?.id !== id || updated.id !== id) return false;
+    get().acceptSession(updated);
+    return true;
+  },
+  updateAvatar: async (avatar) => {
+    const id = get().user?.id;
+    if (!id) return false;
+    const updated = await updateAccountAvatar(avatar, id);
     if (get().user?.id !== id || updated.id !== id) return false;
     get().acceptSession(updated);
     return true;

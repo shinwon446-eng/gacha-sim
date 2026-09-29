@@ -7,6 +7,7 @@ import { LogOut, Smartphone, Mail, UserRound } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/format";
 import { useAuthStore } from "@/stores/authStore";
+import { ProfileAvatar } from "./ProfileAvatar";
 import { GoogleMark, AppleMark } from "@/components/auth/ProviderMarks";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -106,7 +107,7 @@ export function HeaderAuthControl({ className }: { className?: string }) {
         aria-label={user.label}
         className="glass-dark flex h-11 flex-none items-center gap-1.5 whitespace-nowrap rounded-full px-2 transition-colors hover:border-gold-champagne lg:h-11 lg:px-2.5"
       >
-        <ProviderBadge provider={user.provider} />
+        {user.avatarUrl ? <ProfileAvatar src={user.avatarUrl} name={user.label} className="h-7 w-7" /> : <ProviderBadge provider={user.provider} />}
         <span className="hidden max-w-[104px] truncate text-xs font-semibold text-white sm:inline">{user.label}</span>
         <OnlineDot />
       </button>
@@ -132,7 +133,7 @@ export function HeaderAuthControl({ className }: { className?: string }) {
             transition={{ duration: 0.18, ease: EASE }}
           >
             <div className="flex items-center gap-2 rounded-lg bg-surface px-2.5 py-2">
-              <ProviderBadge provider={user.provider} />
+              {user.avatarUrl ? <ProfileAvatar src={user.avatarUrl} name={user.label} className="h-7 w-7" /> : <ProviderBadge provider={user.provider} />}
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[12px] font-bold text-white">{user.label}</span>
                 <span className="block truncate text-xs text-faint">{user.local ? t("accountLocal") : user.subLabel}</span>
