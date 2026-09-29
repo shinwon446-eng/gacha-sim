@@ -580,7 +580,7 @@
     "confirming": "Confirmation {n} / {total}",
     "credited": "Credited to balance",
     "amount": "Amount (USDT)",
-    "belowMin": "Minimum deposit is {min}",
+    "invalidAmount": "Enter an amount greater than 0",
     "creditedToast": "+{amount} credited",
     "close": "Close",
     "unavailableTitle": "Deposits are currently unavailable",
@@ -881,7 +881,7 @@
     "verifiedOf": "{n} of my opens re-verified"
   },
   "proof": {
-    "title": "Live Proof of Payout & Delivery",
+    "title": "Live Proof of USDT Payouts",
     "live": "LIVE",
     "tab": {
       "payouts": "USDT Payouts",
@@ -1099,8 +1099,8 @@
           "p": "Operating deposit wallets, payment processors and real-transaction territories are not yet confirmed. Transfer funds only when the official deposit flow for your account is enabled and verifies the address, network, asset and deposit conditions. Do not transfer to illustrative addresses or addresses sent by messages or accounts claiming to be support."
         },
         {
-          "h": "Networks and minimum amount",
-          "p": "The deposit screen lists USDT on TRC-20, BEP-20 and ERC-20 with a minimum of {minDeposit} USDT. Receiving availability and final conditions must be confirmed when deposits are enabled. Similar address formats do not mean the same network or token contract. Check sender support, the amount arriving after sender fees and any required memo."
+          "h": "Networks and deposit confirmation",
+          "p": "The deposit screen lists USDT on TRC-20, BEP-20 and ERC-20. Receiving availability and final conditions must be confirmed when deposits are enabled. Similar address formats do not mean the same network or token contract. Check sender support, the amount arriving after sender fees and any required memo."
         },
         {
           "h": "Confirmation, crediting and timers",
@@ -1752,6 +1752,7 @@
     "walletBalance": "Wallet balance",
     "resaleEstimate": "Estimated resale value",
     "estimateNote": "Before resale · separate from withdrawable funds",
+    "autoCashbackNotice": "Items kept for 30 days without a delivery request or resale are automatically credited at 95% of their stated value to the original payment balance.",
     "manageBalance": "Balance & withdrawals",
     "transactionGuide": "Transaction policies",
     "searchItems": "Search items or record IDs",
@@ -1774,10 +1775,10 @@
       "delivered": "Delivered"
     },
     "periods": {
-      "all": "All time",
       "7": "Last 7 days",
       "30": "Last 30 days",
-      "90": "Last 90 days"
+      "90": "Last 90 days",
+      "all": "All time"
     },
     "sorts": {
       "newest": "Newest first",
@@ -1814,6 +1815,8 @@
     "sellback": "Resell",
     "item": "Item / activity",
     "settledAmount": "Recorded amount",
+    "settlementMethod": "Settlement method",
+    "autoCashbackRecord": "30-day unused automatic cashback (95%)",
     "shipmentState": "Shipment status",
     "processedDate": "Activity date",
     "recordDetails": "View details",
@@ -1942,7 +1945,7 @@
     "reviews": "My reviews",
     "security": "Account security",
     "securityIntro": "Verify your identity by email to change your password. If you have forgotten it, use password recovery.",
-    "newPasswordTitle": "Set a new password",
+    "newPasswordTitle": "New password",
     "updatePassword": "Change password",
     "passwordUpdated": "Password changed. Please sign in with your new password.",
     "closureTitle": "Close your account",
@@ -2000,9 +2003,31 @@
     "browserAccountLabel": "Account saved in this browser",
     "browserAccountNote": "Start now to create an account in this browser, or sign up with an email and password below.",
     "startBrowserAccount": "Start now",
-    "browserSecurityNote": "Your authenticator settings are saved in this browser and do not sync to other devices.",
-    "browserEmailNote": "Email delivery is not connected, so the confirmation code is displayed here. Verifying it records a withdrawal request with a 72-hour hold.",
-    "browserCode": "Confirmation code: {code} (no email sent)"
+    "browserSecurityNote": "Enter any six digits to finish OTP setup. Your settings are saved in this browser.",
+    "browserEmailNote": "Confirm with any six digits to request a 72-hour withdrawal hold. Continue here instead of receiving an email.",
+    "browserCode": "Enter any six digits. Example: {code}",
+    "welcomeTitle": "Log in or sign up",
+    "createAccountTitle": "Create your account",
+    "enterPasswordTitle": "Enter your password",
+    "createPasswordTitle": "Create your password",
+    "verifyTitle": "Verify your email",
+    "continue": "Continue",
+    "continueProvider": "Continue with {provider}",
+    "or": "OR",
+    "editEmail": "Edit",
+    "backEmail": "Back to email",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "verificationCode": "Verification code",
+    "verifyEmailIntro": "Enter the six-digit code sent to your email.",
+    "arbitraryCodeHint": "Enter any six digits to continue.",
+    "arbitraryAccountHint": "You can currently use any input values. Your account is saved in this browser.",
+    "haveAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "rememberPassword": "Remember your password?",
+    "continueTerms": "By continuing, you agree to our terms and privacy policy.",
+    "resendCode": "Resend code",
+    "codeResent": "A new verification code has been sent."
   },
   "fairnessGuide": {
     "eyebrow": "Fairness · Result verification",

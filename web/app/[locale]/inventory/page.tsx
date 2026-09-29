@@ -111,6 +111,7 @@ export default function InventoryPage() {
         <div><span className="summary-label"><Wallet className="h-4 w-4" aria-hidden="true" />{r("walletBalance")}</span><Money value={balance} size="lg" className="mt-3" /><button onClick={() => setWithdrawOpen(true)} className="workspace-text-link mt-2">{r("manageBalance")}<ArrowUpRight className="h-4 w-4" aria-hidden="true" /></button></div>
         <div><span className="summary-label"><Package className="h-4 w-4" aria-hidden="true" />{r("resaleEstimate")}</span><Money value={resaleEstimate(items)} size="lg" className="mt-3" numberClassName="text-gold-champagne" /><p className="mt-3 text-xs leading-5 text-muted">{r("estimateNote")}</p></div>
       </div>}
+      {tab === "held" && <p className="mt-4 rounded-lg border border-gold-champagne/30 bg-gold-champagne/5 px-4 py-3 text-sm leading-6 text-secondary">{r("autoCashbackNotice")}</p>}
       <nav className="workspace-tabs" aria-label={t("title")}>
         {(["held", "shipping", "done"] as const).map(key => <button key={key} aria-current={tab === key ? "page" : undefined} onClick={() => switchTab(key)}>{r(`tabs.${key}`)}<span>{counts[key]}</span></button>)}
       </nav>
@@ -162,7 +163,7 @@ export default function InventoryPage() {
                 <div><dt>{r("recordId")}</dt><dd className="break-all font-mono">{item.id}</dd></div>
                 <div><dt>{r("acquiredDate")}</dt><dd>{date(item.acquiredAt)}</dd></div>
                 <div><dt>{r("processedDate")}</dt><dd>{at ? new Date(at).toLocaleString(locale) : r("unknownDate")}</dd></div>
-                {tab === "done" && <><div><dt>{r("originalValue")}</dt><dd><Money value={item.valueUsdt} size="sm" /></dd></div><div><dt>{r("settledAmount")}</dt><dd>{typeof item.soldForUsdt === "number" ? <Money value={item.soldForUsdt} size="sm" /> : r("amountUnknown")}</dd></div><div><dt>{r("funding")}</dt><dd>{r(`fundingTypes.${item.fundingSource ?? "unknown"}`)}</dd></div></>}
+                {tab === "done" && <><div><dt>{r("originalValue")}</dt><dd><Money value={item.valueUsdt} size="sm" /></dd></div><div><dt>{r("settledAmount")}</dt><dd>{typeof item.soldForUsdt === "number" ? <Money value={item.soldForUsdt} size="sm" /> : r("amountUnknown")}</dd></div>{item.autoCashback && <div><dt>{r("settlementMethod")}</dt><dd>{r("autoCashbackRecord")}</dd></div>}<div><dt>{r("funding")}</dt><dd>{r(`fundingTypes.${item.fundingSource ?? "unknown"}`)}</dd></div></>}
               </dl><div className="flex flex-wrap gap-3">{tab === "shipping" && <button className="workspace-button" onClick={() => setTrack(item)}><Truck className="h-4 w-4" />{t("track")}</button>}{item.status === "SHIPPING_REQUESTED" && <button className="workspace-button" onClick={() => setCancelTarget(item)}>{tc("confirm")}</button>}{item.status === "DELIVERED" && <Link href="/community?tab=eligible" className="workspace-button">{r("writeReview")}</Link>}<button className="workspace-button" onClick={() => setVerify(item)}><ShieldCheck className="h-4 w-4" />{t("verify")}</button></div>{item.status === "SHIPPING" && <p className="mt-4 text-xs leading-6 text-muted">{tc("inTransit")} <Link href="/legal/refunds" className="text-gold-champagne underline">{tc("refundPolicy")}</Link></p>}</div>
             </details>
           </li>;

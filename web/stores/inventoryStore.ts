@@ -15,6 +15,10 @@ import { attributeRefunds, normalizeRatio, sourceOf, type FundingRatio, type Fun
 
 export type OwnedStatus = "IN_STORAGE" | "SHIPPING_REQUESTED" | "SHIPPING" | "DELIVERED" | "SOLD";
 
+/** 배송 신청·판매 없이 보관할 수 있는 기간. 만료 시 평가액의 95%를 자동 환급한다. */
+export const AUTO_CASHBACK_AFTER_DAYS = 30;
+export const AUTO_CASHBACK_AFTER_MS = AUTO_CASHBACK_AFTER_DAYS * 24 * 60 * 60 * 1000;
+
 export interface OwnedItem {
   id: string;
   itemId: string;
@@ -31,6 +35,8 @@ export interface OwnedItem {
   /** SOLD 시 실제 환급액 */
   soldForUsdt?: number;
   soldAt?: string;
+  /** 30일 미사용 자동 캐시백으로 정산된 기록인지 구분한다. */
+  autoCashback?: boolean;
   shipping?: { address: ShippingAddress; feeUsdt: number; requestedAt: string; carrier?: CarrierKey; trackingNumber?: string; shippedAt?: string; deliveredAt?: string; requestId?: string; feeFundingRatio?: FundingRatio };
   shippingCancellations?: { requestId?: string; requestedAt: string; cancelledAt: string; feeRefundUsdt: number; toCrypto: number; toCard: number }[];
 }
@@ -41,6 +47,8 @@ interface InventoryState {
   add: (items: Omit<OwnedItem, "id" | "status" | "acquiredAt">[]) => OwnedItem[];
   /** 환급 — 합계와 함께 원천별 귀속액(교차 환급 차단)을 돌려준다 */
   sell: (ids: string[], refundRate: number) => { ids: string[]; totalUsdt: number; toCrypto: number; toCard: number };
+  /** 배송·판매 없이 30일을 넘긴 보관품을 95% 자동 캐시백으로 정산한다. */
+  settleExpiredCashback: (now?: number) => { ids: string[]; totalUsdt: number; toCrypto: number; toCard: number };
   requestShipping: (ids: string[], address: ShippingAddress, feeUsdt: number, feeFundingRatio?: FundingRatio) => void;
   cancelShipping: (id: string) => { ok: boolean; reason?: "notPreparing" | "unknownFee"; refundedUsdt: number; toCrypto: number; toCard: number };
   /** 데모/관리자: 운송장 발급 */
@@ -83,6 +91,19 @@ export const useInventoryStore = create<InventoryState>()(
         }));
         const { toCrypto, toCard } = attributeRefunds(refunds);
         return { ids: sold, totalUsdt: +total.toFixed(2), toCrypto, toCard };
+      },
+      settleExpiredCashback: (now = Date.now()) => {
+        const expired = get().items
+          .filter((item) => item.status === "IN_STORAGE" && Number.isFinite(Date.parse(item.acquiredAt)) && Date.parse(item.acquiredAt) <= now - AUTO_CASHBACK_AFTER_MS)
+          .map((item) => item.id);
+        if (!expired.length) return { ids: [], totalUsdt: 0, toCrypto: 0, toCard: 0 };
+
+        const settled = get().sell(expired, 0.95);
+        if (settled.ids.length) {
+          const sold = new Set(settled.ids);
+          set((state) => ({ items: state.items.map((item) => sold.has(item.id) ? { ...item, autoCashback: true } : item) }));
+        }
+        return settled;
       },
       requestShipping: (ids, address, feeUsdt, feeFundingRatio) => {
         if (!Number.isFinite(feeUsdt) || feeUsdt < 0) return;

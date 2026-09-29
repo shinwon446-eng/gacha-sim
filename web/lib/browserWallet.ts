@@ -17,4 +17,10 @@ export function restoreBrowserAssets(userId: string | null) {
   const inventory = restore(inventoryName);
   useInventoryStore.persist.setOptions({ name: inventoryName });
   useInventoryStore.setState({ ...useInventoryStore.getInitialState(), ...inventory, hydrated: true });
+  const settled = useInventoryStore.getState().settleExpiredCashback();
+  if (settled.ids.length) {
+    const activeWallet = useWalletStore.getState();
+    activeWallet.creditSplit(settled.toCrypto, settled.toCard);
+    activeWallet.addTransaction({ type: "sellback", amountUsdt: settled.totalUsdt, ref: `auto-cashback-30d:${settled.ids.join(",")}` });
+  }
 }

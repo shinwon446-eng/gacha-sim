@@ -1,7 +1,7 @@
 // 보관함 상태 전이 + 배송 규칙
 import test from "node:test";
 import assert from "node:assert/strict";
-import { useInventoryStore, summarize, type OwnedItem } from "../stores/inventoryStore";
+import { AUTO_CASHBACK_AFTER_MS, useInventoryStore, summarize, type OwnedItem } from "../stores/inventoryStore";
 import { COUNTRIES, FREE_SHIPPING_EVENT, SHIPPING_FEE_USDT, customsKindFor, isValidPccc, isValidResidentId, shippingFee, validateAddress } from "../lib/shipping";
 
 const base = (over: Partial<Omit<OwnedItem, "id" | "status" | "acquiredAt">> = {}) => ({
@@ -29,6 +29,23 @@ test("add → IN_STORAGE, sell → SOLD 환급액 = 가치 × 환급률, 이미 
   const sold = useInventoryStore.getState().items.find((i) => i.id === a.id)!;
   assert.equal(sold.status, "SOLD");
   assert.equal(sold.soldForUsdt, 80);
+});
+
+test("30일 동안 미사용한 보관품만 95% 자동 캐시백으로 한 번 정산한다", () => {
+  useInventoryStore.setState({ items: [] });
+  const [expired, fresh, shipping] = useInventoryStore.getState().add([base({ valueUsdt: 100 }), base({ valueUsdt: 50 }), base({ valueUsdt: 80 })]);
+  useInventoryStore.getState().requestShipping([shipping.id], addr, 0);
+  const now = Date.now();
+  useInventoryStore.setState((state) => ({ items: state.items.map((item) => item.id === expired.id ? { ...item, acquiredAt: new Date(now - AUTO_CASHBACK_AFTER_MS).toISOString() } : item) }));
+
+  const settled = useInventoryStore.getState().settleExpiredCashback(now);
+  assert.deepEqual(settled.ids, [expired.id]);
+  assert.equal(settled.totalUsdt, 95);
+  assert.equal(settled.toCrypto, 95);
+  assert.equal(useInventoryStore.getState().items.find((item) => item.id === expired.id)?.autoCashback, true);
+  assert.equal(useInventoryStore.getState().items.find((item) => item.id === fresh.id)?.status, "IN_STORAGE");
+  assert.equal(useInventoryStore.getState().items.find((item) => item.id === shipping.id)?.status, "SHIPPING_REQUESTED");
+  assert.equal(useInventoryStore.getState().settleExpiredCashback(now).ids.length, 0, "already settled items cannot be credited twice");
 });
 
 test("requestShipping → SHIPPING_REQUESTED, markShipping → SHIPPING + 운송장. SOLD 는 배송 불가", () => {

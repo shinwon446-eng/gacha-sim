@@ -14,9 +14,22 @@ import { useTelemetryStore } from "@/stores/telemetryStore";
 export function CurrencyHydrator() {
   useEffect(() => {
     rehydrateCurrency();
-    void useWalletStore.persist.rehydrate();
+    const rehydrate = async () => {
+      await Promise.all([
+        useWalletStore.persist.rehydrate(),
+        useInventoryStore.persist.rehydrate(),
+      ]);
+      // 브라우저 보관함이므로 다음 방문 시에도 반드시 만료분을 정산한다.
+      // 판매 상태 전환 후에만 지갑을 적립해 중복 캐시백을 막는다.
+      const settled = useInventoryStore.getState().settleExpiredCashback();
+      if (settled.ids.length) {
+        const wallet = useWalletStore.getState();
+        wallet.creditSplit(settled.toCrypto, settled.toCard);
+        wallet.addTransaction({ type: "sellback", amountUsdt: settled.totalUsdt, ref: `auto-cashback-30d:${settled.ids.join(",")}` });
+      }
+    };
+    void rehydrate();
     void useSettingsStore.persist.rehydrate();
-    void useInventoryStore.persist.rehydrate();
     void useDailyStore.persist.rehydrate();
     void useCommunityStore.persist.rehydrate();
     void useTelemetryStore.persist.rehydrate();

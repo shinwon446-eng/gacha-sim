@@ -6,7 +6,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { Copy, Check, AlertTriangle, ShieldAlert, Radio, Loader2, Timer } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
-import { MIN_DEPOSIT_USDT, NETWORKS, looksLikeAddress, type DepositNetwork } from "@/lib/depositAddress";
+import { NETWORKS, looksLikeAddress, type DepositNetwork } from "@/lib/depositAddress";
 import { DEPOSIT_ADDRESSES, isLive } from "@/lib/runtime";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
@@ -97,7 +97,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   }, [address]);
 
   const expected = Number(amount);
-  const amountOk = Number.isFinite(expected) && expected >= MIN_DEPOSIT_USDT;
+  const amountOk = Number.isFinite(expected) && expected > 0;
 
   // [⚡ 입금 전송 완료] — 체인 확인을 시작한다. live: API 폴링 → confirmed 면 그 금액을 반영. 백엔드가 없으면 확인 대기 상태로 남긴다.
   const confirm = useCallback(async () => {
@@ -138,7 +138,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   const busy = polling;
 
   if (!user) return <LoginRequired />;
-  if (user.local) return <BrowserFunding source="usdt" onCredited={onCredited} />;
+  if (user.local) return <BrowserFunding onCredited={onCredited} />;
 
   if (!isLive()) return <div className="rounded-xl border border-hairline bg-obsidian p-6"><ShieldAlert className="h-6 w-6 text-gold-champagne" aria-hidden="true" /><h3 className="mt-4 text-lg font-semibold text-white">{t("unavailableTitle")}</h3><p className="mt-3 max-w-2xl text-sm leading-7 text-secondary">{t("unavailableBody")}</p></div>;
 
@@ -242,7 +242,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
             placeholder={t("amount")}
             className="mt-2 w-full rounded-md border border-hairline bg-obsidian px-3 py-2.5 font-mono text-sm text-white outline-none focus:border-gold-champagne"
           />
-          {!amountOk && amount !== "" && <p className="mt-1 text-xs text-crimson">{t("belowMin", { min: fmt(MIN_DEPOSIT_USDT) })}</p>}
+          {!amountOk && amount !== "" && <p className="mt-1 text-xs text-crimson">{t("invalidAmount")}</p>}
         </div>
 
         {/* 안내 */}
@@ -252,7 +252,6 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
             <span className="caption-luxury !text-gold-champagne">{t("guideTitle")}</span>
           </div>
           <ul className="mt-2 space-y-1 text-xs leading-relaxed text-secondary">
-            <li className="font-semibold text-white">· {t("dustWarn", { min: fmt(MIN_DEPOSIT_USDT) })}</li>
             <li>· {t("guideConfirm", { n: meta.confirmations })} ({t("guideTime", { sec: meta.blockSeconds, min: Math.ceil((meta.confirmations * meta.blockSeconds) / 60) })})</li>
             <li>· {t("guideToken")}</li>
           </ul>

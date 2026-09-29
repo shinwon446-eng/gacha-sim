@@ -1,4 +1,3 @@
-import { MIN_DEPOSIT_USDT } from "./depositAddress";
 import { MIN_WITHDRAW_USDT, WITHDRAW_NETWORK_BY_KEY } from "./withdrawal";
 
 // Policy publication does not activate unconnected transaction services.
@@ -12,7 +11,6 @@ export const LEGAL_GROUPS = [
 ] as const;
 // Shared display values; the transaction flow must confirm availability and final charges.
 export const LEGAL_VALUES = {
-  minDeposit: MIN_DEPOSIT_USDT,
   minWithdraw: MIN_WITHDRAW_USDT,
   trcFee: WITHDRAW_NETWORK_BY_KEY.TRC20.feeUsdt.toFixed(2),
   bepFee: WITHDRAW_NETWORK_BY_KEY.BEP20.feeUsdt.toFixed(2),

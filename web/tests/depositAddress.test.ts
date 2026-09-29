@@ -2,7 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { MIN_DEPOSIT_USDT, NETWORKS, looksLikeAddress } from "../lib/depositAddress";
+import { NETWORKS, looksLikeAddress } from "../lib/depositAddress";
 
 const B58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 function b58decode(s: string): Uint8Array {
@@ -22,11 +22,10 @@ function b58decode(s: string): Uint8Array {
 /** EIP-55: 소문자 hex 의 keccak 로 대소문자를 정하는데, 여기서는 "대소문자 혼합이면서 전부 소문자/대문자가 아님"만 확인한다 —
  *  keccak 없이도 무작위 혼합이 체크섬과 일치할 확률은 1/2^(hex letters) 로 무시할 수 있다. */
 
-test("네트워크 메타: TRC-20 · BEP-20 · ERC-20, TRC-20 추천, 12 컨펌, 최소 10 USDT", () => {
+test("네트워크 메타: TRC-20 · BEP-20 · ERC-20, TRC-20 추천, 12 컨펌", () => {
   assert.deepEqual(NETWORKS.map((n) => n.key), ["TRC20", "BEP20", "ERC20"]);
   assert.equal(NETWORKS.find((n) => n.key === "TRC20")!.recommended, true);
   for (const n of NETWORKS) assert.equal(n.confirmations, 12);
-  assert.equal(MIN_DEPOSIT_USDT, 10);
 });
 
 test("주소 형식 검사 — TRC-20 base58 34자 / BEP-20 0x+40hex", () => {

@@ -4,23 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import { useModal } from "@/lib/useModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { X, Wallet, Coins, CreditCard, ArrowUpRight, ReceiptText } from "lucide-react";
+import { X, Wallet, Coins, ArrowUpRight, ReceiptText } from "lucide-react";
 import { cn } from "@/lib/format";
 import { UsdtDepositTab } from "@/components/wallet/UsdtDepositTab";
 import { WithdrawTab } from "@/components/wallet/WithdrawTab";
 import { useWalletStore } from "@/stores/walletStore";
 import { Money } from "@/components/ui/Money";
-import { CardDepositTab } from "@/components/wallet/CardDepositTab";
 import { HistoryTab } from "@/components/wallet/HistoryTab";
 import { PolicyNotice } from "@/components/legal/PolicyNotice";
 
-type Tab = "usdt" | "card" | "withdraw" | "history";
+type Tab = "usdt" | "withdraw" | "history";
 
 export interface DepositModalProps {
   open: boolean;
   onClose: () => void;
-  /** 모의 입금이 잔액에 반영된 뒤 — 호출측이 토스트를 띄운다 */
-  onCredited: (amountUsdt: number, source: "usdt" | "card") => void;
+  /** 입금이 잔액에 반영된 뒤 — 호출측이 토스트를 띄운다 */
+  onCredited: (amountUsdt: number) => void;
   /** 출금 신청 확정 후 — 호출측이 토스트를 띄운다 */
   onWithdrawn?: (amountUsdt: number) => void;
   /** 롤오버 미달로 출금이 막혔을 때 */
@@ -30,23 +29,18 @@ export interface DepositModalProps {
 }
 
 /**
- * 지갑 모달 (PROMPTS 4-1). 탭: [USDT 암호화폐 입금] / [신용카드 결제(4-2)] / [↗ 출금]
+ * 지갑 모달. 탭: [USDT 암호화폐 입금] / [↗ 출금]
  * 출금은 자체 모달이라 탭을 누르면 이 모달을 닫고 그쪽을 연다 — 모바일에서 하단 내비 [💳 충전]이 유일한 지갑 진입점이므로 여기서 출금까지 닿아야 한다.
  */
-/** 출금 가능(USDT 입금분) / 플레이·배송 전용(카드 충전분) 분리 표시 */
+/** 출금 가능한 USDT 잔액 */
 function BalanceSplit() {
   const t = useTranslations("withdraw");
   const cryptoBalance = useWalletStore((s) => s.cryptoBalance);
-  const cardBalance = useWalletStore((s) => s.cardBalance);
   return (
-    <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <div className="mt-4">
       <div className="border-metallic-subtle rounded-lg bg-obsidian p-2.5">
         <div className="break-keep text-xs leading-tight text-faint">{t("availableCrypto")}</div>
         <Money value={cryptoBalance} size="sm" className="mt-1" numberClassName="text-gold-gradient" />
-      </div>
-      <div className="border-metallic-subtle rounded-lg bg-obsidian p-2.5">
-        <div className="break-keep text-xs leading-tight text-faint">{t("cardLocked")}</div>
-        <Money value={cardBalance} size="sm" className="mt-1" numberClassName="text-secondary" />
       </div>
     </div>
   );
@@ -107,7 +101,6 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
               {(
                 [
                   { key: "usdt", label: t("tabUsdt"), Icon: Coins },
-                  { key: "card", label: t("tabCard"), Icon: CreditCard },
                   { key: "withdraw", label: t("tabWithdraw"), Icon: ArrowUpRight },
                   { key: "history", label: t("tabHistory"), Icon: ReceiptText },
                 ] as const
@@ -133,8 +126,7 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
             {tab !== "withdraw" && tab !== "history" && <BalanceSplit />}
 
             <div className="mt-5">
-              {tab === "usdt" && <UsdtDepositTab onCredited={(a) => onCredited(a, "usdt")} />}
-              {tab === "card" && <CardDepositTab onCredited={(a) => onCredited(a, "card")} />}
+              {tab === "usdt" && <UsdtDepositTab onCredited={onCredited} />}
               {tab === "withdraw" && <WithdrawTab onRequested={(a) => onWithdrawn?.(a)} onBlocked={onWithdrawBlocked} onDone={onClose} />}
               {tab === "history" && <HistoryTab />}
             </div>
