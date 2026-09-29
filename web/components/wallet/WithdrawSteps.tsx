@@ -6,11 +6,12 @@ import { AlertTriangle, ArrowLeft, ArrowRight, Loader2, Mail, ShieldCheck, Timer
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { Money } from "@/components/ui/Money";
-import { TOTP_DIGITS, totpNow, totpSecondsRemaining, verifyTotp } from "@/lib/totp";
+import { AccountError } from "@/lib/account";
+import { sendWithdrawalEmail, verifyWithdrawalEmail, verifyWithdrawalOtp, type WithdrawalDraft, type WithdrawalProof } from "@/lib/security";
 import { WITHDRAW_NETWORK_BY_KEY, netReceive } from "@/lib/withdrawal";
 import { HOLD_HOURS, validEmail } from "@/lib/withdrawHold";
-import { twoFactorServerBacked } from "@/stores/securityStore";
-import { accountConfigured } from "@/lib/account";
+
+
 import type { Network } from "@/lib/depositAddress";
 
 /** OTP 를 몇 번 틀리면 대체 수단으로 보내는가 */
@@ -93,262 +94,81 @@ export function ConfirmStep({
  * 검증은 RFC 6238 실제 계산이다(`lib/totp.ts`) — 자릿수만 보는 관문이 아니다.
  * 3회 실패하면 이메일 · 72시간 대기 경로로 보낸다.
  */
-export function OtpStep({
-  secret,
-  onSuccess,
-  onFallback,
-  onBack,
-}: {
-  secret: string;
-  onSuccess: () => void;
-  onFallback: () => void;
-  onBack: () => void;
+export function OtpStep({ draft, onSuccess, onFallback, onBack }: {
+  draft: WithdrawalDraft; onSuccess: (proof: WithdrawalProof) => void; onFallback: () => void; onBack: () => void;
 }) {
   const t = useTranslations("withdraw");
+  const ta = useTranslations("account");
   const [code, setCode] = useState("");
   const [left, setLeft] = useState(OTP_MAX_ATTEMPTS);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [hint, setHint] = useState<{ code: string; left: number } | null>(null);
-  const ref = useRef<HTMLInputElement>(null);
-  const local = !twoFactorServerBacked();
-
-  useEffect(() => {
-    ref.current?.focus();
-  }, []);
-
-  // 서버 검증이 붙기 전에는 지금 유효한 코드를 보여 준다 — 등록된 시크릿에서 계산한 실제 값이다
-  useEffect(() => {
-    if (!local) return;
-    let alive = true;
-    const tick = async () => {
-      try {
-        const next = await totpNow(secret);
-        if (alive) setHint({ code: next, left: totpSecondsRemaining() });
-      } catch {
-        if (alive) setHint(null);
-      }
-    };
-    void tick();
-    const id = window.setInterval(tick, 1000);
-    return () => {
-      alive = false;
-      window.clearInterval(id);
-    };
-  }, [local, secret]);
-
-  const submit = useCallback(
-    async (raw: string) => {
-      if (busy) return;
-      setBusy(true);
-      setError("");
-      try {
-        if (await verifyTotp(secret, raw)) {
-          onSuccess();
-          return;
-        }
-        const remaining = left - 1;
+  const lock = useRef(false);
+  const submit = async (raw: string) => {
+    if (lock.current || left <= 0) return;
+    lock.current = true; setBusy(true); setError("");
+    try { onSuccess(await verifyWithdrawalOtp(draft, raw)); }
+    catch (cause) {
+      setCode("");
+      if (cause instanceof AccountError && ["credentials", "invalid", "rateLimit"].includes(cause.code)) {
+        const remaining = cause.code === "rateLimit" ? 0 : left - 1;
         setLeft(remaining);
-        setCode("");
-        if (remaining <= 0) {
-          onFallback();
-          return;
-        }
+        if (remaining <= 0) { onFallback(); return; }
         setError(t("otpWrong", { left: remaining }));
-        ref.current?.focus();
-      } finally {
-        setBusy(false);
-      }
-    },
-    [busy, secret, left, onSuccess, onFallback, t],
-  );
-
-  const onCode = (raw: string) => {
-    const v = raw.replace(/\D+/g, "").slice(0, TOTP_DIGITS);
-    setCode(v);
-    setError("");
-    if (v.length === TOTP_DIGITS) void submit(v);
+      } else setError(ta(`errors.${cause instanceof AccountError ? cause.code : "network"}`));
+    } finally { lock.current = false; setBusy(false); }
   };
-
-  return (
-    <div className={cn(panel, "mt-4")}>
-      <div className="flex items-center gap-2">
-        <ShieldCheck className="h-4 w-4 flex-none text-gold-champagne" strokeWidth={2.3} />
-        <h3 className="break-keep text-[15px] font-bold text-white">{t("otpTitle")}</h3>
-      </div>
-      <p className="mt-1.5 break-keep text-xs leading-relaxed text-secondary">{t("otpBody")}</p>
-
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        <input
-          ref={ref}
-          type="text"
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          aria-label={t("otpLabel")}
-          value={code}
-          disabled={busy}
-          onChange={(e) => onCode(e.target.value)}
-          maxLength={TOTP_DIGITS}
-          placeholder="000000"
-          className="h-12 w-[8.5rem] flex-none rounded-lg border border-hairline bg-canvas px-2 text-center font-mono text-[17px] font-bold tracking-[0.3em] text-white outline-none placeholder:text-faint/50 focus:border-gold-champagne"
-        />
-        {busy && <Loader2 className="h-4 w-4 animate-spin text-gold-champagne" strokeWidth={2.6} />}
-        {local && hint && (
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => onCode(hint.code)}
-            className="flex min-h-11 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg border border-gold-champagne/55 bg-gold-champagne/[0.09] px-2.5 text-[11.5px] font-bold text-gold-champagne transition-colors hover:bg-gold-champagne/20"
-          >
-            <span className="truncate">{t("otpUseCurrent")}</span>
-            <span className="flex-none rounded bg-gold-champagne/20 px-1.5 py-0.5 font-mono tracking-wider">{hint.code}</span>
-            <span className="flex-none tabular-nums text-gold-champagne/70">{hint.left}s</span>
-          </button>
-        )}
-      </div>
-
-      <p className="mt-2 text-[11px] tabular-nums text-faint">{t("otpAttempts", { left })}</p>
-      {error && (
-        <p role="alert" className="mt-2 rounded-md bg-red-400/10 px-2.5 py-2 text-xs leading-relaxed text-red-200">
-          {error}
-        </p>
-      )}
-
-      <div className="mt-4 grid gap-2">
-        <button type="button" onClick={onFallback} className="flex min-h-12 items-center justify-center gap-2 break-keep rounded-lg border border-hairline px-3 text-[12px] font-semibold leading-snug text-gold-champagne transition-colors hover:border-gold-champagne">
-          <Mail className="h-4 w-4 flex-none" strokeWidth={2.2} />
-          {t("otpFallback", { hours: HOLD_HOURS })}
-        </button>
-        <button type="button" onClick={onBack} className="min-h-11 text-xs font-semibold text-secondary hover:text-white">
-          {t("confirmBack")}
-        </button>
-      </div>
-    </div>
-  );
+  return <div className={cn(panel, "mt-4")}>
+    <h3 className="text-base font-semibold text-white">{t("otpTitle")}</h3>
+    <p className="mt-2 text-sm leading-7 text-secondary">{t("otpBody")}</p>
+    <form onSubmit={e => { e.preventDefault(); if (code.length === 6) void submit(code); }}>
+      <label className="mt-3 block text-sm text-secondary">{t("otpLabel")}<input autoFocus inputMode="numeric" autoComplete="one-time-code" value={code} disabled={busy} maxLength={6} onChange={e => setCode(e.target.value.replace(/\D/g, ""))} className="mt-2 h-12 w-full rounded-lg border border-hairline bg-canvas px-3 font-mono tracking-widest text-white" /></label>
+      <p className="mt-2 text-xs text-muted">{t("otpAttempts", { left })}</p>
+      {error && <p role="alert" className="mt-2 text-sm text-red-200">{error}</p>}
+      <button disabled={busy || code.length !== 6} className="mt-3 min-h-12 w-full rounded-lg bg-[#f1eee7] px-4 text-sm font-semibold text-obsidian disabled:opacity-40">{ta(busy ? "processing" : "verifyCode")}</button>
+    </form>
+    <button type="button" disabled={busy} onClick={onFallback} className="mt-3 min-h-12 w-full rounded-lg border border-hairline px-3 text-sm text-gold-champagne">{t("otpFallback", { hours: HOLD_HOURS })}</button>
+    <button type="button" disabled={busy} onClick={onBack} className="mt-2 min-h-11 w-full text-sm text-secondary">{t("confirmBack")}</button>
+  </div>;
 }
 
-/**
- * 대체 경로 — **이메일 인증 / 72시간 출금**.
- * 인증이 끝나면 잔액을 동결하고 `PENDING_72H_HOLD` 로 기록한다. 대기 중에는 본인이 언제든 취소할 수 있다.
- *
- * ⚠️ 메일 발송은 서버만 할 수 있다. `NEXT_PUBLIC_AUTH_API_BASE` 가 없으면 **메일을 보냈다고 말하지 않고**
- *    이 기기에서 확인하는 코드임을 그대로 적는다(부록 C).
- */
-export function EmailHoldStep({ defaultEmail, onVerified, onBack }: { defaultEmail?: string; onVerified: (email: string) => void; onBack: () => void }) {
+export function EmailHoldStep({ draft, email, onVerified, onBack }: {
+  draft: WithdrawalDraft; email: string; onVerified: (proof: WithdrawalProof) => void; onBack: () => void;
+}) {
   const t = useTranslations("withdraw");
-  const [email, setEmail] = useState(defaultEmail ?? "");
-  const [sent, setSent] = useState<string | null>(null);
+  const ta = useTranslations("account");
+  const [challenge, setChallenge] = useState<Awaited<ReturnType<typeof sendWithdrawalEmail>> | null>(null);
   const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const codeRef = useRef<HTMLInputElement>(null);
-  const serverEmail = accountConfigured();
-
-  const send = () => {
-    if (!validEmail(email)) {
-      setError(t("emailInvalid"));
-      return;
-    }
-    setError("");
-    // 서버가 붙으면 여기서 발송을 요청하고 검증도 서버가 한다. 그전에는 이 기기에서 확인하는 코드다.
-    const bytes = new Uint32Array(1);
-    globalThis.crypto.getRandomValues(bytes);
-    setSent(String(bytes[0] % 10 ** 6).padStart(6, "0"));
-    setCode("");
-    window.setTimeout(() => codeRef.current?.focus(), 200);
+  const lock = useRef(false);
+  const send = async () => {
+    if (lock.current) return;
+    lock.current = true; setBusy(true); setError(""); setCode(""); setChallenge(null);
+    try { setChallenge(await sendWithdrawalEmail(draft)); }
+    catch (cause) { setError(ta(`errors.${cause instanceof AccountError ? cause.code : "network"}`)); }
+    finally { lock.current = false; setBusy(false); }
   };
-
-  const onCode = (raw: string) => {
-    const v = raw.replace(/\D+/g, "").slice(0, 6);
-    setCode(v);
-    setError("");
-    if (v.length === 6) {
-      if (sent && v === sent) onVerified(email.trim());
-      else {
-        setError(t("emailCodeWrong"));
-        setCode("");
-      }
-    }
+  const verify = async () => {
+    if (lock.current || !challenge || code.length !== 6) return;
+    if (Date.now() >= challenge.expiresAt) { setError(t("emailExpired")); return; }
+    lock.current = true; setBusy(true); setError("");
+    try { onVerified(await verifyWithdrawalEmail(draft, challenge.challengeId, code)); }
+    catch (cause) { setCode(""); setError(ta(`errors.${cause instanceof AccountError ? cause.code : "network"}`)); }
+    finally { lock.current = false; setBusy(false); }
   };
-
-  return (
-    <div className={cn(panel, "mt-4")}>
-      <div className="flex items-start gap-2 rounded-lg border border-gold-champagne/45 bg-gold-champagne/[0.07] p-3">
-        <AlertTriangle className="mt-0.5 h-4 w-4 flex-none text-gold-champagne" strokeWidth={2.3} />
-        <p className="break-keep text-[12px] leading-relaxed text-gold-champagne">{t("holdBanner", { hours: HOLD_HOURS })}</p>
-      </div>
-
-      <label className="mt-3 block text-xs text-secondary">
-        {t("emailLabel")}
-        <input
-          type="email"
-          autoComplete="email"
-          maxLength={254}
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            setSent(null);
-            setError("");
-          }}
-          placeholder="you@example.com"
-          className="mt-1.5 h-12 w-full rounded-lg border border-hairline bg-canvas px-3 text-sm text-white outline-none placeholder:text-faint/60 focus:border-gold-champagne"
-        />
-      </label>
-      <button
-        type="button"
-        onClick={send}
-        disabled={!validEmail(email)}
-        className={cn(
-          "mt-2 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold transition-colors",
-          validEmail(email) ? "bg-[#f1eee7] text-obsidian hover:bg-gold-metallic" : "cursor-not-allowed border border-hairline text-faint",
-        )}
-      >
-        <Mail className="h-4 w-4" strokeWidth={2.3} />
-        {sent ? t("emailResend") : t("emailSend")}
-      </button>
-
-      {sent && (
-        <div className="mt-3 border-t border-hairline pt-3">
-          <p className="break-keep text-[11px] leading-relaxed text-faint">{serverEmail ? t("emailSentTo", { email: email.trim() }) : t("emailLocalHint")}</p>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <input
-              ref={codeRef}
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              aria-label={t("emailCodeLabel")}
-              value={code}
-              onChange={(e) => onCode(e.target.value)}
-              maxLength={6}
-              placeholder="000000"
-              className="h-12 w-[8.5rem] flex-none rounded-lg border border-hairline bg-canvas px-2 text-center font-mono text-[17px] font-bold tracking-[0.3em] text-white outline-none placeholder:text-faint/50 focus:border-gold-champagne"
-            />
-            {!serverEmail && (
-              <button
-                type="button"
-                onClick={() => onCode(sent)}
-                className="flex min-h-11 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg border border-gold-champagne/55 bg-gold-champagne/[0.09] px-2.5 text-[11.5px] font-bold text-gold-champagne transition-colors hover:bg-gold-champagne/20"
-              >
-                <span className="truncate">{t("emailUseCode")}</span>
-                <span className="flex-none rounded bg-gold-champagne/20 px-1.5 py-0.5 font-mono tracking-wider">{sent}</span>
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {error && (
-        <p role="alert" className="mt-2 rounded-md bg-red-400/10 px-2.5 py-2 text-xs leading-relaxed text-red-200">
-          {error}
-        </p>
-      )}
-
-      <p className="mt-3 flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-faint">
-        <Timer className="mt-0.5 h-3 w-3 flex-none" strokeWidth={2.4} />
-        {t("holdCancelNote")}
-      </p>
-      <button type="button" onClick={onBack} className="mt-2 min-h-11 w-full text-xs font-semibold text-secondary hover:text-white">
-        {t("confirmBack")}
-      </button>
-    </div>
-  );
+  return <div className={cn(panel, "mt-4")}>
+    <p className="rounded-lg border border-gold-champagne/40 p-3 text-sm leading-7 text-gold-champagne">{t("holdBanner", { hours: HOLD_HOURS })}</p>
+    <p className="mt-3 text-sm leading-7 text-secondary">{t("registeredEmailOnly")}</p>
+    <p className="mt-2 break-all text-sm text-white">{email}</p>
+    <button type="button" disabled={busy} onClick={() => void send()} className="mt-3 min-h-12 w-full rounded-lg bg-[#f1eee7] px-4 text-sm font-semibold text-obsidian disabled:opacity-40">{busy ? ta("processing") : t(challenge ? "emailResend" : "emailSend")}</button>
+    {challenge && <form onSubmit={e => { e.preventDefault(); void verify(); }} className="mt-4">
+      <p role="status" className="text-sm text-secondary">{t("emailSentTo", { email: challenge.emailMasked })}</p>
+      <label className="mt-3 block text-sm text-secondary">{t("emailCodeLabel")}<input autoFocus inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ""))} disabled={busy} className="mt-2 h-12 w-full rounded-lg border border-hairline bg-canvas px-3 font-mono tracking-widest text-white" /></label>
+      <button disabled={busy || code.length !== 6} className="mt-3 min-h-12 w-full rounded-lg bg-[#f1eee7] px-4 text-sm font-semibold text-obsidian disabled:opacity-40">{ta(busy ? "processing" : "verifyCode")}</button>
+    </form>}
+    {error && <p role="alert" className="mt-3 text-sm text-red-200">{error}</p>}
+    <p className="mt-3 text-xs leading-6 text-muted">{t("holdCancelNote")}</p>
+    <button type="button" disabled={busy} onClick={onBack} className="mt-2 min-h-11 w-full text-sm text-secondary">{t("confirmBack")}</button>
+  </div>;
 }

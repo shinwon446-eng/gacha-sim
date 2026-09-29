@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Check, LogOut } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useAuthStore, rehydrateAuth } from "@/stores/authStore";
-import { rehydrateSecurity } from "@/stores/securityStore";
+import { useSecurityStore } from "@/stores/securityStore";
 import { AuthModal } from "@/components/auth/AuthModal";
 
 /**
@@ -16,12 +16,14 @@ import { AuthModal } from "@/components/auth/AuthModal";
  */
 export function AuthHost() {
   const toast = useAuthStore((s) => s.toast);
+  const userId = useAuthStore(s => s.user?.id);
 
   useEffect(() => {
+    // Remove the old unscoped browser secret; account security is fetched from the server.
+    try { localStorage.removeItem("voila-security-v1"); } catch { /* Storage may be disabled. */ }
     void rehydrateAuth();
-    // 2FA 등록 상태도 같은 시점에 복원한다 — 출금 관문이 이 값을 본다
-    rehydrateSecurity();
   }, []);
+  useEffect(() => { if (userId) void useSecurityStore.getState().refresh(userId); }, [userId]);
 
   return (
     <>

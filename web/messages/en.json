@@ -950,7 +950,8 @@
       "BROADCASTING": "Broadcasting",
       "COMPLETED": "Completed",
       "PENDING_72H_HOLD": "72-hour security hold",
-      "CANCELLED": "Cancelled"
+      "CANCELLED": "Cancelled",
+      "FAILED": "Failed"
     },
     "txHash": "On-chain TxID",
     "txHashPending": "The TxID appears after broadcast",
@@ -983,8 +984,8 @@
     "amlRequired": "Usage required",
     "amlCurrent": "Usage reached",
     "amlGrinding": "Low-risk boxes (minimum payback of 90% or more) count only {pct}% of what you spend toward the usage rule — risk-free grinding cannot bypass it.",
-    "gateTitle": "Withdrawals need Google OTP two-factor",
-    "gateBody": "This gate protects your balance. Setup takes about a minute and drops you straight back into the withdrawal form.",
+    "gateTitle": "Choose your withdrawal verification method",
+    "gateBody": "Set up Google Authenticator to verify withdrawals. If you cannot use the app, verify your registered email and wait 72 hours.",
     "gateCta": "Set up Google OTP",
     "gateProtected": "Protected by Google OTP 2FA",
     "confirmEyebrow": "Confirm the amount after fees",
@@ -1011,8 +1012,10 @@
     "emailUseCode": "Fill the code",
     "holdCancelNote": "While it waits you can cancel at any time and the balance returns immediately.",
     "holdDoneTitle": "Email verified · sends automatically in {hours}h",
-    "holdDoneNote": "Watch the countdown in your history, and cancel straight away if anything looks wrong.",
-    "previewNote": "Submitting now creates a withdrawal record and holds the balance. The actual transfer only starts once the payout service is connected, and no TxID is issued before then."
+    "holdDoneNote": "View the eligible processing time and status in transaction history. After the hold expires, the server processes the request subject to required review.",
+    "previewNote": "Submitting now creates a withdrawal record and holds the balance. The actual transfer only starts once the payout service is connected, and no TxID is issued before then.",
+    "registeredEmailOnly": "Codes are sent only to your account's verified email. The 72-hour withdrawal hold starts after verification.",
+    "emailExpired": "This code has expired. Request a new code."
   },
   "footer": {
     "tagline": "You never know what’s next.",
@@ -1982,7 +1985,18 @@
       "credentials": "Check your sign-in details. Email verification or a fresh sign-in may be required.",
       "rateLimit": "Too many requests. Please try again later.",
       "conflict": "The server found unresolved assets or transactions. Check their status before proceeding."
-    }
+    },
+    "settingsLoginNeeded": "Sign in to set your nickname and Google Authenticator and view your transaction history.",
+    "nicknameTitle": "Nickname settings",
+    "nickname": "Nickname",
+    "nicknameHint": "Use 2–20 letters, numbers, underscores (_) or hyphens (-).",
+    "nicknameInvalid": "Check your nickname. Spaces and other special characters are not allowed.",
+    "nicknameSaved": "Nickname saved.",
+    "saveNickname": "Save nickname",
+    "transactionHistory": "Transaction history",
+    "verifyCode": "Verify code",
+    "transactionsUnavailable": "Deposits and withdrawals are being connected. Please check back when the service is available.",
+    "nicknameTaken": "This nickname is already in use. Choose another nickname."
   },
   "fairnessGuide": {
     "eyebrow": "Fairness · Result verification",
@@ -2095,7 +2109,14 @@
     "enabledSince": "Active since {at}",
     "disable": "Turn off two-factor",
     "disabled": "Two-factor authentication is off",
-    "enabledToast": "Google OTP two-factor is now active"
+    "enabledToast": "Google OTP two-factor is now active",
+    "startSetup": "Set up Google Authenticator",
+    "loading": "Loading security settings.",
+    "loadFailed": "Could not load security settings. Please try again.",
+    "retry": "Try again",
+    "disableCode": "Enter the six-digit code from your authenticator to disable it.",
+    "cancel": "Cancel",
+    "copyFailed": "Could not copy. Select the text and copy it manually."
   },
   "history": {
     "title": "Deposits and withdrawals",
@@ -2114,10 +2135,11 @@
       "PENDING_72H_HOLD": "72-hour security hold",
       "BROADCASTING": "Broadcasting on chain",
       "COMPLETED": "Completed",
-      "CANCELLED": "Cancelled"
+      "CANCELLED": "Cancelled",
+      "FAILED": "Failed"
     },
     "holdRemaining": "Sends in {hours}h {minutes}m",
-    "holdReleased": "Hold over · ready to send",
+    "holdReleased": "Hold ended · awaiting server processing",
     "cancelHold": "Cancel withdrawal (refund now)",
     "fee": "Fee",
     "net": "You receive",
@@ -2127,6 +2149,10 @@
     "receipt": "Receipt number",
     "verifiedEmail": "Verified email",
     "copyAddress": "Copy address",
-    "empty": "No deposits or withdrawals yet."
+    "empty": "No deposits or withdrawals yet.",
+    "method": "Network / payment method",
+    "requestId": "Request ID",
+    "unlockAt": "Eligible processing time",
+    "copyFailed": "Could not copy. Select the text and copy it manually."
   }
 }

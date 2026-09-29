@@ -1,11 +1,13 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
 import { CreditCard, Check, X, Receipt, Loader2, Lock, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
+import { useAuthStore } from "@/stores/authStore";
+import { LoginRequired } from "@/components/auth/LoginRequired";
 import { useWalletStore } from "@/stores/walletStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { playChime } from "@/lib/audio";
@@ -45,7 +47,9 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   const t = useTranslations("cardPay");
   const locale = useLocale();
   const { fmt } = useCurrency();
-  const credit = useWalletStore((s) => s.credit);
+  const user = useAuthStore(s => s.user);
+  const paying = useRef(false);
+  const settleDeposit = useWalletStore(s => s.settleDeposit);
   const addTransaction = useWalletStore((s) => s.addTransaction);
   const setTransactionStatus = useWalletStore((s) => s.setTransactionStatus);
   const transactions = useWalletStore((s) => s.transactions);
@@ -77,11 +81,13 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
 
   const pay = useCallback(async () => {
     setTouched(true);
-    if (!canPay) return;
+    if (!canPay || !user || paying.current) return;
+    paying.current = true;
     setStage({ kind: "3ds" });
     // 결제 요청 즉시 입금 내역을 만든다 — 상태는 "3DS 인증 중". 승인 전에는 잔액·롤오버가 움직이지 않는다.
     const pending = addTransaction({
       type: "deposit_card",
+      accountId: user.id,
       amountUsdt,
       ref: `${intended}:requested`,
       network: cardMask(number),
@@ -90,24 +96,26 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
     await new Promise((r) => setTimeout(r, 1800));
     // 카드 원문은 넘기지 않는다 — PG 가 자체 토큰화/3DS 로 승인한다
     const result = await provider.checkout({ amount: amountUsd, currency: "USD", amountUsdt, locale, requestThreeDSecure: DEFAULT_3DS_REQUEST }).catch<CheckoutResult>((e: Error) => ({ ok: false, provider: intended, transactionId: "", at: new Date().toISOString(), reason: e.message }));
-    if (!result.ok) {
+    paying.current = false;
+    if (!result.ok || !result.transactionId) {
       // 승인 실패 — 만들어 둔 내역을 취소로 닫는다(유령 레코드를 남기지 않는다)
-      setTransactionStatus(pending.id, "CANCELLED");
+      setTransactionStatus(pending.id, "FAILED");
       setStage({ kind: "declined", result });
       return;
     }
     // 카드 충전분은 카드 잔액으로만 — 온체인 출금 불가 (CLAUDE.md §7-B)
-    credit(amountUsdt, "card");
-    useWalletStore.setState((w) => ({ transactions: w.transactions.map((x) => (x.id === pending.id ? { ...x, ref: `${result.provider}:${result.transactionId}`, receipt: result.transactionId } : x)) }));
-    setTransactionStatus(pending.id, "COMPLETED");
+    if (useAuthStore.getState().user?.id !== user.id) return;
+    const credited = settleDeposit(pending.id, { amountUsdt, reference: `${result.provider}:${result.transactionId}`, receipt: result.transactionId });
     if (!useSettingsStore.getState().muted) playChime();
-    onCredited(amountUsdt);
+    if (credited) onCredited(amountUsdt);
     setStage({ kind: "receipt", result: { ...result, cardMask: result.cardMask ?? cardMask(number) }, amountUsd });
-  }, [canPay, provider, intended, amountUsd, amountUsdt, locale, credit, addTransaction, setTransactionStatus, onCredited, number]);
+  }, [user, canPay, provider, intended, amountUsd, amountUsdt, locale, settleDeposit, addTransaction, setTransactionStatus, onCredited, number]);
 
   const recent = transactions.filter((x) => x.type === "deposit_card" || x.type === "deposit_usdt").slice(0, 4);
   const providerLabel = intended === "portone" ? t("providerPortone") : t("providerStripe");
   const field = "h-11 w-full rounded-md border bg-obsidian px-3 font-mono text-sm text-white outline-none transition-colors focus:border-gold-champagne";
+
+  if (!user) return <LoginRequired />;
 
   if (stage.kind === "receipt") {
     const r = stage.result;

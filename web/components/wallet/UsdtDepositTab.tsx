@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrcode.react";
 import { Copy, Check, AlertTriangle, ShieldAlert, Radio, Loader2, Timer } from "lucide-react";
@@ -9,7 +9,8 @@ import { useCurrency } from "@/lib/useCurrency";
 import { MIN_DEPOSIT_USDT, NETWORKS, looksLikeAddress, type DepositNetwork } from "@/lib/depositAddress";
 import { DEPOSIT_ADDRESSES, isLive } from "@/lib/runtime";
 import { api } from "@/lib/api";
-import { useFairStore } from "@/stores/fairStore";
+import { useAuthStore } from "@/stores/authStore";
+import { LoginRequired } from "@/components/auth/LoginRequired";
 import { useWalletStore } from "@/stores/walletStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { playChime } from "@/lib/audio";
@@ -39,10 +40,14 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   const [copied, setCopied] = useState(false);
   const [amount, setAmount] = useState<string>("50");
   const [status, setStatus] = useState<DepositStatus>({ kind: "waiting" });
-  const credit = useWalletStore((s) => s.credit);
+  const user = useAuthStore(s => s.user);
+  const settleDeposit = useWalletStore(s => s.settleDeposit);
+  const checking = useRef(false);
+  const [polling, setPolling] = useState(false);
+  const active = useRef(true);
+  useEffect(() => { active.current = true; return () => { active.current = false; }; }, []);
   const addTransaction = useWalletStore((s) => s.addTransaction);
-  const setTransactionStatus = useWalletStore((s) => s.setTransactionStatus);
-  const userKey = useFairStore((s) => s.clientSeed) || "anon";
+  const userKey = user?.id ?? "";
 
   const meta = useMemo(() => NETWORKS.find((n) => n.key === network)!, [network]);
   // 30분 입금 세션 — 만료돼도 72시간 이내 도착분은 자동 처리된다(아래 graceNote). 재시작하면 타이머만 초기화된다.
@@ -63,7 +68,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
     setApiAddress(null);
     setAddrError(false);
     setStatus({ kind: "waiting" });
-    if (!isLive()) return;
+    if (!isLive() || !userKey) return;
     let alive = true;
     api
       .depositAddress(network, userKey)
@@ -95,27 +100,29 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
 
   // [⚡ 입금 전송 완료] — 체인 확인을 시작한다. live: API 폴링 → confirmed 면 그 금액을 반영. 백엔드가 없으면 확인 대기 상태로 남긴다.
   const confirm = useCallback(async () => {
-    if (!address || !isLive()) return;
+    if (!address || !isLive() || !user || !amountOk || checking.current) return;
+    checking.current = true; setPolling(true);
     setStatus({ kind: "checking" });
     // 1차 — 입금 내역을 먼저 만든다. 상태는 "확인 대기"이고 잔액·롤오버는 아직 움직이지 않는다.
-    const pending = addTransaction({
+    const pending = useWalletStore.getState().transactions.find(x => x.type === "deposit_usdt" && x.accountId === user.id && x.address === address && x.network === network && x.status === "PENDING") ?? addTransaction({
       type: "deposit_usdt",
+      accountId: user.id, address,
       amountUsdt: amountOk ? expected : 0,
       ref: `${network}:requested`,
       network,
       status: "PENDING",
     });
+    try {
     for (let i = 0; i < CHECK_MAX_ROUNDS; i++) {
+      if (!active.current || useAuthStore.getState().user?.id !== user.id) return;
       try {
         const r = await api.depositCheck({ network, address, userKey, expectedUsdt: amountOk ? expected : undefined });
-        if (r.status === "confirmed" && r.amountUsdt && r.amountUsdt > 0) {
-          credit(r.amountUsdt, "crypto");
-          // 2차 — 같은 레코드를 체인에서 확인된 금액·해시로 확정한다(레코드를 새로 만들지 않는다)
-          useWalletStore.setState((w) => ({ transactions: w.transactions.map((x) => (x.id === pending.id ? { ...x, amountUsdt: r.amountUsdt!, ref: `${network}:${r.txHash ?? "confirmed"}` } : x)) }));
-          setTransactionStatus(pending.id, "COMPLETED", r.txHash ? { txHash: r.txHash } : undefined);
+        if (!active.current || useAuthStore.getState().user?.id !== user.id) return;
+        if (r.status === "confirmed" && r.amountUsdt && r.amountUsdt > 0 && r.txHash) {
+          const credited = settleDeposit(pending.id, { amountUsdt: r.amountUsdt, reference: `${network}:${r.txHash}`, txHash: r.txHash });
           if (!useSettingsStore.getState().muted) playChime();
           setStatus({ kind: "credited", amount: r.amountUsdt, txHash: r.txHash });
-          onCredited(r.amountUsdt);
+          if (credited) onCredited(r.amountUsdt);
           return;
         }
         setStatus({ kind: "pending", confirmations: r.confirmations, total: meta.confirmations });
@@ -124,9 +131,12 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
       }
       await new Promise((r) => setTimeout(r, CHECK_INTERVAL_MS));
     }
-  }, [address, network, userKey, expected, amountOk, meta.confirmations, credit, addTransaction, setTransactionStatus, onCredited]);
+    } finally { checking.current = false; if (active.current) setPolling(false); }
+  }, [user, address, network, userKey, expected, amountOk, meta.confirmations, settleDeposit, addTransaction, onCredited]);
 
-  const busy = status.kind === "checking";
+  const busy = polling;
+
+  if (!user) return <LoginRequired />;
 
   if (!isLive()) return <div className="rounded-xl border border-hairline bg-obsidian p-6"><ShieldAlert className="h-6 w-6 text-gold-champagne" aria-hidden="true" /><h3 className="mt-4 text-lg font-semibold text-white">{t("unavailableTitle")}</h3><p className="mt-3 max-w-2xl text-sm leading-7 text-secondary">{t("unavailableBody")}</p></div>;
 
@@ -147,7 +157,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
                     active ? "border-metallic-gold bg-gold-champagne/5" : "border-metallic-subtle bg-obsidian hover:bg-elevation",
                   )}
                 >
-                  <input type="radio" name="network" value={n.key} checked={active} onChange={() => setNetwork(n.key)} className="mt-1 accent-gold-champagne" />
+                  <input type="radio" name="network" disabled={busy} value={n.key} checked={active} onChange={() => setNetwork(n.key)} className="mt-1 accent-gold-champagne" />
                   <span className="min-w-0">
                     <span className="block text-sm font-bold text-white">{n.token}</span>
                     <span className="block text-xs text-muted">{n.chain}</span>
@@ -280,7 +290,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
         <button
           type="button"
           onClick={confirm}
-          disabled={!address || busy || status.kind === "credited"}
+          disabled={!address || !amountOk || busy || status.kind === "credited"}
           className="flex h-12 items-center justify-center gap-2 rounded-lg bg-[#f1eee7] text-sm font-bold text-obsidian shadow-[0_0_24px_rgba(230,202,101,0.35)] transition-colors hover:bg-gold-metallic disabled:cursor-not-allowed disabled:opacity-40"
         >
           {busy && <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2.4} />}

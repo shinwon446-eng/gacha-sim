@@ -1,12 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrcode.react";
 import { Check, Copy, KeyRound, Loader2, ShieldCheck, Smartphone } from "lucide-react";
 import { cn } from "@/lib/format";
-import { TOTP_DIGITS, groupSecret, newTotpSecret, otpauthUri, totpNow, totpSecondsRemaining, verifyTotp } from "@/lib/totp";
-import { useSecurityStore, twoFactorServerBacked } from "@/stores/securityStore";
+import { TOTP_DIGITS, groupSecret, otpauthUri } from "@/lib/totp";
+import { useSecurityStore } from "@/stores/securityStore";
+import { AccountError } from "@/lib/account";
+import { beginTotpSetup, confirmTotpSetup } from "@/lib/security";
+import { LoginRequired } from "@/components/auth/LoginRequired";
 import { useAuthStore } from "@/stores/authStore";
 
 /**
@@ -21,69 +24,52 @@ import { useAuthStore } from "@/stores/authStore";
 export function TwoFactorSetup({ onEnabled, compact }: { onEnabled?: () => void; compact?: boolean }) {
   const t = useTranslations("security");
   const user = useAuthStore((s) => s.user);
-  const enableTwoFactor = useSecurityStore((s) => s.enableTwoFactor);
-
-  // 마운트 시 한 번. 서버 검증이 붙으면 이 자리에서 서버가 발급한 시크릿을 받아 온다.
-  const [secret] = useState(() => newTotpSecret());
-  const account = user?.label ?? t("defaultAccount");
-  const uri = useMemo(() => otpauthUri({ secret, account }), [secret, account]);
-
+  const ta = useTranslations("account");
+  const [setup, setSetup] = useState<{ secret: string; setupId: string } | null>(null);
+  const secret = setup?.secret ?? "";
+  const uri = useMemo(() => otpauthUri({ secret, account: user?.email ?? user?.subLabel ?? "VOILA" }), [secret, user?.email, user?.subLabel]);
   const [kept, setKept] = useState(false);
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [hint, setHint] = useState<{ code: string; left: number } | null>(null);
   const codeRef = useRef<HTMLInputElement>(null);
-
-  // 서버 검증이 없는 동안에는 지금 유효한 코드를 화면에 띄워 준다.
-  // 이건 비밀이 아니라 바로 위 시크릿에서 계산한 값이고, 실제 앱에도 같은 숫자가 떠 있다.
-  const local = !twoFactorServerBacked();
-  useEffect(() => {
-    if (!local) return;
-    let alive = true;
-    const tick = async () => {
-      try {
-        const next = await totpNow(secret);
-        if (alive) setHint({ code: next, left: totpSecondsRemaining() });
-      } catch {
-        if (alive) setHint(null);
-      }
-    };
-    void tick();
-    const id = window.setInterval(tick, 1000);
-    return () => {
-      alive = false;
-      window.clearInterval(id);
-    };
-  }, [local, secret]);
+  const inFlight = useRef(false);
+  const prepare = async () => {
+    if (!user || inFlight.current) return;
+    inFlight.current = true; setBusy(true); setError("");
+    const id = user.id;
+    try {
+      const next = await beginTotpSetup();
+      if (useAuthStore.getState().user?.id === id) setSetup(next);
+    } catch (cause) { setError(ta(`errors.${cause instanceof AccountError ? cause.code : "network"}`)); }
+    finally { inFlight.current = false; setBusy(false); }
+  };
 
   const copy = useCallback(() => {
     void navigator.clipboard?.writeText(secret).then(() => {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1600);
-    });
-  }, [secret]);
+    }).catch(() => setError(t("copyFailed")));
+  }, [secret, t]);
 
   const submit = useCallback(
     async (raw: string) => {
-      if (busy) return;
-      setBusy(true);
-      setError("");
+      if (inFlight.current || !user || !setup || !kept) return;
+      inFlight.current = true; setBusy(true); setError("");
+      const id = user.id;
       try {
-        if (await verifyTotp(secret, raw)) {
-          enableTwoFactor(secret);
-          onEnabled?.();
-        } else {
-          setError(t("codeWrong"));
-          setCode("");
-          codeRef.current?.focus();
-        }
-      } finally {
-        setBusy(false);
-      }
+        const status = await confirmTotpSetup(setup.setupId, raw);
+        if (useAuthStore.getState().user?.id !== id) return;
+        useSecurityStore.getState().accept(id, status);
+        setSetup(null);
+        onEnabled?.();
+      } catch (cause) {
+        setError(cause instanceof AccountError && cause.code === "credentials" ? t("codeWrong") : ta(`errors.${cause instanceof AccountError ? cause.code : "network"}`));
+        setCode(""); codeRef.current?.focus();
+      } finally { inFlight.current = false; setBusy(false); }
     },
-    [busy, secret, enableTwoFactor, onEnabled, t],
+    [user, setup, kept, onEnabled, ta, t],
   );
 
   const onCode = (raw: string) => {
@@ -96,6 +82,12 @@ export function TwoFactorSetup({ onEnabled, compact }: { onEnabled?: () => void;
   const stepCls = "border border-hairline rounded-xl bg-obsidian p-4";
   const label = "flex items-center gap-2 text-[12px] font-bold text-white";
 
+  if (!user) return <LoginRequired />;
+  if (!setup) return <div className="mt-4 space-y-3">
+    <p className="text-sm leading-7 text-secondary">{t("intro")}</p>
+    {error && <p role="alert" className="text-sm text-red-200">{error}</p>}
+    <button type="button" disabled={busy} onClick={() => void prepare()} className="min-h-12 rounded-xl bg-[#f1eee7] px-5 text-sm font-semibold text-obsidian disabled:opacity-40">{busy ? ta("processing") : t("startSetup")}</button>
+  </div>;
   return (
     <div className={cn("grid gap-3", compact ? "mt-3" : "mt-4")}>
       <p className="break-keep rounded-xl border border-gold-champagne/40 bg-gold-champagne/[0.07] p-3 text-[12.5px] leading-relaxed text-gold-champagne">
@@ -166,25 +158,13 @@ export function TwoFactorSetup({ onEnabled, compact }: { onEnabled?: () => void;
           />
           {busy && <Loader2 className="h-4 w-4 animate-spin text-gold-champagne" strokeWidth={2.6} />}
           {/* 서버 검증 전에는 지금 유효한 코드를 그대로 보여 준다 — 시크릿에서 계산한 실제 값이다 */}
-          {local && hint && (
-            <button
-              type="button"
-              disabled={!kept || busy}
-              onClick={() => onCode(hint.code)}
-              className="flex min-h-11 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg border border-gold-champagne/55 bg-gold-champagne/[0.09] px-2.5 text-[11.5px] font-bold text-gold-champagne transition-colors hover:bg-gold-champagne/20 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <span className="truncate">{t("useCurrentCode")}</span>
-              <span className="flex-none rounded bg-gold-champagne/20 px-1.5 py-0.5 font-mono tracking-wider">{hint.code}</span>
-              <span className="flex-none tabular-nums text-gold-champagne/70">{hint.left}s</span>
-            </button>
-          )}
         </div>
         {error && (
           <p role="alert" className="mt-2 rounded-md bg-red-400/10 px-2.5 py-2 text-xs leading-relaxed text-red-200">
             {error}
           </p>
         )}
-        <p className="mt-2 break-keep text-[11px] leading-relaxed text-faint">{local ? t("localNote") : t("serverNote")}</p>
+        <p className="mt-2 break-keep text-[11px] leading-relaxed text-faint">{t("serverNote")}</p>
       </div>
     </div>
   );

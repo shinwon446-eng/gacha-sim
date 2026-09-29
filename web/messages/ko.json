@@ -950,7 +950,8 @@
       "BROADCASTING": "전송 중",
       "COMPLETED": "완료",
       "PENDING_72H_HOLD": "72시간 보안 대기",
-      "CANCELLED": "취소됨"
+      "CANCELLED": "취소됨",
+      "FAILED": "실패"
     },
     "txHash": "온체인 TxID",
     "txHashPending": "브로드캐스트 후 TxID가 표시됩니다",
@@ -983,8 +984,8 @@
     "amlRequired": "필요 이용 금액",
     "amlCurrent": "달성 이용 금액",
     "amlGrinding": "최소 페이백이 90% 이상인 저위험 박스는 구매 금액의 {pct}% 만 이용 금액으로 인정됩니다 — 손실 없는 반복 구매로 기준을 우회할 수 없습니다.",
-    "gateTitle": "출금하려면 Google OTP 2차 인증이 필요합니다",
-    "gateBody": "자산을 보호하기 위한 필수 관문입니다. 설정은 1분이면 끝나고, 끝나는 즉시 출금 입력으로 넘어갑니다.",
+    "gateTitle": "출금 인증 방법을 설정해주세요",
+    "gateBody": "Google OTP를 등록하면 인증 앱으로 출금할 수 있습니다. 앱을 사용할 수 없다면 등록 이메일 인증 후 72시간 대기 출금을 선택하세요.",
     "gateCta": "Google OTP 설정 시작",
     "gateProtected": "Google OTP 2FA 보호 중",
     "confirmEyebrow": "수수료 제외 후 출금 확인",
@@ -1011,8 +1012,10 @@
     "emailUseCode": "코드 자동입력",
     "holdCancelNote": "대기 중에는 언제든 [출금 취소]로 잔액을 즉시 돌려받을 수 있습니다.",
     "holdDoneTitle": "이메일 인증 완료 · {hours}시간 후 자동 송금",
-    "holdDoneNote": "입출금 내역에서 남은 시간을 확인하고, 이상하다고 느끼면 바로 취소하세요.",
-    "previewNote": "지금 신청하면 출금 내역이 만들어지고 잔액이 보류됩니다. 다만 실제 송금은 출금 서비스가 연결된 뒤에 시작되며, 그전까지 TxID 는 발급되지 않습니다."
+    "holdDoneNote": "입출금 내역에서 출금 가능 시각과 처리 상태를 확인할 수 있습니다. 대기 시간이 끝나면 서버가 필요한 심사를 거쳐 처리합니다.",
+    "previewNote": "지금 신청하면 출금 내역이 만들어지고 잔액이 보류됩니다. 다만 실제 송금은 출금 서비스가 연결된 뒤에 시작되며, 그전까지 TxID 는 발급되지 않습니다.",
+    "registeredEmailOnly": "계정에 등록된 인증 이메일로만 코드를 보냅니다. 인증이 완료된 시점부터 72시간 동안 출금이 대기됩니다.",
+    "emailExpired": "인증 코드가 만료되었습니다. 새 코드를 요청해주세요."
   },
   "footer": {
     "tagline": "You never know what’s next.",
@@ -1982,7 +1985,18 @@
       "credentials": "로그인 정보를 확인해 주세요. 이메일 인증이나 재로그인이 필요할 수 있습니다.",
       "rateLimit": "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.",
       "conflict": "서버에서 미완료 자산 또는 거래를 확인했습니다. 먼저 처리 상태를 확인해 주세요."
-    }
+    },
+    "settingsLoginNeeded": "로그인 후 닉네임과 Google OTP를 설정하고 입출금 내역을 확인할 수 있습니다.",
+    "nicknameTitle": "닉네임 설정",
+    "nickname": "닉네임",
+    "nicknameHint": "2~20자. 한글·영문·숫자·밑줄(_)·하이픈(-)을 사용할 수 있습니다.",
+    "nicknameInvalid": "닉네임 형식을 확인해주세요. 공백과 특수문자는 사용할 수 없습니다.",
+    "nicknameSaved": "닉네임을 저장했습니다.",
+    "saveNickname": "닉네임 저장",
+    "transactionHistory": "입출금 내역",
+    "verifyCode": "인증 확인",
+    "transactionsUnavailable": "입출금 서비스 연결을 준비 중입니다. 연결 후 이용할 수 있습니다.",
+    "nicknameTaken": "이미 사용 중인 닉네임입니다. 다른 닉네임을 입력해주세요."
   },
   "fairnessGuide": {
     "eyebrow": "공정성 · 결과 검증",
@@ -2095,7 +2109,14 @@
     "enabledSince": "{at}부터 적용",
     "disable": "2차 인증 해제",
     "disabled": "2차 인증이 해제되었습니다",
-    "enabledToast": "Google OTP 2차 인증이 활성화되었습니다"
+    "enabledToast": "Google OTP 2차 인증이 활성화되었습니다",
+    "startSetup": "Google OTP 등록 시작",
+    "loading": "보안 설정을 불러오는 중입니다.",
+    "loadFailed": "보안 설정을 불러오지 못했습니다. 다시 시도해주세요.",
+    "retry": "다시 시도",
+    "disableCode": "해제하려면 인증 앱의 6자리 코드를 입력해주세요.",
+    "cancel": "취소",
+    "copyFailed": "복사하지 못했습니다. 직접 선택해 복사해주세요."
   },
   "history": {
     "title": "입출금 내역",
@@ -2114,10 +2135,11 @@
       "PENDING_72H_HOLD": "72시간 보안 대기",
       "BROADCASTING": "블록체인 전송 중",
       "COMPLETED": "완료",
-      "CANCELLED": "취소됨"
+      "CANCELLED": "취소됨",
+      "FAILED": "실패"
     },
     "holdRemaining": "{hours}시간 {minutes}분 후 송금",
-    "holdReleased": "대기 종료 · 송금 준비",
+    "holdReleased": "대기 종료 · 서버 처리 대기",
     "cancelHold": "출금 취소 (잔액 즉시 환불)",
     "fee": "수수료",
     "net": "실수령액",
@@ -2127,6 +2149,10 @@
     "receipt": "영수증 번호",
     "verifiedEmail": "인증 이메일",
     "copyAddress": "주소 복사",
-    "empty": "아직 입출금 내역이 없습니다."
+    "empty": "아직 입출금 내역이 없습니다.",
+    "method": "네트워크 / 결제수단",
+    "requestId": "요청 번호",
+    "unlockAt": "출금 가능 시각",
+    "copyFailed": "복사하지 못했습니다. 직접 선택해 복사해주세요."
   }
 }

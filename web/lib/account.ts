@@ -16,11 +16,20 @@ export const accountConfigured = () => Boolean(AUTH_API_BASE);
 export const validEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) && value.length <= 254;
 export const validPassword = (value: string) => value.length >= 12 && value.length <= 128;
 
-export interface ServerAccount { id: string; email: string; createdAt: string; emailVerified: boolean }
+export const normalizeNickname = (value: string) => value.normalize("NFC").trim();
+const nicknamePattern = new RegExp("^[\\p{L}\\p{N}_-]{2,20}$", "u");
+export const validNickname = (value: string) => nicknamePattern.test(normalizeNickname(value));
+export interface ServerAccount { id: string; email: string; createdAt: string; emailVerified: boolean; nickname?: string }
 function accountFrom(data: unknown): ServerAccount {
   const user = (data as { user?: ServerAccount })?.user;
   if (!user || typeof user.id !== "string" || !user.id || typeof user.email !== "string" || !validEmail(user.email) || typeof user.createdAt !== "string" || !Number.isFinite(Date.parse(user.createdAt)) || user.emailVerified !== true) throw new AccountError("invalid");
+  if (user.nickname !== undefined && (typeof user.nickname !== "string" || !validNickname(user.nickname))) throw new AccountError("invalid");
   return user;
+}
+
+export async function updateAccountNickname(nickname: string) {
+  if (!validNickname(nickname)) throw new AccountError("invalid");
+  return accountFrom(await accountRequest("/account/profile", { nickname: normalizeNickname(nickname) }));
 }
 
 /** Cookie session + server-issued CSRF token. Backend must enforce Origin, rate limits and current asset balances. */

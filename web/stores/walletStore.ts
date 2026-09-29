@@ -20,13 +20,15 @@ export type TxType = "deposit_usdt" | "deposit_card" | "open" | "sellback" | "wi
  * PENDING_72H_HOLD    — Google OTP 대신 이메일 인증으로 신청한 출금. 72시간 보안 대기 후 송금 (lib/withdrawHold.ts)
  * CANCELLED           — 대기 중 본인이 취소 → 잔액 환불 완료
  */
-export type TxStatus = "PENDING" | "PENDING_ADMIN_REVIEW" | "PENDING_72H_HOLD" | "BROADCASTING" | "COMPLETED" | "CANCELLED";
+export type TxStatus = "PENDING" | "PENDING_ADMIN_REVIEW" | "PENDING_72H_HOLD" | "BROADCASTING" | "COMPLETED" | "CANCELLED" | "FAILED";
 
 /** 출금을 통과시킨 2차 인증 수단 — 내역에 그대로 남는다 */
 export type WithdrawAuthMethod = "2FA_OTP" | "EMAIL_72H_HOLD";
 
 export interface Transaction {
   id: string;
+  accountId?: string;
+  serverId?: string;
   type: TxType;
   /** USDT 기준. 입금·판매는 +, 오픈은 - */
   amountUsdt: number;
@@ -68,6 +70,9 @@ interface WalletState {
   /** 신용카드 결제분 — 개봉·실물 배송·카드 환불 전용, 온체인 출금 불가 (CLAUDE.md §7-B) */
   cardBalance: number;
   transactions: Transaction[];
+  settledDepositRefs: string[];
+  settleDeposit: (id: string, input: { amountUsdt: number; reference: string; txHash?: string; receipt?: string }) => boolean;
+  syncWithdrawal: (id: string, status: TxStatus, patch?: { txHash?: string; unlockAt?: number }) => void;
   /** 롤오버(자금세탁 방지) 누계 — addTransaction 이 자동으로 적립한다. lib/rollover.ts 참고 */
   totalDeposited: number;
   /** 크립토 입금 누계 — 필요 롤오버의 기준(카드 입금분은 온체인 출금이 애초에 불가하므로 제외) */
@@ -112,6 +117,7 @@ export const useWalletStore = create<WalletState>()(
       cryptoBalance: START_BALANCE_USDT,
       cardBalance: 0,
       transactions: [],
+      settledDepositRefs: [],
       totalDeposited: 0,
       totalDepositedCrypto: 0,
       totalDepositedCard: 0,
@@ -127,7 +133,7 @@ export const useWalletStore = create<WalletState>()(
         const depositedCard = settled && rec.type === "deposit_card" ? Math.max(0, rec.amountUsdt) : 0;
         const wagered = rec.type === "open" ? (typeof rec.rolloverUsdt === "number" ? Math.max(0, rec.rolloverUsdt) : Math.abs(Math.min(0, rec.amountUsdt))) : 0;
         set((s) => ({
-          transactions: [rec, ...s.transactions].slice(0, 200),
+          transactions: [rec, ...s.transactions],
           totalDepositedCrypto: +(s.totalDepositedCrypto + depositedCrypto).toFixed(2),
           totalDepositedCard: +(s.totalDepositedCard + depositedCard).toFixed(2),
           totalDeposited: +(s.totalDeposited + depositedCrypto + depositedCard).toFixed(2),
@@ -135,9 +141,37 @@ export const useWalletStore = create<WalletState>()(
         }));
         return rec;
       },
+      settleDeposit: (id, input) => {
+        const s = get();
+        const tx = s.transactions.find(x => x.id === id);
+        if (!tx || !["deposit_usdt", "deposit_card"].includes(tx.type) || tx.status !== "PENDING" || !Number.isFinite(input.amountUsdt) || input.amountUsdt <= 0 || !input.reference.trim()) return false;
+        const key = `${tx.type}:${input.reference}`;
+        if (s.settledDepositRefs.includes(key) || s.transactions.some(x => x.id !== id && x.type === tx.type && (x.status === "COMPLETED" || x.status === undefined) && x.ref === input.reference)) {
+          set({ transactions: s.transactions.map(x => x.id === id ? { ...x, status: "CANCELLED" } : x) });
+          return false;
+        }
+        const crypto = tx.type === "deposit_usdt" ? input.amountUsdt : 0;
+        const card = tx.type === "deposit_card" ? input.amountUsdt : 0;
+        set({
+          ...sync(+(s.cryptoBalance + crypto).toFixed(2), +(s.cardBalance + card).toFixed(2)),
+          transactions: s.transactions.map(x => x.id === id ? { ...x, amountUsdt: input.amountUsdt, ref: input.reference, txHash: input.txHash, receipt: input.receipt, status: "COMPLETED" } : x),
+          settledDepositRefs: [...s.settledDepositRefs, key],
+          totalDepositedCrypto: +(s.totalDepositedCrypto + crypto).toFixed(2),
+          totalDepositedCard: +(s.totalDepositedCard + card).toFixed(2),
+          totalDeposited: +(s.totalDeposited + crypto + card).toFixed(2),
+        });
+        return true;
+      },
+      syncWithdrawal: (id, status, patch) => set(s => {
+        const tx = s.transactions.find(x => x.id === id);
+        if (!tx || tx.type !== "withdraw" || ["COMPLETED", "CANCELLED", "FAILED"].includes(tx.status ?? "")) return {};
+        const refund = ["CANCELLED", "FAILED"].includes(status) ? Math.abs(tx.amountUsdt) : 0;
+        return { ...sync(+(s.cryptoBalance + refund).toFixed(2), s.cardBalance), transactions: s.transactions.map(x => x.id === id ? { ...x, ...patch, status } : x) };
+      }),
       setTransactionStatus: (id, status, patch) =>
         set((s) => {
           const prev = s.transactions.find((x) => x.id === id);
+          if (!prev || ["COMPLETED", "CANCELLED", "FAILED"].includes(prev.status ?? "") || (prev.status === undefined && ["deposit_usdt", "deposit_card"].includes(prev.type))) return {};
           const transactions = s.transactions.map((x) => (x.id === id ? { ...x, status, ...patch } : x));
           // 확인 대기였던 입금이 확정되는 순간에만 롤오버 요구액이 올라간다(중복 가산 없음)
           const becameSettled = !!prev && prev.status !== "COMPLETED" && status === "COMPLETED";
@@ -189,7 +223,7 @@ export const useWalletStore = create<WalletState>()(
     {
       name: "gachaflix.wallet",
       storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ balance: s.balance, cryptoBalance: s.cryptoBalance, cardBalance: s.cardBalance, transactions: s.transactions, welcomeClaimed: s.welcomeClaimed, totalDeposited: s.totalDeposited, totalDepositedCrypto: s.totalDepositedCrypto, totalDepositedCard: s.totalDepositedCard, totalWagered: s.totalWagered }),
+      partialize: (s) => ({ balance: s.balance, cryptoBalance: s.cryptoBalance, cardBalance: s.cardBalance, transactions: s.transactions, settledDepositRefs: s.settledDepositRefs, welcomeClaimed: s.welcomeClaimed, totalDeposited: s.totalDeposited, totalDepositedCrypto: s.totalDepositedCrypto, totalDepositedCard: s.totalDepositedCard, totalWagered: s.totalWagered }),
       version: 4,
       // v0 → v1: 출금 상태명 PROCESSING → BROADCASTING
       // v1 → v2: 롤오버 누계 신설 — 남아 있는 거래 기록에서 되살린다

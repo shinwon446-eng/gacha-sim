@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { CheckCircle2, Clock, Copy, Check, CreditCard, Coins, ExternalLink, Gavel, Loader2, Timer, Undo2, XCircle } from "lucide-react";
 import { cn } from "@/lib/format";
@@ -9,6 +9,10 @@ import { useWalletStore, type Transaction, type TxStatus } from "@/stores/wallet
 import { EXPLORERS, WITHDRAW_NETWORK_BY_KEY, explorerTxUrl } from "@/lib/withdrawal";
 import { holdCountdown } from "@/lib/withdrawHold";
 import type { Network } from "@/lib/depositAddress";
+import { api } from "@/lib/api";
+import { AccountError } from "@/lib/account";
+import { useAuthStore } from "@/stores/authStore";
+import { LoginRequired } from "@/components/auth/LoginRequired";
 import { Money } from "@/components/ui/Money";
 
 type Filter = "all" | "deposit" | "withdraw";
@@ -33,14 +37,14 @@ function StatusBadge({ status, unlockAt, now }: { status: TxStatus; unlockAt?: n
   const t = useTranslations("history");
   const tone =
     status === "COMPLETED" ? "bg-emerald-500/15 text-emerald-300"
-    : status === "CANCELLED" ? "bg-white/8 text-faint"
+    : (status === "CANCELLED" || status === "FAILED") ? "bg-white/8 text-faint"
     : status === "PENDING_ADMIN_REVIEW" ? "bg-crimson/15 text-crimson"
     : status === "BROADCASTING" ? "bg-gold-champagne/15 text-gold-champagne"
     : status === "PENDING_72H_HOLD" ? "bg-gold-champagne/12 text-gold-champagne"
     : "bg-white/10 text-secondary";
   const Icon =
     status === "COMPLETED" ? CheckCircle2
-    : status === "CANCELLED" ? XCircle
+    : (status === "CANCELLED" || status === "FAILED") ? XCircle
     : status === "PENDING_ADMIN_REVIEW" ? Gavel
     : status === "BROADCASTING" ? Loader2
     : status === "PENDING_72H_HOLD" ? Timer
@@ -74,7 +78,40 @@ export function HistoryTab() {
   const locale = useLocale();
   const { fmt } = useCurrency();
   const transactions = useWalletStore((s) => s.transactions);
-  const cancelHeldWithdrawal = useWalletStore((s) => s.cancelHeldWithdrawal);
+  const user = useAuthStore(s => s.user);
+  const ta = useTranslations("account");
+  const [error, setError] = useState("");
+  const [cancelling, setCancelling] = useState<string | null>(null);
+  const cancelLock = useRef(false);
+  const cancel = async (tx: Transaction) => {
+    if (cancelLock.current || !user || !tx.serverId || tx.accountId !== user.id) return;
+    cancelLock.current = true; setCancelling(tx.id); setError("");
+    try {
+      const result = await api.cancelWithdrawal(tx.serverId);
+      if (result.id !== tx.serverId || useAuthStore.getState().user?.id !== user.id) return;
+      useWalletStore.getState().syncWithdrawal(tx.id, result.status, { txHash: result.txHash, unlockAt: result.unlockAt });
+    } catch (cause) { setError(ta(`errors.${cause instanceof AccountError ? cause.code : "network"}`)); }
+    finally { cancelLock.current = false; setCancelling(null); }
+  };
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      const pending = useWalletStore.getState().transactions.filter(x => x.accountId === user.id && x.type === "withdraw" && x.serverId && !["COMPLETED", "CANCELLED", "FAILED"].includes(x.status ?? ""));
+      for (const tx of pending) {
+        if (!active) return;
+        try {
+          const result = await api.withdrawStatus(tx.serverId!);
+          if (!active || useAuthStore.getState().user?.id !== user.id || result.id !== tx.serverId) return;
+          useWalletStore.getState().syncWithdrawal(tx.id, result.status, { txHash: result.txHash, unlockAt: result.unlockAt });
+        } catch { /* Preserve the last confirmed status while offline. */ }
+      }
+      if (active) timer = setTimeout(poll, 10000);
+    };
+    void poll();
+    return () => { active = false; clearTimeout(timer); };
+  }, [user?.id]);
   const [filter, setFilter] = useState<Filter>("all");
   const [copied, setCopied] = useState<string | null>(null);
   // 카운트다운 — 마운트 후에만 흐른다(첫 렌더는 서버와 같은 값)
@@ -88,23 +125,26 @@ export function HistoryTab() {
   const rows = useMemo(
     () =>
       transactions.filter((x) => {
+        if (x.accountId !== user?.id) return false;
         const deposit = (DEPOSIT_TYPES as readonly string[]).includes(x.type);
         const withdraw = x.type === "withdraw";
         if (!deposit && !withdraw) return false;
         return filter === "all" ? true : filter === "deposit" ? deposit : withdraw;
       }),
-    [transactions, filter],
+    [transactions, filter, user?.id],
   );
 
   const copy = (text: string) => {
     void navigator.clipboard?.writeText(text).then(() => {
       setCopied(text);
       window.setTimeout(() => setCopied((c) => (c === text ? null : c)), 1600);
-    });
+    }).catch(() => setError(t("copyFailed")));
   };
 
+  if (!user) return <LoginRequired />;
   return (
     <div className="mt-4">
+      {error && <p role="alert" className="mb-3 text-sm text-red-200">{error}</p>}
       <div role="group" aria-label={t("title")} className="flex gap-1 rounded-lg bg-obsidian p-1">
         {(["all", "deposit", "withdraw"] as Filter[]).map((k) => (
           <button
@@ -128,8 +168,10 @@ export function HistoryTab() {
         <ul className="mt-3 grid gap-2">
           {rows.map((tx) => {
             const deposit = (DEPOSIT_TYPES as readonly string[]).includes(tx.type);
-            const status = tx.status ?? (deposit ? "PENDING" : "PENDING");
+            const status = tx.status ?? (deposit ? "COMPLETED" : "PENDING");
             const net = (tx.network === "BEP20" ? "BEP20" : "TRC20") as Network;
+            const explorerName = tx.network === "ERC20" ? "Etherscan" : EXPLORERS[net].name;
+            const explorerUrl = tx.network === "ERC20" ? `https://etherscan.io/tx/${encodeURIComponent(tx.txHash ?? "")}` : explorerTxUrl(net, tx.txHash ?? "");
             const held = status === "PENDING_72H_HOLD" && typeof tx.unlockAt === "number";
             return (
               <li key={tx.id} className="border border-hairline rounded-xl bg-obsidian p-3">
@@ -159,9 +201,12 @@ export function HistoryTab() {
                 )}
 
                 <dl className="mt-2 grid gap-1 text-[11px]">
+                  {tx.network && <div className="flex justify-between gap-2"><dt className="text-faint">{t("method")}</dt><dd className="font-mono text-secondary">{tx.network}</dd></div>}
+                  <div className="flex justify-between gap-2"><dt className="text-faint">{t("requestId")}</dt><dd className="min-w-0 break-all text-right font-mono text-secondary">{tx.serverId ?? tx.id}</dd></div>
+                  {held && <div className="flex justify-between gap-2"><dt className="text-faint">{t("unlockAt")}</dt><dd className="text-right text-secondary">{new Date(tx.unlockAt!).toLocaleString(locale)}</dd></div>}
                   {tx.address && (
                     <div className="flex items-center justify-between gap-2">
-                      <dt className="flex-none text-faint">{WITHDRAW_NETWORK_BY_KEY[net].token}</dt>
+                      <dt className="flex-none text-faint">{tx.network === "ERC20" ? "USDT (ERC-20)" : WITHDRAW_NETWORK_BY_KEY[net].token}</dt>
                       <dd className="flex min-w-0 items-center gap-1.5">
                         <code className="truncate font-mono text-secondary" title={tx.address}>
                           {short(tx.address)}
@@ -199,12 +244,12 @@ export function HistoryTab() {
                         {tx.txHash}
                       </code>
                       <a
-                        href={explorerTxUrl(net, tx.txHash)}
+                        href={explorerUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex h-7 flex-none items-center gap-1 whitespace-nowrap rounded-md border border-gold-champagne/50 px-2 font-bold text-gold-champagne hover:bg-gold-champagne/10"
                       >
-                        {EXPLORERS[net].name}
+                        {explorerName}
                         <ExternalLink className="h-3 w-3" strokeWidth={2.4} />
                       </a>
                     </>
@@ -214,10 +259,11 @@ export function HistoryTab() {
                 </div>
 
                 {/* 72시간 대기 — 이상 징후를 발견하면 본인이 즉시 되돌릴 수 있다 */}
-                {held && (
+                {held && tx.serverId && (
                   <button
                     type="button"
-                    onClick={() => cancelHeldWithdrawal(tx.id)}
+                    disabled={cancelling !== null}
+                    onClick={() => void cancel(tx)}
                     className="mt-2 flex min-h-11 w-full items-center justify-center gap-1.5 break-keep rounded-lg border border-crimson/50 px-3 text-[12px] font-bold text-crimson transition-colors hover:bg-crimson/10"
                   >
                     <Undo2 className="h-3.5 w-3.5 flex-none" strokeWidth={2.4} />

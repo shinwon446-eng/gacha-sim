@@ -950,7 +950,8 @@
       "BROADCASTING": "广播中",
       "COMPLETED": "已完成",
       "PENDING_72H_HOLD": "72 小时安全等待",
-      "CANCELLED": "已取消"
+      "CANCELLED": "已取消",
+      "FAILED": "失败"
     },
     "txHash": "链上 TxID",
     "txHashPending": "广播后显示 TxID",
@@ -983,8 +984,8 @@
     "amlRequired": "所需使用金额",
     "amlCurrent": "已达成使用金额",
     "amlGrinding": "最低返现 90% 以上的低风险盲盒，购买金额仅按 {pct}% 计入使用金额——无法用无风险刷量绕过标准。",
-    "gateTitle": "提现需要 Google OTP 二次验证",
-    "gateBody": "这是保护资产的必经关卡。设置约一分钟，完成后会直接回到提现填写页。",
+    "gateTitle": "请选择提现验证方式",
+    "gateBody": "设置 Google 身份验证器即可验证提现。若无法使用该应用，可验证注册邮箱并等待 72 小时。",
     "gateCta": "开始设置 Google OTP",
     "gateProtected": "已受 Google OTP 2FA 保护",
     "confirmEyebrow": "确认扣除手续费后的金额",
@@ -1011,8 +1012,10 @@
     "emailUseCode": "自动填入验证码",
     "holdCancelNote": "等待期间可随时点击［取消提现］，余额立即退回。",
     "holdDoneTitle": "邮箱验证完成 · {hours} 小时后自动转出",
-    "holdDoneNote": "请在出入金记录中查看剩余时间，若发现异常请立即取消。",
-    "previewNote": "现在提交会生成提现记录并冻结余额。实际转账要等提现服务接入后才会开始，在此之前不会签发 TxID。"
+    "holdDoneNote": "可在充提记录中查看可处理时间与状态。等待期结束后，服务器将在完成必要审核后处理。",
+    "previewNote": "现在提交会生成提现记录并冻结余额。实际转账要等提现服务接入后才会开始，在此之前不会签发 TxID。",
+    "registeredEmailOnly": "验证码仅发送至账户已验证的邮箱，验证成功后开始 72 小时提现等待期。",
+    "emailExpired": "验证码已过期，请重新获取。"
   },
   "footer": {
     "tagline": "You never know what’s next.",
@@ -1982,7 +1985,18 @@
       "credentials": "请检查登录信息，可能需要验证邮箱或重新登录。",
       "rateLimit": "请求过于频繁，请稍后重试。",
       "conflict": "服务器发现尚未处理完的资产或交易，请先检查其状态。"
-    }
+    },
+    "settingsLoginNeeded": "登录后可设置昵称和 Google 身份验证器，并查看交易记录。",
+    "nicknameTitle": "昵称设置",
+    "nickname": "昵称",
+    "nicknameHint": "请输入 2–20 个字母、汉字、数字、下划线 (_) 或连字符 (-)。",
+    "nicknameInvalid": "请检查昵称格式，不可使用空格及其他特殊字符。",
+    "nicknameSaved": "昵称已保存。",
+    "saveNickname": "保存昵称",
+    "transactionHistory": "充提记录",
+    "verifyCode": "验证",
+    "transactionsUnavailable": "充值与提现服务正在接入中，服务开通后即可使用。",
+    "nicknameTaken": "此昵称已被使用，请选择其他昵称。"
   },
   "fairnessGuide": {
     "eyebrow": "公平性 · 结果核验",
@@ -2095,7 +2109,14 @@
     "enabledSince": "自 {at} 起生效",
     "disable": "关闭二次验证",
     "disabled": "二次验证已关闭",
-    "enabledToast": "Google OTP 二次验证已启用"
+    "enabledToast": "Google OTP 二次验证已启用",
+    "startSetup": "开始设置 Google 身份验证器",
+    "loading": "正在加载安全设置。",
+    "loadFailed": "无法加载安全设置，请重试。",
+    "retry": "重试",
+    "disableCode": "请输入身份验证器中的六位验证码以关闭验证。",
+    "cancel": "取消",
+    "copyFailed": "复制失败，请选择文本手动复制。"
   },
   "history": {
     "title": "出入金记录",
@@ -2114,10 +2135,11 @@
       "PENDING_72H_HOLD": "72 小时安全等待",
       "BROADCASTING": "链上转账中",
       "COMPLETED": "已完成",
-      "CANCELLED": "已取消"
+      "CANCELLED": "已取消",
+      "FAILED": "失败"
     },
     "holdRemaining": "{hours} 小时 {minutes} 分后转出",
-    "holdReleased": "等待结束 · 准备转出",
+    "holdReleased": "等待期已结束 · 等待服务器处理",
     "cancelHold": "取消提现（立即退回余额）",
     "fee": "手续费",
     "net": "实际到账",
@@ -2127,6 +2149,10 @@
     "receipt": "收据编号",
     "verifiedEmail": "验证邮箱",
     "copyAddress": "复制地址",
-    "empty": "暂无出入金记录。"
+    "empty": "暂无出入金记录。",
+    "method": "网络 / 支付方式",
+    "requestId": "申请编号",
+    "unlockAt": "可处理时间",
+    "copyFailed": "复制失败，请选择文本手动复制。"
   }
 }

@@ -7,26 +7,22 @@ import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useCurrencyStore } from "@/stores/currencyStore";
 import { useWalletStore, type Transaction, type TxStatus } from "@/stores/walletStore";
-import { useSettingsStore } from "@/stores/settingsStore";
-import { playChime } from "@/lib/audio";
 import type { Network } from "@/lib/depositAddress";
 import { EXPLORERS, MIN_WITHDRAW_USDT, WITHDRAW_NETWORKS, WITHDRAW_NETWORK_BY_KEY, explorerTxUrl, maxWithdrawable, netReceive, validateWithdrawal, type WithdrawError } from "@/lib/withdrawal";
 import { LOW_RISK_WEIGHT, requiredRollover, rolloverProgress } from "@/lib/rollover";
-import { assessWithdrawalRisk, circuitState, needsManualReview, CIRCUIT_LIMIT_USDT, REVIEW_THRESHOLD } from "@/lib/fraudScoring";
-import { useTelemetryStore } from "@/stores/telemetryStore";
+import { circuitState, CIRCUIT_LIMIT_USDT } from "@/lib/fraudScoring";
 import { isLive } from "@/lib/runtime";
+import { AccountError } from "@/lib/account";
+import type { WithdrawalProof } from "@/lib/security";
+import { useAuthStore } from "@/stores/authStore";
+import { LoginRequired } from "@/components/auth/LoginRequired";
 import { api } from "@/lib/api";
-import { useFairStore } from "@/stores/fairStore";
 import { Money } from "@/components/ui/Money";
 import { PolicyNotice } from "@/components/legal/PolicyNotice";
 import { useSecurityStore } from "@/stores/securityStore";
 import { TwoFactorSetup } from "@/components/wallet/TwoFactorSetup";
 import { ConfirmStep, EmailHoldStep, OtpStep } from "@/components/wallet/WithdrawSteps";
-import { HOLD_HOURS, holdUnlockAt, maskEmail } from "@/lib/withdrawHold";
-import type { WithdrawAuthMethod } from "@/stores/walletStore";
-
-/** 온체인 전송 준비 연출 길이(ms) — 이 동안 신청서를 만들고, 실제 브로드캐스트는 백엔드가 한다 */
-const SUBMIT_MS = 1500;
+import { HOLD_HOURS } from "@/lib/withdrawHold";
 
 export interface WithdrawTabProps {
   /** 출금 신청 확정 후 — 호출측이 토스트를 띄운다 */
@@ -50,7 +46,7 @@ type Stage =
   | ({ kind: "otp" } & Draft)
   | ({ kind: "email" } & Draft)
   | { kind: "submitting" }
-  | { kind: "done"; tx: Transaction; amountUsdt: number; network: Network; address: string; review: boolean; riskScore: number; hold?: number };
+  | { kind: "done"; tx: Transaction; amountUsdt: number; network: Network; address: string; review: boolean; hold?: number };
 
 const inputCls = "mt-1.5 w-full rounded-md border border-hairline bg-obsidian px-3 py-2.5 font-mono text-sm text-white outline-none transition-colors placeholder:text-faint focus:border-gold-champagne";
 
@@ -64,8 +60,8 @@ type TFn = ReturnType<typeof useTranslations<"withdraw">>;
 
 function StatusPill({ status, t }: { status: TxStatus; t: TFn }) {
   return (
-    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold", status === "PENDING_ADMIN_REVIEW" ? "bg-crimson/15 text-crimson" : status === "PENDING" ? "bg-white/10 text-secondary" : status === "BROADCASTING" ? "bg-gold-champagne/15 text-gold-champagne" : "bg-emerald-500/15 text-emerald-300")}>
-      {status === "PENDING_ADMIN_REVIEW" ? <Gavel className="h-3 w-3" strokeWidth={2.4} /> : status === "PENDING" ? <Clock className="h-3 w-3" strokeWidth={2.4} /> : status === "BROADCASTING" ? <Loader2 className="h-3 w-3 animate-spin" strokeWidth={2.4} /> : <CheckCircle2 className="h-3 w-3" strokeWidth={2.4} />}
+    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold", (status === "PENDING_ADMIN_REVIEW" || status === "FAILED") ? "bg-crimson/15 text-crimson" : status === "COMPLETED" ? "bg-emerald-500/15 text-emerald-300" : status === "PENDING_72H_HOLD" || status === "BROADCASTING" ? "bg-gold-champagne/15 text-gold-champagne" : "bg-white/10 text-secondary")}>
+      {status === "PENDING_ADMIN_REVIEW" ? <Gavel className="h-3 w-3" strokeWidth={2.4} /> : status !== "COMPLETED" && status !== "BROADCASTING" ? <Clock className="h-3 w-3" strokeWidth={2.4} /> : status === "BROADCASTING" ? <Loader2 className="h-3 w-3 animate-spin" strokeWidth={2.4} /> : <CheckCircle2 className="h-3 w-3" strokeWidth={2.4} />}
       {t(`status.${status}`)}
     </span>
   );
@@ -167,13 +163,21 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const totalWagered = useWalletStore((s) => s.totalWagered);
   const debitCrypto = useWalletStore((s) => s.debitCrypto);
   const addTransaction = useWalletStore((s) => s.addTransaction);
-  const setTransactionStatus = useWalletStore((s) => s.setTransactionStatus);
   const transactions = useWalletStore((s) => s.transactions);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const userKey = useFairStore((s) => s.clientSeed) || "anon";
   // 1단계 관문 — Google OTP(2FA) 등록 여부
   const twoFactorEnabled = useSecurityStore((s) => s.twoFactorEnabled);
-  const totpSecret = useSecurityStore((s) => s.totpSecret);
+  const user = useAuthStore(s => s.user);
+  const securityReady = useSecurityStore(s => s.hydrated);
+  const securityError = useSecurityStore(s => s.error);
+  const ta = useTranslations("account");
+  const ts = useTranslations("security");
+  const [submitError, setSubmitError] = useState("");
+  const submission = useRef(false);
+  const requestId = useRef<string>("");
+  const requestDraft = useRef<string>("");
+  const [emailOnly, setEmailOnly] = useState(false);
+  useEffect(() => { setStage({ kind: "form" }); setSetupOpen(false); setEmailOnly(false); }, [user?.id]);
   const [setupOpen, setSetupOpen] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
 
@@ -211,13 +215,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const net = amountOk ? netReceive(amountUsdt, network) : 0;
 
   // 부정거래 탐지 입력 — 첫 입금 시각, 스핀 간격, 1시간 누적 출금
-  const spinTimes = useTelemetryStore((s) => s.spinTimes);
-  const firstDepositAt = useMemo(() => {
-    const deposits = transactions.filter((x) => x.type === "deposit_usdt" || x.type === "deposit_card");
-    if (deposits.length === 0) return undefined;
-    return Math.min(...deposits.map((x) => Date.parse(x.at)).filter(Number.isFinite));
-  }, [transactions]);
-  const withdrawHistory = useMemo(() => transactions.filter((x) => x.type === "withdraw").map((x) => ({ amountUsdt: x.amountUsdt, at: x.at })), [transactions]);
+  const withdrawHistory = useMemo(() => transactions.filter((x) => x.type === "withdraw" && x.accountId === user?.id && !["CANCELLED", "FAILED"].includes(x.status ?? "")).map((x) => ({ amountUsdt: x.amountUsdt, at: x.at })), [transactions, user?.id]);
   const circuit = useMemo(() => circuitState(withdrawHistory), [withdrawHistory]);
 
   const amlPct = rolloverProgress(totalWagered, totalDepositedCrypto);
@@ -232,75 +230,55 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   /** [출금 신청] — 바로 보내지 않고 반드시 [수수료 제외 후 출금 확인] 요약을 거친다 */
   const beginConfirm = useCallback(() => {
     setTouched(true);
-    if (stage.kind !== "form") return;
+    if (stage.kind !== "form" || !user || !securityReady || submission.current) return;
     if (!amlOk) {
       onBlocked?.(amlPct);
       return;
     }
     if (errors.length) return;
+    const fingerprint = JSON.stringify([user.id, amountUsdt, network, address.trim()]);
+    if (requestDraft.current !== fingerprint) {
+      requestDraft.current = fingerprint;
+      requestId.current = globalThis.crypto.randomUUID();
+    }
+    setSubmitError("");
     setStage({ kind: "confirm", amountUsdt, network, address: address.trim() });
-  }, [stage.kind, amlOk, amlPct, onBlocked, errors.length, amountUsdt, network, address]);
+  }, [user, securityReady, stage.kind, amlOk, amlPct, onBlocked, errors.length, amountUsdt, network, address]);
 
   /**
    * 2차 인증을 통과한 뒤에만 불린다 — 여기서 잔액이 차감되고 출금 내역이 생긴다.
    * 이메일 경로는 `PENDING_72H_HOLD` 로 기록되고 `unlockAt` 이 붙는다.
    * TxID·COMPLETED 는 백엔드가 준 값으로만 올라간다 — preview 는 신청 상태에 머문다(부록 C).
    */
-  const commit = useCallback(
-    (draft: Draft, method: WithdrawAuthMethod, email?: string) => {
-      const { amountUsdt: amount, network: net2, address: addr } = draft;
-      setStage({ kind: "submitting" });
-      timers.current.push(
-        setTimeout(() => {
-          if (!debitCrypto(amount)) {
-            setStage({ kind: "form" });
-            return;
-          }
-          const risk = assessWithdrawalRisk({ amountUsdt: amount, firstDepositAt, spinTimes });
-          const review = needsManualReview(risk, circuitState(withdrawHistory));
-          const hold = method === "EMAIL_72H_HOLD" ? holdUnlockAt() : undefined;
-          const tx = addTransaction({
-            type: "withdraw",
-            amountUsdt: -amount,
-            ref: `${net2}:${addr}`,
-            network: net2,
-            address: addr,
-            feeUsdt: WITHDRAW_NETWORK_BY_KEY[net2].feeUsdt,
-            netUsdt: netReceive(amount, net2),
-            authMethod: method,
-            ...(hold ? { unlockAt: hold } : {}),
-            ...(email ? { emailMasked: maskEmail(email) } : {}),
-            status: hold ? "PENDING_72H_HOLD" : review ? "PENDING_ADMIN_REVIEW" : "PENDING",
-          });
-          if (!useSettingsStore.getState().muted) playChime();
-          onRequested?.(amount, net2);
-          setStage({ kind: "done", tx, amountUsdt: amount, network: net2, address: addr, review, riskScore: risk.score, hold });
-          // 심사 대상·72시간 대기 건은 자동 송금 경로를 타지 않는다 — 승인/해제 후 백엔드가 브로드캐스트한다.
-          // live: 서버가 서명·브로드캐스트 → 상태·TxID 를 폴링으로 반영. preview: 신청 상태에 머문다 (TxID 를 지어내지 않는다).
-          if (!review && !hold && isLive()) {
-            api
-              .withdraw({ network: net2, address: addr, amountUsdt: amount, userKey })
-              .then((r) => {
-                setTransactionStatus(tx.id, r.status, r.txHash ? { txHash: r.txHash } : undefined);
-                const poll = () =>
-                  api
-                    .withdrawStatus(r.id)
-                    .then((s) => {
-                      setTransactionStatus(tx.id, s.status, s.txHash ? { txHash: s.txHash } : undefined);
-                      if (s.status !== "COMPLETED") timers.current.push(setTimeout(poll, 5000));
-                    })
-                    .catch(() => timers.current.push(setTimeout(poll, 10000)));
-                if (r.status !== "COMPLETED") timers.current.push(setTimeout(poll, 5000));
-              })
-              .catch(() => {
-                /* 신청은 기록됐다 — 상태는 다음 조회에서 동기화 */
-              });
-          }
-        }, SUBMIT_MS),
-      );
-    },
-    [firstDepositAt, spinTimes, withdrawHistory, debitCrypto, addTransaction, onRequested, setTransactionStatus, userKey],
-  );
+  const commit = useCallback(async (draft: Draft, proof: WithdrawalProof) => {
+    if (submission.current || !user || useAuthStore.getState().user?.id !== user.id) return;
+    const current = useWalletStore.getState();
+    if (validateWithdrawal({ ...draft, balanceUsdt: current.cryptoBalance }).length || rolloverProgress(current.totalWagered, current.totalDepositedCrypto) < 100) {
+      setStage({ kind: "form" }); setSubmitError(t("errors.insufficient")); return;
+    }
+    submission.current = true; setSubmitError(""); setStage({ kind: "submitting" });
+    try {
+      const result = await api.withdraw({ ...draft, requestId: requestId.current, authorization: proof.authorization, authMethod: proof.method });
+      if (useAuthStore.getState().user?.id !== user.id) return;
+      const existing = useWalletStore.getState().transactions.find(x => x.serverId === result.id);
+      if (existing) { setStage({ kind: "form" }); return; }
+      const hold = result.unlockAt;
+      const review = result.status === "PENDING_ADMIN_REVIEW";
+      // The server reserves funds atomically before acknowledging the request.
+      if (!["CANCELLED", "FAILED"].includes(result.status)) debitCrypto(draft.amountUsdt);
+      const tx = addTransaction({ type: "withdraw", accountId: user.id, serverId: result.id,
+        amountUsdt: -draft.amountUsdt, ref: `${draft.network}:${draft.address}`, network: draft.network,
+        address: draft.address, feeUsdt: WITHDRAW_NETWORK_BY_KEY[draft.network].feeUsdt,
+        netUsdt: netReceive(draft.amountUsdt, draft.network), authMethod: proof.method,
+        unlockAt: hold, emailMasked: proof.emailMasked, status: result.status, txHash: result.txHash });
+      requestDraft.current = "";
+      onRequested?.(draft.amountUsdt, draft.network);
+      setStage({ kind: "done", tx, ...draft, review, hold });
+    } catch (cause) {
+      setSubmitError(ta(`errors.${cause instanceof AccountError ? cause.code : "network"}`));
+      setStage({ kind: "form" });
+    } finally { submission.current = false; }
+  }, [user, debitCrypto, addTransaction, onRequested, ta, t]);
 
   const reset = () => {
     setStage({ kind: "form" });
@@ -310,7 +288,10 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   };
 
   // ── 1단계 관문: 2FA 미등록이면 출금 입력 앞에 Google OTP 설정이 선다 ──
-  if (!twoFactorEnabled && stage.kind !== "done") {
+  if (!user) return <LoginRequired />;
+  if (!isLive()) return <p role="status" className="mt-4 rounded-xl border border-hairline p-5 text-sm leading-7 text-secondary">{ta("transactionsUnavailable")}</p>;
+  if (!securityReady) return <div className="mt-4 text-sm text-secondary"><p role="status">{ts(securityError ? "loadFailed" : "loading")}</p>{securityError && <button type="button" onClick={() => void useSecurityStore.getState().refresh(user.id)} className="mt-2 min-h-11 text-gold-champagne">{ts("retry")}</button>}</div>;
+  if (!twoFactorEnabled && !emailOnly && stage.kind !== "done") {
     return (
       <div className="mt-4">
         <PolicyNotice />
@@ -331,7 +312,8 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
             </button>
           )}
         </div>
-        {setupOpen && <TwoFactorSetup onEnabled={() => setSetupOpen(false)} compact />}
+        {setupOpen && <TwoFactorSetup key={user.id} onEnabled={() => setSetupOpen(false)} compact />}
+        <button type="button" onClick={() => setEmailOnly(true)} className="mt-3 min-h-12 w-full rounded-lg border border-hairline px-3 text-sm text-gold-champagne">{t("otpFallback", { hours: HOLD_HOURS })}</button>
       </div>
     );
   }
@@ -344,18 +326,18 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
         address={stage.address}
         amountUsdt={stage.amountUsdt}
         onBack={() => setStage({ kind: "form" })}
-        onNext={() => setStage({ kind: "otp", amountUsdt: stage.amountUsdt, network: stage.network, address: stage.address })}
+        onNext={() => setStage({ kind: emailOnly ? "email" : "otp", amountUsdt: stage.amountUsdt, network: stage.network, address: stage.address })}
       />
     );
   }
 
   // ── 3~4단계: 2차 인증 확인 → 성공 / 이메일·72시간 대기 ──
-  if (stage.kind === "otp" && totpSecret) {
+  if (stage.kind === "otp") {
     const draft: Draft = { amountUsdt: stage.amountUsdt, network: stage.network, address: stage.address };
     return (
       <OtpStep
-        secret={totpSecret}
-        onSuccess={() => commit(draft, "2FA_OTP")}
+        draft={draft}
+        onSuccess={(proof) => void commit(draft, proof)}
         onFallback={() => setStage({ kind: "email", ...draft })}
         onBack={() => setStage({ kind: "confirm", ...draft })}
       />
@@ -364,12 +346,12 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
 
   if (stage.kind === "email") {
     const draft: Draft = { amountUsdt: stage.amountUsdt, network: stage.network, address: stage.address };
-    return <EmailHoldStep onVerified={(email) => commit(draft, "EMAIL_72H_HOLD", email)} onBack={() => setStage({ kind: "otp", ...draft })} />;
+    return <EmailHoldStep draft={draft} email={user.email ?? user.subLabel} onVerified={(proof) => void commit(draft, proof)} onBack={() => setStage({ kind: "confirm", ...draft })} />;
   }
 
   const liveTx = stage.kind === "done" ? transactions.find((x) => x.id === stage.tx.id) ?? stage.tx : undefined;
   const liveStatus: TxStatus | undefined = liveTx?.status;
-  const recent = transactions.filter((x) => x.type === "withdraw").slice(0, 4);
+  const recent = transactions.filter((x) => x.type === "withdraw" && x.accountId === user?.id && !["CANCELLED", "FAILED"].includes(x.status ?? "")).slice(0, 4);
 
   if (stage.kind === "done") {
     return (
@@ -439,7 +421,6 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
               {t("reviewTitle")}
             </div>
             <p className="mt-1 break-keep text-xs leading-relaxed text-secondary">{t("reviewNote")}</p>
-            <p className="mt-1 break-keep text-xs leading-relaxed text-faint">{t("riskScore", { score: stage.riskScore, threshold: REVIEW_THRESHOLD })}</p>
           </div>
         ) : (
           <p className="mt-3 text-xs leading-relaxed text-faint">{isLive() ? t("processingNote") : t("networkNote")}</p>
@@ -462,6 +443,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   return (
     <>
       <PolicyNotice />
+      {submitError && <p role="alert" className="mt-3 text-sm text-red-200">{submitError}</p>}
       {/* 2FA 보호 중 — 1단계 관문을 통과한 계정 */}
       <p className="mt-4 flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/[0.07] px-3 py-2 text-xs font-bold text-emerald-300">
         <ShieldCheck className="h-3.5 w-3.5 flex-none" strokeWidth={2.4} />

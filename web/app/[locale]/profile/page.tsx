@@ -9,8 +9,10 @@ import { useWalletStore } from "@/stores/walletStore";
 import { useInventoryStore } from "@/stores/inventoryStore";
 import { useCurrency } from "@/lib/useCurrency";
 import { AccountError, accountConfigured, closureReadiness, deleteAccount, resetAccountPassword, validPassword } from "@/lib/account";
-import { useSecurityStore } from "@/stores/securityStore";
-import { TwoFactorSetup } from "@/components/wallet/TwoFactorSetup";
+import { SecuritySettings } from "@/components/auth/SecuritySettings";
+import { NicknameSettings } from "@/components/auth/NicknameSettings";
+import { LoginRequired } from "@/components/auth/LoginRequired";
+import { HistoryTab } from "@/components/wallet/HistoryTab";
 
 export default function ProfilePage() {
   const t = useTranslations("account");
@@ -20,11 +22,6 @@ export default function ProfilePage() {
   const inventoryReady = useInventoryStore(s => s.hydrated);
   const { fmt } = useCurrency();
   const [confirm, setConfirm] = useState(false);
-  const ts = useTranslations("security");
-  const twoFactorEnabled = useSecurityStore(x => x.twoFactorEnabled);
-  const enabledAt = useSecurityStore(x => x.enabledAt);
-  const disableTwoFactor = useSecurityStore(x => x.disableTwoFactor);
-  const [otpOpen, setOtpOpen] = useState(false);
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
@@ -78,23 +75,7 @@ export default function ProfilePage() {
     <div className="mt-5 grid gap-4 sm:grid-cols-3">{[{ href: "/#deposit", icon: Wallet, label: "wallet" }, { href: "/inventory", icon: Package, label: "inventory" }, { href: "/community", icon: UserRound, label: "reviews" }].map(({ href, icon: Icon, label }) => <Link key={label} href={href} className="flex min-h-20 items-center justify-between rounded-xl border border-hairline px-5 text-sm font-semibold text-white transition-colors hover:border-gold-champagne/50"><span className="flex items-center gap-3"><Icon className="h-5 w-5 text-gold-champagne" />{t(label)}</span><ArrowUpRight className="h-4 w-4 text-muted" /></Link>)}</div>
     <section className="mt-9 border-t border-hairline pt-8"><div className="flex items-center gap-3"><LockKeyhole className="h-5 w-5 text-gold-champagne" /><h2 className="text-xl font-semibold text-white">{t("security")}</h2></div><p className="mt-3 text-sm leading-7 text-secondary">{t("securityIntro")}</p><button onClick={() => openAuthModal("recover")} className="mt-3 min-h-11 text-sm font-semibold text-gold-champagne underline underline-offset-4">{t("forgot")}</button></section>
     {/* 🔐 Google OTP(2FA) — 출금 모달 안에서도, 여기에서도 같은 컴포넌트로 등록한다 */}
-    <section className="mt-9 rounded-2xl border border-hairline bg-surface p-5 sm:p-7">
-      <div className="flex items-center gap-3"><ShieldCheck className="h-5 w-5 text-gold-champagne" /><h2 className="text-xl font-semibold text-white">{ts("title")}</h2></div>
-      {twoFactorEnabled ? (
-        <div className="mt-4 rounded-xl border border-emerald-500/40 bg-emerald-500/[0.07] p-4">
-          <p className="text-sm font-semibold text-emerald-300">{ts("enabledTitle")}</p>
-          {enabledAt && <p className="mt-1 text-xs text-secondary">{ts("enabledSince", { at: new Date(enabledAt).toLocaleString() })}</p>}
-          <button type="button" onClick={disableTwoFactor} className="mt-3 min-h-11 text-sm font-semibold text-crimson underline underline-offset-4">{ts("disable")}</button>
-        </div>
-      ) : otpOpen ? (
-        <TwoFactorSetup onEnabled={() => setOtpOpen(false)} />
-      ) : (
-        <>
-          <p className="mt-3 text-sm leading-7 text-secondary">{ts("intro")}</p>
-          <button type="button" onClick={() => setOtpOpen(true)} className="mt-4 min-h-12 rounded-xl bg-[#f1eee7] px-5 text-sm font-semibold text-obsidian">{ts("menu")}</button>
-        </>
-      )}
-    </section>
+    {user ? <><NicknameSettings key={user.id} user={user} /><SecuritySettings key={user.id} user={user} /><section className="mt-9 rounded-2xl border border-hairline bg-surface p-5 sm:p-7"><h2 className="text-xl font-semibold text-white">{t("transactionHistory")}</h2><HistoryTab /></section></> : <LoginRequired />}
     <section className="mt-9 rounded-2xl border border-hairline bg-surface p-5 sm:p-7"><div className="flex items-center gap-3"><ShieldCheck className="h-5 w-5 text-gold-champagne" /><h2 className="text-xl font-semibold text-white">{t("closureTitle")}</h2></div><p className="mt-3 text-sm leading-7 text-secondary">{t("closureIntro")}</p>
       <div className="mt-6 divide-y divide-hairline">{checks.map(({ key, count, ok, icon: Icon, href }) => <div key={key} className="flex items-start gap-3 py-5"><Icon className="mt-1 h-5 w-5 shrink-0 text-muted" /><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-sm font-semibold text-white">{t(`checks.${key}.title`)}</h3><span className={ok ? "text-sm text-emerald-300" : "text-sm text-gold-champagne"}>{ready ? (ok ? t("settled") : count) : "—"}</span></div><p className="mt-2 text-sm leading-6 text-secondary">{t(`checks.${key}.body`)}</p>{!ok && <Link href={href} className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-gold-champagne">{t(`checks.${key}.action`)}<ArrowUpRight className="h-4 w-4" /></Link>}</div>{ok && ready && <Check className="mt-1 h-4 w-4 shrink-0 text-emerald-300" />}</div>)}</div>
       <div className="mt-3 rounded-xl border border-hairline bg-obsidian p-4 text-sm leading-7 text-secondary"><p>{t("noForfeiture")}</p><p className="mt-2">{t("retention")}</p><Link href="/legal/privacy" className="mt-2 inline-flex min-h-11 items-center text-gold-champagne underline underline-offset-4">{t("privacy")}</Link></div>
