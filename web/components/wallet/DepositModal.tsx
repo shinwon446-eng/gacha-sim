@@ -130,6 +130,11 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
               {tab === "withdraw" && <WithdrawTab onRequested={(a) => onWithdrawn?.(a)} onBlocked={onWithdrawBlocked} onDone={onClose} />}
               {tab === "history" && <HistoryTab />}
             </div>
+            {tab !== "history" && (
+              <section className="mt-8 border-t border-hairline pt-6" aria-label={t("tabHistory")}>
+                <HistoryTab />
+              </section>
+            )}
           </motion.div>
         </motion.div>
       )}
