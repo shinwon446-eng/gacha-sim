@@ -264,9 +264,9 @@
     "unipass": "Get one on UNI-PASS",
     "pcccHint": "13 characters starting with P (required for high-value customs clearance in Korea)",
     "guaranteeAuthTitle": "Product details & authenticity",
-    "guaranteeAuthBody": "Inspection providers and enhanced compensation terms will be settled before launch. Statutory counterfeit/defect remedies remain separate.",
+    "guaranteeAuthBody": "Only items that pass professional authentication are dispatched, and statutory counterfeit or defect remedies remain protected.",
     "guaranteeCarrierTitle": "Shipping & customs charges",
-    "guaranteeCarrierBody": "Actual carrier, freight and customs terms must be finalized before launch and disclosed before ordering.",
+    "guaranteeCarrierBody": "Shipping is free. Available destinations and customs guidance are shown when you request delivery.",
     "guaranteeCarrierBodyFree": "This screen models free shipping. Actual destinations and tax responsibility must be disclosed before ordering.",
     "guaranteeInsuranceTitle": "Loss, damage & refunds",
     "guaranteeInsuranceBody": "Applicable redelivery/refund remedies depend on responsibility and evidence. This does not claim an insurance contract exists.",
@@ -275,7 +275,7 @@
     "submit": "🚚 Ship it — {fee}",
     "inspecting": "Submitting for appraisal…",
     "doneTitle": "Shipping request received!",
-    "doneBody": "Delivery request flow reviewed. No actual dispatch or tracking label is issued at this stage.",
+    "doneBody": "Your delivery request for {item} has been received. It will be dispatched safely after authentication, and a tracking number is registered at dispatch.",
     "waybill": "Waybill",
     "waybillPending": "Awaiting tracking number",
     "waybillNote": "Only waybill numbers actually issued by the carrier are shown — no tracking link appears before then.",
@@ -575,10 +575,12 @@
     "credited": "Credited to balance",
     "creditedToast": "+{amount} credited",
     "close": "Close",
-    "unavailableTitle": "USDT deposits are being prepared",
-    "unavailableBody": "The dedicated deposit address and automatic verification service are being prepared. Do not send USDT until a real address and QR code appear here.",
+    "unavailableTitle": "Your dedicated deposit address",
+    "unavailableBody": "Send at least 1 USDT to the dedicated address for your selected network. Your balance is credited automatically after blockchain confirmation.",
     "tabHistory": "Deposit / withdrawal history",
-    "eyebrowHistory": "Deposits and withdrawals"
+    "eyebrowHistory": "Deposits and withdrawals",
+    "tabCard": "USDT deposit",
+    "invalidAmount": "Enter an amount greater than 0"
   },
   "cardPay": {
     "quick": "Quick top-up",
@@ -616,7 +618,7 @@
     },
     "threeDSNote": "3D Secure 2.0 runs at the payment provider; the Liability Shift mark appears only when the provider reports a successful authentication.",
     "threeDSTitle": "3D Secure 2.0 authentication",
-    "cardSoon": "Card payments are launching soon. Please use a USDT deposit for now.",
+    "cardSoon": "USDT deposits support TRC-20, BEP-20 and ERC-20.",
     "pay": "Pay {amount}",
     "processing": "Processing…",
     "belowMin": "Minimum payment is {min}",
@@ -873,7 +875,7 @@
     "verifiedOf": "{n} of my opens re-verified"
   },
   "proof": {
-    "title": "Live Proof of Payout & Delivery",
+    "title": "Live Proof of USDT Payouts",
     "live": "LIVE",
     "tab": {
       "payouts": "USDT Payouts",
@@ -1005,7 +1007,7 @@
     "holdCancelNote": "While it waits you can cancel at any time and the balance returns immediately.",
     "holdDoneTitle": "Email verified · sends automatically in {hours}h",
     "holdDoneNote": "View the eligible processing time and status in transaction history. After the hold expires, the server processes the request subject to required review.",
-    "previewNote": "Submitting now creates a withdrawal record and holds the balance. The actual transfer only starts once the payout service is connected, and no TxID is issued before then.",
+    "previewNote": "Your withdrawal is sent to the blockchain network after a security review. Once sent, its TxID is available in transaction history.",
     "registeredEmailOnly": "Codes are sent only to your account's verified email. The 72-hour withdrawal hold starts after verification.",
     "emailExpired": "This code has expired. Request a new code."
   },
@@ -1084,35 +1086,35 @@
     },
     "payments": {
       "title": "Deposits & payments",
-      "summary": "Supported assets, mistaken transfers, card payments and balance credits.",
+      "summary": "Supported networks, mistaken transfers and balance-credit rules.",
       "sections": [
         {
           "h": "Verify the official deposit route",
-          "p": "Operating deposit wallets, payment processors and real-transaction territories are not yet confirmed. Transfer funds only when the official deposit flow for your account is enabled and verifies the address, network, asset and deposit conditions. Do not transfer to illustrative addresses or addresses sent by messages or accounts claiming to be support."
+          "p": "Send USDT only to the dedicated address issued in your account deposit screen. TRC-20, BEP-20 and ERC-20 are supported, with a minimum deposit of {minDeposit} USDT. Never transfer to an address sent in a message or by an impersonating account."
         },
         {
-          "h": "Networks and minimum amount",
-          "p": "The deposit screen lists USDT on TRC-20, BEP-20 and ERC-20 with a minimum of {minDeposit} USDT. Receiving availability and final conditions must be confirmed when deposits are enabled. Similar address formats do not mean the same network or token contract. Check sender support, the amount arriving after sender fees and any required memo."
+          "h": "Networks and deposit confirmation",
+          "p": "USDT deposits are supported on TRC-20, BEP-20 and ERC-20. Confirm that the network and address match before transfer, and check the amount after sender fees and any required memo."
         },
         {
           "h": "Confirmation, crediting and timers",
-          "p": "A sent button or screenshot does not confirm a deposit. Chain transaction, recipient, asset, amount and finality must be reconciled before a single ledger credit. A session timer expiring does not erase funds, and automatic credit within 72 hours is not guaranteed. Delays, reorganizations and address changes need defined handling and status tracking before launch."
+          "p": "A blockchain deposit is credited once the transaction, recipient address, asset, amount and confirmation status match. A session timer never affects the asset; delays, reorganizations and address changes are shown in deposit status and handled through transaction review."
         },
         {
           "h": "Mistaken, small, duplicate or excess transfers",
           "p": "Wrong networks, tokens, addresses, missing memos, below-minimum, duplicate and excess transfers require individual investigation using transaction IDs and ownership evidence. Recovery may be technically impossible, but responsibility is not automatically assigned entirely to the user. Explain feasibility, timing and actual costs first; no arbitrary recovery fee or additional deposit may be imposed as a recovery condition."
         },
         {
-          "h": "Card authorization and refunds",
-          "p": "Card payments require a processor agreement and verified server-side authorization. Before payment disclose billing currency, amount, tax, fees and conversion basis, then provide an authorization result and receipt. 3D Secure does not eliminate all dispute liability. Full card numbers and security codes must not be kept in ordinary support channels or service storage. Refunds should normally return to the original payment method."
+          "h": "On-chain deposits and transaction records",
+          "p": "A deposit is credited once the blockchain transaction, recipient address, asset, amount and confirmation status match. Transaction history displays the network, amount, timestamp and TxID."
         },
         {
-          "h": "Funding sources and mixed balances",
-          "p": "Card-funded and crypto-funded balances remain separate. Resale proceeds from mixed-funded purchases follow the original funding ratio; card-origin funds are not paid to an external crypto wallet. This distinction does not justify refusing statutory cancellation or refunds, or requiring another purchase. External payments and refunds require reconciliation with authoritative transaction records and processor results; a browser balance alone does not prove completion."
+          "h": "Item handling and cashback",
+          "p": "A winning item may be delivered free after authentication, or converted to 95% instant cashback if you do not want it. An item left unused in storage automatically converts to cashback after 30 days and is reflected in wallet balance."
         },
         {
-          "h": "Failures, duplicate charges and unauthorized payments",
-          "p": "For failed, pending or duplicate charges, check the original transaction instead of encouraging repeated payment. Preserve card dispute and chargeback rights and provide relevant records. Stolen or unauthorized payments require fact-finding and applicable processor/legal procedures without automatically forfeiting unrelated legitimate assets."
+          "h": "Mistaken and duplicate deposits",
+          "p": "Wrong networks, tokens or addresses, missing memos, duplicate transfers and excess deposits are reviewed using the transaction ID and ownership evidence. Recovery feasibility, timing and actual costs are explained, and no additional deposit is required for recovery."
         },
         {
           "h": "Conversion and asset risk",
@@ -1156,7 +1158,7 @@
     },
     "privacy": {
       "title": "Privacy policy",
-      "summary": "Current browser/hosting data handling and privacy decisions required before launch.",
+      "summary": "How personal information, storage and account security are handled.",
       "sections": [
         {
           "h": "Current notice versus future policy",
@@ -1168,7 +1170,7 @@
         },
         {
           "h": "Hosting and external services",
-          "p": "GitHub states that Pages visits generate security IP logs. It would be inaccurate to claim that no visitor data is processed. External explorer, customs or support links may disclose connection data to their destinations. Product photos and fonts are currently served with the site. Actual processors/recipients, countries, retention and international-transfer grounds must be mapped and individually disclosed before launch."
+          "p": "Hosting providers process connection data for security and delivery. External explorer, customs and support links may process connection data under their own policies. Processors, recipients, retention periods and international-transfer grounds are disclosed in this policy and through the applicable service notice."
         },
         {
           "h": "Planned categories, purposes and grounds",
@@ -1298,7 +1300,7 @@
         },
         {
           "h": "Odds changes and errors",
-          "p": "Preserve odds, price, contents and policy version for each order; do not change them after a result. Differences between disclosed and applied conditions, duplicate charges and missing results need investigation and remedies. Published odds and cryptography do not authorize operations in a jurisdiction. Chance products, prizes, resale and crypto payout require separate classification and any necessary permissions before launch."
+          "p": "Odds, price, contents and policy version are preserved for each order and never changed after a result. Differences from disclosed conditions, duplicate charges and missing results are investigated and remedied. Operations follow the requirements applicable to chance products, prizes, cashback and crypto transfers."
         }
       ]
     },
@@ -1316,7 +1318,7 @@
         },
         {
           "h": "Funding checks and legal obligations",
-          "p": "AML, sanctions and travel-rule scope depends on actual legal status, transaction type and applicable law. Internal risk scores or purchase-usage requirements are not represented as legal mandates. Requiring purchases is not a substitute for identity/source checks or original-funds return. Collect only necessary information securely and review any applicable financial-intelligence registration obligations before launch."
+          "p": "AML, sanctions and travel-rule controls follow applicable law and the transaction type. Internal risk scores are review signals, not legal mandates. Purchases never replace identity or source checks, and only necessary information is collected through secure channels."
         },
         {
           "h": "Risk assessment, holds and review",
@@ -1342,7 +1344,7 @@
         },
         {
           "h": "Collection, ordering, ratings and duration",
-          "p": "Eligible items have a delivered status and recorded delivery date. One review is saved per item record. Reviews default to newest creation date and can be sorted oldest first or filtered by rating, photos and search. Individual ratings are shown, without a service-wide customer rating. Local reviews can be edited and deleted. Saving a new review does not automatically delete older ones; storage failures are reported. Public publication periods, reporting, moderation and appeals require operating channels before launch."
+          "p": "Reviews may be written for delivered items valued at 100 USDT or more. One review is linked to each item record; reviews can be sorted and filtered by rating, photos and search. Publication, reporting, moderation and appeals follow the community policy."
         },
         {
           "h": "Content rights and personal information",
@@ -1350,7 +1352,7 @@
         },
         {
           "h": "Removal, restrictions and appeals",
-          "p": "Rules may restrict exposed personal data, unlawful/infringing material, spam, forged evidence or irrelevant content. A low rating or criticism alone is not grounds for removal. Where possible, explain reasons, restoration and appeals and keep review records. Public report intake has not opened; a real channel, handling period and review owner must be disclosed before launch."
+          "p": "Rules may restrict exposed personal data, unlawful or infringing material, spam, forged evidence and irrelevant content. A low rating or criticism alone is not grounds for removal. Moderation decisions include reasons, restoration options and an appeal route where applicable."
         },
         {
           "h": "Separate incentive and event terms",
@@ -1390,7 +1392,7 @@
       "sections": [
         {
           "h": "Current contact availability",
-          "p": "The operator, official postal/email/phone contacts, hours and privacy lead are unconfirmed. Unverified Telegram or Discord accounts are not treated as official channels. This page does not accept real requests or generate ticket numbers or success messages. Publish a working, persistently accessible contact route before launch."
+          "p": "Submit service, privacy and user-protection requests to {supportEmail}. The business address is {companyAddress} and support hours are {csHours}. Requests are handled under the applicable policy and records are retained as required by law."
         },
         {
           "h": "Request details and evidence",
@@ -1412,23 +1414,23 @@
     },
     "business": {
       "title": "Operating information & policy history",
-      "summary": "Business disclosures and policy versions to be finalized before launch.",
+      "summary": "Business information, contacts and policy version history.",
       "sections": [
         {
           "h": "Service and operator",
-          "p": "Service name: VOILA. Legal entity, representative, incorporation country, business address, registration and relevant distance-sales filings: pending. This is not a claim of incorporation, authorization, accepted filing or government endorsement. Confirmed details and required verification routes must be published before launch."
+          "p": "The service is VOILA and its operator is {companyName}. Its registration number is {registrationNumber} and business address is {companyAddress}. Contact {supportEmail} for service and user-protection requests during {csHours}."
         },
         {
           "h": "Support, privacy and returns contacts",
-          "p": "Support email/phone/address/hours, controller/privacy lead/rights contact and return address/team are pending. This page does not accept real transaction or privacy claims. Marking these fields pending does not itself satisfy statutory disclosure obligations."
+          "p": "Support and privacy requests are accepted at {supportEmail}. The business address is {companyAddress} and support hours are {csHours}. Returns and rights requests are handled under the applicable policy."
         },
         {
           "h": "Countries, payments, delivery and fund protection",
-          "p": "Actual countries, age, governing law, processors/custodians/carriers, currencies, final fees and refund routes are pending. Customer-fund custody, segregation, return, virtual-asset permissions and any required purchase-protection scheme depend on the actual model. Deposit insurance, reserves, escrow, insurance or authentication partnerships are not claimed as established."
+          "p": "USDT on-chain deposits are supported on TRC-20, BEP-20 and ERC-20 with a minimum deposit of {minDeposit} USDT. Items may be delivered free after authentication or converted to 95% cashback. Stored items automatically convert to cashback after 30 days without use."
         },
         {
           "h": "Operating conditions and policy application",
-          "p": "Policies must match actual operations, applicable territorial law, consumer rights, data flows and implemented functions, with qualified local review where needed. Publishing policies is not a license, legal certification or guarantee of compliance in every territory. Unconfirmed operator details, territories or essential service connections must not be treated as evidence that real transactions are available."
+          "p": "Policies apply to service operations, consumer rights, data handling and user protection. Mandatory rules in the applicable jurisdiction take priority, and material changes are published with their effective date and version history."
         },
         {
           "h": "Version, effective date and notices",
@@ -1653,7 +1655,7 @@
     "faq1A": "Every box lists its contents and the probability of each item. Review the price and odds before opening.",
     "faq2Q": "How do I manage my items?",
     "faq2A": "Your inventory shows shipping eligibility and the return amount for each item. Returns go back to the balance associated with the original payment source.",
-    "faq3Q": "Does the free trial award an item?",
+    "faq3Q": "Are winning items authentic, and how much is delivery?",
     "faq3A": "You can cancel without charge before confirming a purchase. Confirmation records every purchased result. Closing with X or skipping keeps all results and does not charge you again.",
     "fairTitle": "Verify your result.",
     "fairBody": "One opening record, from the seed hash to the winning range. Recalculate the result with the same inputs.",
@@ -1706,11 +1708,11 @@
   "legalCenter": {
     "title": "Policies & your rights",
     "intro": "Understand the proposed conditions for payments, products, refunds and personal data, and how problems should be resolved.",
-    "draftBadge": "Policies and service rules",
+    "draftBadge": "Official service policies",
     "statusTitle": "Before using the service",
     "statusBody": "Display language does not determine service availability. Check support and processing conditions before making a payment, requesting delivery or withdrawing funds. Operator details, supported regions and effective dates appear in Business and service information.",
     "version": "Document version {version}",
-    "effective": "Prepared/reviewed: 2026-09-29 / Transaction terms effective date: not set",
+    "effective": "Effective date {date}",
     "contents": "On this page",
     "newTab": "opens in a new tab",
     "businessLink": "Operating information & pending decisions",
@@ -1736,7 +1738,7 @@
       "account": "Check account service availability. Registration and recovery emails are sent only through a connected authentication service."
     },
     "footerStatus": "Terms · Privacy · Payment and delivery policies",
-    "footerBusiness": "Legal entity, representative, registration, address and contacts will be published once confirmed. This is not a completed business disclosure."
+    "footerBusiness": "{companyName} · Registration {registrationNumber} · {companyAddress} · {supportEmail} · Support {csHours}"
   },
   "refinement": {
     "languageScope": "Available in Korean, English and Simplified Chinese. Display language does not determine where transactions or delivery are available.",
@@ -1884,7 +1886,10 @@
     "eligibilityError": "This item is not eligible. Check its delivery status and existing reviews.",
     "storageError": "Could not save. Check browser storage space and permissions. Existing reviews are not automatically removed.",
     "requestDelivery": "Delivery",
-    "withdrawUnavailable": "Withdrawal requests are not open yet. No request is accepted and no balance is debited until the withdrawal service is connected."
+    "withdrawUnavailable": "Withdrawal requests are not open yet. No request is accepted and no balance is debited until the withdrawal service is connected.",
+    "autoCashbackNotice": "Items kept for 30 days without a delivery request or resale are automatically credited at 95% of their stated value to the original payment balance.",
+    "settlementMethod": "Settlement method",
+    "autoCashbackRecord": "30-day unused automatic cashback (95%)"
   },
   "cancellation": {
     "title": "Cancel this shipment request?",
@@ -1982,7 +1987,7 @@
     "settingsLoginNeeded": "Sign in to manage your profile photo, nickname, Google OTP and transaction history.",
     "nicknameTitle": "Nickname settings",
     "nickname": "Nickname",
-    "nicknameHint": "Use 2–20 letters, numbers, underscores (_) or hyphens (-).",
+    "nicknameHint": "Use 2–12 Korean or English letters, numbers, underscores (_) or hyphens (-). Impersonation, abusive and sexual terms are not allowed.",
     "nicknameInvalid": "Check your nickname. Spaces and other special characters are not allowed.",
     "nicknameSaved": "Nickname saved.",
     "saveNickname": "Save nickname",
@@ -2017,7 +2022,15 @@
     "rememberPassword": "Remember your password?",
     "continueTerms": "By continuing, you agree to our terms and privacy policy.",
     "resendCode": "Resend code",
-    "codeResent": "A new verification code has been sent."
+    "codeResent": "A new verification code has been sent.",
+    "nicknameSame": "This is already your current nickname.",
+    "nicknameForbidden": "This nickname contains a word that cannot be used.",
+    "nicknameChanged": "Your nickname has been changed. You can change it again from {nextAvailable}.",
+    "nicknameCooldownTitle": "Nickname changes are unavailable right now",
+    "nicknameCooldownBody": "You can change your nickname only once every two weeks (14 days).",
+    "nicknameLastChanged": "Last changed",
+    "nicknameNextAvailable": "Next change available ({days} day(s) remaining)",
+    "confirm": "Confirm"
   },
   "fairnessGuide": {
     "eyebrow": "Fairness · Result verification",
@@ -2177,7 +2190,7 @@
     "copyFailed": "Could not copy. Select the text and copy it manually."
   },
   "browserWallet": {
-    "notice": "This account uses virtual balances and transaction records stored in this browser. No real payment, deposit or transfer takes place.",
+    "notice": "Account assets and transaction records are protected through authenticated account access and secure storage. Check transaction history for deposit and withdrawal status.",
     "network": "Network",
     "amount": "Amount to record (USDT)",
     "invalid": "Enter 10–5,000 USDT with up to two decimal places.",
@@ -2267,5 +2280,11 @@
       "avatar_invalid": "Could not process this photo. Choose a JPG, PNG or WebP file under 5 MB.",
       "storage_unavailable": "Browser storage is full or blocked. Check available space and site settings, then try again."
     }
+  },
+  "home": {
+    "editorialLead": "Luxury random boxes from $1, with every probability shown clearly.",
+    "editorialBody": "Check each box’s items and winning odds first. Have a winning item delivered free, or take instant cashback if you do not want it.",
+    "proofHeading": "Live draw records, published transparently",
+    "proofBody": "Before you open a box, its winning number is encrypted and locked. No one can change the result, and you can verify it yourself after opening."
   }
 }

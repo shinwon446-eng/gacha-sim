@@ -49,6 +49,8 @@ export interface OwnedItem {
   soldForUsdt?: number;
   soldAt?: string;
   autoCashbackAt?: string;
+  /** Compatibility with the deployed inventory settlement label. */
+  autoCashback?: boolean;
   shipping?: { address: ShippingAddress; feeUsdt: number; requestedAt: string; carrier?: CarrierKey; trackingNumber?: string; shippedAt?: string; deliveredAt?: string; requestId?: string; feeFundingRatio?: FundingRatio };
   shippingCancellations?: { requestId?: string; requestedAt: string; cancelledAt: string; feeRefundUsdt: number; toCrypto: number; toCard: number }[];
 }
@@ -87,7 +89,7 @@ export const useInventoryStore = create<InventoryState>()(
         const at = new Date(now).toISOString();
         // Claim the items before crediting: subscriptions and subsequent sweeps cannot pay twice.
         set(s => ({ items: s.items.map(item => refunds.has(item.id) && item.status === "IN_STORAGE"
-          ? { ...item, status: "SOLD", soldForUsdt: refunds.get(item.id), soldAt: at, autoCashbackAt: at }
+          ? { ...item, status: "SOLD", soldForUsdt: refunds.get(item.id), soldAt: at, autoCashbackAt: at, autoCashback: true }
           : item) }));
         const split = attributeRefunds(expired.map(item => ({ amountUsdt: refunds.get(item.id)!, ratio: normalizeRatio(item.fundingRatio) })));
         // Existing card-origin items retain their funding bucket after automatic cashback.

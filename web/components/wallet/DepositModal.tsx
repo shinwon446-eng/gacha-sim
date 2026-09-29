@@ -8,6 +8,8 @@ import { X, Wallet, Coins, ArrowUpRight, ReceiptText } from "lucide-react";
 import { cn } from "@/lib/format";
 import { UsdtDepositTab } from "@/components/wallet/UsdtDepositTab";
 import { WithdrawTab } from "@/components/wallet/WithdrawTab";
+import { useWalletStore } from "@/stores/walletStore";
+import { Money } from "@/components/ui/Money";
 import { HistoryTab } from "@/components/wallet/HistoryTab";
 
 type Tab = "usdt" | "withdraw" | "history";
@@ -15,7 +17,7 @@ type Tab = "usdt" | "withdraw" | "history";
 export interface DepositModalProps {
   open: boolean;
   onClose: () => void;
-  /** 온체인 입금이 잔액에 반영된 뒤 — 호출측이 토스트를 띄운다 */
+  /** 입금이 잔액에 반영된 뒤 — 호출측이 토스트를 띄운다 */
   onCredited: (amountUsdt: number) => void;
   /** 출금 신청 확정 후 — 호출측이 토스트를 띄운다 */
   onWithdrawn?: (amountUsdt: number) => void;
@@ -23,6 +25,24 @@ export interface DepositModalProps {
   onWithdrawBlocked?: (progressPct: number) => void;
   /** 열리자마자 보여줄 탭 — 모바일 [출금] 진입용 */
   initialTab?: Tab;
+}
+
+/**
+ * 지갑 모달. 탭: [USDT 암호화폐 입금] / [↗ 출금]
+ * 출금은 자체 모달이라 탭을 누르면 이 모달을 닫고 그쪽을 연다 — 모바일에서 하단 내비 [💳 충전]이 유일한 지갑 진입점이므로 여기서 출금까지 닿아야 한다.
+ */
+/** 출금 가능한 USDT 잔액 */
+function BalanceSplit() {
+  const t = useTranslations("withdraw");
+  const cryptoBalance = useWalletStore((s) => s.cryptoBalance);
+  return (
+    <div className="mt-4">
+      <div className="border-metallic-subtle rounded-lg bg-obsidian p-2.5">
+        <div className="break-keep text-xs leading-tight text-faint">{t("availableCrypto")}</div>
+        <Money value={cryptoBalance} size="sm" className="mt-1" numberClassName="text-gold-gradient" />
+      </div>
+    </div>
+  );
 }
 
 export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdrawBlocked, initialTab = "usdt" }: DepositModalProps) {
@@ -105,6 +125,11 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
               {tab === "withdraw" && <WithdrawTab onRequested={(a) => onWithdrawn?.(a)} onBlocked={onWithdrawBlocked} onDone={onClose} />}
               {tab === "history" && <HistoryTab />}
             </div>
+            {tab !== "history" && (
+              <section className="mt-8 border-t border-hairline pt-6" aria-label={t("tabHistory")} aria-live="polite">
+                <HistoryTab />
+              </section>
+            )}
           </motion.div>
         </motion.div>
       )}
