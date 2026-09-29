@@ -8,7 +8,8 @@ import { useAuthStore } from "@/stores/authStore";
 import { useWalletStore } from "@/stores/walletStore";
 import { useInventoryStore } from "@/stores/inventoryStore";
 import { useCurrency } from "@/lib/useCurrency";
-import { AccountError, accountConfigured, closureReadiness, deleteAccount, resetAccountPassword, validPassword } from "@/lib/account";
+import { AccountError, accountConfigured, closureReadiness, resetAccountPassword, validPassword } from "@/lib/account";
+import { AccountClosureFlow } from "@/components/auth/AccountClosureFlow";
 import { SecuritySettings } from "@/components/auth/SecuritySettings";
 import { NicknameSettings } from "@/components/auth/NicknameSettings";
 import { LoginRequired } from "@/components/auth/LoginRequired";
@@ -35,13 +36,11 @@ export default function ProfilePage() {
     setPanel(next); const url = new URL(window.location.href); url.searchParams.set("section", next); window.history.pushState(null, "", url);
     requestAnimationFrame(() => panelHeading.current?.focus({ preventScroll: true }));
   };
-  const { user, openAuthModal, clearSession, hydrated: authReady } = useAuthStore();
+  const { user, openAuthModal, hydrated: authReady } = useAuthStore();
   const wallet = useWalletStore();
   const items = useInventoryStore(s => s.items);
   const inventoryReady = useInventoryStore(s => s.hydrated);
   const { fmt } = useCurrency();
-  const [confirm, setConfirm] = useState(false);
-  const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [resetToken, setResetToken] = useState("");
@@ -56,15 +55,6 @@ export default function ProfilePage() {
     const token = new URLSearchParams(window.location.hash.slice(1)).get("reset_token");
     if (token) { setResetToken(token); history.replaceState(null, "", window.location.pathname + window.location.search); }
   }, []);
-  const closeAccount = async (event: FormEvent) => {
-    event.preventDefault(); if (busy || !ready || !closure.eligible || !confirm || !user || user.local || !configured) return;
-    // Re-read before requesting; server independently checks authoritative balances and open orders.
-    if (!closureReadiness({ ...useWalletStore.getState(), items: useInventoryStore.getState().items }).eligible) return;
-    setBusy(true); setError(""); setNotice("");
-    try { await deleteAccount(password); clearSession(); setPassword(""); setConfirm(false); setNotice(t("deleted")); }
-    catch (cause) { setError(t(`errors.${cause instanceof AccountError ? cause.code : "network"}`)); }
-    finally { setBusy(false); }
-  };
   const changePassword = async (event: FormEvent) => {
     event.preventDefault(); if (busy || !configured || !resetToken) return;
     if (!validPassword(newPassword) || newPassword !== repeatPassword) { setError(t("validation")); return; }
@@ -75,7 +65,7 @@ export default function ProfilePage() {
   };
   const input = "mt-2 h-12 w-full rounded-xl border border-hairline bg-obsidian px-4 text-base text-white focus:border-gold-champagne focus:outline-none disabled:opacity-40";
   const checks = [
-    { key: "balance", count: fmt(wallet.balance), ok: !closure.hasBalance, icon: Wallet, href: "/#withdraw" },
+    { key: "balance", count: fmt(wallet.balance), ok: wallet.balance === 0 && !closure.hasBalance, icon: Wallet, href: "/#withdraw" },
     { key: "held", count: closure.held, ok: !closure.held, icon: Package, href: "/inventory?tab=held" },
     { key: "shipping", count: closure.shipping, ok: !closure.shipping, icon: Truck, href: "/inventory?tab=shipping" },
     { key: "pending", count: closure.pending, ok: !closure.pending, icon: CreditCard, href: "/#withdraw" },
@@ -118,7 +108,7 @@ export default function ProfilePage() {
       <div className="mt-6 divide-y divide-hairline">{checks.map(({ key, count, ok, icon: Icon, href }) => <div key={key} className="flex items-start gap-3 py-5"><Icon className="mt-1 h-5 w-5 shrink-0 text-muted" /><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-sm font-semibold text-white">{t(`checks.${key}.title`)}</h3><span className={ok ? "text-sm text-emerald-300" : "text-sm text-gold-champagne"}>{ready ? (ok ? t("settled") : count) : "—"}</span></div><p className="mt-2 text-sm leading-6 text-secondary">{t(`checks.${key}.body`)}</p>{!ok && <Link href={href} className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-gold-champagne">{t(`checks.${key}.action`)}<ArrowUpRight className="h-4 w-4" /></Link>}</div>{ok && ready && <Check className="mt-1 h-4 w-4 shrink-0 text-emerald-300" />}</div>)}</div>
       <div className="mt-3 rounded-xl border border-hairline bg-obsidian p-4 text-sm leading-7 text-secondary"><p>{t("noForfeiture")}</p><p className="mt-2">{t("retention")}</p><Link href="/legal/privacy" className="mt-2 inline-flex min-h-11 items-center text-gold-champagne underline underline-offset-4">{t("privacy")}</Link></div>
       {!configured && <p className="mt-5 text-sm leading-6 text-secondary">{t("closureUnavailable")}</p>}
-      <form onSubmit={closeAccount} className="mt-5 space-y-4"><label className="block max-w-md text-sm text-secondary">{t("reauth")}<input type="password" autoComplete="current-password" required maxLength={128} value={password} onChange={e => setPassword(e.target.value)} disabled={busy || !configured || !user || !closure.eligible} className={input} /></label><label className="flex min-h-11 items-start gap-3 text-sm leading-6 text-secondary"><input type="checkbox" checked={confirm} onChange={e => setConfirm(e.target.checked)} disabled={busy || !configured || !user || !closure.eligible} className="mt-1 h-4 w-4 shrink-0 accent-[#d5bd87]" /><span>{t("closureConsent")}</span></label><button disabled={busy || !ready || !configured || !user || user.local || !closure.eligible || !confirm || !password} className="min-h-12 rounded-xl border border-red-300/40 px-5 text-sm font-semibold text-red-200 disabled:cursor-not-allowed disabled:opacity-35">{t(busy ? "processing" : "closeAccount")}</button></form>
+      <AccountClosureFlow />
     </section>
 
         </details></>}

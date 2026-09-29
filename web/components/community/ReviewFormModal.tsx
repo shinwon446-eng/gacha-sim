@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Camera, ImagePlus, Star, X } from "lucide-react";
 import { useModal } from "@/lib/useModal";
 import { useProductText } from "@/lib/useProductText";
@@ -10,6 +10,7 @@ import { useInventoryStore } from "@/stores/inventoryStore";
 import { useCommunityStore, type MyReview } from "@/stores/communityStore";
 import { cn } from "@/lib/format";
 import { Link } from "@/i18n/navigation";
+import { reviewValueNotice } from "./reviewValueNotice";
 
 async function shrinkImage(file: File): Promise<string> {
   if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 8 * 1024 * 1024) throw new Error("photo");
@@ -26,6 +27,7 @@ async function shrinkImage(file: File): Promise<string> {
 export interface ReviewFormModalProps { open: boolean; onClose: () => void; onSubmitted: () => void; initialOwnedId?: string; editing?: MyReview | null; }
 export function ReviewFormModal({ open, onClose, onSubmitted, initialOwnedId, editing }: ReviewFormModalProps) {
   const t = useTranslations("community");
+  const locale = useLocale();
   const r = useTranslations("refinement");
   const { itemName } = useProductText();
   const items = useInventoryStore(s => s.items);
@@ -75,8 +77,7 @@ export function ReviewFormModal({ open, onClose, onSubmitted, initialOwnedId, ed
     <div ref={panel} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="review-heading" className="relative mx-auto max-w-xl rounded-2xl border border-hairline bg-surface p-6 outline-none md:p-8">
       <button onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full hover:bg-elevation"><X className="h-5 w-5" /></button>
       <p className="workspace-eyebrow">VOILA JOURNAL</p><h2 id="review-heading" className="mt-3 pr-8 text-2xl font-medium text-white">{editing ? r("editReview") : t("writeTitle")}</h2>
-      <p className="mt-3 text-sm leading-6 text-muted">{r("reviewLocalNote")}</p>
-      {eligible.length === 0 && !editing ? <p className="mt-6 rounded-xl border border-hairline p-5 text-sm leading-7 text-secondary">{r(hasMinValueItem ? "eligibleEmptyBody" : "minReviewItemValueNotice")}</p> : <form className="mt-6 grid gap-5" onSubmit={e => { e.preventDefault(); submit(); }}>
+      {eligible.length === 0 && !editing ? <p className="mt-6 rounded-xl border border-hairline p-5 text-sm leading-7 text-secondary">{hasMinValueItem ? r("eligibleEmptyBody") : reviewValueNotice(locale)}</p> : <form className="mt-6 grid gap-5" onSubmit={e => { e.preventDefault(); submit(); }}>
         {!editing && <label className="text-sm text-secondary">{t("pickItem")}<select className="workspace-select mt-2 w-full" value={ownedId} onChange={e => setOwnedId(e.target.value)}>{eligible.map(item => <option key={item.id} value={item.id}>{productOf(item) ? itemName(productOf(item)!) : item.itemId}</option>)}</select></label>}
         <fieldset><legend className="mb-2 text-sm text-secondary">{t("rating")}</legend><div className="flex gap-1">{[1, 2, 3, 4, 5].map(n => <label key={n} className="relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg hover:bg-elevation"><input type="radio" className="peer sr-only" name="rating" value={n} checked={rating === n} onChange={() => setRating(n)} aria-label={r("ratingLabel", { n })} /><Star aria-hidden="true" className={cn("h-6 w-6 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-gold-champagne", n <= rating ? "fill-gold-champagne text-gold-champagne" : "text-muted")} /></label>)}</div></fieldset>
         <label className="text-sm text-secondary">{t("text")}<textarea value={text} onChange={e => setText(e.target.value)} rows={5} maxLength={REVIEW_MAX_CHARS} placeholder={t("textHint")} className="mt-2 w-full rounded-xl border border-hairline bg-obsidian p-4 text-sm leading-7 text-white placeholder:text-muted" /><span className="mt-1 block text-right text-xs text-muted">{text.length} / {REVIEW_MAX_CHARS}</span></label>

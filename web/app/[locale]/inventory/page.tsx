@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowDownLeft, ArrowUpRight, Check, ChevronDown, Coins, Package, Search, ShieldCheck, Truck, Wallet, X } from "lucide-react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -20,7 +20,8 @@ import { productOf, processedAt, recordKind, resaleEstimate, vaultTab, type Vaul
 import type { ShippingAddress } from "@/lib/shipping";
 import { useInventoryStore, daysUntilCashback, sweepReadyInventory, type OwnedItem } from "@/stores/inventoryStore";
 import { useWalletStore } from "@/stores/walletStore";
-import { isLive } from "@/lib/runtime";
+import { API_BASE, isLive } from "@/lib/runtime";
+import { accountRequest } from "@/lib/account";
 import { api } from "@/lib/api";
 
 const PAGE = 24;
@@ -50,8 +51,9 @@ export default function InventoryPage() {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [toast, setToast] = useState("");
   const [now, setNow] = useState<number | null>(null);
+  const shippingRequestKey = useRef("");
   const retentionNotice = locale === "ko"
-    ? "보관함에 보관된 상품은 획득일로부터 30일(1개월) 동안 배송 신청 또는 페이백을 진행하지 않을 경우, 상품 가치의 95%가 지갑 캐시백(USDT)으로 자동 전환됩니다."
+    ? "보관함 상품은 획득 후 30일(1개월) 동안 미사용 시 자동으로 캐시백 전환되어 잔액으로 지급됩니다. 전환 금액은 상품 가치의 95%입니다."
     : locale === "zh" ? "获得商品后30天（1个月）内未申请配送或返现，商品价值的95%将自动转换为钱包返现（USDT）。"
     : "Items kept for 30 days (1 month) after acquisition without a shipping or sellback request are automatically converted to wallet cashback (USDT) at 95% of their value.";
   useEffect(() => {
@@ -68,6 +70,7 @@ export default function InventoryPage() {
   }, []);
   useEffect(() => { setShown(PAGE); setSelected(new Set()); }, [tab, query, kind, period, sort]);
   useEffect(() => { if (!toast) return; const id = setTimeout(() => setToast(""), 5000); return () => clearTimeout(id); }, [toast]);
+  useEffect(() => { if (shipTarget?.length) shippingRequestKey.current = crypto.randomUUID(); }, [shipTarget]);
   useEffect(() => {
     if (!isLive()) return;
     const tick = () => useInventoryStore.getState().items.filter(o => o.status === "SHIPPING_REQUESTED").forEach(o => {
@@ -107,10 +110,21 @@ export default function InventoryPage() {
     }
     setSellTarget(null); setSelected(new Set());
   };
-  const ship = (_address: ShippingAddress, _fee: number) => {
-    // There is no authenticated shipment creation endpoint yet. Do not collect an address or claim submission.
-    setToast(r("shippingUnavailable"));
-    setShipTarget(null);
+  const ship = async (address: ShippingAddress, fee: number) => {
+    const ids = shipTarget?.filter(id => useInventoryStore.getState().items.some(item => item.id === id && item.status === "IN_STORAGE"));
+    if (!ids?.length || ids.length !== shipTarget?.length) throw new Error("invalid-shipping-items");
+    const result = await accountRequest("/shipping/request", { ownedIds: ids, address, feeUsdt: fee, idempotencyKey: shippingRequestKey.current }, API_BASE);
+    const returned = result.items;
+    const wallet = result.wallet as Record<string, unknown> | undefined;
+    if (!Array.isArray(returned) || returned.length !== ids.length || new Set(returned.map(item => item?.id)).size !== ids.length || !wallet ||
+      ![wallet.balance, wallet.cryptoBalance, wallet.cardBalance].every(value => typeof value === "number" && Number.isFinite(value) && value >= 0) ||
+      !returned.every(item => item && typeof item === "object" && ids.includes(item.id) && item.status === "SHIPPING_REQUESTED" &&
+        typeof item.shipping?.requestId === "string" && typeof item.shipping?.requestedAt === "string" &&
+        typeof item.shipping?.feeUsdt === "number" && item.shipping?.address)) throw new Error("invalid-shipping-response");
+    const updated = new Map((returned as OwnedItem[]).map(item => [item.id, item]));
+    useInventoryStore.setState(state => ({ items: state.items.map(item => updated.get(item.id) ?? item) }));
+    useWalletStore.setState({ balance: wallet.balance as number, cryptoBalance: wallet.cryptoBalance as number, cardBalance: wallet.cardBalance as number });
+    setTab("shipping");
   };
   return <main className="min-h-screen bg-canvas">
     <SiteHeader />
@@ -184,11 +198,10 @@ export default function InventoryPage() {
         })}</ul>
       </div>}
       {shown < visible.length && <div className="mt-6 flex justify-center"><button className="workspace-button" onClick={() => setShown(n => n + PAGE)}>{r("loadMore", { n: visible.length - shown })}</button></div>}
-      <div className="workspace-footnote"><ShieldCheck className="h-4 w-4 shrink-0" aria-hidden="true" /><p>{r("localRecords")} <Link href="/legal/payments">{r("transactionGuide")}</Link></p></div>
     </section>
     {tab === "held" && selectedItems.length > 0 && <div className="vault-selection-bar"><div><p>{t("selected", { n: selectedItems.length })}</p><Money value={resaleEstimate(selectedItems)} size="sm" numberClassName="text-gold-champagne" /></div><button className="workspace-button" onClick={() => setSelected(new Set())} aria-label={t("clearSelection")}><X className="h-4 w-4" /></button><button className="workspace-button" onClick={() => setShipTarget(selectedItems.map(o => o.id))}>{r("requestDelivery")}</button><button className="workspace-button primary" onClick={() => setSellTarget(selectedItems.map(o => o.id))}>{r("sellback")}</button></div>}
     <SellConfirmModal open={!!sellTarget} count={targetItems.length} amountUsdt={resaleEstimate(targetItems)} refundRate={REFUND_RATE} onClose={() => setSellTarget(null)} onConfirm={sell} />
-    <DeliveryModal open={!!shipTarget} itemCount={shipTarget?.length ?? 0} balanceUsdt={balance} onClose={() => setShipTarget(null)} onSubmit={ship} />
+    <DeliveryModal open={!!shipTarget} itemCount={shipTarget?.length ?? 0} balanceUsdt={balance} requestEnabled onClose={() => setShipTarget(null)} onSubmit={ship} />
     <TrackingModal item={track} onClose={() => setTrack(null)} />
     <CancelShipmentModal item={cancelTarget} onClose={() => setCancelTarget(null)} onCancelled={() => { setCancelTarget(null); switchTab("held"); setToast(tc("done")); }} />
     <VisualVerifyModal item={verify} onClose={() => setVerify(null)} />

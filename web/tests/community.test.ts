@@ -4,9 +4,11 @@ import assert from "node:assert/strict";
 import { REVIEW_BONUS_USDT, REVIEW_MIN_CHARS, MIN_REVIEW_ITEM_VALUE_USDT, canReview, meetsReviewValue, toReview } from "../lib/community";
 import { useInventoryStore, type OwnedItem } from "../stores/inventoryStore";
 import { useCommunityStore } from "../stores/communityStore";
+import { reviewValueNotice } from "../components/community/reviewValueNotice";
 
 test("review value boundary is inclusive at 100 USDT, and invalid values are refused by the store", () => {
   assert.equal(MIN_REVIEW_ITEM_VALUE_USDT, 100);
+  assert.equal(reviewValueNotice("ko"), "100 USDT 이상 상품 당첨 시 후기를 작성하고 보너스를 받을 수 있습니다");
   const owned: OwnedItem = {
     id: "threshold", itemId: "item", boxSlug: "box", valueUsdt: 100, tier: "royal", status: "DELIVERED",
     acquiredAt: "2026-09-01T00:00:00Z", fair: { serverSeedHash: "h", serverSeed: "s", clientSeed: "c", nonce: 1, roll: 1 },

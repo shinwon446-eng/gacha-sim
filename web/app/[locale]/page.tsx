@@ -10,7 +10,7 @@ import { BillboardHero } from "@/components/home/BillboardHero";
 import { AboutBanner } from "@/components/home/AboutBanner";
 import { DailyFreeBoxModal } from "@/components/home/DailyFreeBox";
 import { QuickTabs, type CategoryTab } from "@/components/home/QuickTabs";
-import { ProofFeed } from "@/components/fairness/ProofFeed";
+import { ProofFeed } from "@/components/home/ProofFeed";
 import { BoxCard } from "@/components/box/BoxCard";
 import { DetailModal } from "@/components/box/DetailModal";
 import { useTranslations } from "next-intl";
@@ -197,7 +197,7 @@ export default function BoxesPage() {
       <DiscoveryGuide />
       <section className="page-shell pb-20" aria-labelledby="proof-section-title">
         <div className="guide-heading"><div><p className="eyebrow">TRANSPARENCY, BY DESIGN</p><h2 id="proof-section-title">{t("design.proofTitle")}</h2></div><Link href="/fairness" className="text-link">{t("design.verify")}<ArrowUpRight size={16} aria-hidden /></Link></div>
-        <ProofFeed limit={4} showReserve={false} />
+        <ProofFeed limit={4} />
       </section>
 
       <DetailModal pending={openingPending} onDeposit={(box, count) => openDepositForPurchase(box.price * count)} box={detail} onClose={() => setDetail(null)} onOpen={openBox} onAutoplay={(b, cfg) => { if (useWalletStore.getState().balance < b.price) { openDepositForPurchase(b.price); return; } setDetail(null); setUnbox({ box: b, count: 1, auto: cfg }); }} />

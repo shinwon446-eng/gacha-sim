@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useModal } from "@/lib/useModal";
-import { PolicyNotice } from "@/components/legal/PolicyNotice";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { X, Truck, ShieldCheck, PackageCheck, Lock, ExternalLink, Loader2, Check } from "lucide-react";
@@ -21,17 +20,16 @@ import {
   type ShippingAddress,
 } from "@/lib/shipping";
 
-/** 명품 정밀 검수 접수 연출 길이(ms) */
-const INSPECT_MS = 1500;
-
 export interface DeliveryModalProps {
   open: boolean;
   /** 배송 신청할 아이템 수 */
   itemCount: number;
   balanceUsdt: number;
+  /** Only entry points that await an authenticated shipment receipt may submit. */
+  requestEnabled?: boolean;
   onClose: () => void;
   /** 신청 확정 — 호출측이 배송비 차감·상태 전환을 한다 */
-  onSubmit: (address: ShippingAddress, feeUsdt: number) => void;
+  onSubmit: (address: ShippingAddress, feeUsdt: number) => void | Promise<void>;
 }
 
 const inputCls =
@@ -73,26 +71,23 @@ function GuaranteeCards({ t, fee }: { t: ReturnType<typeof useTranslations<"deli
  * 송장 번호는 여기서 만들지 않는다 — 물류에서 실제로 발급된 번호만 보관함에 들어오고(관리자/API),
  * 그전까지는 "출고 준비 · 24시간 내 송장 발급"으로 남는다. 지어낸 번호로 조회 링크를 띄우면 유저가 없는 배송을 추적하게 된다.
  */
-export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit }: DeliveryModalProps) {
+export function DeliveryModal({ open, itemCount, balanceUsdt, requestEnabled = false, onClose, onSubmit }: DeliveryModalProps) {
   const { fmt } = useCurrency();
   const t = useTranslations("delivery");
-  const r = useTranslations("refinement");
-  // No authenticated shipment-creation endpoint exists. Never simulate acceptance.
-  const acceptingRequests = false;
   const ti = useTranslations("inventory");
   const panelRef = useRef<HTMLDivElement>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [form, setForm] = useState<ShippingAddress>({ recipient: "", country: "KR", phone: "", postalCode: "", address: "", customsId: "" });
   const [detail, setDetail] = useState("");
   const [errors, setErrors] = useState<AddressError[]>([]);
   const [touched, setTouched] = useState(false);
   const [stage, setStage] = useState<"form" | "inspecting" | "done">("form");
+  const [submitError, setSubmitError] = useState("");
 
-  useModal(open, onClose, panelRef);
+  const close = () => { if (stage !== "inspecting") onClose(); };
+  useModal(open, close, panelRef);
   useEffect(() => {
-    if (open) setStage("form");
-    return () => { if (timer.current) clearTimeout(timer.current); };
+    if (open) { setStage("form"); setSubmitError(""); }
   }, [open]);
 
   const fee = shippingFee(form.country);
@@ -109,18 +104,16 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
 
   const has = (k: AddressError) => touched && errors.includes(k);
 
-  const submit = useCallback(() => {
-    if (!acceptingRequests) return;
+  const submit = useCallback(async () => {
     const payload: ShippingAddress = { ...form, address: fullAddress, customsId: customs === "none" ? undefined : form.customsId?.trim().toUpperCase() };
     const errs = validateAddress(payload);
     setTouched(true);
     setErrors(errs);
     if (errs.length || insufficient || stage !== "form") return;
+    setSubmitError("");
     setStage("inspecting");
-    timer.current = setTimeout(() => {
-      onSubmit(payload, fee);
-      setStage("done");
-    }, INSPECT_MS);
+    try { await onSubmit(payload, fee); setStage("done"); }
+    catch { setSubmitError("배송 신청을 접수하지 못했습니다. 잠시 후 다시 시도해 주세요."); setStage("form"); }
   }, [form, fullAddress, customs, insufficient, stage, onSubmit, fee]);
 
   return (
@@ -131,7 +124,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onMouseDown={(e) => e.target === e.currentTarget && onClose()}
+          onMouseDown={(e) => e.target === e.currentTarget && close()}
         >
           <motion.div
             ref={panelRef}
@@ -145,7 +138,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
             exit={{ opacity: 0, y: 12 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <button type="button" onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
+            <button type="button" onClick={close} disabled={stage === "inspecting"} aria-label={t("close")} className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white disabled:opacity-40">
               <X className="h-5 w-5" strokeWidth={2} />
             </button>
 
@@ -154,8 +147,6 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
               <h2 className="break-keep font-display text-xl font-bold uppercase tracking-tight text-white">{t("title")}</h2>
             </div>
 
-            <PolicyNotice kind="delivery" />
-            <p className="mt-4 rounded-lg border border-hairline bg-obsidian p-4 text-sm leading-7 text-secondary">{r("shippingUnavailable")}</p>
             {stage === "done" ? (
               <div className="mt-4">
                 <div className="border-metallic-gold rounded-lg bg-obsidian p-4">
@@ -188,7 +179,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
                     </div>
                   </dl>
                 </div>
-                <button type="button" onClick={onClose} className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#f1eee7] text-sm font-bold text-obsidian hover:bg-gold-metallic">
+                <button type="button" onClick={close} className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#f1eee7] text-sm font-bold text-obsidian hover:bg-gold-metallic">
                   {t("doneCta")}
                 </button>
               </div>
@@ -197,7 +188,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
                 <p className="mt-2 break-keep text-xs leading-relaxed text-muted">{t("body")}</p>
                 <div className="caption-luxury mt-3">{ti("itemsToShip", { n: itemCount })}</div>
 
-                <fieldset disabled={!acceptingRequests} className="mt-4 grid gap-3 disabled:opacity-50">
+                <fieldset disabled={!requestEnabled || stage === "inspecting"} className="mt-4 grid gap-3 disabled:opacity-50">
                   <label className="block">
                     <span className="caption-luxury">{t("recipient")}</span>
                     <input value={form.recipient} onChange={(e) => set("recipient", e.target.value)} placeholder={t("recipientHint")} className={cn(inputCls, has("recipient") && "border-crimson")} />
@@ -278,7 +269,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
                 <button
                   type="button"
                   onClick={submit}
-                  disabled={!acceptingRequests || insufficient || stage !== "form"}
+                  disabled={!requestEnabled || insufficient || stage !== "form"}
                   className="mt-4 flex h-12 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md bg-gold-champagne px-3 text-sm font-bold text-obsidian shadow-[0_0_24px_rgba(230,202,101,0.35)] transition-colors hover:bg-gold-metallic disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
                 >
                   {stage === "inspecting" ? (
@@ -290,6 +281,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
                     t("submit", { fee: fee === 0 ? "0.00 USDT" : fmt(fee) })
                   )}
                 </button>
+                {submitError && <p role="alert" className="mt-3 text-sm text-red-200">{submitError}</p>}
               </>
             )}
           </motion.div>
