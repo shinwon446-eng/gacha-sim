@@ -25,7 +25,7 @@ export const NETWORKS: NetworkMeta[] = [
   { key: "ERC20", chain: "Ethereum", token: "USDT (ERC-20)", confirmations: 12, blockSeconds: 12, recommended: false },
 ];
 
-export const MIN_DEPOSIT_USDT = 10;
+export const MIN_DEPOSIT_USDT = 1;
 
 /** 주소 형식 검사 — 화면 표기 전 자기 검증용 */
 export function looksLikeAddress(network: DepositNetwork, addr: string): boolean {

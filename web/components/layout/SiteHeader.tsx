@@ -14,7 +14,7 @@ import { useCurrency } from "@/lib/useCurrency";
 import { useModal } from "@/lib/useModal";
 import { cn } from "@/lib/format";
 
-type WalletTab = "usdt" | "card" | "withdraw";
+type WalletTab = "usdt" | "withdraw";
 const links = [{ href: "/", key: "boxes" }, { href: "/about", key: "about" }, { href: "/fairness", key: "fairness" }, { href: "/community", key: "community" }, { href: "/inventory", key: "inventory" }] as const;
 
 export function SiteHeader({ onWallet, onDaily }: { onWallet?: (tab: WalletTab) => void; onDaily?: () => void }) {

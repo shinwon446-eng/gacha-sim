@@ -62,7 +62,7 @@ export default function BoxesPage() {
   const [openingPending, setOpeningPending] = useState(false);
   const [unbox, setUnbox] = useState<{ prepared?: OpeningResult[]; box: ProductBox; count: number; demo?: { itemId: string }; auto?: AutoplayConfig; funding?: FundingRatio } | null>(null);
   const [bulk, setBulk] = useState<{ prepared?: OpeningResult[]; box: ProductBox; count: number; funding?: FundingRatio } | null>(null);
-  const [walletTab, setWalletTab] = useState<"usdt" | "card" | "withdraw">("usdt");
+  const [walletTab, setWalletTab] = useState<"usdt" | "withdraw">("usdt");
   const depositOpen = useUiStore((s) => s.depositOpen);
   const setDepositOpen = useCallback((on: boolean) => useUiStore.getState()[on ? "openDeposit" : "closeDeposit"](), []);
   const [dailyOpen, setDailyOpen] = useState(false);
@@ -206,8 +206,8 @@ export default function BoxesPage() {
       <DepositModal
         open={depositOpen}
         onClose={() => setDepositOpen(false)}
-        onCredited={(amount, source) =>
-          pushToast({ title: t(source === "card" ? "cardPay.creditedToast" : "deposit.creditedToast", { amount: fmt(amount) }), tone: "#E6CA65" })
+        onCredited={(amount) =>
+          pushToast({ title: t("deposit.creditedToast", { amount: fmt(amount) }), tone: "#E6CA65" })
         }
         initialTab={walletTab}
         onWithdrawn={(amount) => pushToast({ title: t("withdraw.requestedToast", { amount: fmt(amount) }), tone: "#E6CA65" })}
