@@ -38,8 +38,8 @@ export function containsForbiddenNicknameWord(nickname: string): boolean {
 
 export function validateNewNickname(nickname: string, currentNickname?: string): { valid: boolean; reason?: "format" | "same" | "forbidden" } {
   const normalized = nickname.trim().normalize("NFC");
-  if (!/^[\u1100-\u11FF\u3130-\u318F\uAC00-\uD7A3A-Za-z0-9_-]{2,12}$/.test(normalized)) return { valid: false, reason: "format" };
-  if (currentNickname && normalized === currentNickname.trim().normalize("NFC")) return { valid: false, reason: "same" };
+  if (!/^[\u1100-\u11FF\u3130-\u318F\uAC00-\uD7A3A-Za-z0-9]{2,12}$/.test(normalized)) return { valid: false, reason: "format" };
+  if (currentNickname && normalized.toLocaleLowerCase() === currentNickname.trim().normalize("NFC").toLocaleLowerCase()) return { valid: false, reason: "same" };
   if (containsForbiddenNicknameWord(normalized)) return { valid: false, reason: "forbidden" };
   return { valid: true };
 }

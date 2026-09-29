@@ -15,6 +15,9 @@ test("default browser account supports signup, password login, nickname, OTP, he
     assert.equal((await startBrowserAccount()).id, quick.id);
     const profile = await browserAccountRequest("/account/profile", { nickname: "MyAccount" });
     assert.equal((profile.user as { nickname: string }).nickname, "MyAccount");
+    assert.deepEqual(await browserAccountRequest("/account/profile/nickname/check", { nickname: "myaccount" }), { nickname: "myaccount", available: false, reason: "same" });
+    assert.deepEqual(await browserAccountRequest("/account/profile/nickname/check", { nickname: "GuideTeam" }), { nickname: "GuideTeam", available: false, reason: "taken" });
+    assert.deepEqual(await browserAccountRequest("/account/profile/nickname/check", { nickname: "new_name" }), { nickname: "new_name", available: false, reason: "format" });
     const setup = await browserAccountRequest("/account/security/totp/setup", {});
     assert.match(String(setup.secret), /^[A-Z2-7]{16}$/);
     const code = "123456";
@@ -46,6 +49,7 @@ test("default browser account supports signup, password login, nickname, OTP, he
     await browserAccountRequest("/auth/logout", {});
     const login = await browserAccountRequest("/auth/login", { email: "alice", password: "any-value" });
     assert.equal((login.user as { local: boolean }).local, true);
+    assert.deepEqual(await browserAccountRequest("/account/profile/nickname/check", { nickname: "MyAccount" }), { nickname: "MyAccount", available: false, reason: "taken" });
     assert.equal((await browserAccountRequest("/account/security")).twoFactorEnabled, false, "another account cannot inherit OTP");
     assert.ok(!Array.from(memory.values()).some(value => value.includes("any-value")), "password is never stored in plain text");
     await browserAccountRequest("/auth/password/reset-request", { email: "alice" });
