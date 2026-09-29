@@ -1,7 +1,5 @@
 /**
- * 실물 언박싱 포토 후기 (CLAUDE.md §7-B 계승).
- * 후기는 실제 수령 유저가 올린 것만 게시한다 — 예시 후기를 지어내지 않는다.
- * live 모드는 API 가 전체 후기를 주고, preview 모드는 이 기기에서 작성한 후기만 보인다.
+ * 당첨 상품 후기. 실제 보관함 기록과 100 USDT 기준으로 작성 자격을 검증한다.
  */
 import type { Network } from "@/lib/depositAddress";
 import type { CarrierKey } from "@/lib/carriers";
@@ -17,9 +15,9 @@ export function meetsReviewValue(item: Pick<OwnedItem, "valueUsdt">): boolean {
   return Number.isFinite(item.valueUsdt) && item.valueUsdt >= MIN_REVIEW_ITEM_VALUE_USDT;
 }
 
-/** A tracking number or an in-transit state is not proof of delivery. */
+/** Reviews describe a won item; delivery is not a prerequisite. One review per win. */
 export function canReview(item: OwnedItem, reviews: Pick<MyReview, "ownedId">[]): boolean {
-  return meetsReviewValue(item) && item.status === "DELIVERED" && !!item.shipping?.deliveredAt && Number.isFinite(Date.parse(item.shipping.deliveredAt)) && !reviews.some(r => r.ownedId === item.id);
+  return meetsReviewValue(item) && ["IN_STORAGE", "SHIPPING_REQUESTED", "SHIPPING", "DELIVERED", "SOLD"].includes(item.status) && !reviews.some(r => r.ownedId === item.id);
 }
 
 export interface Review {

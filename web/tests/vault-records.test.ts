@@ -23,15 +23,15 @@ test("archive ordering uses processing dates and does not invent missing dates",
 test("resale estimates sum individual rounded refunds, excluding processed records", () => {
  assert.equal(resaleEstimate([item,{...item,id:"two"},{...item,id:"sold",status:"SOLD",valueUsdt:100}]),0.2);
 });
-test("reviews require an actual delivery date, not a tracking number or transit status", () => {
+test("reviews require a valuable won item, independently of shipping status", () => {
  const valuableItem={...item,valueUsdt:MIN_REVIEW_ITEM_VALUE_USDT};
- assert.equal(canReview({...valuableItem,status:"SHIPPING"},[]),false);
- assert.equal(canReview({...valuableItem,status:"DELIVERED"},[]),false);
+ assert.equal(canReview({...valuableItem,status:"SHIPPING"},[]),true);
+ assert.equal(canReview({...valuableItem,status:"DELIVERED"},[]),true);
  const delivered={...valuableItem,status:"DELIVERED" as const,shipping:{...item.shipping!,deliveredAt:"2026-09-29T00:00:00Z"}};
  assert.equal(canReview(delivered,[]),true);
  assert.equal(canReview({...delivered,valueUsdt:99.99},[]),false);
  assert.equal(canReview(delivered,[{ownedId:item.id}]),false);
- assert.equal(canReview({...delivered,shipping:{...delivered.shipping,deliveredAt:"invalid"}},[]),false);
+ assert.equal(canReview({...delivered,shipping:{...delivered.shipping,deliveredAt:"invalid"}},[]),true);
 });
 const review = (n: number) => ({ownedId:"own-"+n,boxSlug:"test",itemId:"test",text:"Test review content",rating:4,bonusUsdt:10});
 test("saving beyond 20 reviews retains history; duplicates do not produce another record or reward", () => {

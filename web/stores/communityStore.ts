@@ -1,7 +1,7 @@
 "use client";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { meetsReviewValue, REVIEW_MAX_CHARS, REVIEW_MIN_CHARS } from "@/lib/community";
+import { canReview, REVIEW_MAX_CHARS, REVIEW_MIN_CHARS } from "@/lib/community";
 import { useInventoryStore } from "@/stores/inventoryStore";
 export interface MyReview {
   id: string; ownedId: string; boxSlug: string; itemId: string; text: string; rating: number;
@@ -27,19 +27,24 @@ export const useCommunityStore = create<CommunityState>()(
     add: r => {
       validateReview(r);
       const item = useInventoryStore.getState().items.find(item => item.id === r.ownedId);
-      if (!item || !meetsReviewValue(item)) throw new Error("ineligible-review-item");
       if (get().hasReviewed(r.ownedId)) throw new Error("duplicate");
-      const rec: MyReview = { ...r, bonusUsdt: 0, id: `my_${crypto.randomUUID()}`, at: new Date().toISOString() };
+      if (!item || !canReview(item, [])) throw new Error("ineligible-review-item");
+      const rec: MyReview = { ...r, text: r.text.trim(), itemId: item.itemId, boxSlug: item.boxSlug, bonusUsdt: 0, id: `my_${crypto.randomUUID()}`, at: new Date().toISOString() };
       const mine = [rec, ...get().mine];
       persistReviews(mine); set({ mine }); return rec;
     },
     update: (id, patch) => {
       validateReview(patch);
       if (!get().mine.some(r => r.id === id)) throw new Error("review-not-found");
+      const ownedId = get().mine.find(r => r.id === id)!.ownedId;
+      if (!useInventoryStore.getState().items.some(item => item.id === ownedId)) throw new Error("review-forbidden");
       const mine = get().mine.map(r => r.id === id ? { ...r, ...patch, updatedAt: new Date().toISOString() } : r);
       persistReviews(mine); set({ mine });
     },
     remove: id => {
+      const review = get().mine.find(r => r.id === id);
+      if (!review) throw new Error("review-not-found");
+      if (!useInventoryStore.getState().items.some(item => item.id === review.ownedId)) throw new Error("review-forbidden");
       const mine = get().mine.filter(r => r.id !== id);
       persistReviews(mine); set({ mine });
     },
