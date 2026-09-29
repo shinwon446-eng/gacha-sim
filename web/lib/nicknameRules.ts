@@ -1,0 +1,42 @@
+export const NICKNAME_CHANGE_INTERVAL_MS = 14 * 24 * 60 * 60 * 1000;
+
+const forbiddenWords = [
+  "admin", "administrator", "operator", "system", "official", "voila",
+  "관리자", "운영자", "고객센터", "대표", "공식",
+  "씨발", "시발", "병신", "좆", "fuck", "shit", "bitch", "asshole",
+];
+
+function timestamp(value?: string | number | null): number | null {
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value === "string") {
+    const parsed = Date.parse(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
+export function canChangeNickname(lastUpdatedAt?: string | number | null, now = Date.now()) {
+  const lastChanged = timestamp(lastUpdatedAt);
+  if (lastChanged === null) return { allowed: true, remainingDays: 0, nextAvailableAt: null };
+
+  const nextAvailable = lastChanged + NICKNAME_CHANGE_INTERVAL_MS;
+  if (now >= nextAvailable) return { allowed: true, remainingDays: 0, nextAvailableAt: new Date(nextAvailable).toISOString() };
+  return {
+    allowed: false,
+    remainingDays: Math.ceil((nextAvailable - now) / (24 * 60 * 60 * 1000)),
+    nextAvailableAt: new Date(nextAvailable).toISOString(),
+  };
+}
+
+export function containsForbiddenNicknameWord(nickname: string): boolean {
+  const normalized = nickname.normalize("NFC").toLocaleLowerCase();
+  return forbiddenWords.some(word => normalized.includes(word));
+}
+
+export function validateNewNickname(nickname: string, currentNickname?: string): { valid: boolean; reason?: "format" | "same" | "forbidden" } {
+  const normalized = nickname.trim().normalize("NFC");
+  if (!/^[\u1100-\u11FF\u3130-\u318F\uAC00-\uD7A3A-Za-z0-9_-]{2,20}$/.test(normalized)) return { valid: false, reason: "format" };
+  if (currentNickname && normalized === currentNickname.trim().normalize("NFC")) return { valid: false, reason: "same" };
+  if (containsForbiddenNicknameWord(normalized)) return { valid: false, reason: "forbidden" };
+  return { valid: true };
+}
