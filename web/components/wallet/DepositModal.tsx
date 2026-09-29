@@ -131,7 +131,7 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
               {tab === "history" && <HistoryTab />}
             </div>
             {tab !== "history" && (
-              <section className="mt-8 border-t border-hairline pt-6" aria-label={t("tabHistory")}>
+              <section className="mt-8 border-t border-hairline pt-6" aria-label={t("tabHistory")} aria-live="polite">
                 <HistoryTab />
               </section>
             )}
