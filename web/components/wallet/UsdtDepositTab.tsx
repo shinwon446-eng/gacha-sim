@@ -41,6 +41,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   const [status, setStatus] = useState<DepositStatus>({ kind: "waiting" });
   const credit = useWalletStore((s) => s.credit);
   const addTransaction = useWalletStore((s) => s.addTransaction);
+  const setTransactionStatus = useWalletStore((s) => s.setTransactionStatus);
   const userKey = useFairStore((s) => s.clientSeed) || "anon";
 
   const meta = useMemo(() => NETWORKS.find((n) => n.key === network)!, [network]);
@@ -96,12 +97,22 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   const confirm = useCallback(async () => {
     if (!address || !isLive()) return;
     setStatus({ kind: "checking" });
+    // 1차 — 입금 내역을 먼저 만든다. 상태는 "확인 대기"이고 잔액·롤오버는 아직 움직이지 않는다.
+    const pending = addTransaction({
+      type: "deposit_usdt",
+      amountUsdt: amountOk ? expected : 0,
+      ref: `${network}:requested`,
+      network,
+      status: "PENDING",
+    });
     for (let i = 0; i < CHECK_MAX_ROUNDS; i++) {
       try {
         const r = await api.depositCheck({ network, address, userKey, expectedUsdt: amountOk ? expected : undefined });
         if (r.status === "confirmed" && r.amountUsdt && r.amountUsdt > 0) {
           credit(r.amountUsdt, "crypto");
-          addTransaction({ type: "deposit_usdt", amountUsdt: r.amountUsdt, ref: `${network}:${r.txHash ?? "confirmed"}`, txHash: r.txHash });
+          // 2차 — 같은 레코드를 체인에서 확인된 금액·해시로 확정한다(레코드를 새로 만들지 않는다)
+          useWalletStore.setState((w) => ({ transactions: w.transactions.map((x) => (x.id === pending.id ? { ...x, amountUsdt: r.amountUsdt!, ref: `${network}:${r.txHash ?? "confirmed"}` } : x)) }));
+          setTransactionStatus(pending.id, "COMPLETED", r.txHash ? { txHash: r.txHash } : undefined);
           if (!useSettingsStore.getState().muted) playChime();
           setStatus({ kind: "credited", amount: r.amountUsdt, txHash: r.txHash });
           onCredited(r.amountUsdt);
@@ -113,7 +124,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
       }
       await new Promise((r) => setTimeout(r, CHECK_INTERVAL_MS));
     }
-  }, [address, network, userKey, expected, amountOk, meta.confirmations, credit, addTransaction, onCredited]);
+  }, [address, network, userKey, expected, amountOk, meta.confirmations, credit, addTransaction, setTransactionStatus, onCredited]);
 
   const busy = status.kind === "checking";
 

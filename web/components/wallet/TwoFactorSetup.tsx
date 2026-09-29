@@ -1,0 +1,193 @@
+"use client";
+
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
+import { QRCodeSVG } from "qrcode.react";
+import { Check, Copy, KeyRound, Loader2, ShieldCheck, Smartphone } from "lucide-react";
+import { cn } from "@/lib/format";
+import { TOTP_DIGITS, groupSecret, newTotpSecret, otpauthUri, totpNow, totpSecondsRemaining, verifyTotp } from "@/lib/totp";
+import { useSecurityStore, twoFactorServerBacked } from "@/stores/securityStore";
+import { useAuthStore } from "@/stores/authStore";
+
+/**
+ * Google OTP(2FA) 등록 — 출금 모달 인라인 스텝과 마이페이지 보안 설정이 **같은 컴포넌트**를 쓴다.
+ *
+ *   Step 1 앱 연결   — 표준 `otpauth://` QR + 수동 입력용 시크릿(복사)
+ *   Step 2 백업 보관 — 휴대폰을 잃어버렸을 때 쓸 수 있도록 시크릿 보관을 확인받는다
+ *   Step 3 등록 확인 — 앱이 보여 주는 6자리를 입력. 검증은 RFC 6238 실제 계산이다(`lib/totp.ts`).
+ *
+ * 시크릿은 컴포넌트가 살아 있는 동안 한 번만 만들어진다 — 리렌더마다 새로 만들면 유저가 방금 스캔한 QR 이 무효가 된다.
+ */
+export function TwoFactorSetup({ onEnabled, compact }: { onEnabled?: () => void; compact?: boolean }) {
+  const t = useTranslations("security");
+  const user = useAuthStore((s) => s.user);
+  const enableTwoFactor = useSecurityStore((s) => s.enableTwoFactor);
+
+  // 마운트 시 한 번. 서버 검증이 붙으면 이 자리에서 서버가 발급한 시크릿을 받아 온다.
+  const [secret] = useState(() => newTotpSecret());
+  const account = user?.label ?? t("defaultAccount");
+  const uri = useMemo(() => otpauthUri({ secret, account }), [secret, account]);
+
+  const [kept, setKept] = useState(false);
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [hint, setHint] = useState<{ code: string; left: number } | null>(null);
+  const codeRef = useRef<HTMLInputElement>(null);
+
+  // 서버 검증이 없는 동안에는 지금 유효한 코드를 화면에 띄워 준다.
+  // 이건 비밀이 아니라 바로 위 시크릿에서 계산한 값이고, 실제 앱에도 같은 숫자가 떠 있다.
+  const local = !twoFactorServerBacked();
+  useEffect(() => {
+    if (!local) return;
+    let alive = true;
+    const tick = async () => {
+      try {
+        const next = await totpNow(secret);
+        if (alive) setHint({ code: next, left: totpSecondsRemaining() });
+      } catch {
+        if (alive) setHint(null);
+      }
+    };
+    void tick();
+    const id = window.setInterval(tick, 1000);
+    return () => {
+      alive = false;
+      window.clearInterval(id);
+    };
+  }, [local, secret]);
+
+  const copy = useCallback(() => {
+    void navigator.clipboard?.writeText(secret).then(() => {
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    });
+  }, [secret]);
+
+  const submit = useCallback(
+    async (raw: string) => {
+      if (busy) return;
+      setBusy(true);
+      setError("");
+      try {
+        if (await verifyTotp(secret, raw)) {
+          enableTwoFactor(secret);
+          onEnabled?.();
+        } else {
+          setError(t("codeWrong"));
+          setCode("");
+          codeRef.current?.focus();
+        }
+      } finally {
+        setBusy(false);
+      }
+    },
+    [busy, secret, enableTwoFactor, onEnabled, t],
+  );
+
+  const onCode = (raw: string) => {
+    const v = raw.replace(/\D+/g, "").slice(0, TOTP_DIGITS);
+    setCode(v);
+    setError("");
+    if (v.length === TOTP_DIGITS) void submit(v);
+  };
+
+  const stepCls = "border border-hairline rounded-xl bg-obsidian p-4";
+  const label = "flex items-center gap-2 text-[12px] font-bold text-white";
+
+  return (
+    <div className={cn("grid gap-3", compact ? "mt-3" : "mt-4")}>
+      <p className="break-keep rounded-xl border border-gold-champagne/40 bg-gold-champagne/[0.07] p-3 text-[12.5px] leading-relaxed text-gold-champagne">
+        {t("intro")}
+      </p>
+
+      {/* Step 1 — 앱 연결 */}
+      <div className={stepCls}>
+        <div className={label}>
+          <Smartphone className="h-4 w-4 flex-none text-gold-champagne" strokeWidth={2.3} />
+          {t("step1Title")}
+        </div>
+        <p className="mt-1 break-keep text-xs leading-relaxed text-secondary">{t("step1Body")}</p>
+        <div className="mt-3 flex flex-col items-center gap-3 sm:flex-row sm:items-start">
+          <span className="flex-none rounded-lg bg-white p-2">
+            <QRCodeSVG value={uri} size={140} level="M" bgColor="#ffffff" fgColor="#0B0B0B" includeMargin={false} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[10px] uppercase tracking-[0.12em] text-faint">{t("manualKey")}</span>
+            <code className="mt-1 block break-all rounded-md border border-hairline bg-canvas px-2.5 py-2 font-mono text-[13px] font-bold tracking-wider text-white">
+              {groupSecret(secret)}
+            </code>
+            <button
+              type="button"
+              onClick={copy}
+              className="mt-2 inline-flex min-h-11 items-center gap-1.5 rounded-md border border-hairline px-3 text-xs font-semibold text-gold-champagne transition-colors hover:border-gold-champagne"
+            >
+              {copied ? <Check className="h-3.5 w-3.5" strokeWidth={2.6} /> : <Copy className="h-3.5 w-3.5" strokeWidth={2.2} />}
+              {copied ? t("copied") : t("copyKey")}
+            </button>
+          </span>
+        </div>
+      </div>
+
+      {/* Step 2 — 백업 보관 */}
+      <div className={stepCls}>
+        <div className={label}>
+          <KeyRound className="h-4 w-4 flex-none text-gold-champagne" strokeWidth={2.3} />
+          {t("step2Title")}
+        </div>
+        <p className="mt-1 break-keep text-xs leading-relaxed text-secondary">{t("step2Body")}</p>
+        <label className="mt-2.5 flex min-h-11 cursor-pointer items-start gap-2.5 text-xs leading-relaxed text-white">
+          <input type="checkbox" checked={kept} onChange={(e) => setKept(e.target.checked)} className="mt-0.5 h-4 w-4 flex-none accent-[#d5bd87]" />
+          <span className="break-keep">{t("step2Confirm")}</span>
+        </label>
+      </div>
+
+      {/* Step 3 — 등록 확인 */}
+      <div className={cn(stepCls, !kept && "opacity-55")}>
+        <div className={label}>
+          <ShieldCheck className="h-4 w-4 flex-none text-gold-champagne" strokeWidth={2.3} />
+          {t("step3Title")}
+        </div>
+        <p className="mt-1 break-keep text-xs leading-relaxed text-secondary">{t("step3Body")}</p>
+        <div className="mt-2.5 flex flex-wrap items-center gap-2">
+          <input
+            ref={codeRef}
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            aria-label={t("codeLabel")}
+            disabled={!kept || busy}
+            value={code}
+            onChange={(e) => onCode(e.target.value)}
+            maxLength={TOTP_DIGITS}
+            placeholder="000000"
+            className="h-12 w-[8.5rem] flex-none rounded-lg border border-hairline bg-canvas px-2 text-center font-mono text-[17px] font-bold tracking-[0.3em] text-white outline-none placeholder:text-faint/50 focus:border-gold-champagne disabled:cursor-not-allowed"
+          />
+          {busy && <Loader2 className="h-4 w-4 animate-spin text-gold-champagne" strokeWidth={2.6} />}
+          {/* 서버 검증 전에는 지금 유효한 코드를 그대로 보여 준다 — 시크릿에서 계산한 실제 값이다 */}
+          {local && hint && (
+            <button
+              type="button"
+              disabled={!kept || busy}
+              onClick={() => onCode(hint.code)}
+              className="flex min-h-11 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg border border-gold-champagne/55 bg-gold-champagne/[0.09] px-2.5 text-[11.5px] font-bold text-gold-champagne transition-colors hover:bg-gold-champagne/20 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <span className="truncate">{t("useCurrentCode")}</span>
+              <span className="flex-none rounded bg-gold-champagne/20 px-1.5 py-0.5 font-mono tracking-wider">{hint.code}</span>
+              <span className="flex-none tabular-nums text-gold-champagne/70">{hint.left}s</span>
+            </button>
+          )}
+        </div>
+        {error && (
+          <p role="alert" className="mt-2 rounded-md bg-red-400/10 px-2.5 py-2 text-xs leading-relaxed text-red-200">
+            {error}
+          </p>
+        )}
+        <p className="mt-2 break-keep text-[11px] leading-relaxed text-faint">{local ? t("localNote") : t("serverNote")}</p>
+      </div>
+    </div>
+  );
+}
+
+export default TwoFactorSetup;

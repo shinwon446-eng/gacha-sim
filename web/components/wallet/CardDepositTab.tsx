@@ -47,6 +47,7 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   const { fmt } = useCurrency();
   const credit = useWalletStore((s) => s.credit);
   const addTransaction = useWalletStore((s) => s.addTransaction);
+  const setTransactionStatus = useWalletStore((s) => s.setTransactionStatus);
   const transactions = useWalletStore((s) => s.transactions);
 
   const [picked, setPicked] = useState<number>(50);
@@ -78,20 +79,31 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
     setTouched(true);
     if (!canPay) return;
     setStage({ kind: "3ds" });
+    // 결제 요청 즉시 입금 내역을 만든다 — 상태는 "3DS 인증 중". 승인 전에는 잔액·롤오버가 움직이지 않는다.
+    const pending = addTransaction({
+      type: "deposit_card",
+      amountUsdt,
+      ref: `${intended}:requested`,
+      network: cardMask(number),
+      status: "PENDING",
+    });
     await new Promise((r) => setTimeout(r, 1800));
     // 카드 원문은 넘기지 않는다 — PG 가 자체 토큰화/3DS 로 승인한다
     const result = await provider.checkout({ amount: amountUsd, currency: "USD", amountUsdt, locale, requestThreeDSecure: DEFAULT_3DS_REQUEST }).catch<CheckoutResult>((e: Error) => ({ ok: false, provider: intended, transactionId: "", at: new Date().toISOString(), reason: e.message }));
     if (!result.ok) {
+      // 승인 실패 — 만들어 둔 내역을 취소로 닫는다(유령 레코드를 남기지 않는다)
+      setTransactionStatus(pending.id, "CANCELLED");
       setStage({ kind: "declined", result });
       return;
     }
     // 카드 충전분은 카드 잔액으로만 — 온체인 출금 불가 (CLAUDE.md §7-B)
     credit(amountUsdt, "card");
-    addTransaction({ type: "deposit_card", amountUsdt, ref: `${result.provider}:${result.transactionId}` });
+    useWalletStore.setState((w) => ({ transactions: w.transactions.map((x) => (x.id === pending.id ? { ...x, ref: `${result.provider}:${result.transactionId}`, receipt: result.transactionId } : x)) }));
+    setTransactionStatus(pending.id, "COMPLETED");
     if (!useSettingsStore.getState().muted) playChime();
     onCredited(amountUsdt);
     setStage({ kind: "receipt", result: { ...result, cardMask: result.cardMask ?? cardMask(number) }, amountUsd });
-  }, [canPay, provider, intended, amountUsd, amountUsdt, locale, credit, addTransaction, onCredited, number]);
+  }, [canPay, provider, intended, amountUsd, amountUsdt, locale, credit, addTransaction, setTransactionStatus, onCredited, number]);
 
   const recent = transactions.filter((x) => x.type === "deposit_card" || x.type === "deposit_usdt").slice(0, 4);
   const providerLabel = intended === "portone" ? t("providerPortone") : t("providerStripe");

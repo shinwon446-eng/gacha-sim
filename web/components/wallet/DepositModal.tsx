@@ -4,16 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import { useModal } from "@/lib/useModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { X, Wallet, Coins, CreditCard, ArrowUpRight } from "lucide-react";
+import { X, Wallet, Coins, CreditCard, ArrowUpRight, ReceiptText } from "lucide-react";
 import { cn } from "@/lib/format";
 import { UsdtDepositTab } from "@/components/wallet/UsdtDepositTab";
 import { WithdrawTab } from "@/components/wallet/WithdrawTab";
 import { useWalletStore } from "@/stores/walletStore";
 import { Money } from "@/components/ui/Money";
 import { CardDepositTab } from "@/components/wallet/CardDepositTab";
+import { HistoryTab } from "@/components/wallet/HistoryTab";
 import { PolicyNotice } from "@/components/legal/PolicyNotice";
 
-type Tab = "usdt" | "card" | "withdraw";
+type Tab = "usdt" | "card" | "withdraw" | "history";
 
 export interface DepositModalProps {
   open: boolean;
@@ -54,6 +55,7 @@ function BalanceSplit() {
 export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdrawBlocked, initialTab = "usdt" }: DepositModalProps) {
   const t = useTranslations("deposit");
   const tw = useTranslations("withdraw");
+  const th = useTranslations("history");
   const [tab, setTab] = useState<Tab>(initialTab);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -95,8 +97,8 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
             <div className="flex items-center gap-3 pr-10">
               <Wallet className="h-5 w-5 text-gold-champagne" strokeWidth={2.2} />
               <div>
-                <div className="caption-luxury">{tab === "withdraw" ? t("eyebrowWithdraw") : t("eyebrow")}</div>
-                <h2 className="font-display text-2xl font-bold uppercase tracking-tight text-white">{tab === "withdraw" ? tw("title") : t("title")}</h2>
+                <div className="caption-luxury">{tab === "withdraw" ? t("eyebrowWithdraw") : tab === "history" ? t("eyebrowHistory") : t("eyebrow")}</div>
+                <h2 className="font-display text-2xl font-bold uppercase tracking-tight text-white">{tab === "withdraw" ? tw("title") : tab === "history" ? th("title") : t("title")}</h2>
               </div>
             </div>
 
@@ -107,6 +109,7 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
                   { key: "usdt", label: t("tabUsdt"), Icon: Coins },
                   { key: "card", label: t("tabCard"), Icon: CreditCard },
                   { key: "withdraw", label: t("tabWithdraw"), Icon: ArrowUpRight },
+                  { key: "history", label: t("tabHistory"), Icon: ReceiptText },
                 ] as const
               ).map(({ key, label, Icon }) => (
                 <button
@@ -119,20 +122,21 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
                     tab === key ? "bg-[#f1eee7] text-obsidian" : "text-muted hover:text-white",
                   )}
                 >
-                  <Icon className="h-4 w-4" strokeWidth={2} />
-                  {label}
+                  <Icon className="h-4 w-4 flex-none" strokeWidth={2} />
+                  <span className="truncate">{label}</span>
                 </button>
               ))}
             </div>
 
-            {tab !== "withdraw" && <PolicyNotice />}
+            {tab !== "withdraw" && tab !== "history" && <PolicyNotice />}
             {/* 원천 분리 요약 — 입금 탭에서만(출금 탭은 자체 표시) */}
-            {tab !== "withdraw" && <BalanceSplit />}
+            {tab !== "withdraw" && tab !== "history" && <BalanceSplit />}
 
             <div className="mt-5">
               {tab === "usdt" && <UsdtDepositTab onCredited={(a) => onCredited(a, "usdt")} />}
               {tab === "card" && <CardDepositTab onCredited={(a) => onCredited(a, "card")} />}
               {tab === "withdraw" && <WithdrawTab onRequested={(a) => onWithdrawn?.(a)} onBlocked={onWithdrawBlocked} onDone={onClose} />}
+              {tab === "history" && <HistoryTab />}
             </div>
           </motion.div>
         </motion.div>

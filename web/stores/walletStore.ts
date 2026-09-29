@@ -15,8 +15,15 @@ export const WELCOME_BONUS_USDT = 5;
 
 export type TxType = "deposit_usdt" | "deposit_card" | "open" | "sellback" | "withdraw" | "bonus" | "shipping_refund" | "order_refund";
 
-/** PENDING_ADMIN_REVIEW — 부정거래 탐지·서킷 브레이커로 관리자 안전 심사 대기 (lib/fraudScoring.ts) */
-export type TxStatus = "PENDING" | "PENDING_ADMIN_REVIEW" | "BROADCASTING" | "COMPLETED";
+/**
+ * PENDING_ADMIN_REVIEW — 부정거래 탐지·서킷 브레이커로 관리자 안전 심사 대기 (lib/fraudScoring.ts)
+ * PENDING_72H_HOLD    — Google OTP 대신 이메일 인증으로 신청한 출금. 72시간 보안 대기 후 송금 (lib/withdrawHold.ts)
+ * CANCELLED           — 대기 중 본인이 취소 → 잔액 환불 완료
+ */
+export type TxStatus = "PENDING" | "PENDING_ADMIN_REVIEW" | "PENDING_72H_HOLD" | "BROADCASTING" | "COMPLETED" | "CANCELLED";
+
+/** 출금을 통과시킨 2차 인증 수단 — 내역에 그대로 남는다 */
+export type WithdrawAuthMethod = "2FA_OTP" | "EMAIL_72H_HOLD";
 
 export interface Transaction {
   id: string;
@@ -26,6 +33,22 @@ export interface Transaction {
   at: string;
   /** 부가 정보 — PG 거래 id, 네트워크, 박스 slug 등 */
   ref?: string;
+  /** 출금 네트워크 수수료(USDT) */
+  feeUsdt?: number;
+  /** 수수료를 뺀 실수령액(USDT) — 화면에서 가장 크게 보여 주는 값 */
+  netUsdt?: number;
+  /** 입·출금 네트워크 키("TRC20"/"BEP20") 또는 카드 브랜드 */
+  network?: string;
+  /** 수령 지갑 주소 */
+  address?: string;
+  /** 출금을 통과시킨 인증 수단 */
+  authMethod?: WithdrawAuthMethod;
+  /** 72시간 보안 대기 해제 시각(epoch ms) — PENDING_72H_HOLD 전용 */
+  unlockAt?: number;
+  /** 인증에 쓴 이메일(마스킹) — 원문은 저장하지 않는다 */
+  emailMasked?: string;
+  /** 카드 결제 영수증 번호 — PG 가 준 값만 들어간다 */
+  receipt?: string;
   /**
    * 이 개봉이 롤오버에 인정되는 금액(USDT). 저위험 상자는 개봉액의 30% 만 잡힌다 (lib/rollover.ts).
    * 없으면 개봉액 전액으로 본다. 배송비처럼 롤오버와 무관한 지출은 0 을 준다.
@@ -56,7 +79,12 @@ interface WalletState {
   welcomeClaimed: boolean;
   hydrated: boolean;
   addTransaction: (tx: Omit<Transaction, "id" | "at">) => Transaction;
-  setTransactionStatus: (id: string, status: TxStatus, patch?: Partial<Pick<Transaction, "txHash">>) => void;
+  setTransactionStatus: (id: string, status: TxStatus, patch?: Partial<Pick<Transaction, "txHash" | "receipt">>) => void;
+  /**
+   * 72시간 보안 대기 중인 출금을 본인이 취소하고 잔액을 되돌린다.
+   * 대기 상태가 아니거나 이미 취소된 건이면 아무것도 하지 않고 false — 중복 환불이 일어날 수 없다.
+   */
+  cancelHeldWithdrawal: (id: string) => boolean;
   /** 차감(암호화폐 우선 → 모자라면 카드 결합). 부족하면 false 를 돌려주고 아무것도 바꾸지 않는다. */
   debit: (usdt: number) => boolean;
   /** 차감 + 이번 지출의 족보(비율)를 돌려준다 — 개봉이 쓴다. 부족하면 null. */
@@ -92,9 +120,11 @@ export const useWalletStore = create<WalletState>()(
       hydrated: false,
       addTransaction: (tx) => {
         const rec: Transaction = { ...tx, id: transactionId(), at: new Date().toISOString() };
-        // 롤오버 누계는 여기서만 늘어난다 — 입금(+)은 요구액, 개봉(−)은 가중치가 반영된 인정액
-        const depositedCrypto = rec.type === "deposit_usdt" ? Math.max(0, rec.amountUsdt) : 0;
-        const depositedCard = rec.type === "deposit_card" ? Math.max(0, rec.amountUsdt) : 0;
+        // 롤오버 누계는 **확정된 입금**만 올린다. 확인 대기(PENDING) 상태로 만든 입금 레코드는
+        // 아직 돈이 도착하지 않았으므로 요구 롤오버를 늘리지 않는다 — COMPLETED 로 바뀔 때 setTransactionStatus 가 더한다.
+        const settled = rec.status === undefined || rec.status === "COMPLETED";
+        const depositedCrypto = settled && rec.type === "deposit_usdt" ? Math.max(0, rec.amountUsdt) : 0;
+        const depositedCard = settled && rec.type === "deposit_card" ? Math.max(0, rec.amountUsdt) : 0;
         const wagered = rec.type === "open" ? (typeof rec.rolloverUsdt === "number" ? Math.max(0, rec.rolloverUsdt) : Math.abs(Math.min(0, rec.amountUsdt))) : 0;
         set((s) => ({
           transactions: [rec, ...s.transactions].slice(0, 200),
@@ -105,7 +135,33 @@ export const useWalletStore = create<WalletState>()(
         }));
         return rec;
       },
-      setTransactionStatus: (id, status, patch) => set((s) => ({ transactions: s.transactions.map((x) => (x.id === id ? { ...x, status, ...patch } : x)) })),
+      setTransactionStatus: (id, status, patch) =>
+        set((s) => {
+          const prev = s.transactions.find((x) => x.id === id);
+          const transactions = s.transactions.map((x) => (x.id === id ? { ...x, status, ...patch } : x));
+          // 확인 대기였던 입금이 확정되는 순간에만 롤오버 요구액이 올라간다(중복 가산 없음)
+          const becameSettled = !!prev && prev.status !== "COMPLETED" && status === "COMPLETED";
+          const crypto = becameSettled && prev.type === "deposit_usdt" ? Math.max(0, prev.amountUsdt) : 0;
+          const card = becameSettled && prev.type === "deposit_card" ? Math.max(0, prev.amountUsdt) : 0;
+          if (!crypto && !card) return { transactions };
+          return {
+            transactions,
+            totalDepositedCrypto: +(s.totalDepositedCrypto + crypto).toFixed(2),
+            totalDepositedCard: +(s.totalDepositedCard + card).toFixed(2),
+            totalDeposited: +(s.totalDeposited + crypto + card).toFixed(2),
+          };
+        }),
+      cancelHeldWithdrawal: (id) => {
+        const tx = get().transactions.find((x) => x.id === id);
+        // 대기 중인 출금만 되돌린다 — 이미 CANCELLED 거나 송금이 시작된 건은 손대지 않는다
+        if (!tx || tx.type !== "withdraw" || tx.status !== "PENDING_72H_HOLD") return false;
+        const refund = Math.abs(tx.amountUsdt);
+        set((s) => ({
+          ...sync(+(s.cryptoBalance + refund).toFixed(2), s.cardBalance),
+          transactions: s.transactions.map((x) => (x.id === id ? { ...x, status: "CANCELLED" as TxStatus } : x)),
+        }));
+        return true;
+      },
       debit: (usdt) => get().debitSplit(usdt) !== null,
       debitCrypto: (usdt) => {
         const s = get();

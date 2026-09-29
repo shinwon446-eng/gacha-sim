@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Check, LogOut } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useAuthStore, rehydrateAuth } from "@/stores/authStore";
+import { rehydrateSecurity } from "@/stores/securityStore";
 import { AuthModal } from "@/components/auth/AuthModal";
 
 /**
@@ -17,7 +18,9 @@ export function AuthHost() {
   const toast = useAuthStore((s) => s.toast);
 
   useEffect(() => {
-    rehydrateAuth();
+    void rehydrateAuth();
+    // 2FA 등록 상태도 같은 시점에 복원한다 — 출금 관문이 이 값을 본다
+    rehydrateSecurity();
   }, []);
 
   return (
