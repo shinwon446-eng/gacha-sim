@@ -2,14 +2,24 @@
 
 The default GitHub Pages flow now includes browser accounts, password signup/login,
 nickname settings, Google Authenticator enrollment, and an account-scoped virtual
-wallet. There is no separate mode switch. “Start now” creates or reopens the browser
-account. Email/password accounts store a salted PBKDF2-SHA256 hash (210,000 rounds),
-not the raw password. Records and OTP secrets remain on this device and are not a
-server security boundary. No email, real payment, or on-chain transfer occurs.
+wallet. There is no separate mode switch. Login/signup use a centered, step-based
+screen: email, password, then a six-digit email code for signup. The password field
+supports show/hide; the email can be edited; recovery and resend stay in the same flow.
+Google, Apple and Microsoft buttons share the OAuth-start contract below.
+
+As explicitly requested, the browser transport accepts arbitrary nonempty email
+identifiers and passwords, including short values and previously unseen accounts.
+Any six digits work for signup, password recovery, OTP enrollment/removal, OTP
+withdrawals, and email hold verification. No hidden switch or fixed code is needed.
+These responses remain marked local and never claim verified email ownership.
+Records and OTP secrets stay on the device. This is not an authentication boundary.
+No email, real payment, or on-chain transfer occurs. Entered passwords are never
+stored in plaintext.
 
 Without API configuration, USDT/card inputs explicitly record virtual funds in the
 ordinary wallet screens. Source balances remain separate. The email recovery screen
-displays a local confirmation code and explicitly states that no email was sent.
+accepts any six-digit confirmation code. Nonempty withdrawal addresses may also
+contain arbitrary values in the browser flow; amount/balance checks still apply.
 Successful confirmation starts a real 72-hour local hold; expiry changes the request
 to pending processing, never a fabricated transfer or transaction hash. Reconnecting
 a production backend bypasses these browser services; local accounts and wallet
@@ -37,11 +47,38 @@ or numbers, `_` or `-`. Enforce the same validation and uniqueness rules server-
 
 | Method / path | Request | Response |
 | --- | --- | --- |
+| POST `/auth/signup` | `{ email, password, locale, acceptedTerms: true }` | `{ verificationRequired: true }` |
+| POST `/auth/email/verify` | `{ email, code }` | `{ user }` and authenticated session cookie |
+| POST `/auth/email/resend` | `{ email, locale }` | `{ accepted: true }` |
+| POST `/auth/login` | `{ email, password }` | `{ user }` and authenticated session cookie |
+| GET `/auth/session` | — | `{ user }` |
+| POST `/auth/logout` | `{}` | `{ loggedOut: true }`, session invalidated |
+| POST `/auth/password/reset-request` | `{ email, locale }` | `{ accepted: true }`; deliver a six-digit code |
+| POST `/auth/password/reset` | `{ email, code, password }` or existing `{ token, password }` | `{ updated: true }`, one-use reset consumed |
+| POST `/auth/oauth/start` | `{ provider: "google"\|"apple"\|"microsoft", returnTo }` | `{ redirectUrl }` |
 | POST `/account/profile` | `{ nickname }` | `{ user }` with the saved nickname |
 | GET `/account/security` | — | `{ twoFactorEnabled, enabledAt: ISO-string-or-null }` |
 | POST `/account/security/totp/setup` | `{}` | `{ setupId, secret }` (Base32, at least 160 bits) |
 | POST `/account/security/totp/enable` | `{ setupId, code }` | `{ twoFactorEnabled: true, enabledAt }` |
 | POST `/account/security/totp/disable` | `{ code }` | `{ twoFactorEnabled: false, enabledAt: null }` |
+
+The OAuth backend generates state/nonce and PKCE, validates an allowlisted return
+URL, exchanges the provider code in its callback, sets the session cookie, then
+redirects back. The client only accepts HTTPS redirects to accounts.google.com,
+appleid.apple.com, login.microsoftonline.com, or login.live.com. Provider secrets
+never enter the browser bundle. On return, /auth/session restores the identity.
+The browser transport instead creates a persistent local provider identity.
+
+Configuring either API base disables all arbitrary-value browser behavior, including
+direct browser-service calls. Failed remote requests never fall back to local success.
+Remote signup/recovery require a valid email and a 12–128-character password;
+the backend must independently validate credentials/codes and expiry.
+
+`tests/accountHttp.test.ts` exercises these clients against an actual local HTTP
+server (no fetch interception): signup, verification/resend, login/session/logout,
+reset, OAuth redirect validation, profile, OTP rejection, email hold, withdrawals,
+cancellation and deposit confirmation. This verifies the integration contract,
+not credentials or delivery by an external identity/mail/payment provider.
 
 With a remote backend, the setup secret is held only in the mounted enrollment screen; the active secret
 and OTP codes are never persisted to browser storage or displayed as an autofill.

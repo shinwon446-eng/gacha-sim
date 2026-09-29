@@ -57,9 +57,9 @@ export function netReceive(amountUsdt: number, network: Network): number {
   return +Math.max(0, amountUsdt - WITHDRAW_NETWORK_BY_KEY[network].feeUsdt).toFixed(2);
 }
 
-export function validateWithdrawal(input: { network: Network; address: string; amountUsdt: number; balanceUsdt: number }): WithdrawError[] {
+export function validateWithdrawal(input: { network: Network; address: string; amountUsdt: number; balanceUsdt: number }, allowAnyAddress = false): WithdrawError[] {
   const errs: WithdrawError[] = [];
-  if (!isValidWithdrawAddress(input.network, input.address)) errs.push("address");
+  if (allowAnyAddress ? !input.address.trim() : !isValidWithdrawAddress(input.network, input.address)) errs.push("address");
   if (!Number.isFinite(input.amountUsdt) || input.amountUsdt <= 0) errs.push("nan");
   else {
     if (input.amountUsdt < MIN_WITHDRAW_USDT) errs.push("min");

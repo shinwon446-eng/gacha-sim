@@ -1774,10 +1774,10 @@
       "delivered": "수령 완료"
     },
     "periods": {
-      "all": "전체 기간",
       "7": "최근 7일",
       "30": "최근 30일",
-      "90": "최근 90일"
+      "90": "최근 90일",
+      "all": "전체 기간"
     },
     "sorts": {
       "newest": "최신순",
@@ -1942,7 +1942,7 @@
     "reviews": "내 후기",
     "security": "계정 보안",
     "securityIntro": "비밀번호는 이메일로 본인을 확인한 뒤 변경할 수 있습니다. 비밀번호를 분실했다면 재설정 절차를 이용하세요.",
-    "newPasswordTitle": "새 비밀번호 설정",
+    "newPasswordTitle": "새 비밀번호",
     "updatePassword": "비밀번호 변경",
     "passwordUpdated": "비밀번호가 변경되었습니다. 새 비밀번호로 로그인해 주세요.",
     "closureTitle": "회원탈퇴",
@@ -2000,9 +2000,31 @@
     "browserAccountLabel": "이 브라우저에 저장된 계정",
     "browserAccountNote": "바로 시작하면 이 브라우저에 계정이 저장됩니다. 이메일·비밀번호로 가입해 사용할 수도 있습니다.",
     "startBrowserAccount": "바로 시작하기",
-    "browserSecurityNote": "OTP 설정은 이 브라우저에 저장됩니다. 다른 기기와 동기화되지 않습니다.",
-    "browserEmailNote": "현재 이메일 발송은 연결되지 않아 확인 코드를 화면에 표시합니다. 코드 확인 후 72시간 대기 출금 신청이 기록됩니다.",
-    "browserCode": "확인 코드: {code} (이메일 미발송)"
+    "browserSecurityNote": "숫자 6자리를 입력하면 OTP 설정을 완료할 수 있습니다. 설정은 이 브라우저에 저장됩니다.",
+    "browserEmailNote": "숫자 6자리로 확인하면 72시간 대기 출금이 접수됩니다. 현재는 이메일 대신 화면에서 진행합니다.",
+    "browserCode": "원하는 숫자 6자리를 입력하세요. 예: {code}",
+    "welcomeTitle": "로그인 또는 회원가입",
+    "createAccountTitle": "계정 만들기",
+    "enterPasswordTitle": "비밀번호 입력",
+    "createPasswordTitle": "비밀번호 만들기",
+    "verifyTitle": "이메일 확인",
+    "continue": "계속",
+    "continueProvider": "{provider}로 계속하기",
+    "or": "또는",
+    "editEmail": "수정",
+    "backEmail": "이메일 입력으로 돌아가기",
+    "showPassword": "비밀번호 표시",
+    "hidePassword": "비밀번호 숨기기",
+    "verificationCode": "인증 코드",
+    "verifyEmailIntro": "이메일로 받은 인증 코드 6자리를 입력해 주세요.",
+    "arbitraryCodeHint": "원하는 숫자 6자리를 입력하면 다음 단계로 진행됩니다.",
+    "arbitraryAccountHint": "현재는 임의의 입력값으로 진행할 수 있으며 계정은 이 브라우저에 저장됩니다.",
+    "haveAccount": "이미 계정이 있으신가요?",
+    "noAccount": "계정이 없으신가요?",
+    "rememberPassword": "비밀번호가 기억나셨나요?",
+    "continueTerms": "계속하면 이용약관 및 개인정보 처리방침에 동의합니다.",
+    "resendCode": "코드 다시 받기",
+    "codeResent": "인증 코드를 다시 보냈습니다."
   },
   "fairnessGuide": {
     "eyebrow": "공정성 · 결과 검증",

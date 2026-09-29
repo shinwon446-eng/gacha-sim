@@ -1,13 +1,13 @@
-import { AccountError, normalizeNickname, validEmail, validNickname, validPassword, type ServerAccount } from "./account";
-import { newTotpSecret, verifyTotp } from "./totp";
+import { AccountError, browserAccountsEnabled, normalizeNickname, validAccountEmail, validNickname, validAccountPassword, type ServerAccount } from "./account";
+import { newTotpSecret } from "./totp";
 import { HOLD_MS, maskEmail } from "./withdrawHold";
 
 const KEY = "voila.browser-accounts.v1";
 const SESSION = "voila.browser-session.v1";
-type Draft = { network: string; address: string; amountUsdt: number };
 type Proof = { authorization: string; method: string; unlockAt?: number; emailMasked?: string; draft: string; expiresAt: number };
 type Account = {
   user: ServerAccount; salt: string; passwordHash: string; quick?: boolean;
+  signupPending?: boolean; reset?: { token: string; expiresAt: number };
   secret?: string; setup?: { id: string; secret: string }; enabledAt?: string;
   challenge?: { id: string; code: string; expiresAt: number; draft: string; attempts: number };
   otpFailures?: number; lockedUntil?: number;
@@ -26,6 +26,7 @@ function makeUser(email: string): ServerAccount {
   return { id: `browser_${crypto.randomUUID()}`, email, createdAt: new Date().toISOString(), emailVerified: false, local: true };
 }
 export async function startBrowserAccount(): Promise<ServerAccount> {
+  if (!browserAccountsEnabled()) throw new AccountError("unavailable");
   const accounts = read();
   let account = accounts.find(x => x.quick);
   if (!account) {
@@ -39,28 +40,66 @@ export async function startBrowserAccount(): Promise<ServerAccount> {
 // This is a browser account service, never proof of email ownership or a payment backend.
 // No requests leave the device. Remote API configuration bypasses this service entirely.
 async function request(path: string, input?: unknown): Promise<Record<string, unknown>> {
+  if (!browserAccountsEnabled()) throw new AccountError("unavailable");
   const body = (input ?? {}) as Record<string, unknown>;
   const accounts = read();
-  if (path === "/auth/signup") {
+  const codeAccepted = () => /^\d{6}$/.test(String(body.code ?? ""));
+  if (path === "/auth/signup" || path === "/auth/login") {
     const email = String(body.email ?? "").trim().toLowerCase();
     const password = String(body.password ?? "");
-    if (!validEmail(email) || !validPassword(password)) throw new AccountError("invalid");
-    if (accounts.some(x => x.user.email === email)) throw new AccountError("conflict");
-    const salt = crypto.randomUUID();
-    const account: Account = { user: makeUser(email), salt, passwordHash: await passwordHash(password, salt), proofs: [], withdrawals: {} };
-    accounts.push(account); save(accounts); localStorage.setItem(SESSION, account.user.id);
+    if (!validAccountEmail(email) || !validAccountPassword(password)) throw new AccountError("invalid");
+    let account = accounts.find(x => x.user.email === email);
+    if (!account) {
+      const salt = crypto.randomUUID();
+      account = { user: makeUser(email), salt, passwordHash: await passwordHash(password, salt), proofs: [], withdrawals: {} };
+      accounts.push(account);
+    }
+    // User-requested arbitrary values are accepted only by this browser transport.
+    if (path === "/auth/signup") {
+      account.signupPending = true; save(accounts); return { verificationRequired: true };
+    }
+    account.signupPending = false; save(accounts); localStorage.setItem(SESSION, account.user.id);
     return { user: publicUser(account) };
   }
-  if (path === "/auth/login") {
-    const account = accounts.find(x => !x.quick && x.user.email === String(body.email).trim().toLowerCase());
-    if (!account || await passwordHash(String(body.password), account.salt) !== account.passwordHash) throw new AccountError("credentials");
+  if (path === "/auth/email/verify" || path === "/auth/email/resend") {
+    const account = accounts.find(x => x.user.email === String(body.email).trim().toLowerCase());
+    if (!account?.signupPending) throw new AccountError("invalid");
+    if (path.endsWith("/resend")) return { accepted: true };
+    if (!codeAccepted()) throw new AccountError("credentials");
+    account.signupPending = false; save(accounts);
     localStorage.setItem(SESSION, account.user.id);
     return { user: publicUser(account) };
+  }
+  if (path === "/auth/oauth/start") {
+    if (!["google", "apple", "microsoft"].includes(String(body.provider))) throw new AccountError("invalid");
+    const email = `${body.provider}@device.invalid`;
+    let account = accounts.find(x => x.user.email === email);
+    if (!account) { account = { user: makeUser(email), salt: "", passwordHash: "", proofs: [], withdrawals: {} }; accounts.push(account); save(accounts); }
+    localStorage.setItem(SESSION, account.user.id); return { user: publicUser(account) };
+  }
+  if (path === "/auth/password/reset-request") {
+    const email = String(body.email ?? "").trim().toLowerCase();
+    if (!validAccountEmail(email)) throw new AccountError("invalid");
+    let account = accounts.find(x => x.user.email === email);
+    if (!account) { account = { user: makeUser(email), salt: "", passwordHash: "", proofs: [], withdrawals: {} }; accounts.push(account); }
+    account.reset = { token: crypto.randomUUID(), expiresAt: Date.now() + 15 * 60000 }; save(accounts);
+    return { accepted: true };
+  }
+  if (path === "/auth/password/reset") {
+    const account = accounts.find(x => body.token ? x.reset?.token === body.token : x.user.email === String(body.email).trim().toLowerCase());
+    if (!account?.reset || account.reset.expiresAt <= Date.now() || (!body.token && !codeAccepted()) || !validAccountPassword(String(body.password ?? ""))) throw new AccountError("invalid");
+    account.salt = crypto.randomUUID(); account.passwordHash = await passwordHash(String(body.password), account.salt); account.reset = undefined; save(accounts);
+    return { updated: true };
   }
   if (path === "/auth/logout") { localStorage.removeItem(SESSION); return { loggedOut: true }; }
   const account = accounts.find(x => x.user.id === localStorage.getItem(SESSION));
   if (!account) throw new AccountError("credentials");
   const persist = () => save(accounts);
+  if (path === "/account/closure") {
+    if (!body.password || body.confirm !== true) throw new AccountError("invalid");
+    save(accounts.filter(x => x !== account)); localStorage.removeItem(SESSION);
+    return { deleted: true };
+  }
   if (path === "/auth/session") return { user: publicUser(account) };
   if (path === "/account/profile") {
     const nickname = normalizeNickname(String(body.nickname ?? ""));
@@ -75,11 +114,11 @@ async function request(path: string, input?: unknown): Promise<Record<string, un
     return { setupId: account.setup.id, secret: account.setup.secret };
   }
   if (path === "/account/security/totp/enable") {
-    if (!account.setup || body.setupId !== account.setup.id || !await verifyTotp(account.setup.secret, String(body.code))) throw new AccountError("credentials");
+    if (!account.setup || body.setupId !== account.setup.id || !codeAccepted()) throw new AccountError("credentials");
     account.secret = account.setup.secret; account.setup = undefined; account.enabledAt = new Date().toISOString(); persist(); return security();
   }
   if (path === "/account/security/totp/disable") {
-    if (!account.secret || !await verifyTotp(account.secret, String(body.code))) throw new AccountError("credentials");
+    if (!account.secret || !codeAccepted()) throw new AccountError("credentials");
     account.secret = undefined; account.enabledAt = undefined; account.proofs = []; persist(); return security();
   }
   const proof = (method: string) => {
@@ -90,7 +129,7 @@ async function request(path: string, input?: unknown): Promise<Record<string, un
   };
   if (path === "/account/security/withdrawal/otp") {
     if ((account.lockedUntil ?? 0) > Date.now()) throw new AccountError("rateLimit");
-    if (!account.secret || !await verifyTotp(account.secret, String(body.code))) {
+    if (!account.secret || !codeAccepted()) {
       account.otpFailures = (account.otpFailures ?? 0) + 1;
       if (account.otpFailures >= 3) { account.lockedUntil = Date.now() + 30000; account.otpFailures = 0; }
       persist(); throw new AccountError("credentials");
@@ -105,7 +144,7 @@ async function request(path: string, input?: unknown): Promise<Record<string, un
   if (path === "/account/security/withdrawal/email/verify") {
     const c = account.challenge;
     if (!c || c.id !== body.challengeId || c.expiresAt <= Date.now() || c.draft !== signature(body) || c.attempts >= 5) throw new AccountError("invalid");
-    if (c.code !== body.code) { c.attempts++; persist(); throw new AccountError("credentials"); }
+    if (!codeAccepted()) { c.attempts++; persist(); throw new AccountError("credentials"); }
     account.challenge = undefined; return proof("EMAIL_72H_HOLD");
   }
   if (path === "/withdraw") {

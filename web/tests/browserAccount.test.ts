@@ -1,7 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { browserAccountRequest, startBrowserAccount } from "../lib/browserAccount";
-import { totpNow } from "../lib/totp";
 import { HOLD_MS } from "../lib/withdrawHold";
 
 test("default browser account supports signup, password login, nickname, OTP, held withdrawals and cancellation", async () => {
@@ -17,7 +16,7 @@ test("default browser account supports signup, password login, nickname, OTP, he
     const profile = await browserAccountRequest("/account/profile", { nickname: "MyAccount" });
     assert.equal((profile.user as { nickname: string }).nickname, "MyAccount");
     const setup = await browserAccountRequest("/account/security/totp/setup", {});
-    const code = await totpNow(setup.secret as string);
+    const code = "123456";
     const enabled = await browserAccountRequest("/account/security/totp/enable", { setupId: setup.setupId, code });
     assert.equal(enabled.twoFactorEnabled, true);
     const draft = { network: "TRC20", address: "T" + "A".repeat(33), amountUsdt: 50 };
@@ -30,7 +29,7 @@ test("default browser account supports signup, password login, nickname, OTP, he
     const challenge = await browserAccountRequest("/account/security/withdrawal/email", draft);
     await assert.rejects(browserAccountRequest("/account/security/withdrawal/email/verify", { ...draft, amountUsdt: 60, challengeId: challenge.challengeId, code: challenge.browserCode }));
     const started = Date.now();
-    const proof = await browserAccountRequest("/account/security/withdrawal/email/verify", { ...draft, challengeId: challenge.challengeId, code: challenge.browserCode });
+    const proof = await browserAccountRequest("/account/security/withdrawal/email/verify", { ...draft, challengeId: challenge.challengeId, code: "111111" });
     assert.ok(Number(proof.unlockAt) >= started + HOLD_MS);
     const held = await browserAccountRequest("/withdraw", { ...draft, requestId: "hold-request", authorization: proof.authorization, authMethod: "EMAIL_72H_HOLD" });
     assert.equal(held.status, "PENDING_72H_HOLD");
@@ -39,13 +38,25 @@ test("default browser account supports signup, password login, nickname, OTP, he
     await assert.rejects(browserAccountRequest("/account/security/withdrawal/email/verify", { ...draft, challengeId: challenge.challengeId, code: challenge.browserCode }));
     await browserAccountRequest("/auth/logout", {});
     await assert.rejects(browserAccountRequest("/account/security"));
-    await browserAccountRequest("/auth/signup", { email: "alice@example.test", password: "a-long-unique-password" });
+    assert.deepEqual(await browserAccountRequest("/auth/signup", { email: "alice", password: "1" }), { verificationRequired: true });
+    await assert.rejects(browserAccountRequest("/auth/session"));
+    await browserAccountRequest("/auth/email/resend", { email: "alice" });
+    await browserAccountRequest("/auth/email/verify", { email: "alice", code: "654321" });
     await browserAccountRequest("/auth/logout", {});
-    await assert.rejects(browserAccountRequest("/auth/login", { email: "alice@example.test", password: "wrong-password" }));
-    const login = await browserAccountRequest("/auth/login", { email: "alice@example.test", password: "a-long-unique-password" });
+    const login = await browserAccountRequest("/auth/login", { email: "alice", password: "any-value" });
     assert.equal((login.user as { local: boolean }).local, true);
     assert.equal((await browserAccountRequest("/account/security")).twoFactorEnabled, false, "another account cannot inherit OTP");
-    assert.ok(!Array.from(memory.values()).some(value => value.includes("a-long-unique-password")), "password is never stored in plain text");
+    assert.ok(!Array.from(memory.values()).some(value => value.includes("any-value")), "password is never stored in plain text");
+    await browserAccountRequest("/auth/password/reset-request", { email: "alice" });
+    assert.deepEqual(await browserAccountRequest("/auth/password/reset", { email: "alice", code: "000000", password: "2" }), { updated: true });
+    await assert.rejects(browserAccountRequest("/auth/password/reset", { email: "alice", code: "000000", password: "3" }), "reset challenge is consumed");
+    await browserAccountRequest("/auth/logout", {});
+    const unknown = await browserAccountRequest("/auth/login", { email: "new-value", password: "1" });
+    assert.equal((unknown.user as { email: string }).email, "new-value", "unknown browser identities can continue");
+    for (const provider of ["google", "apple", "microsoft"]) {
+      const social = await browserAccountRequest("/auth/oauth/start", { provider });
+      assert.equal((social.user as { email: string }).email, provider + "@device.invalid");
+    }
     await startBrowserAccount();
     assert.equal((await browserAccountRequest("/account/security")).twoFactorEnabled, true, "returning to the account restores its OTP");
   } finally {

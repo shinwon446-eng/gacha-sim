@@ -46,6 +46,7 @@ export function HeaderAuthControl({ className }: { className?: string }) {
   const t = useTranslations("auth");
   const ta = useTranslations("account");
   const user = useAuthStore((s) => s.user);
+  const ready = useAuthStore((s) => s.hydrated);
   const openAuthModal = useAuthStore((s) => s.openAuthModal);
   const logout = useAuthStore((s) => s.logout);
   const [open, setOpen] = useState(false);
@@ -79,6 +80,7 @@ export function HeaderAuthControl({ className }: { className?: string }) {
         <button
           type="button"
           onClick={() => openAuthModal("login")}
+          disabled={!ready}
           className="flex h-11 flex-none items-center whitespace-nowrap rounded-lg px-3 text-xs font-semibold text-white transition-colors hover:text-gold-champagne"
         >
           {t("login")}
@@ -86,6 +88,7 @@ export function HeaderAuthControl({ className }: { className?: string }) {
         <button
           type="button"
           onClick={() => openAuthModal("signup")}
+          disabled={!ready}
           className="flex h-11 flex-none items-center whitespace-nowrap rounded-lg bg-[#f1eee7] px-4 text-xs font-semibold text-obsidian transition-colors hover:bg-white"
         >
           {t("signup")}

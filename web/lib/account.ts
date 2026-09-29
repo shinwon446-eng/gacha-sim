@@ -1,4 +1,4 @@
-/** Account services never infer a successful operation from a local identity. */
+/** Shared account contract; browser and HTTP transports use the same routes. */
 export class AccountError extends Error {
   constructor(public readonly code: "unavailable" | "network" | "invalid" | "credentials" | "rateLimit" | "conflict") { super(code); }
 }
@@ -16,6 +16,8 @@ export const browserAccountsEnabled = () => !AUTH_API_BASE && !process.env.NEXT_
 export const accountConfigured = () => Boolean(AUTH_API_BASE) || browserAccountsEnabled();
 export const validEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) && value.length <= 254;
 export const validPassword = (value: string) => value.length >= 12 && value.length <= 128;
+export const validAccountEmail = (value: string) => browserAccountsEnabled() ? value.trim().length > 0 && value.length <= 254 : validEmail(value);
+export const validAccountPassword = (value: string) => browserAccountsEnabled() ? value.length > 0 && value.length <= 128 : validPassword(value);
 
 export const normalizeNickname = (value: string) => value.normalize("NFC").trim();
 const nicknamePattern = new RegExp("^[\\p{L}\\p{N}_-]{2,20}$", "u");
@@ -23,7 +25,7 @@ export const validNickname = (value: string) => nicknamePattern.test(normalizeNi
 export interface ServerAccount { id: string; email: string; createdAt: string; emailVerified: boolean; nickname?: string; local?: boolean }
 function accountFrom(data: unknown): ServerAccount {
   const user = (data as { user?: ServerAccount })?.user;
-  if (!user || typeof user.id !== "string" || !user.id || typeof user.email !== "string" || !validEmail(user.email) || typeof user.createdAt !== "string" || !Number.isFinite(Date.parse(user.createdAt)) || (user.emailVerified !== true && !(browserAccountsEnabled() && user.local === true))) throw new AccountError("invalid");
+  if (!user || typeof user.id !== "string" || !user.id || typeof user.email !== "string" || !(browserAccountsEnabled() && user.local === true ? validAccountEmail(user.email) : validEmail(user.email)) || typeof user.createdAt !== "string" || !Number.isFinite(Date.parse(user.createdAt)) || (user.emailVerified !== true && !(browserAccountsEnabled() && user.local === true))) throw new AccountError("invalid");
   if (user.nickname !== undefined && (typeof user.nickname !== "string" || !validNickname(user.nickname))) throw new AccountError("invalid");
   return user;
 }
@@ -54,25 +56,48 @@ export async function accountRequest(path: string, body?: unknown, base = AUTH_A
   return request(path, { method: "POST", headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf.token }, body: JSON.stringify(body) });
 }
 export async function loginAccount(email: string, password: string) {
-  if (!validEmail(email) || !password) throw new AccountError("invalid");
+  if (!validAccountEmail(email) || !password) throw new AccountError("invalid");
   return accountFrom(await accountRequest("/auth/login", { email: email.trim(), password }));
 }
 export async function signupAccount(email: string, password: string, locale: string) {
-  if (!validEmail(email) || !validPassword(password)) throw new AccountError("invalid");
+  if (!validAccountEmail(email) || !validAccountPassword(password)) throw new AccountError("invalid");
   const result = await accountRequest("/auth/signup", { email: email.trim(), password, locale, acceptedTerms: true });
   if (browserAccountsEnabled() && result.user) return accountFrom(result);
   if (result.verificationRequired !== true) throw new AccountError("invalid");
   return null;
 }
 export async function recoverAccount(email: string, locale: string) {
-  if (!validEmail(email)) throw new AccountError("invalid");
+  if (!validAccountEmail(email)) throw new AccountError("invalid");
   if ((await accountRequest("/auth/password/reset-request", { email: email.trim(), locale })).accepted !== true) throw new AccountError("invalid");
 }
 export async function resetAccountPassword(token: string, password: string) {
-  if (!token || !validPassword(password)) throw new AccountError("invalid");
+  if (!token || !validAccountPassword(password)) throw new AccountError("invalid");
   if ((await accountRequest("/auth/password/reset", { token, password })).updated !== true) throw new AccountError("invalid");
 }
 export async function getAccountSession() { return accountFrom(await accountRequest("/auth/session")); }
+export async function verifyAccountEmail(email: string, code: string) {
+  if (!validAccountEmail(email) || !/^\d{6}$/.test(code)) throw new AccountError("invalid");
+  return accountFrom(await accountRequest("/auth/email/verify", { email: email.trim(), code }));
+}
+export async function resendAccountEmail(email: string, locale: string) {
+  if (!validAccountEmail(email)) throw new AccountError("invalid");
+  if ((await accountRequest("/auth/email/resend", { email: email.trim(), locale })).accepted !== true) throw new AccountError("invalid");
+}
+export async function completePasswordRecovery(email: string, code: string, password: string) {
+  if (!validAccountEmail(email) || !/^\d{6}$/.test(code) || !validAccountPassword(password)) throw new AccountError("invalid");
+  if ((await accountRequest("/auth/password/reset", { email: email.trim(), code, password })).updated !== true) throw new AccountError("invalid");
+}
+export type SocialProvider = "google" | "apple" | "microsoft";
+export async function beginSocialLogin(provider: SocialProvider, returnTo: string): Promise<{ user?: ServerAccount; redirectUrl?: string }> {
+  const result = await accountRequest("/auth/oauth/start", { provider, returnTo });
+  if (browserAccountsEnabled() && result.user) return { user: accountFrom(result) };
+  if (typeof result.redirectUrl !== "string") throw new AccountError("invalid");
+  let url: URL;
+  try { url = new URL(result.redirectUrl); } catch { throw new AccountError("invalid"); }
+  const hosts: Record<SocialProvider, string[]> = { google: ["accounts.google.com"], apple: ["appleid.apple.com"], microsoft: ["login.microsoftonline.com", "login.live.com"] };
+  if (url.protocol !== "https:" || url.username || url.password || !hosts[provider].includes(url.hostname)) throw new AccountError("invalid");
+  return { redirectUrl: url.href };
+}
 export async function logoutAccount() {
   if ((await accountRequest("/auth/logout", {})).loggedOut !== true) throw new AccountError("invalid");
 }

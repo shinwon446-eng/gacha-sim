@@ -210,7 +210,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   // 입력은 선택 통화 단위 — 잔액 반영·온체인 금액은 USDT 로 환산
   const amountNative = Number(amountText);
   const amountUsdt = useMemo(() => (Number.isFinite(amountNative) ? +(amountNative / rates[currency]).toFixed(2) : NaN), [amountNative, rates, currency]);
-  const errors = useMemo(() => validateWithdrawal({ network, address, amountUsdt, balanceUsdt: balance }), [network, address, amountUsdt, balance]);
+  const errors = useMemo(() => validateWithdrawal({ network, address, amountUsdt, balanceUsdt: balance }, user?.local === true), [network, address, amountUsdt, balance, user?.local]);
   const has = (k: WithdrawError) => touched && errors.includes(k);
   const amountOk = !errors.includes("nan") && !errors.includes("min") && !errors.includes("insufficient");
   const net = amountOk ? netReceive(amountUsdt, network) : 0;
@@ -254,7 +254,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const commit = useCallback(async (draft: Draft, proof: WithdrawalProof) => {
     if (submission.current || !user || useAuthStore.getState().user?.id !== user.id) return;
     const current = useWalletStore.getState();
-    if (validateWithdrawal({ ...draft, balanceUsdt: current.cryptoBalance }).length || (!user.local && rolloverProgress(current.totalWagered, current.totalDepositedCrypto) < 100)) {
+    if (validateWithdrawal({ ...draft, balanceUsdt: current.cryptoBalance }, user.local).length || (!user.local && rolloverProgress(current.totalWagered, current.totalDepositedCrypto) < 100)) {
       setStage({ kind: "form" }); setSubmitError(t("errors.insufficient")); return;
     }
     submission.current = true; setSubmitError(""); setStage({ kind: "submitting" });

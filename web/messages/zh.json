@@ -1774,10 +1774,10 @@
       "delivered": "已签收"
     },
     "periods": {
-      "all": "全部时间",
       "7": "最近7天",
       "30": "最近30天",
-      "90": "最近90天"
+      "90": "最近90天",
+      "all": "全部时间"
     },
     "sorts": {
       "newest": "最新优先",
@@ -1942,7 +1942,7 @@
     "reviews": "我的评价",
     "security": "账户安全",
     "securityIntro": "修改密码需要通过邮箱验证身份。忘记密码时，请使用密码重置流程。",
-    "newPasswordTitle": "设置新密码",
+    "newPasswordTitle": "新密码",
     "updatePassword": "修改密码",
     "passwordUpdated": "密码已修改。请使用新密码登录。",
     "closureTitle": "注销账户",
@@ -2000,9 +2000,31 @@
     "browserAccountLabel": "保存在此浏览器中的账户",
     "browserAccountNote": "立即开始即可在此浏览器中创建账户，也可在下方使用邮箱和密码注册。",
     "startBrowserAccount": "立即开始",
-    "browserSecurityNote": "身份验证器设置保存在此浏览器中，不会同步到其他设备。",
-    "browserEmailNote": "邮件发送尚未接入，确认码将显示在此处。验证后将记录需等待 72 小时的提现申请。",
-    "browserCode": "确认码：{code}（未发送邮件）"
+    "browserSecurityNote": "输入任意六位数字即可完成 OTP 设置。设置保存在此浏览器中。",
+    "browserEmailNote": "输入任意六位数字确认后即可申请 72 小时等待提现。目前在此页面继续，无需接收邮件。",
+    "browserCode": "输入任意六位数字。例如：{code}",
+    "welcomeTitle": "登录或注册",
+    "createAccountTitle": "创建账户",
+    "enterPasswordTitle": "输入密码",
+    "createPasswordTitle": "创建密码",
+    "verifyTitle": "验证邮箱",
+    "continue": "继续",
+    "continueProvider": "使用 {provider} 继续",
+    "or": "或",
+    "editEmail": "修改",
+    "backEmail": "返回邮箱输入",
+    "showPassword": "显示密码",
+    "hidePassword": "隐藏密码",
+    "verificationCode": "验证码",
+    "verifyEmailIntro": "请输入发送到邮箱的六位验证码。",
+    "arbitraryCodeHint": "输入任意六位数字即可继续。",
+    "arbitraryAccountHint": "目前可使用任意输入值继续。账户保存在此浏览器中。",
+    "haveAccount": "已有账户？",
+    "noAccount": "还没有账户？",
+    "rememberPassword": "想起密码了？",
+    "continueTerms": "继续即表示同意使用条款和隐私政策。",
+    "resendCode": "重新获取验证码",
+    "codeResent": "已重新发送验证码。"
   },
   "fairnessGuide": {
     "eyebrow": "公平性 · 结果核验",
