@@ -12,10 +12,30 @@ import { CurrencyHydrator } from "@/components/layout/CurrencyHydrator";
  */
 const pretendard = localFont({ src: "../public/assets/fonts/PretendardVariable.woff2", variable: "--font-ui", display: "swap", weight: "45 920" });
 
+const SITE = "https://shinwon446-eng.github.io/gacha-sim";
+const TITLE = "VOILA — 1달러부터 여는 럭셔리 랜덤박스";
+const DESCRIPTION = "1달러부터 시작하는 럭셔리 랜덤박스 VOILA. 모든 상품 확률 100% 투명 공개, 당첨 상품 정품 무료 배송 또는 즉시 캐시백까지 한 번에 경험하세요.";
+const IMAGE = `${SITE}/assets/photography/photo-1587836374828-4dbafa94cf0e.webp`;
+
 export const metadata: Metadata = {
-  title: "VOILA — You never know what’s next. | OPEN IT, OWN IT",
-  description:
-    "취향에 맞는 컬렉션을 발견하세요. 구성품과 확률을 확인하고, 개봉 결과부터 배송과 환급까지 VOILA에서 선택하세요.",
+  applicationName: "VOILA",
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: {
+    type: "website",
+    siteName: "VOILA",
+    title: TITLE,
+    description: DESCRIPTION,
+    url: `${SITE}/`,
+    locale: "ko_KR",
+    images: [{ url: IMAGE, alt: "VOILA 럭셔리 컬렉션" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [IMAGE],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
