@@ -8,11 +8,14 @@ import type { CarrierKey } from "@/lib/carriers";
 import type { CountryCode } from "@/lib/shipping";
 import type { OwnedItem } from "@/stores/inventoryStore";
 import type { Transaction, TxStatus } from "@/stores/walletStore";
+import { isValidTxHash } from "@/lib/withdrawal";
 
-export type PayoutKind = "withdraw" | "sellback";
+export type PayoutKind = Transaction["type"];
 
 export interface PayoutProof {
   id: string;
+  serverId?: string;
+  ref?: string;
   /** 마스킹된 유저 */
   user: string;
   kind: PayoutKind;
@@ -60,13 +63,61 @@ export function buildLocalPayouts(transactions: Transaction[], user: string, lim
         user,
         kind: t.type === "withdraw" ? "withdraw" : "sellback",
         amountUsdt: Math.abs(t.amountUsdt),
-        network: t.type === "withdraw" ? (net === "BEP20" ? "BEP20" : "TRC20") : undefined,
+        network: t.type === "withdraw" ? knownNetwork(t.network ?? net) : undefined,
         txHash: t.txHash,
         status: t.status,
         at: t.at,
       };
     })
     .slice(0, limit);
+}
+
+function knownNetwork(value: unknown): Network | undefined {
+  return value === "TRC20" || value === "BEP20" ? value : undefined;
+}
+const ACTIVITY_KINDS = new Set<PayoutKind>(["deposit_usdt", "deposit_card", "open", "sellback", "withdraw", "bonus", "shipping_refund", "order_refund"]);
+const TX_STATUSES = new Set<TxStatus>(["PENDING", "PENDING_ADMIN_REVIEW", "PENDING_72H_HOLD", "BROADCASTING", "COMPLETED", "CANCELLED", "FAILED"]);
+
+/** Validate the API boundary. Missing hashes, networks and statuses are never invented. */
+function validProof(value: unknown): PayoutProof | null {
+  if (!value || typeof value !== "object") return null;
+  const p = value as Partial<PayoutProof>;
+  if (typeof p.id !== "string" || !p.id || typeof p.user !== "string" || !p.user.trim()
+    || !p.kind || !ACTIVITY_KINDS.has(p.kind) || typeof p.amountUsdt !== "number" || !Number.isFinite(p.amountUsdt)
+    || typeof p.at !== "string" || !Number.isFinite(Date.parse(p.at))) return null;
+  const network = knownNetwork(p.network);
+  return {
+    id: p.id, user: p.user, kind: p.kind, amountUsdt: Math.abs(p.amountUsdt), at: p.at,
+    serverId: typeof p.serverId === "string" ? p.serverId : undefined,
+    ref: typeof p.ref === "string" ? p.ref : undefined,
+    boxSlug: typeof p.boxSlug === "string" ? p.boxSlug : undefined,
+    status: p.status && TX_STATUSES.has(p.status) ? p.status : undefined,
+    network, txHash: network && typeof p.txHash === "string" && isValidTxHash(network, p.txHash) ? p.txHash : undefined,
+  };
+}
+
+/** One chronological feed of actual transactions, with authoritative API records taking precedence. */
+export function buildProofFeed(transactions: Transaction[], user: string, remote: unknown = [], limit = 99): PayoutProof[] {
+  const local = transactions.map(t => ({
+    id: t.id, serverId: t.serverId, user, kind: t.type, amountUsdt: t.amountUsdt,
+    at: t.at, ref: t.ref, boxSlug: t.type === "open" ? t.ref : undefined,
+    network: knownNetwork(t.network ?? (t.type === "withdraw" ? t.ref?.split(":")[0] : undefined)),
+    txHash: t.txHash, status: t.status,
+  }));
+  const seen = new Set<string>();
+  const result: PayoutProof[] = [];
+  for (const raw of [...(Array.isArray(remote) ? remote : []), ...local]) {
+    const p = validProof(raw);
+    if (!p) continue;
+    const keys = [`${p.kind}:id:${p.id}`];
+    if (p.serverId) keys.push(`${p.kind}:id:${p.serverId}`);
+    if (p.network && p.txHash) keys.push(`${p.kind}:tx:${p.network}:${p.txHash.toLowerCase()}`);
+    const duplicate = keys.some(key => seen.has(key));
+    keys.forEach(key => seen.add(key));
+    if (!duplicate) result.push(p);
+  }
+  return result.sort((a, b) => Date.parse(b.at) - Date.parse(a.at) || a.id.localeCompare(b.id))
+    .slice(0, Math.max(0, Math.floor(limit)));
 }
 
 /** 이 기기의 실제 기록 → 출고 피드 (출고 신청 이후 항목) */

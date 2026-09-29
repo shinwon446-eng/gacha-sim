@@ -5,7 +5,7 @@ import { Camera, ImagePlus, Star, X } from "lucide-react";
 import { useModal } from "@/lib/useModal";
 import { useProductText } from "@/lib/useProductText";
 import { productOf } from "@/lib/vault";
-import { canReview, MIN_REVIEW_ITEM_VALUE_USDT, REVIEW_MAX_CHARS, REVIEW_MIN_CHARS } from "@/lib/community";
+import { canReview, meetsReviewValue, REVIEW_MAX_CHARS, REVIEW_MIN_CHARS } from "@/lib/community";
 import { useInventoryStore } from "@/stores/inventoryStore";
 import { useCommunityStore, type MyReview } from "@/stores/communityStore";
 import { cn } from "@/lib/format";
@@ -31,7 +31,7 @@ export function ReviewFormModal({ open, onClose, onSubmitted, initialOwnedId, ed
   const items = useInventoryStore(s => s.items);
   const mine = useCommunityStore(s => s.mine);
   const eligible = items.filter(item => canReview(item, mine));
-  const hasMinValueItem = items.some(item => item.valueUsdt >= MIN_REVIEW_ITEM_VALUE_USDT);
+  const hasMinValueItem = items.some(meetsReviewValue);
   const [ownedId, setOwnedId] = useState("");
   const [text, setText] = useState("");
   const [rating, setRating] = useState(0);

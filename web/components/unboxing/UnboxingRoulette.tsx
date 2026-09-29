@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { AnimatePresence, animate, motion, useReducedMotion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { useModal } from "@/lib/useModal";
 import { MegaWinFX } from "@/components/unboxing/MegaWinFX";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Wallet, Truck, ShieldCheck, X, Volume2, VolumeX, Play, SkipForward } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
@@ -98,6 +98,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
   const panelRef = useRef<HTMLDivElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("unbox");
+  const locale = useLocale();
   const tr = useTranslations();
   const { fmt } = useCurrency();
   const { boxTitle, itemName } = useProductText();
@@ -724,6 +725,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                   <Link href="/inventory" className="text-gold-champagne underline-offset-2 hover:underline">
                     {t("keep")}
                   </Link>
+                  <span className="mt-2 block text-xs leading-6 text-secondary">{locale === "ko" ? "보관함 보관 기한은 30일이며, 30일 미사용 시 상품 가치의 95% 캐시백(USDT)으로 자동 전환됩니다." : locale === "zh" ? "保管期限为30天。30天未使用的商品将自动转换为商品价值95%的返现（USDT）。" : "Items can be stored for 30 days. After 30 days without use, they are automatically converted to 95% cashback (USDT)."}</span>
                 </p>
                 <button type="button" onClick={onClose} className="relative mt-2 h-11 w-full rounded-lg text-sm font-semibold text-muted transition-colors hover:text-white">
                   {t("close")}

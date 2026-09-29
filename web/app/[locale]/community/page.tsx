@@ -8,7 +8,7 @@ import { ReviewFormModal } from "@/components/community/ReviewFormModal";
 import { useCommunityStore, type MyReview } from "@/stores/communityStore";
 import { useInventoryStore } from "@/stores/inventoryStore";
 import { BOX_BY_SLUG } from "@/lib/products";
-import { canReview, MIN_REVIEW_ITEM_VALUE_USDT } from "@/lib/community";
+import { canReview, meetsReviewValue } from "@/lib/community";
 import { productOf } from "@/lib/vault";
 import { useProductText } from "@/lib/useProductText";
 import { cn } from "@/lib/format";
@@ -34,7 +34,7 @@ export default function CommunityPage() {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [toast, setToast] = useState("");
   const eligible = useMemo(() => items.filter(item => canReview(item, mine)), [items, mine]);
-  const hasMinValueItem = items.some(item => item.valueUsdt >= MIN_REVIEW_ITEM_VALUE_USDT);
+  const hasMinValueItem = items.some(meetsReviewValue);
   useEffect(() => { if (new URLSearchParams(window.location.search).get("tab") === "eligible") setTab("eligible"); }, []);
   useEffect(() => { setShown(12); setDeleting(null); }, [tab, query, filter, sort]);
   useEffect(() => { if (!toast) return; const timer = setTimeout(() => setToast(""), 5000); return () => clearTimeout(timer); }, [toast]);
@@ -55,6 +55,7 @@ export default function CommunityPage() {
         <div><p className="workspace-eyebrow">VOILA JOURNAL</p><h1>{r("journalTitle")}</h1><p className="workspace-description">{r("journalIntro")}</p></div>
         <button className="workspace-button primary" onClick={() => eligible.length ? write() : setTab("eligible")}><Pencil className="h-4 w-4" aria-hidden="true" />{t("write")}</button>
       </header>
+      {!hasMinValueItem && <p className="mb-5 rounded-xl border border-hairline p-4 text-sm leading-7 text-secondary">{r("minReviewItemValueNotice")}</p>}
       <nav className="workspace-tabs" aria-label={r("journalTitle")}>
         {(["public", "mine", "eligible"] as const).map(key => <button key={key} aria-current={key === tab ? "page" : undefined} onClick={() => setTab(key)}>{r(`reviewTabs.${key}`)}{key !== "public" && <span>{key === "mine" ? mine.length : eligible.length}</span>}</button>)}
       </nav>

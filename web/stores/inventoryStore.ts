@@ -12,6 +12,17 @@ import type { TierKey } from "@/lib/tiers";
 import type { ShippingAddress } from "@/lib/shipping";
 import type { CarrierKey } from "@/lib/carriers";
 import { attributeRefunds, normalizeRatio, sourceOf, type FundingRatio, type FundingSource } from "@/lib/funding";
+import { REFUND_RATE } from "@/lib/types";
+import { browserAccountsEnabled } from "@/lib/account";
+import { useWalletStore } from "@/stores/walletStore";
+import { useAuthStore } from "@/stores/authStore";
+
+export const EXPIRE_MS = 30 * 24 * 60 * 60 * 1000;
+export function daysUntilCashback(acquiredAt: string, now: number): number | null {
+  const acquired = Date.parse(acquiredAt);
+  return Number.isFinite(acquired) && Number.isFinite(now)
+    ? Math.max(0, Math.ceil((acquired + EXPIRE_MS - now) / 86_400_000)) : null;
+}
 
 export type OwnedStatus = "IN_STORAGE" | "SHIPPING_REQUESTED" | "SHIPPING" | "DELIVERED" | "SOLD";
 
@@ -31,6 +42,7 @@ export interface OwnedItem {
   /** SOLD 시 실제 환급액 */
   soldForUsdt?: number;
   soldAt?: string;
+  autoCashbackAt?: string;
   shipping?: { address: ShippingAddress; feeUsdt: number; requestedAt: string; carrier?: CarrierKey; trackingNumber?: string; shippedAt?: string; deliveredAt?: string; requestId?: string; feeFundingRatio?: FundingRatio };
   shippingCancellations?: { requestId?: string; requestedAt: string; cancelledAt: string; feeRefundUsdt: number; toCrypto: number; toCard: number }[];
 }
@@ -38,6 +50,7 @@ export interface OwnedItem {
 interface InventoryState {
   items: OwnedItem[];
   hydrated: boolean;
+  sweepExpired: (now?: number) => { ids: string[]; totalUsdt: number };
   add: (items: Omit<OwnedItem, "id" | "status" | "acquiredAt">[]) => OwnedItem[];
   /** 환급 — 합계와 함께 원천별 귀속액(교차 환급 차단)을 돌려준다 */
   sell: (ids: string[], refundRate: number) => { ids: string[]; totalUsdt: number; toCrypto: number; toCard: number };
@@ -55,6 +68,25 @@ export const useInventoryStore = create<InventoryState>()(
     (set, get) => ({
       items: [],
       hydrated: false,
+      sweepExpired: (now = Date.now()) => {
+        const none = { ids: [] as string[], totalUsdt: 0 };
+        if (!Number.isFinite(now) || !Number.isFinite(new Date(now).getTime())) return none;
+        const expired = get().items.filter(item => item.status === "IN_STORAGE"
+          && Number.isFinite(item.valueUsdt) && item.valueUsdt >= 0
+          && now - Date.parse(item.acquiredAt) >= EXPIRE_MS);
+        if (!expired.length) return none;
+        const refunds = new Map(expired.map(item => [item.id, +(item.valueUsdt * REFUND_RATE).toFixed(2)]));
+        const totalUsdt = +[...refunds.values()].reduce((sum, amount) => sum + amount, 0).toFixed(2);
+        if (!Number.isFinite(totalUsdt)) return none;
+        const at = new Date(now).toISOString();
+        // Claim the items before crediting: subscriptions and subsequent sweeps cannot pay twice.
+        set(s => ({ items: s.items.map(item => refunds.has(item.id) && item.status === "IN_STORAGE"
+          ? { ...item, status: "SOLD", soldForUsdt: refunds.get(item.id), soldAt: at, autoCashbackAt: at }
+          : item) }));
+        useWalletStore.getState().credit(totalUsdt);
+        useWalletStore.getState().addTransaction({ type: "sellback", amountUsdt: totalUsdt, ref: "auto_cashback_30d" });
+        return { ids: [...refunds.keys()], totalUsdt };
+      },
       add: (items) => {
         const now = new Date().toISOString();
         const recs: OwnedItem[] = items.map((i) => {
@@ -141,6 +173,48 @@ export const useInventoryStore = create<InventoryState>()(
     },
   ),
 );
+
+/** Hydration and account restoration must finish together before moving money. */
+export function sweepReadyInventory(now = Date.now()) {
+  if (!useInventoryStore.getState().hydrated || !useWalletStore.getState().hydrated) return;
+  if (browserAccountsEnabled()) {
+    const auth = useAuthStore.getState();
+    const account = auth.user?.id ?? "guest";
+    if (!auth.hydrated
+      || useInventoryStore.persist?.getOptions().name !== `voila.browser-inventory.${account}`
+      || useWalletStore.persist?.getOptions().name !== `voila.browser-wallet.${account}`) return;
+  }
+  const result = useInventoryStore.getState().sweepExpired(now);
+  if (!result.ids.length) return;
+  const n = result.ids.length;
+  const amount = result.totalUsdt.toFixed(2);
+  const locale = typeof document !== "undefined" ? document.documentElement.lang : "ko";
+  useAuthStore.getState().pushToast(locale.startsWith("en")
+    ? `${n} items stored for over 30 days were automatically converted to ${amount} USDT cashback.`
+    : locale.startsWith("zh") ? `${n}件商品已超过30天保管期限，已自动转换为${amount} USDT返现。`
+    : `보관 기한(30일)이 경과한 상품 ${n}건이 ${amount} USDT로 자동 캐시백 전환되었습니다.`);
+}
+
+// This store is loaded by the shared app shell, so expiration also runs outside the inventory page.
+// Defer subscriptions until the account's wallet and inventory have both been restored.
+if (typeof window !== "undefined") {
+  const host = window as Window & { __inventoryExpiryCleanup?: () => void };
+  host.__inventoryExpiryCleanup?.();
+  let pending: ReturnType<typeof setTimeout> | undefined;
+  const schedule = () => {
+    clearTimeout(pending);
+    pending = setTimeout(() => { if (document.visibilityState !== "hidden") sweepReadyInventory(); }, 0);
+  };
+  const unsubscribers = [useInventoryStore.subscribe(schedule), useWalletStore.subscribe(schedule), useAuthStore.subscribe(schedule)];
+  const timer = setInterval(schedule, 60_000);
+  window.addEventListener("focus", schedule);
+  document.addEventListener("visibilitychange", schedule);
+  host.__inventoryExpiryCleanup = () => {
+    clearTimeout(pending); clearInterval(timer); unsubscribers.forEach(unsubscribe => unsubscribe());
+    window.removeEventListener("focus", schedule); document.removeEventListener("visibilitychange", schedule);
+  };
+  schedule();
+}
 
 /** 파생 요약 */
 export function summarize(items: OwnedItem[]) {

@@ -13,9 +13,13 @@ export const MIN_REVIEW_ITEM_VALUE_USDT = 100;
 export const REVIEW_MIN_CHARS = 5;
 export const REVIEW_MAX_CHARS = 1200;
 
+export function meetsReviewValue(item: Pick<OwnedItem, "valueUsdt">): boolean {
+  return Number.isFinite(item.valueUsdt) && item.valueUsdt >= MIN_REVIEW_ITEM_VALUE_USDT;
+}
+
 /** A tracking number or an in-transit state is not proof of delivery. */
 export function canReview(item: OwnedItem, reviews: Pick<MyReview, "ownedId">[]): boolean {
-  return item.valueUsdt >= MIN_REVIEW_ITEM_VALUE_USDT && item.status === "DELIVERED" && !!item.shipping?.deliveredAt && Number.isFinite(Date.parse(item.shipping.deliveredAt)) && !reviews.some(r => r.ownedId === item.id);
+  return meetsReviewValue(item) && item.status === "DELIVERED" && !!item.shipping?.deliveredAt && Number.isFinite(Date.parse(item.shipping.deliveredAt)) && !reviews.some(r => r.ownedId === item.id);
 }
 
 export interface Review {

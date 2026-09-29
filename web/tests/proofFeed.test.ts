@@ -1,9 +1,43 @@
 // 실지급/실배송 피드 — 이 기기의 실제 기록에서만 만든다. TxID·운송장은 발급된 것만 링크한다.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildLocalPayouts, buildLocalShipments, maskRecipient } from "../lib/proofFeed";
+import { buildProofFeed, buildLocalPayouts, buildLocalShipments, maskRecipient } from "../lib/proofFeed";
 import type { OwnedItem } from "../stores/inventoryStore";
 import type { Transaction } from "../stores/walletStore";
+
+test("single feed uses actual transactions only, sorts before limiting and keeps actual statuses", () => {
+  assert.deepEqual(buildProofFeed([], "me"), []);
+  const types = ["open", "deposit_card", "deposit_usdt", "sellback", "withdraw"] as const;
+  const txs = types.map((type, i): Transaction => ({ id: `tx${i}`, type, amountUsdt: i + 1, at: `2026-09-0${i + 1}T00:00:00Z`, status: type === "withdraw" ? "CANCELLED" : undefined }));
+  const feed = buildProofFeed(txs, "me");
+  assert.deepEqual(feed.map(p => p.kind), [...types].reverse());
+  assert.equal(feed[0].status, "CANCELLED");
+  assert.equal(feed[0].network, undefined);
+  assert.equal(feed[0].txHash, undefined);
+  assert.equal(feed[1].status, undefined);
+  assert.deepEqual(buildProofFeed(txs, "me", [], 2).map(p => p.id), ["tx4", "tx3"]);
+});
+
+test("server and local records merge without duplicate IDs or chain hashes", () => {
+  const hash = "ab".repeat(32);
+  const local: Transaction[] = [{ id: "local", serverId: "server", type: "withdraw", amountUsdt: -20, at: "2026-09-01T00:00:00Z", status: "PENDING" },
+    { id: "other", type: "open", amountUsdt: -10, at: "2026-09-02T00:00:00Z" }];
+  const remote = [{ id: "server", user: "me", kind: "withdraw", amountUsdt: 20, at: "2026-09-01T00:00:00Z", network: "TRC20", txHash: hash, status: "COMPLETED" },
+    { id: "duplicate", user: "me", kind: "withdraw", amountUsdt: 20, at: "2026-09-01T00:00:00Z", network: "TRC20", txHash: hash }];
+  const feed = buildProofFeed(local, "me", remote);
+  assert.deepEqual(feed.map(p => p.id), ["other", "server"]);
+  assert.equal(feed[1].status, "COMPLETED");
+  assert.equal(feed[1].txHash, hash);
+});
+
+test("API boundary rejects fabricated shapes, invalid dates and amounts; never invents explorer links", () => {
+  const valid = { id: "1", user: "u***", kind: "withdraw", amountUsdt: 1, at: "2026-09-01T00:00:00Z" };
+  const feed = buildProofFeed([], "me", [null, {}, { ...valid, kind: "shipments" }, { ...valid, at: "bad" }, { ...valid, amountUsdt: Infinity }, { ...valid, amountUsdt: "1" }, { ...valid, network: "BEP20", txHash: "fake", status: "invented" }]);
+  assert.equal(feed.length, 1);
+  assert.equal(feed[0].txHash, undefined);
+  assert.equal(feed[0].status, undefined);
+  assert.deepEqual(buildProofFeed([], "me", { payouts: [valid] }), []);
+});
 
 test("수령인 마스킹 — 한글은 가운데, 영문은 이름 첫 글자 + 성 이니셜", () => {
   assert.equal(maskRecipient("홍길동"), "홍*동");
