@@ -2,7 +2,7 @@ import { MIN_DEPOSIT_USDT } from "./depositAddress";
 import { MIN_WITHDRAW_USDT, WITHDRAW_NETWORK_BY_KEY } from "./withdrawal";
 
 // Pre-launch documents describe the design; they do not enable transactions.
-export const LEGAL_VERSION = "2026-09-29-draft.1";
+export const LEGAL_VERSION = "2026-09-29-draft.2";
 export const LEGAL_DOCS = ["terms", "privacy", "payments", "withdrawals", "refunds", "policy", "fairness", "safety", "community", "cookies", "complaints", "business", "faq"] as const;
 export type LegalDoc = (typeof LEGAL_DOCS)[number];
 export const LEGAL_GROUPS = [

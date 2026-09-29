@@ -20,9 +20,9 @@ const API_BASE = (process.env.NEXT_PUBLIC_API_BASE ?? "").replace(/\/+$/, "");
 
 /** 그 공급자가 실제로 연결돼 있는가 — 아니면 로컬 세션이다 */
 export function providerConfigured(provider: AuthProvider): boolean {
-  if (provider === "google") return GOOGLE_CLIENT_ID.length > 0;
-  if (provider === "apple") return APPLE_CLIENT_ID.length > 0;
-  return API_BASE.length > 0;
+  // Client IDs alone are not an OAuth/OTP integration. Until a verified server
+  // session exchange exists, every session created by authStore is local.
+  return false;
 }
 
 /** 셋 중 하나라도 연결돼 있으면 실계정 경로가 존재한다 */

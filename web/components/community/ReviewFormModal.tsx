@@ -1,178 +1,90 @@
 "use client";
-
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useModal } from "@/lib/useModal";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Camera, X, Star, Gift, ImagePlus } from "lucide-react";
-import { cn } from "@/lib/format";
-import { useCurrency } from "@/lib/useCurrency";
+import { Camera, ImagePlus, Star, X } from "lucide-react";
+import { useModal } from "@/lib/useModal";
 import { useProductText } from "@/lib/useProductText";
-import { BOX_BY_SLUG } from "@/lib/products";
-import { REVIEW_BONUS_USDT } from "@/lib/community";
-import { useInventoryStore, type OwnedItem } from "@/stores/inventoryStore";
-import { useCommunityStore } from "@/stores/communityStore";
-import { Money } from "@/components/ui/Money";
+import { productOf } from "@/lib/vault";
+import { canReview, REVIEW_MAX_CHARS, REVIEW_MIN_CHARS } from "@/lib/community";
+import { useInventoryStore } from "@/stores/inventoryStore";
+import { useCommunityStore, type MyReview } from "@/stores/communityStore";
+import { cn } from "@/lib/format";
+import { Link } from "@/i18n/navigation";
 
-/** 사진 축소 — localStorage 에 넣을 수 있게 긴 변 640px, JPEG 0.8 */
-async function shrinkImage(file: File, max = 640): Promise<string> {
+async function shrinkImage(file: File): Promise<string> {
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 8 * 1024 * 1024) throw new Error("photo");
   const url = URL.createObjectURL(file);
   try {
-    const img = await new Promise<HTMLImageElement>((res, rej) => {
-      const i = new Image();
-      i.onload = () => res(i);
-      i.onerror = rej;
-      i.src = url;
-    });
-    const scale = Math.min(1, max / Math.max(img.width, img.height));
-    const c = document.createElement("canvas");
-    c.width = Math.round(img.width * scale);
-    c.height = Math.round(img.height * scale);
-    c.getContext("2d")?.drawImage(img, 0, 0, c.width, c.height);
-    return c.toDataURL("image/jpeg", 0.8);
-  } finally {
-    URL.revokeObjectURL(url);
-  }
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => { const image = new Image(); image.onload = () => resolve(image); image.onerror = reject; image.src = url; });
+    if (img.width * img.height > 40000000) throw new Error("photo");
+    const scale = Math.min(1, 960 / Math.max(img.width, img.height));
+    const canvas = document.createElement("canvas"); canvas.width = Math.max(1, Math.round(img.width * scale)); canvas.height = Math.max(1, Math.round(img.height * scale));
+    const context = canvas.getContext("2d"); if (!context) throw new Error("photo");
+    context.drawImage(img, 0, 0, canvas.width, canvas.height); return canvas.toDataURL("image/jpeg", 0.8);
+  } finally { URL.revokeObjectURL(url); }
 }
-
-export interface ReviewFormModalProps {
-  open: boolean;
-  onClose: () => void;
-  /** 저장 완료 — 호출측이 보너스 지급·토스트 */
-  onSubmitted: (ownedId: string, bonusUsdt: number) => void;
-}
-
-/**
- * 포토 후기 작성 (CLAUDE.md §7-B). 배송받은(SHIPPING) 아이템만 대상. 한 아이템당 1회, 10 USDT 보너스.
- * 업로드 백엔드가 없어 브라우저에만 저장된다 — 데모 고지.
- */
-export function ReviewFormModal({ open, onClose, onSubmitted }: ReviewFormModalProps) {
+export interface ReviewFormModalProps { open: boolean; onClose: () => void; onSubmitted: () => void; initialOwnedId?: string; editing?: MyReview | null; }
+export function ReviewFormModal({ open, onClose, onSubmitted, initialOwnedId, editing }: ReviewFormModalProps) {
   const t = useTranslations("community");
-  const { fmt } = useCurrency();
-  const { boxTitle, itemName } = useProductText();
-  const items = useInventoryStore((s) => s.items);
-  const hasReviewed = useCommunityStore((s) => s.hasReviewed);
-  const add = useCommunityStore((s) => s.add);
-
-  const eligible: OwnedItem[] = useMemo(() => items.filter((o) => o.status === "SHIPPING" && !hasReviewed(o.id)), [items, hasReviewed]);
-  const [ownedId, setOwnedId] = useState<string>("");
+  const r = useTranslations("refinement");
+  const { itemName } = useProductText();
+  const items = useInventoryStore(s => s.items);
+  const mine = useCommunityStore(s => s.mine);
+  const eligible = items.filter(item => canReview(item, mine));
+  const [ownedId, setOwnedId] = useState("");
   const [text, setText] = useState("");
-  const [rating, setRating] = useState(5);
-  const [photo, setPhoto] = useState<string | undefined>();
-  const [error, setError] = useState<string | null>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  useModal(open, onClose, panelRef);
-
+  const [rating, setRating] = useState(0);
+  const [photo, setPhoto] = useState<string>();
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const imageTask = useRef(0);
+  const panel = useRef<HTMLDivElement>(null);
+  useModal(open, onClose, panel);
   useEffect(() => {
-    if (!open) return;
-    setOwnedId(eligible[0]?.id ?? "");
-    setText("");
-    setRating(5);
-    setPhoto(undefined);
-    setError(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
-  const onFile = useCallback(async (f: File | undefined) => {
-    if (!f) return;
-    try {
-      setPhoto(await shrinkImage(f));
-    } catch {
-      setError("photo");
-    }
-  }, []);
-
-  const submit = () => {
-    const o = eligible.find((x) => x.id === ownedId);
-    if (!o) return setError("item");
-    if (text.trim().length < 5) return setError("text");
-    add({ ownedId: o.id, boxSlug: o.boxSlug, itemId: o.itemId, text: text.trim(), rating, photo, bonusUsdt: REVIEW_BONUS_USDT });
-    onSubmitted(o.id, REVIEW_BONUS_USDT);
+    if (!open) { imageTask.current++; return; }
+    const first = useInventoryStore.getState().items.find(item => canReview(item, useCommunityStore.getState().mine));
+    setOwnedId(editing?.ownedId ?? initialOwnedId ?? first?.id ?? "");
+    setText(editing?.text ?? ""); setRating(editing?.rating ?? 0); setPhoto(editing?.photo); setError(""); setBusy(false);
+  }, [open, initialOwnedId, editing]);
+  const onFile = async (file?: File) => {
+    if (!file) return;
+    const task = ++imageTask.current;
+    setBusy(true); setError("");
+    try { const result = await shrinkImage(file); if (task === imageTask.current) setPhoto(result); }
+    catch { if (task === imageTask.current) setError("photoError"); }
+    finally { if (task === imageTask.current) setBusy(false); }
   };
-
-  return (
-    <AnimatePresence>
-      {open && (
-        <motion.div className="fixed inset-0 z-[120] overflow-y-auto bg-obsidian/85 px-3 py-6 backdrop-blur-sm md:px-6 md:py-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-          <motion.div ref={panelRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label={t("writeTitle")} className="relative mx-auto w-full max-w-xl rounded-lg border border-hairline bg-canvas p-6 outline-none md:p-8" initial={{ opacity: 0, y: 20, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
-            <button type="button" onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
-              <X className="h-5 w-5" strokeWidth={2} />
-            </button>
-            <div className="flex items-center gap-2">
-              <Camera className="h-5 w-5 text-gold-champagne" strokeWidth={2.2} />
-              <h2 className="pr-9 text-2xl font-medium tracking-tight text-white">{t("writeTitle")}</h2>
-            </div>
-            <p className="mt-1 flex flex-wrap items-baseline gap-1 text-xs text-muted">
-              <Gift className="h-3.5 w-3.5 self-center text-gold-champagne" strokeWidth={2.2} />
-              {t("writeBonus")} <Money value={REVIEW_BONUS_USDT} size="xs" numberClassName="text-gold-champagne" />
-            </p>
-
-            {eligible.length === 0 ? (
-              <div className="border-metallic-subtle mt-5 rounded-lg bg-obsidian p-4 text-sm text-muted">{t("noEligible")}</div>
-            ) : (
-              <div className="mt-5 grid gap-4">
-                <label className="block">
-                  <span className="caption-luxury">{t("pickItem")}</span>
-                  <select value={ownedId} onChange={(e) => setOwnedId(e.target.value)} className="mt-1.5 w-full rounded-md border border-hairline bg-obsidian px-3 py-2.5 text-sm text-white outline-none focus:border-gold-champagne">
-                    {eligible.map((o) => {
-                      const b = BOX_BY_SLUG[o.boxSlug];
-                      const it = b?.items.find((i) => i.id === o.itemId);
-                      return (
-                        <option key={o.id} value={o.id} className="bg-obsidian">
-                          {it ? itemName(it) : o.itemId} · {b ? boxTitle(b) : o.boxSlug}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </label>
-
-                <div>
-                  <span className="caption-luxury">{t("photo")}</span>
-                  <label className={cn("border-metallic-subtle mt-1.5 flex cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-obsidian", photo ? "aspect-video" : "h-28")}>
-                    {photo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={photo} alt="" className="h-full w-full object-cover" />
-                    ) : (
-                      <span className="flex flex-col items-center gap-1 text-xs text-muted">
-                        <ImagePlus className="h-6 w-6 text-faint" strokeWidth={1.6} />
-                        {t("photoHint")}
-                      </span>
-                    )}
-                    <input type="file" accept="image/*" className="sr-only" onChange={(e) => onFile(e.target.files?.[0])} />
-                  </label>
-                </div>
-
-                <div>
-                  <span className="caption-luxury">{t("rating")}</span>
-                  <div className="mt-1.5 flex gap-1">
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <button key={n} type="button" onClick={() => setRating(n)} aria-label={`${t("rating")} ${n} / 5`} aria-pressed={n === rating} className="flex h-11 w-11 items-center justify-center rounded-md hover:bg-elevation">
-                        <Star className={cn("h-5 w-5", n <= rating ? "fill-gold-champagne text-gold-champagne" : "text-faint")} strokeWidth={1.8} />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <label className="block">
-                  <span className="caption-luxury">{t("text")}</span>
-                  <textarea value={text} onChange={(e) => setText(e.target.value)} rows={3} maxLength={160} placeholder={t("textHint")} className="mt-1.5 w-full resize-none rounded-md border border-hairline bg-obsidian px-3 py-2.5 text-sm text-white outline-none placeholder:text-faint focus:border-gold-champagne" />
-                  <span className="mt-1 block text-right font-mono text-xs text-muted">{text.length}/160</span>
-                </label>
-
-                {error && <p role="alert" className="text-sm text-crimson">{t(`errors.${error}`)}</p>}
-
-                <button type="button" onClick={submit} className="flex h-12 items-center justify-center gap-2 rounded-md bg-gold-champagne text-sm font-bold text-obsidian hover:bg-gold-metallic">
-                  <Camera className="h-4 w-4" strokeWidth={2.4} />
-                  {t("submit", { bonus: fmt(REVIEW_BONUS_USDT) })}
-                </button>
-              </div>
-            )}
-            <p className="mt-5 text-xs leading-6 text-muted">{t("bonusNote", { bonus: fmt(REVIEW_BONUS_USDT) })}</p>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
+  const submit = () => {
+    if (busy) return;
+    if (text.trim().length < REVIEW_MIN_CHARS || text.trim().length > REVIEW_MAX_CHARS) return setError("textError");
+    if (rating < 1 || rating > 5) return setError("ratingError");
+    try {
+      if (editing) useCommunityStore.getState().update(editing.id, { text: text.trim(), rating, photo });
+      else {
+        const item = useInventoryStore.getState().items.find(i => i.id === ownedId);
+        if (!item || !canReview(item, useCommunityStore.getState().mine)) return setError("eligibilityError");
+        useCommunityStore.getState().add({ ownedId, boxSlug: item.boxSlug, itemId: item.itemId, text: text.trim(), rating, photo, bonusUsdt: 0 });
+      }
+      onSubmitted();
+    } catch { setError("storageError"); }
+  };
+  if (!open) return null;
+  return <div className="fixed inset-0 z-[120] overflow-y-auto bg-obsidian/85 px-3 py-6 backdrop-blur-sm md:py-12" onMouseDown={e => e.target === e.currentTarget && onClose()}>
+    <div ref={panel} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="review-heading" className="relative mx-auto max-w-xl rounded-2xl border border-hairline bg-surface p-6 outline-none md:p-8">
+      <button onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full hover:bg-elevation"><X className="h-5 w-5" /></button>
+      <p className="workspace-eyebrow">VOILA JOURNAL</p><h2 id="review-heading" className="mt-3 pr-8 text-2xl font-medium text-white">{editing ? r("editReview") : t("writeTitle")}</h2>
+      <p className="mt-3 text-sm leading-6 text-muted">{r("reviewLocalNote")}</p>
+      {eligible.length === 0 && !editing ? <p className="mt-6 rounded-xl border border-hairline p-5 text-sm leading-7 text-secondary">{r("eligibleEmptyBody")}</p> : <form className="mt-6 grid gap-5" onSubmit={e => { e.preventDefault(); submit(); }}>
+        {!editing && <label className="text-sm text-secondary">{t("pickItem")}<select className="workspace-select mt-2 w-full" value={ownedId} onChange={e => setOwnedId(e.target.value)}>{eligible.map(item => <option key={item.id} value={item.id}>{productOf(item) ? itemName(productOf(item)!) : item.itemId}</option>)}</select></label>}
+        <fieldset><legend className="mb-2 text-sm text-secondary">{t("rating")}</legend><div className="flex gap-1">{[1, 2, 3, 4, 5].map(n => <label key={n} className="relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg hover:bg-elevation"><input type="radio" className="peer sr-only" name="rating" value={n} checked={rating === n} onChange={() => setRating(n)} aria-label={r("ratingLabel", { n })} /><Star aria-hidden="true" className={cn("h-6 w-6 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-gold-champagne", n <= rating ? "fill-gold-champagne text-gold-champagne" : "text-muted")} /></label>)}</div></fieldset>
+        <label className="text-sm text-secondary">{t("text")}<textarea value={text} onChange={e => setText(e.target.value)} rows={5} maxLength={REVIEW_MAX_CHARS} placeholder={t("textHint")} className="mt-2 w-full rounded-xl border border-hairline bg-obsidian p-4 text-sm leading-7 text-white placeholder:text-muted" /><span className="mt-1 block text-right text-xs text-muted">{text.length} / {REVIEW_MAX_CHARS}</span></label>
+        <div><p className="mb-2 text-sm text-secondary">{t("photo")}</p>{photo && <div className="mb-3 flex items-center gap-3"><img src={photo} alt={r("attachedPhoto")} className="h-24 w-24 rounded-lg object-cover" /><button type="button" className="workspace-text-link" onClick={() => { imageTask.current++; setPhoto(undefined); setBusy(false); }}>{r("removePhoto")}</button></div>}
+          <label className="workspace-button relative cursor-pointer"><ImagePlus className="h-4 w-4" aria-hidden="true" />{r(busy ? "processingPhoto" : "attachPhoto")}<input aria-label={r("attachPhoto")} type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={e => { void onFile(e.target.files?.[0]); e.target.value = ""; }} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" /></label><p className="mt-2 text-xs text-muted">{r("photoHint")}</p>
+        </div>
+        {error && <p role="alert" className="text-sm text-[#f3ad9e]">{r(error)}</p>}
+        <button type="submit" disabled={busy} className="workspace-button primary w-full"><Camera className="h-4 w-4" />{r(editing ? "saveChanges" : "saveReview")}</button>
+      </form>}
+      <Link href="/legal/community" target="_blank" rel="noopener noreferrer" className="workspace-text-link mt-4">{r("reviewPolicy")}</Link>
+    </div>
+  </div>;
 }
-
-export default ReviewFormModal;

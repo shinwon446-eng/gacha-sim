@@ -142,6 +142,7 @@ function CircuitBanner({ t, used, limit, remaining, tripped }: { t: TFn; used: n
  */
 export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps) {
   const t = useTranslations("withdraw");
+  const r = useTranslations("refinement");
   const locale = useLocale();
   const { currency, fmt } = useCurrency();
   const rates = useCurrencyStore((s) => s.rates);
@@ -210,6 +211,8 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   };
 
   const submit = useCallback(() => {
+    // A preview must not debit a balance or create an apparently accepted withdrawal.
+    if (!isLive()) return;
     setTouched(true);
     if (stage.kind !== "form") return;
     if (!amlOk) {
@@ -348,6 +351,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   return (
     <>
       <PolicyNotice />
+      {!isLive() && <p className="my-4 rounded-lg border border-hairline bg-obsidian p-4 text-sm leading-7 text-secondary">{r("withdrawUnavailable")}</p>}
       {/* 출금 가능액은 암호화폐 입금분만 — 카드 충전분은 온체인 출금 불가 (CLAUDE.md §7-B) */}
       <div className="mt-2 grid gap-1.5">
         <div className="flex items-baseline justify-between gap-3">
@@ -451,7 +455,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
       <button
         type="button"
         onClick={submit}
-        disabled={stage.kind !== "form" || !amlOk || (touched && errors.length > 0)}
+        disabled={!isLive() || stage.kind !== "form" || !amlOk || (touched && errors.length > 0)}
         className="mt-4 flex h-12 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md bg-gold-champagne px-3 text-sm font-bold text-obsidian shadow-[0_0_24px_rgba(230,202,101,0.35)] transition-colors hover:bg-gold-metallic disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
       >
         {stage.kind === "submitting" ? (

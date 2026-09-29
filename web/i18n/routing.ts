@@ -16,4 +16,4 @@ export const routing = defineRouting({
 export const LOCALE_LABEL: Record<Locale, string> = { ko: "한국어", en: "English", zh: "中文" };
 export const LOCALE_SHORT: Record<Locale, string> = { ko: "KO", en: "EN", zh: "ZH" };
 /** html lang 값 */
-export const LOCALE_LANG: Record<Locale, string> = { ko: "ko", en: "en", zh: "zh-CN" };
+export const LOCALE_LANG: Record<Locale, string> = { ko: "ko", en: "en", zh: "zh-Hans" };

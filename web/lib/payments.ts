@@ -96,7 +96,8 @@ const randomId = (prefix: string): string => {
 /** Stripe — NEXT_PUBLIC_STRIPE_PK 가 있어야 한다. 실제 연동은 서버 세션 생성이 필요하다. */
 export const stripeProvider: PaymentProvider = {
   key: "stripe",
-  configured: () => !!envKey("NEXT_PUBLIC_STRIPE_PK"),
+  // The checkout implementation below has no session endpoint yet. A key is not readiness.
+  configured: () => false,
   async checkout() {
     // 실서비스: fetch("/api/payments/stripe/session") → stripe.redirectToCheckout(sessionId)
     throw new Error("Stripe 미설정: NEXT_PUBLIC_STRIPE_PK 와 서버 세션 엔드포인트가 필요합니다");
@@ -106,7 +107,7 @@ export const stripeProvider: PaymentProvider = {
 /** PortOne(구 아임포트) — NEXT_PUBLIC_PORTONE_STORE_ID 가 있어야 한다. */
 export const portoneProvider: PaymentProvider = {
   key: "portone",
-  configured: () => !!envKey("NEXT_PUBLIC_PORTONE_STORE_ID"),
+  configured: () => false,
   async checkout() {
     // 실서비스: PortOne.requestPayment({ storeId, channelKey, paymentId, orderName, totalAmount, currency:"KRW" })
     throw new Error("PortOne 미설정: NEXT_PUBLIC_PORTONE_STORE_ID 와 채널 키가 필요합니다");

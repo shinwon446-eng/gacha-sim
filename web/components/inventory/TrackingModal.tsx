@@ -22,6 +22,7 @@ const STEPS: Step[] = ["requested", "label", "transit", "delivered"];
 
 /** 상태 → 완료된 단계 수. SHIPPING_REQUESTED 는 신청만, SHIPPING 은 운송장 발급 + 운송 중 */
 function doneCount(o: OwnedItem): number {
+  if (o.status === "DELIVERED") return 4;
   if (o.status === "SHIPPING") return 3;
   if (o.status === "SHIPPING_REQUESTED") return o.shipping?.trackingNumber ? 2 : 1;
   return 0;
@@ -114,6 +115,7 @@ export function TrackingModal({ item, onClose }: TrackingModalProps) {
                       <div className={cn("text-sm font-semibold", isDone ? "text-white" : "text-faint")}>{t(`steps.${s}`)}</div>
                       {s === "requested" && item.shipping?.requestedAt && <div className="text-xs text-faint">{new Date(item.shipping.requestedAt).toLocaleString(locale)}</div>}
                       {s === "label" && item.shipping?.shippedAt && <div className="text-xs text-faint">{new Date(item.shipping.shippedAt).toLocaleString(locale)}</div>}
+                      {s === "delivered" && item.shipping?.deliveredAt && <div className="text-xs text-muted">{new Date(item.shipping.deliveredAt).toLocaleString(locale)}</div>}
                       {isCurrent && <div className="text-xs text-gold-champagne">{t("stepCurrent")}</div>}
                     </div>
                   </li>

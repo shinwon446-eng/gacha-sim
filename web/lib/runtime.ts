@@ -27,7 +27,7 @@ export const RESERVE_NETWORK = (process.env.NEXT_PUBLIC_RESERVE_NETWORK ?? "TRC2
 
 /** 고객지원 채널 — 푸터 */
 export const SUPPORT = {
-  telegram: process.env.NEXT_PUBLIC_SUPPORT_TELEGRAM ?? "https://t.me/gachaflix",
-  discord: process.env.NEXT_PUBLIC_SUPPORT_DISCORD ?? "https://discord.gg/gachaflix",
-  notice: process.env.NEXT_PUBLIC_SUPPORT_NOTICE ?? "https://t.me/gachaflix_notice",
+  telegram: process.env.NEXT_PUBLIC_SUPPORT_TELEGRAM ?? "",
+  discord: process.env.NEXT_PUBLIC_SUPPORT_DISCORD ?? "",
+  notice: process.env.NEXT_PUBLIC_SUPPORT_NOTICE ?? "",
 };

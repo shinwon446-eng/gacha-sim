@@ -1,484 +1,179 @@
 "use client";
-
-import { SiteHeader } from "@/components/layout/SiteHeader";
-
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Wallet, Truck, ShieldCheck, CheckSquare, Square, ArrowUpRight, ChevronDown, Coins } from "lucide-react";
-import { cn } from "@/lib/format";
-import { Link, useRouter } from "@/i18n/navigation";
-import { useCurrency } from "@/lib/useCurrency";
-import { useProductText } from "@/lib/useProductText";
-import { BOX_BY_SLUG, REFUND_RATE, floorRatio, type ProductBox, type ProductItem } from "@/lib/products";
-import { rolloverContribution } from "@/lib/rollover";
-import { TIERS, TIER_BY_KEY, glow, type TierKey } from "@/lib/tiers";
-import type { ShippingAddress } from "@/lib/shipping";
-import { isLive } from "@/lib/runtime";
-import { api } from "@/lib/api";
-import { useInventoryStore, summarize, type OwnedItem, type OwnedStatus } from "@/stores/inventoryStore";
-import { useWalletStore } from "@/stores/walletStore";
-import { useSettingsStore } from "@/stores/settingsStore";
-import { playChime } from "@/lib/audio";
+import { ArrowDownLeft, ArrowUpRight, Check, ChevronDown, Coins, Package, Search, ShieldCheck, Truck, Wallet, X } from "lucide-react";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import { ProductArt } from "@/components/box/ProductArt";
-import { DetailModal } from "@/components/box/DetailModal";
-import { UnboxingRoulette, type UnboxResult } from "@/components/unboxing/UnboxingRoulette";
-import { BulkOpenModal } from "@/components/unboxing/BulkOpenModal";
-import { BULK_THRESHOLD, type AutoplayConfig } from "@/lib/autoplay";
-import { BrandLogo } from "@/components/layout/BrandLogo";
-import { LanguageSelector } from "@/components/layout/LanguageSelector";
-import { CurrencySelector } from "@/components/layout/CurrencySelector";
-import { HeaderAuthControl } from "@/components/auth/HeaderAuthControl";
 import { Money } from "@/components/ui/Money";
 import { SellConfirmModal } from "@/components/inventory/SellConfirmModal";
 import { DeliveryModal } from "@/components/inventory/DeliveryModal";
-import { ShippingTicker } from "@/components/inventory/ShippingTicker";
 import { TrackingModal } from "@/components/inventory/TrackingModal";
-import { HotBoxes } from "@/components/inventory/HotBoxes";
 import { WithdrawalModal } from "@/components/wallet/WithdrawalModal";
-import type { FundingRatio } from "@/lib/funding";
 import { VisualVerifyModal } from "@/components/fairness/VisualVerifyModal";
+import { Link } from "@/i18n/navigation";
+import { cn } from "@/lib/format";
+import { useCurrency } from "@/lib/useCurrency";
+import { useProductText } from "@/lib/useProductText";
+import { BOX_BY_SLUG, REFUND_RATE } from "@/lib/products";
+import { productOf, processedAt, recordKind, resaleEstimate, vaultTab, type VaultTab } from "@/lib/vault";
+import type { ShippingAddress } from "@/lib/shipping";
+import { useInventoryStore, type OwnedItem } from "@/stores/inventoryStore";
+import { useWalletStore } from "@/stores/walletStore";
+import { isLive } from "@/lib/runtime";
+import { api } from "@/lib/api";
 
-/** 2단 탭 — 보유 중(미사용 당첨 상품) / 처리 완료(환전·출고 아카이브) */
-type VaultTab = "held" | "done";
-const DONE_STATUSES: OwnedStatus[] = ["SOLD", "SHIPPING_REQUESTED", "SHIPPING"];
-type SortKey = "newest" | "valueDesc" | "valueAsc";
-const SORTS: SortKey[] = ["newest", "valueDesc", "valueAsc"];
-
-function itemOf(o: OwnedItem): ProductItem | undefined {
-  return BOX_BY_SLUG[o.boxSlug]?.items.find((i) => i.id === o.itemId);
-}
-
-const isShippingStatus = (s: OwnedStatus) => s === "SHIPPING_REQUESTED" || s === "SHIPPING";
-
-const chipCls = "min-h-11 rounded-lg px-3 py-2 text-xs font-semibold transition-colors";
-
-/**
- * 보관함 — 넷플릭스 'My List' 그리드 (PROMPTS 5-1/5-2).
- * 압축 배너(요약 칩 · 총 자산 · 출금 · 일괄 판매) → 전체 선택 + 상태·등급 필터 + 정렬 → 카드 그리드 → 플로팅 일괄 판매 바.
- * 금액은 전부 <Money> — 숫자 크게·단위 작게, 단일 통화. 빈 화면은 TOP 3 박스 캐러셀로 채운다.
- */
+const PAGE = 24;
 export default function InventoryPage() {
-  const t = useTranslations();
+  const t = useTranslations("inventory");
+  const r = useTranslations("refinement");
+  const tw = useTranslations("withdraw");
   const locale = useLocale();
   const { fmt } = useCurrency();
-  const { boxTitle, itemName } = useProductText();
-  const items = useInventoryStore((s) => s.items);
-  const sell = useInventoryStore((s) => s.sell);
-  const requestShipping = useInventoryStore((s) => s.requestShipping);
-  const markShipping = useInventoryStore((s) => s.markShipping);
-  const balance = useWalletStore((s) => s.balance);
-  const credit = useWalletStore((s) => s.credit);
-  const creditSplit = useWalletStore((s) => s.creditSplit);
-  const debit = useWalletStore((s) => s.debit);
-  const debitSplit = useWalletStore((s) => s.debitSplit);
-  const addTransaction = useWalletStore((s) => s.addTransaction);
-
+  const { itemName, boxTitle } = useProductText();
+  const items = useInventoryStore(s => s.items);
+  const hydrated = useInventoryStore(s => s.hydrated);
+  const balance = useWalletStore(s => s.balance);
   const [tab, setTab] = useState<VaultTab>("held");
-  const [tier, setTier] = useState<TierKey | "all">("all");
-  const [sort, setSort] = useState<SortKey>("newest");
+  const [query, setQuery] = useState("");
+  const [kind, setKind] = useState("all");
+  const [period, setPeriod] = useState("all");
+  const [sort, setSort] = useState("newest");
+  const [shown, setShown] = useState(PAGE);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [sellTarget, setSellTarget] = useState<string[] | null>(null);
   const [shipTarget, setShipTarget] = useState<string[] | null>(null);
-  const [verify, setVerify] = useState<OwnedItem | null>(null);
   const [track, setTrack] = useState<OwnedItem | null>(null);
-  const router = useRouter();
+  const [verify, setVerify] = useState<OwnedItem | null>(null);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
-  const [detail, setDetail] = useState<ProductBox | null>(null);
-  const [unbox, setUnbox] = useState<{ box: ProductBox; count: number; auto?: AutoplayConfig; funding?: FundingRatio } | null>(null);
-  const [bulk, setBulk] = useState<{ box: ProductBox; count: number; funding?: FundingRatio } | null>(null);
-  const [toast, setToast] = useState<{ id: number; text: string; tone: string } | null>(null);
+  const [toast, setToast] = useState("");
 
-  /** 한 번에 그리는 카드 수 — 수백 건을 모바일에서 한꺼번에 렌더하지 않는다 */
-  const PAGE = 24;
-  const [shown, setShown] = useState(PAGE);
-  useEffect(() => setShown(PAGE), [tab, tier, sort]);
-
-  const summary = useMemo(() => summarize(items), [items]);
-  const visible = useMemo(() => {
-    const list = items.filter((o) => (tab === "held" ? o.status === "IN_STORAGE" : DONE_STATUSES.includes(o.status)) && (tier === "all" || o.tier === tier));
-    if (sort === "valueDesc") return [...list].sort((a, b) => b.valueUsdt - a.valueUsdt);
-    if (sort === "valueAsc") return [...list].sort((a, b) => a.valueUsdt - b.valueUsdt);
-    return [...list].sort((a, b) => b.acquiredAt.localeCompare(a.acquiredAt));
-  }, [items, tab, tier, sort]);
-  const selectable = useMemo(() => visible.filter((o) => o.status === "IN_STORAGE"), [visible]);
-  const allSelected = selectable.length > 0 && selectable.every((o) => selected.has(o.id));
-  const selectedItems = items.filter((o) => selected.has(o.id) && o.status === "IN_STORAGE");
-  const selectedValue = +selectedItems.reduce((s, o) => s + o.valueUsdt, 0).toFixed(2);
-  const storedIds = useMemo(() => items.filter((o) => o.status === "IN_STORAGE").map((o) => o.id), [items]);
-  const rateLabel = `${Math.round(REFUND_RATE * 100)}%`;
-  const heldCount = items.filter((o) => o.status === "IN_STORAGE").length;
-  const doneCount = items.filter((o) => DONE_STATUSES.includes(o.status)).length;
-
-  // live: 출고 대기 항목의 운송장을 물류 API 에서 동기화한다 (60초). preview 는 발급 주체가 없으므로 대기 상태 그대로 둔다.
+  useEffect(() => {
+    const value = new URLSearchParams(window.location.search).get("tab");
+    if (value === "shipping" || value === "done") setTab(value);
+  }, []);
+  useEffect(() => { setShown(PAGE); setSelected(new Set()); }, [tab, query, kind, period, sort]);
+  useEffect(() => { if (!toast) return; const id = setTimeout(() => setToast(""), 5000); return () => clearTimeout(id); }, [toast]);
   useEffect(() => {
     if (!isLive()) return;
-    const tick = () => {
-      for (const o of useInventoryStore.getState().items) {
-        if (o.status !== "SHIPPING_REQUESTED") continue;
-        api
-          .shipping(o.id)
-          .then((r) => markShipping(o.id, r.carrier, r.trackingNumber))
-          .catch(() => {});
-      }
-    };
-    tick();
-    const id = setInterval(tick, 60_000);
-    return () => clearInterval(id);
-  }, [markShipping]);
-
-  const say = useCallback((text: string, tone: string) => {
-    const id = Date.now();
-    setToast({ id, text, tone });
-    setTimeout(() => setToast((x) => (x?.id === id ? null : x)), 4500);
+    const tick = () => useInventoryStore.getState().items.filter(o => o.status === "SHIPPING_REQUESTED").forEach(o => {
+      api.shipping(o.id).then(s => useInventoryStore.getState().markShipping(o.id, s.carrier, s.trackingNumber)).catch(() => {});
+    });
+    tick(); const timer = setInterval(tick, 60000); return () => clearInterval(timer);
   }, []);
 
-  const toggle = (id: string) =>
-    setSelected((s) => {
-      const n = new Set(s);
-      if (n.has(id)) n.delete(id);
-      else n.add(id);
-      return n;
+  const counts = useMemo(() => items.reduce((acc, item) => { acc[vaultTab(item)]++; return acc; }, { held: 0, shipping: 0, done: 0 }), [items]);
+  const visible = useMemo(() => {
+    const cutoff = period === "all" ? 0 : Date.now() - Number(period) * 86400000;
+    return items.filter(item => {
+      const product = productOf(item);
+      const box = BOX_BY_SLUG[item.boxSlug];
+      const haystack = [product ? itemName(product) : item.itemId, box ? boxTitle(box) : item.boxSlug, item.id].join(" ").toLocaleLowerCase(locale);
+      return vaultTab(item) === tab && (kind === "all" || recordKind(item) === kind) && haystack.includes(query.trim().toLocaleLowerCase(locale)) && (!cutoff || Date.parse(processedAt(item) ?? "") >= cutoff);
+    }).sort((a, b) => {
+      if (sort === "valueDesc") return (tab === "done" ? b.soldForUsdt ?? 0 : b.valueUsdt) - (tab === "done" ? a.soldForUsdt ?? 0 : a.valueUsdt);
+      const delta = (Date.parse(processedAt(b) ?? "") || 0) - (Date.parse(processedAt(a) ?? "") || 0);
+      return sort === "oldest" ? -delta : delta;
     });
-  const toggleAll = () => setSelected(allSelected ? new Set() : new Set(selectable.map((o) => o.id)));
-
-  const sellAmountFor = (ids: string[]) => +items.filter((o) => ids.includes(o.id) && o.status === "IN_STORAGE").reduce((s, o) => s + o.valueUsdt * REFUND_RATE, 0).toFixed(2);
-
-  const confirmSell = () => {
+  }, [items, tab, query, kind, period, sort, itemName, boxTitle, locale]);
+  const selectedItems = visible.filter(o => selected.has(o.id) && o.status === "IN_STORAGE");
+  const allSelected = visible.length > 0 && visible.every(o => selected.has(o.id));
+  const targetItems = items.filter(o => sellTarget?.includes(o.id));
+  const switchTab = (next: VaultTab) => { setTab(next); setKind("all"); setSelected(new Set()); };
+  const reset = () => { setQuery(""); setKind("all"); setPeriod("all"); setSort("newest"); };
+  const date = (value?: string) => value && Number.isFinite(Date.parse(value)) ? new Intl.DateTimeFormat(locale, { year: "numeric", month: "short", day: "numeric" }).format(new Date(value)) : r("unknownDate");
+  const sell = () => {
     if (!sellTarget) return;
-    const { ids, totalUsdt, toCrypto, toCard } = sell(sellTarget, REFUND_RATE);
-    if (ids.length) {
-      // 카드 출처 아이템의 환급금은 카드 잔액으로만 되돌아간다 (CLAUDE.md §7-B)
-      creditSplit(toCrypto, toCard);
-      addTransaction({ type: "sellback", amountUsdt: totalUsdt, ref: ids.join(",") });
-      if (!useSettingsStore.getState().muted) playChime();
-      say(t("inventory.soldToast", { amount: fmt(totalUsdt) }), "#E6CA65");
+    const result = useInventoryStore.getState().sell(sellTarget, REFUND_RATE);
+    if (result.ids.length) {
+      const wallet = useWalletStore.getState();
+      wallet.creditSplit(result.toCrypto, result.toCard);
+      wallet.addTransaction({ type: "sellback", amountUsdt: result.totalUsdt, ref: result.ids.join(",") });
+      setToast(t("soldToast", { amount: fmt(result.totalUsdt) }));
     }
-    setSellTarget(null);
-    setSelected(new Set());
+    setSellTarget(null); setSelected(new Set());
   };
-
-  const submitShip = (address: ShippingAddress, fee: number) => {
-    if (!shipTarget) return;
-    if (!debit(fee)) return;
-    requestShipping(shipTarget, address, fee);
-    if (fee > 0) addTransaction({ type: "open", amountUsdt: -fee, ref: `shipping:${address.country}`, rolloverUsdt: 0 });
-    say(t("inventory.shipRequestedToast"), "#93C5FD");
+  const ship = (_address: ShippingAddress, _fee: number) => {
+    // There is no authenticated shipment creation endpoint yet. Do not collect an address or claim submission.
+    setToast(r("shippingUnavailable"));
     setShipTarget(null);
-    setSelected(new Set());
   };
-
-  // 빈 화면 TOP 3 → 상세/오픈. 홈과 같은 규칙: 가격 × 횟수 차감 후 룰렛.
-  const openBox = useCallback(
-    (box: ProductBox, count = 1) => {
-      const cost = box.price * count;
-      const plan = debitSplit(cost);
-      if (!plan) {
-        say(t("unbox.insufficient", { price: fmt(cost) }), "#E50914");
-        return;
-      }
-      // 롤오버 인정액 — 저위험(바닥 환전율 90%+) 상자는 30% 만 (lib/rollover.ts)
-      addTransaction({ type: "open", amountUsdt: -cost, ref: `${box.slug}x${count}`, rolloverUsdt: rolloverContribution(cost, floorRatio(box)) });
-      setDetail(null);
-      if (count >= BULK_THRESHOLD) setBulk({ box, count, funding: plan.ratio });
-      else setUnbox({ box, count, funding: plan.ratio });
-    },
-    [debitSplit, addTransaction, say, t, fmt],
-  );
-  const onSellBack = useCallback(
-    (results: UnboxResult[], amount: number, split?: { toCrypto: number; toCard: number }) => {
-      // 환급금은 아이템 족보대로 — 카드 출처는 카드 잔액으로만 (CLAUDE.md §7-B)
-      if (split) creditSplit(split.toCrypto, split.toCard);
-      else credit(amount);
-      addTransaction({ type: "sellback", amountUsdt: amount, ref: results.map((r) => r.item.id).join(",") });
-      say(t("unbox.sold", { amount: fmt(amount) }), "#E6CA65");
-    },
-    [credit, creditSplit, addTransaction, say, t, fmt],
-  );
-
-  return (
-    <main className="min-h-screen bg-canvas pb-28">
-      <SiteHeader />
-
-      <section className="page-shell pb-10 pt-8 md:pt-12">
-        {/* ── 요약 배너 (압축) ── */}
-        <div className="relative overflow-hidden rounded-2xl border border-hairline bg-surface p-5 md:p-8">
-
-          <div className="relative flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
-            {/* 좌: 캡션 · 타이틀 · 현황 칩 */}
-            <div className="min-w-0">
-              <div className="caption-luxury">{t("inventory.eyebrow")}</div>
-              <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-white md:text-4xl">{t("inventory.title")}</h1>
-              <ul className="mt-2.5 flex flex-wrap gap-1.5">
-                {[
-                  [t("inventory.storedCount", { n: summary.stored }), "text-white"],
-                  [t("inventory.shippingCount", { n: summary.shipping }), "text-tier-prestige"],
-                  [t("inventory.soldCount", { n: summary.sold }), "text-muted"],
-                ].map(([label, tone]) => (
-                  <li key={label} className={cn("border-metallic-subtle rounded-full bg-obsidian px-2.5 py-1 text-xs font-semibold tabular-nums", tone)}>
-                    {label}
-                  </li>
-                ))}
-              </ul>
+  return <main className="min-h-screen bg-canvas">
+    <SiteHeader />
+    <section className="page-shell workspace-shell">
+      <header className="workspace-heading">
+        <div><p className="workspace-eyebrow">MY VAULT</p><h1>{t("title")}</h1><p className="workspace-description">{r("vaultIntro")}</p></div>
+        <Link href="/legal/refunds" className="workspace-text-link">{r("transactionGuide")}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></Link>
+      </header>
+      {tab === "held" && <div className="vault-summary">
+        <div><span className="summary-label"><Wallet className="h-4 w-4" aria-hidden="true" />{r("walletBalance")}</span><Money value={balance} size="lg" className="mt-3" /><button onClick={() => setWithdrawOpen(true)} className="workspace-text-link mt-2">{r("manageBalance")}<ArrowUpRight className="h-4 w-4" aria-hidden="true" /></button></div>
+        <div><span className="summary-label"><Package className="h-4 w-4" aria-hidden="true" />{r("resaleEstimate")}</span><Money value={resaleEstimate(items)} size="lg" className="mt-3" numberClassName="text-gold-champagne" /><p className="mt-3 text-xs leading-5 text-muted">{r("estimateNote")}</p></div>
+      </div>}
+      <nav className="workspace-tabs" aria-label={t("title")}>
+        {(["held", "shipping", "done"] as const).map(key => <button key={key} aria-current={tab === key ? "page" : undefined} onClick={() => switchTab(key)}>{r(`tabs.${key}`)}<span>{counts[key]}</span></button>)}
+      </nav>
+      <div className="workspace-toolbar">
+        <label className="workspace-search"><Search aria-hidden="true" className="h-4 w-4 shrink-0" /><input value={query} onChange={e => setQuery(e.target.value)} placeholder={r("searchItems")} aria-label={r("searchItems")} />{query && <button onClick={() => setQuery("")} aria-label={r("clearSearch")}><X className="h-4 w-4" /></button>}</label>
+        {tab !== "held" && <select aria-label={r("typeFilter")} value={kind} onChange={e => setKind(e.target.value)} className="workspace-select">
+          {(tab === "done" ? ["all", "sellback", "cash"] : ["all", "requested", "transit", "delivered"]).map(key => <option key={key} value={key}>{r(`kinds.${key}`)}</option>)}
+        </select>}
+        <select aria-label={r("period")} value={period} onChange={e => setPeriod(e.target.value)} className="workspace-select">{["all", "7", "30", "90"].map(key => <option key={key} value={key}>{r(`periods.${key}`)}</option>)}</select>
+        <select aria-label={t("sort")} value={sort} onChange={e => setSort(e.target.value)} className="workspace-select">{["newest", "oldest", "valueDesc"].map(key => <option key={key} value={key}>{r(`sorts.${key}`)}</option>)}</select>
+      </div>
+      <div className="mb-5 flex min-h-11 flex-wrap items-center justify-between gap-2 text-xs text-muted">
+        <p aria-live="polite">{r("results", { n: visible.length })}<span className="mx-2">&middot;</span>{r(tab === "held" ? "acquisitionOrder" : "processingOrder")}</p>
+        {tab === "held" && visible.length > 0 && <button className="workspace-text-link" onClick={() => setSelected(allSelected ? new Set() : new Set(visible.map(o => o.id)))} aria-pressed={allSelected}><span className={cn("selection-check", allSelected && "is-selected")}>{allSelected && <Check className="h-3 w-3" />}</span>{t("selectAll")}</button>}
+      </div>
+      {!hydrated ? <div className="workspace-empty" role="status">{r("loading")}</div> : visible.length === 0 ? <div className="workspace-empty">
+        {tab === "shipping" ? <Truck aria-hidden="true" /> : tab === "done" ? <ArrowDownLeft aria-hidden="true" /> : <Package aria-hidden="true" />}
+        <h2>{r(query || kind !== "all" || period !== "all" ? "noResults" : `empty.${tab}.title`)}</h2>
+        <p>{r(query || kind !== "all" || period !== "all" ? "changeFilters" : `empty.${tab}.body`)}</p>
+        {query || kind !== "all" || period !== "all" ? <button className="workspace-button" onClick={reset}>{r("resetFilters")}</button> : <Link href={tab === "held" ? "/" : "/legal/" + (tab === "shipping" ? "policy" : "refunds")} className="workspace-button">{r(tab === "held" ? "explore" : "viewPolicy")}<ArrowUpRight className="h-4 w-4" /></Link>}
+      </div> : tab === "held" ? <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {visible.slice(0, shown).map(item => {
+          const product = productOf(item); const chosen = selected.has(item.id);
+          return <li key={item.id} className={cn("vault-product", chosen && "is-selected")}>
+            <div className="relative aspect-[16/10] bg-[#151718]">
+              {product && <ProductArt image={product.image} alt={itemName(product)} fallbackSize="md" />}
+              <button aria-label={r("selectItem", { name: product ? itemName(product) : item.itemId })} aria-pressed={chosen} className="absolute left-3 top-3 flex h-11 w-11 items-center justify-center rounded-full border border-hairline bg-obsidian/90" onClick={() => setSelected(prev => { const next = new Set(prev); next.has(item.id) ? next.delete(item.id) : next.add(item.id); return next; })}><span className={cn("selection-check", chosen && "is-selected")}>{chosen && <Check className="h-3 w-3" />}</span></button>
             </div>
-            {/* 우: 총 자산 · 출금 · 전체 판매 */}
-            <div className="flex w-full min-w-0 flex-wrap items-center gap-x-5 gap-y-3 sm:w-auto">
-              <div className="min-w-0 text-right">
-                <div className="caption-luxury !text-gold-champagne">{t("inventory.cashableValue")}</div>
-                <Money value={sellAmountFor(storedIds)} size="lg" numberClassName="text-gold-gradient" className="mt-1" />
-                <div className="mt-0.5 flex items-baseline justify-end gap-1 text-xs text-faint">
-                  {t("inventory.totalValue")} <Money value={summary.storedValueUsdt} size="xs" numberClassName="text-muted" />
-                </div>
-              </div>
-              <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-                <button type="button" onClick={() => setWithdrawOpen(true)} className="flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-hairline bg-obsidian px-4 text-xs font-semibold text-white transition-colors hover:bg-gold-metallic">
-                  <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2.4} />
-                  {t("inventory.withdrawBalance")}
-                </button>
-                <button
-                  type="button"
-                  disabled={storedIds.length === 0}
-                  onClick={() => setSellTarget(storedIds)}
-                  className="flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-md bg-[#f1eee7] px-4 text-xs font-semibold text-obsidian transition-colors hover:bg-gold-metallic disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  <Coins className="h-3.5 w-3.5" strokeWidth={2.4} />
-                  {t("inventory.sellAll")}
-                </button>
-              </div>
+            <div className="p-5"><p className="text-xs text-muted">{date(item.acquiredAt)}</p><h2 className="mt-2 text-base font-medium text-white">{product ? itemName(product) : item.itemId}</h2>
+              <p className="mt-1 text-xs leading-5 text-muted">{BOX_BY_SLUG[item.boxSlug] ? boxTitle(BOX_BY_SLUG[item.boxSlug]) : item.boxSlug}</p>
+              <div className="my-5 flex flex-wrap items-baseline justify-between gap-2"><span className="text-xs text-muted">{r("resaleValue")}</span><Money value={resaleEstimate([item])} size="md" /></div>
+              <div className="grid grid-cols-[1fr_1fr_44px] gap-2"><button className="workspace-button" onClick={() => setShipTarget([item.id])}>{r("requestDelivery")}</button><button className="workspace-button primary" onClick={() => setSellTarget([item.id])}>{r("sellback")}</button><button className="workspace-button !px-0" onClick={() => setVerify(item)} aria-label={t("verify")}><ShieldCheck className="h-4 w-4" /></button></div>
             </div>
-          </div>
-        </div>
-
-        <ShippingTicker className="mx-[4%] mt-4" />
-
-      {/* ── 2단 탭: 보유 중 / 처리 완료 ── */}
-        <div aria-label={t("inventory.title")} className="mt-5 grid grid-cols-2 gap-2 rounded-xl border border-hairline bg-obsidian p-1">
-          {(
-            [
-              ["held", t("inventory.tabHeld", { n: heldCount })],
-              ["done", t("inventory.tabDone", { n: doneCount })],
-            ] as const
-          ).map(([k, label]) => (
-            <button
-              key={k}
-              type="button"
-                            aria-pressed={tab === k}
-              onClick={() => {
-                setTab(k);
-                setSelected(new Set());
-              }}
-              className={cn(
-                "flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg text-sm font-bold transition-all duration-200",
-                tab === k ? "bg-[#f1eee7] text-obsidian" : "text-muted hover:bg-elevation hover:text-white",
-              )}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {/* ── 필터 바: 전체 선택 · 등급 · 정렬 ── */}
-        <div className="mt-3 flex flex-wrap items-center gap-2 border-b border-hairline pb-3">
-          <button
-            type="button"
-            onClick={toggleAll}
-            disabled={tab !== "held" || selectable.length === 0}
-            aria-pressed={allSelected}
-            className={cn("mr-1 flex min-h-11 items-center gap-1.5 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40", allSelected ? "text-gold-champagne" : "text-muted hover:text-white")}
-          >
-            {allSelected ? <CheckSquare className="h-4 w-4" strokeWidth={2.2} /> : <Square className="h-4 w-4" strokeWidth={2} />}
-            {t("inventory.selectAll")}
-          </button>
-          <span className="mx-1 hidden h-4 w-px bg-hairline sm:block" />
-          <span className="caption-luxury mr-1">{t("inventory.filterTier")}</span>
-          {(["all", ...TIERS.map((x) => x.key)] as const).map((k) => (
-            <button
-              key={k}
-              type="button"
-              onClick={() => setTier(k)}
-              className={cn(chipCls, tier === k ? "bg-white text-obsidian" : "border-metallic-subtle text-muted hover:text-white")}
-              style={tier !== k && k !== "all" ? { color: TIER_BY_KEY[k].accent } : undefined}
-            >
-              {k === "all" ? t("inventory.all") : TIER_BY_KEY[k].label}
-            </button>
-          ))}
-          <label className="glass-dark relative ml-auto flex h-11 items-center rounded-md pl-3 pr-8 text-xs font-semibold text-secondary">
-            <span className="sr-only">{t("inventory.sort")}</span>
-            <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} className="appearance-none bg-transparent pr-1 text-xs font-semibold text-secondary outline-none">
-              {SORTS.map((k) => (
-                <option key={k} value={k} className="bg-obsidian text-white">
-                  {t(`inventory.sorts.${k}`)}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-2.5 h-3.5 w-3.5 text-muted" strokeWidth={2.2} />
-          </label>
-        </div>
-
-        {/* ── 그리드 / 빈 화면 ── */}
-        {visible.length === 0 ? (
-          items.length === 0 ? (
-            <HotBoxes className="mt-6" onOpen={setDetail} onInspect={setDetail} />
-          ) : (
-            <div className="border-metallic-subtle mt-6 rounded-xl bg-surface px-6 py-12 text-center text-sm text-muted">{tab === "done" && tier === "all" ? t("inventory.emptyDone") : t("inventory.emptyFiltered")}</div>
-          )
-        ) : (
-          <ul className="mt-6 grid grid-cols-1 gap-4 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {visible.slice(0, shown).map((o) => {
-              const item = itemOf(o);
-              const box = BOX_BY_SLUG[o.boxSlug];
-              const tierMeta = TIER_BY_KEY[o.tier];
-              const stored = o.status === "IN_STORAGE";
-              const shipping = isShippingStatus(o.status);
-              const isSel = selected.has(o.id);
-              return (
-                <li
-                  key={o.id}
-                  className={cn("relative overflow-hidden rounded-xl bg-surface transition-shadow", o.tier === "royal" ? "border-metallic-gold" : "border-metallic-subtle", isSel && "ring-1 ring-gold-champagne")}
-                  style={isSel ? { boxShadow: `0 0 24px ${glow(tierMeta.accent, 0.25)}` } : undefined}
-                >
-                  {/* 썸네일 — 배송 상태면 클릭 시 추적 모달 */}
-                  <div
-                    role={shipping ? "button" : undefined}
-                    tabIndex={shipping ? 0 : undefined}
-                    onClick={shipping ? () => setTrack(o) : undefined}
-                    onKeyDown={shipping ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setTrack(o); } } : undefined}
-                    className={cn("relative aspect-[4/3] w-full overflow-hidden bg-obsidian", shipping && "cursor-pointer")}
-                  >
-                    {item ? <ProductArt image={item.image} alt={itemName(item)} accent={tierMeta.accent} kind={item.kind} glowStrength={0.22} fallbackSize="md" /> : <ProductArt image={{ src: null }} alt="" accent={tierMeta.accent} />}
-                    <div className="absolute left-2 top-2 z-10 flex items-center gap-1.5">
-                      {stored && (
-                        <button type="button" onClick={() => toggle(o.id)} aria-label={t("inventory.select")} aria-pressed={isSel} className="flex h-11 w-11 items-center justify-center rounded-sm bg-obsidian/85 text-secondary hover:text-white">
-                          {isSel ? <CheckSquare className="h-4 w-4 text-gold-champagne" strokeWidth={2.2} /> : <Square className="h-4 w-4" strokeWidth={2} />}
-                        </button>
-                      )}
-                      <span className="rounded-sm px-1.5 py-1 text-xs font-bold uppercase tracking-widest" style={{ color: tierMeta.accent, backgroundColor: glow(tierMeta.accent, 0.12), border: `1px solid ${glow(tierMeta.accent, 0.45)}` }}>
-                        {tierMeta.label}
-                      </span>
-                    </div>
-                    <span
-                      className={cn(
-                        "z-10 flex items-center gap-1 text-xs font-bold",
-                        stored
-                          ? "absolute right-2 top-2 rounded-sm bg-obsidian/80 px-1.5 py-1 text-secondary"
-                          : "absolute inset-x-0 bottom-0 justify-center whitespace-nowrap bg-obsidian/85 px-2 py-1.5 backdrop-blur-sm",
-                        !stored && (o.status === "SOLD" ? "border-t border-gold-champagne/40 text-gold-champagne" : "border-t border-tier-prestige/40 text-tier-prestige"),
-                      )}
-                    >
-                      {stored
-                        ? t("inventory.status.IN_STORAGE")
-                        : o.status === "SOLD"
-                          ? `${t(item?.kind === "cash" ? "inventory.doneCash" : "inventory.doneSold", { amount: fmt(o.soldForUsdt ?? 0) })}`
-                          : o.status === "SHIPPING"
-                            ? `${t("inventory.doneShipping")}`
-                            : `${t("inventory.donePreparing")}`}
-                    </span>
-                  </div>
-
-                  <div className="p-4">
-                    <div className="line-clamp-2 min-h-10 text-sm font-semibold leading-5 text-white">{item ? itemName(item) : o.itemId}</div>
-                    <div className="truncate text-xs text-faint">{box ? boxTitle(box) : o.boxSlug}</div>
-                    <div className="mt-1.5 flex items-baseline justify-between gap-2">
-                      <Money value={o.valueUsdt} size="sm" className="min-w-0 max-w-full overflow-hidden" numberClassName="truncate" style={{ color: tierMeta.accent }} />
-                      <span className="flex-none text-xs text-faint">{new Date(o.acquiredAt).toLocaleDateString(locale)}</span>
-                    </div>
-                    {o.status === "SOLD" && o.soldForUsdt !== undefined && (
-                      <div className="mt-1 flex items-baseline gap-1 text-xs text-muted">
-                        {t("inventory.soldForLabel")} <Money value={o.soldForUsdt} size="xs" numberClassName="text-secondary" />
-                      </div>
-                    )}
-                    {shipping && (
-                      <div className="mt-1 truncate text-xs text-muted">
-                        {o.shipping?.carrier ? `${t(`inventory.carriers.${o.shipping.carrier}`)} · ` : `${t("inventory.tracking")}: `}
-                        <span className="font-mono text-secondary">{o.shipping?.trackingNumber ?? t("inventory.trackingPending")}</span>
-                      </div>
-                    )}
-                    {stored ? (
-                      <div className="mt-3 grid grid-cols-[1fr_auto] gap-1.5">
-                        <button type="button" onClick={() => setSellTarget([o.id])} className="flex h-11 min-w-0 items-center justify-center gap-1 whitespace-nowrap rounded-sm bg-[#f1eee7] px-3 text-xs font-bold text-obsidian hover:bg-gold-metallic md:text-xs">
-                          <span className="truncate">{t("inventory.sellShort")}<span className="hidden xl:inline"> · {t("inventory.noFee")}</span></span>
-                        </button>
-                        <button type="button" onClick={() => setVerify(o)} aria-label={t("inventory.verify")} title={t("inventory.verify")} className="glass-dark row-span-2 flex h-full w-11 items-center justify-center rounded-sm text-gold-champagne hover:border-gold-champagne">
-                          <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2.2} />
-                        </button>
-                        <button type="button" onClick={() => setShipTarget([o.id])} className="flex h-11 min-w-0 items-center justify-center gap-1 whitespace-nowrap rounded-sm border border-white/25 bg-transparent px-1 text-xs font-semibold text-white transition-colors hover:border-gold-champagne hover:text-gold-champagne md:text-xs">
-                          <Truck className="h-3 w-3 flex-none" strokeWidth={2.2} />
-                          <span className="truncate">{t("inventory.shipShort")}</span>
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="mt-3 grid grid-cols-[1fr_auto] gap-1.5">
-                        {shipping ? (
-                          <button type="button" onClick={() => setTrack(o)} className="glass flex h-11 items-center justify-center gap-1 rounded-sm text-xs font-semibold text-white hover:bg-white/15">
-                            <Truck className="h-3 w-3" strokeWidth={2.2} />
-                            {t("inventory.track")}
-                          </button>
-                        ) : (
-                          <span className="flex h-11 items-center justify-center rounded-sm border border-white/10 text-xs font-semibold text-faint">{t("inventory.archived")}</span>
-                        )}
-                        <button type="button" onClick={() => setVerify(o)} aria-label={t("inventory.verify")} title={t("inventory.verify")} className="glass-dark flex h-11 w-11 items-center justify-center rounded-sm text-gold-champagne hover:border-gold-champagne">
-                          <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2.2} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-        {shown < visible.length && (
-          <div className="mt-6 flex justify-center">
-            <button type="button" onClick={() => setShown((n) => n + PAGE)} className="rounded-sm border border-[#555555] px-6 py-2.5 text-[13px] font-semibold text-white transition-colors duration-200 hover:border-white hover:bg-elevation">
-              {t("grid.loadMore", { n: visible.length - shown })}
-            </button>
-          </div>
-        )}
-      </section>
-
-      {/* ── 플로팅 일괄 액션 바 — 모바일은 하단 내비(h-14) 위에 뜬다 ── */}
-      <AnimatePresence>
-        {selectedItems.length > 0 && (
-          <motion.div className="fixed inset-x-0 bottom-[calc(64px+env(safe-area-inset-bottom))] z-40 px-[4%] pb-3 md:bottom-0 md:pb-4" initial={{ y: 80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 80, opacity: 0 }} transition={{ duration: 0.25 }}>
-            <div className="border-metallic-gold mx-auto flex max-w-3xl flex-wrap items-center gap-3 rounded-xl bg-obsidian/95 p-3 backdrop-blur-md">
-              <div className="flex min-w-0 items-baseline gap-2 text-sm text-secondary">
-                <span>{t("inventory.selected", { n: selectedItems.length })}</span>
-                <span className="flex items-baseline gap-1 text-xs text-muted">
-                  ({t("inventory.selectedValue")} <Money value={selectedValue} size="sm" numberClassName="text-white" />)
-                </span>
-              </div>
-              <button type="button" onClick={() => setSelected(new Set())} className="min-h-11 px-2 text-xs text-muted hover:text-white">
-                {t("inventory.clearSelection")}
-              </button>
-              <div className="ml-auto flex gap-2">
-                <button type="button" onClick={() => setShipTarget(selectedItems.map((o) => o.id))} className="glass h-11 rounded-md px-4 text-sm font-semibold text-white hover:bg-white/15">
-                  {t("inventory.ship")}
-                </button>
-                <button type="button" onClick={() => setSellTarget(selectedItems.map((o) => o.id))} className="h-11 rounded-md bg-gold-champagne px-4 text-sm font-bold text-obsidian hover:bg-gold-metallic">
-                  {t("inventory.sellSelected", { rate: rateLabel })}
-                </button>
-              </div>
+          </li>;
+        })}
+      </ul> : <div className="record-list">
+        <div className="record-table-heading" aria-hidden="true"><span>{r("item")}</span><span>{r("typeFilter")}</span><span>{r(tab === "done" ? "settledAmount" : "shipmentState")}</span><span>{r("processedDate")}</span></div>
+        <ul>{visible.slice(0, shown).map(item => {
+          const product = productOf(item); const type = recordKind(item); const at = processedAt(item);
+          return <li key={item.id} className="record-item">
+            <div className="record-main">
+              <div className="record-product"><div className="record-thumbnail">{type === "cash" ? <Coins className="h-6 w-6 text-gold-champagne" aria-hidden="true" /> : product && <ProductArt image={product.image} alt="" fallbackSize="sm" />}</div><div className="min-w-0"><h2>{product ? itemName(product) : item.itemId}</h2><p>{BOX_BY_SLUG[item.boxSlug] ? boxTitle(BOX_BY_SLUG[item.boxSlug]) : item.boxSlug}</p></div></div>
+              <span className="record-type">{r(`kinds.${type}`)}</span>
+              <div className="record-value">{tab === "done" ? typeof item.soldForUsdt === "number" ? <Money value={item.soldForUsdt} size="md" sign="+" numberClassName="text-gold-champagne" /> : <span>{r("amountUnknown")}</span> : <span className={cn("status-pill", type === "delivered" && "is-complete")}>{type === "delivered" ? <Check /> : <Truck />}{t(`status.${item.status}`)}</span>}</div>
+              <time className="record-date" dateTime={at}>{date(at)}</time>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <SellConfirmModal open={!!sellTarget} count={sellTarget?.length ?? 0} amountUsdt={sellTarget ? sellAmountFor(sellTarget) : 0} refundRate={REFUND_RATE} onClose={() => setSellTarget(null)} onConfirm={confirmSell} />
-      <DeliveryModal open={!!shipTarget} itemCount={shipTarget?.length ?? 0} balanceUsdt={balance} onClose={() => setShipTarget(null)} onSubmit={submitShip} />
-      <TrackingModal item={track} onClose={() => setTrack(null)} />
-      <WithdrawalModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onRequested={(amount) => say(t("withdraw.requestedToast", { amount: fmt(amount) }), "#E6CA65")} onBlocked={(pct) => say(t("withdraw.amlBlocked", { pct }), "#E50914")} />
-      <VisualVerifyModal item={verify} onClose={() => setVerify(null)} />
-      <DetailModal box={detail} onClose={() => setDetail(null)} onOpen={openBox} onAutoplay={(b, cfg) => { setDetail(null); setUnbox({ box: b, count: 1, auto: cfg }); }} />
-      <BulkOpenModal box={bulk?.box ?? null} count={bulk?.count ?? 0} funding={bulk?.funding} onClose={() => setBulk(null)} onSellBack={(ids, amount, split) => { if (split) creditSplit(split.toCrypto, split.toCard); else credit(amount); addTransaction({ type: "sellback", amountUsdt: amount, ref: ids.join(",") }); say(t("inventory.soldToast", { amount: fmt(amount) }), "#E6CA65"); }} />
-      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} funding={unbox?.funding} auto={unbox?.auto} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={() => say(t("inventory.shipRequestedToast"), "#93C5FD")} onRespin={(b) => { setUnbox(null); setTimeout(() => openBox(b, 1), 60); }} />
-
-      <AnimatePresence>
-        {toast && (
-          <motion.div key={toast.id} className="border-metallic-subtle fixed bottom-24 right-4 z-50 rounded-lg bg-obsidian p-3 text-xs font-bold" style={{ color: toast.tone, boxShadow: `0 0 20px ${glow(toast.tone, 0.2)}` }} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 24 }}>
-            {toast.text}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </main>
-  );
+            <details className="record-details"><summary>{r("recordDetails")}<ChevronDown className="h-4 w-4" aria-hidden="true" /></summary>
+              <div className="record-detail-body"><dl>
+                <div><dt>{r("recordId")}</dt><dd className="break-all font-mono">{item.id}</dd></div>
+                <div><dt>{r("acquiredDate")}</dt><dd>{date(item.acquiredAt)}</dd></div>
+                <div><dt>{r("processedDate")}</dt><dd>{at ? new Date(at).toLocaleString(locale) : r("unknownDate")}</dd></div>
+                {tab === "done" && <><div><dt>{r("originalValue")}</dt><dd><Money value={item.valueUsdt} size="sm" /></dd></div><div><dt>{r("settledAmount")}</dt><dd>{typeof item.soldForUsdt === "number" ? <Money value={item.soldForUsdt} size="sm" /> : r("amountUnknown")}</dd></div><div><dt>{r("funding")}</dt><dd>{r(`fundingTypes.${item.fundingSource ?? "unknown"}`)}</dd></div></>}
+              </dl><div className="flex flex-wrap gap-3">{tab === "shipping" && <button className="workspace-button" onClick={() => setTrack(item)}><Truck className="h-4 w-4" />{t("track")}</button>}{item.status === "DELIVERED" && <Link href="/community?tab=eligible" className="workspace-button">{r("writeReview")}</Link>}<button className="workspace-button" onClick={() => setVerify(item)}><ShieldCheck className="h-4 w-4" />{t("verify")}</button></div></div>
+            </details>
+          </li>;
+        })}</ul>
+      </div>}
+      {shown < visible.length && <div className="mt-6 flex justify-center"><button className="workspace-button" onClick={() => setShown(n => n + PAGE)}>{r("loadMore", { n: visible.length - shown })}</button></div>}
+      <div className="workspace-footnote"><ShieldCheck className="h-4 w-4 shrink-0" aria-hidden="true" /><p>{r("localRecords")} <Link href="/legal/payments">{r("transactionGuide")}</Link></p></div>
+    </section>
+    {tab === "held" && selectedItems.length > 0 && <div className="vault-selection-bar"><div><p>{t("selected", { n: selectedItems.length })}</p><Money value={resaleEstimate(selectedItems)} size="sm" numberClassName="text-gold-champagne" /></div><button className="workspace-button" onClick={() => setSelected(new Set())} aria-label={t("clearSelection")}><X className="h-4 w-4" /></button><button className="workspace-button" onClick={() => setShipTarget(selectedItems.map(o => o.id))}>{r("requestDelivery")}</button><button className="workspace-button primary" onClick={() => setSellTarget(selectedItems.map(o => o.id))}>{r("sellback")}</button></div>}
+    <SellConfirmModal open={!!sellTarget} count={targetItems.length} amountUsdt={resaleEstimate(targetItems)} refundRate={REFUND_RATE} onClose={() => setSellTarget(null)} onConfirm={sell} />
+    <DeliveryModal open={!!shipTarget} itemCount={shipTarget?.length ?? 0} balanceUsdt={balance} onClose={() => setShipTarget(null)} onSubmit={ship} />
+    <TrackingModal item={track} onClose={() => setTrack(null)} />
+    <VisualVerifyModal item={verify} onClose={() => setVerify(null)} />
+    <WithdrawalModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onRequested={amount => setToast(tw("requestedToast", { amount: fmt(amount) }))} onBlocked={() => setToast(r("withdrawHelp"))} />
+    {toast && <div role="status" className="workspace-toast">{toast}</div>}
+  </main>;
 }

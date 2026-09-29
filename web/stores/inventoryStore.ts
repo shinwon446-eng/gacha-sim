@@ -13,7 +13,7 @@ import type { ShippingAddress } from "@/lib/shipping";
 import type { CarrierKey } from "@/lib/carriers";
 import { attributeRefunds, normalizeRatio, sourceOf, type FundingRatio, type FundingSource } from "@/lib/funding";
 
-export type OwnedStatus = "IN_STORAGE" | "SHIPPING_REQUESTED" | "SHIPPING" | "SOLD";
+export type OwnedStatus = "IN_STORAGE" | "SHIPPING_REQUESTED" | "SHIPPING" | "DELIVERED" | "SOLD";
 
 export interface OwnedItem {
   id: string;
@@ -31,7 +31,7 @@ export interface OwnedItem {
   /** SOLD 시 실제 환급액 */
   soldForUsdt?: number;
   soldAt?: string;
-  shipping?: { address: ShippingAddress; feeUsdt: number; requestedAt: string; carrier?: CarrierKey; trackingNumber?: string; shippedAt?: string };
+  shipping?: { address: ShippingAddress; feeUsdt: number; requestedAt: string; carrier?: CarrierKey; trackingNumber?: string; shippedAt?: string; deliveredAt?: string };
 }
 
 interface InventoryState {

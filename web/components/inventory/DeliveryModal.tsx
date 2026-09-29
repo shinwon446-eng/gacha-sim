@@ -76,6 +76,9 @@ function GuaranteeCards({ t, fee }: { t: ReturnType<typeof useTranslations<"deli
 export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit }: DeliveryModalProps) {
   const { fmt } = useCurrency();
   const t = useTranslations("delivery");
+  const r = useTranslations("refinement");
+  // No authenticated shipment-creation endpoint exists. Never simulate acceptance.
+  const acceptingRequests = false;
   const ti = useTranslations("inventory");
   const panelRef = useRef<HTMLDivElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -107,6 +110,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
   const has = (k: AddressError) => touched && errors.includes(k);
 
   const submit = useCallback(() => {
+    if (!acceptingRequests) return;
     const payload: ShippingAddress = { ...form, address: fullAddress, customsId: customs === "none" ? undefined : form.customsId?.trim().toUpperCase() };
     const errs = validateAddress(payload);
     setTouched(true);
@@ -151,6 +155,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
             </div>
 
             <PolicyNotice kind="delivery" />
+            <p className="mt-4 rounded-lg border border-hairline bg-obsidian p-4 text-sm leading-7 text-secondary">{r("shippingUnavailable")}</p>
             {stage === "done" ? (
               <div className="mt-4">
                 <div className="border-metallic-gold rounded-lg bg-obsidian p-4">
@@ -192,7 +197,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
                 <p className="mt-2 break-keep text-xs leading-relaxed text-muted">{t("body")}</p>
                 <div className="caption-luxury mt-3">{ti("itemsToShip", { n: itemCount })}</div>
 
-                <div className="mt-4 grid gap-3">
+                <fieldset disabled={!acceptingRequests} className="mt-4 grid gap-3 disabled:opacity-50">
                   <label className="block">
                     <span className="caption-luxury">{t("recipient")}</span>
                     <input value={form.recipient} onChange={(e) => set("recipient", e.target.value)} placeholder={t("recipientHint")} className={cn(inputCls, has("recipient") && "border-crimson")} />
@@ -255,9 +260,9 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
                       {has("customsId") && <span className="mt-1 block text-xs text-crimson">{ti("errors.customsId")}</span>}
                     </label>
                   )}
-                </div>
+                </fieldset>
 
-                {/* 3대 안심 배송 보증 */}
+                {/* Confirmed launch conditions are described in the policy. */}
                 <GuaranteeCards t={t} fee={fee} />
 
                 {/* 배송비 */}
@@ -273,7 +278,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
                 <button
                   type="button"
                   onClick={submit}
-                  disabled={insufficient || stage !== "form"}
+                  disabled={!acceptingRequests || insufficient || stage !== "form"}
                   className="mt-4 flex h-12 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md bg-gold-champagne px-3 text-sm font-bold text-obsidian shadow-[0_0_24px_rgba(230,202,101,0.35)] transition-colors hover:bg-gold-metallic disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
                 >
                   {stage === "inspecting" ? (

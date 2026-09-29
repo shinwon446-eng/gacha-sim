@@ -278,9 +278,9 @@
     "waybillPending": "Delivery design review · not dispatched",
     "waybillNote": "Only waybill numbers actually issued by the carrier are shown — no tracking link appears before then.",
     "tickerTitle": "📦 Shipment status",
-    "tickerFree": "Free-shipping event — 0.00 USDT domestically",
+    "tickerFree": "Available destinations and final delivery charges must be shown before a transaction.",
     "tickerAuth": "Inspection, delivery and compensation terms are pending",
-    "tickerInsured": "Shipping insurance included — reship or USDT compensation",
+    "tickerInsured": "Shipping insurance and loss or damage procedures must be finalized before service opens.",
     "doneCta": "Done"
   },
   "aboutBanner": {
@@ -649,7 +649,8 @@
       "IN_STORAGE": "In Vault",
       "SHIPPING_REQUESTED": "Preparing shipment",
       "SHIPPING": "Shipping",
-      "SOLD": "Paid back"
+      "SOLD": "Paid back",
+      "DELIVERED": "Delivered"
     },
     "acquired": "Acquired {date}",
     "from": "{box}",
@@ -1018,6 +1019,10 @@
         {
           "h": "Liability, governing law and disputes",
           "p": "Intentional misconduct, gross negligence and non-excludable statutory liability cannot be disclaimed. Users must not face unfair evidential burdens, excessive damages or one-sided exclusive jurisdiction. Governing law and venue require territorial review without displacing mandatory consumer rights or lawful access to courts. Translation discrepancies should be explained and corrected, not used to override statutory rights."
+        },
+        {
+          "h": "Display language and service territories",
+          "p": "VOILA provides interfaces for Korean, English and Simplified Chinese speakers. Language selection does not establish nationality, residence, delivery country or transaction eligibility. Actual availability must be separately determined and disclosed for residence, destination, payment method and applicable local rules. Transactions in unapproved territories must not be enabled. Changing language or using a VPN does not override regional restrictions."
         }
       ]
     },
@@ -1136,6 +1141,10 @@
         {
           "h": "Safeguards, incidents and changes",
           "p": "Least-privilege access, transit/storage protection, access logs, backup/recovery and deletion controls require real implementation and verification. Do not claim unverified PCI-DSS or security certification. Establish incident containment, investigation, mitigation and required notification/reporting with named contacts. Disclose changed purposes, categories or providers before implementation and obtain consent where required. Applicable privacy regulators and dispute-resolution bodies remain available."
+        },
+        {
+          "h": "Rights across language communities",
+          "p": "Display language does not determine applicable privacy law. Review the actual location of individuals, offering of services or monitoring, establishment of controllers and data movements. Where applicable, provide processes for access, correction, erasure, restriction, portability, consent withdrawal, objections, regulatory complaints and rights relating to automated decisions. Choosing a Korean, English or Chinese document is not a waiver of those rights."
         }
       ]
     },
@@ -1269,7 +1278,7 @@
         },
         {
           "h": "Collection, ordering, ratings and duration",
-          "p": "Live reviews need author eligibility, purchase/receipt verification, collection route, default sorting/recommendation rules, rating calculation and publication duration accessible on the first review screen. Currently the local list order and individual stars are displayed, not an aggregate of all customers. Local content remains until removed; live publication duration is undecided. Distinguish ads, recommendations and compensated exposure."
+          "p": "Eligible items have a delivered status and recorded delivery date. One review is saved per item record. Reviews default to newest creation date and can be sorted oldest first or filtered by rating, photos and search. Individual ratings are shown, without a service-wide customer rating. Local reviews can be edited and deleted. Saving a new review does not automatically delete older ones; storage failures are reported. Public publication periods, reporting, moderation and appeals require operating channels before launch."
         },
         {
           "h": "Content rights and personal information",
@@ -1359,7 +1368,7 @@
         },
         {
           "h": "Version, effective date and notices",
-          "p": "2026-09-29-draft.1 replaces brief text with separate deposit, withdrawal, unused-fund, statutory refund, delivery, privacy, review and dispute drafts. Prepared 2026-09-29; transaction terms have no effective date yet. Live changes must retain old versions, reasons/content, publication/effective dates, required notice/assent and treatment of pending orders. Existing valid rights must not be retroactively reduced."
+          "p": "2026-09-29-draft.2 replaces brief text with separate deposit, withdrawal, unused-fund, statutory refund, delivery, privacy, review and dispute drafts. Prepared 2026-09-29; transaction terms have no effective date yet. Live changes must retain old versions, reasons/content, publication/effective dates, required notice/assent and treatment of pending orders. Existing valid rights must not be retroactively reduced."
         }
       ]
     },
@@ -1654,5 +1663,152 @@
     },
     "footerStatus": "Pre-launch design review · Operator and regions pending · Real transactions not launched",
     "footerBusiness": "Legal entity, representative, registration, address and contacts will be published once confirmed. This is not a completed business disclosure."
+  },
+  "refinement": {
+    "languageScope": "Available in Korean, English and Simplified Chinese. Display language does not determine where transactions or delivery are available.",
+    "vaultIntro": "Your collection, deliveries and activity. All in one place.",
+    "walletBalance": "Wallet balance",
+    "resaleEstimate": "Estimated resale value",
+    "estimateNote": "Before resale · separate from withdrawable funds",
+    "manageBalance": "Balance & withdrawals",
+    "transactionGuide": "Transaction policies",
+    "searchItems": "Search items or record IDs",
+    "clearSearch": "Clear search",
+    "typeFilter": "Activity type",
+    "period": "Date range",
+    "sortLabel": "Sort order",
+    "tabs": {
+      "held": "Collection",
+      "shipping": "Deliveries",
+      "done": "Activity"
+    },
+    "kinds": {
+      "all": "All types",
+      "held": "In collection",
+      "cash": "Auto credit",
+      "sellback": "Resale",
+      "requested": "Preparing",
+      "transit": "In transit",
+      "delivered": "Delivered"
+    },
+    "periods": {
+      "all": "All time",
+      "7": "Last 7 days",
+      "30": "Last 30 days",
+      "90": "Last 90 days"
+    },
+    "sorts": {
+      "newest": "Newest first",
+      "oldest": "Oldest first",
+      "valueDesc": "Highest amount"
+    },
+    "unknownDate": "Not recorded",
+    "amountUnknown": "Amount not recorded",
+    "results": "{n} records",
+    "acquisitionOrder": "By acquisition date",
+    "processingOrder": "By activity date",
+    "loading": "Loading your records.",
+    "noResults": "No matching records",
+    "changeFilters": "Try another search or adjust your filters.",
+    "resetFilters": "Reset filters",
+    "empty": {
+      "held": {
+        "title": "Your collection starts here",
+        "body": "Items you acquire appear here, with delivery and resale options."
+      },
+      "shipping": {
+        "title": "No deliveries yet",
+        "body": "Follow each shipment from preparation to confirmed delivery here."
+      },
+      "done": {
+        "title": "No activity yet",
+        "body": "Resales and automatic credits appear here with the recorded amount and date."
+      }
+    },
+    "explore": "Explore collections",
+    "viewPolicy": "Read the policy",
+    "selectItem": "Select {name}",
+    "resaleValue": "Estimated resale",
+    "sellback": "Resell",
+    "item": "Item / activity",
+    "settledAmount": "Recorded amount",
+    "shipmentState": "Shipment status",
+    "processedDate": "Activity date",
+    "recordDetails": "View details",
+    "recordId": "Record ID",
+    "acquiredDate": "Acquired on",
+    "originalValue": "Value shown at acquisition",
+    "funding": "Original funding source",
+    "fundingTypes": {
+      "crypto": "Crypto balance",
+      "card": "Card balance",
+      "mixed": "Card and crypto",
+      "unknown": "Not specified in this record"
+    },
+    "writeReview": "Write a review",
+    "loadMore": "Show more ({n} remaining)",
+    "localRecords": "These records are stored in this browser. They do not confirm acceptance or completion of real transactions.",
+    "shippingUnavailable": "Shipment requests are not open yet. They require a connected fulfilment service.",
+    "withdrawHelp": "Please review withdrawal conditions and the original-payment return process.",
+    "journalTitle": "The story after delivery",
+    "journalIntro": "Record your experience and keep your reviews in one place.",
+    "reviewTabs": {
+      "public": "Discover",
+      "mine": "My reviews",
+      "eligible": "To review"
+    },
+    "reviewLocalNote": "Your reviews stay in this browser. Public posting and review rewards are not available yet.",
+    "searchReviews": "Search products or reviews",
+    "reviewFilter": "Filter reviews",
+    "allReviews": "All reviews",
+    "photoReviews": "With photos",
+    "ratingLabel": "{n} stars",
+    "publicEmptyTitle": "Public reviews are coming",
+    "publicEmptyBody": "Discover delivery experiences when public posting opens. For now, you can write and manage your own local reviews.",
+    "eligibleEmptyTitle": "Nothing to review yet",
+    "eligibleEmptyBody": "Items appear here after confirmed delivery if you have not reviewed them. Items still in transit are not eligible.",
+    "checkShipments": "Check deliveries",
+    "myEmptyTitle": "Your first story belongs here",
+    "myEmptyBody": "After delivery, share what you think and add a photo. You can edit or delete your saved reviews.",
+    "privateRecords": "Saved in this browser",
+    "deliveredOn": "Delivered · {date}",
+    "yourReview": "Your review",
+    "edited": "Edited",
+    "readFullReview": "Read full review",
+    "reviewPhoto": "User-submitted photo of {name}",
+    "userPhoto": "Your uploaded photo",
+    "catalogueImage": "Catalogue image",
+    "legacyIncentive": "This review has an incentive record from an earlier version. It is not evidence of an actual payment.",
+    "viewOwnedItem": "Delivery records",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "deleteConfirmation": "Delete this review from this browser? Its text and photo cannot be restored.",
+    "guideTitle": "A thoughtful review",
+    "guideReceivedTitle": "Start with what arrived",
+    "guideReceivedBody": "Choose a delivery-confirmed item. A tracking number alone does not confirm receipt.",
+    "guideHonestTitle": "Make it your own",
+    "guideHonestBody": "Share what worked and what could be better. No reward depends on a positive rating.",
+    "guidePrivacyTitle": "Keep private details private",
+    "guidePrivacyBody": "Check photos for addresses, phone numbers, shipping labels and other people's faces.",
+    "reviewPolicy": "Review policy",
+    "privacyPolicy": "Privacy notice",
+    "reviewDeleted": "Review deleted.",
+    "reviewSaved": "Review saved in this browser.",
+    "editReview": "Edit your review",
+    "attachedPhoto": "Attached photo",
+    "removePhoto": "Remove photo",
+    "processingPhoto": "Processing photo",
+    "attachPhoto": "Add a photo",
+    "photoHint": "Optional · JPG, PNG or WebP · up to 8 MB",
+    "saveChanges": "Save changes",
+    "saveReview": "Save my review",
+    "photoError": "Choose a JPG, PNG or WebP image up to 8 MB.",
+    "textError": "Write between 5 and 1,200 characters.",
+    "ratingError": "Choose a star rating.",
+    "eligibilityError": "This item is not eligible. Check its delivery status and existing reviews.",
+    "storageError": "Could not save. Check browser storage space and permissions. Existing reviews are not automatically removed.",
+    "requestDelivery": "Delivery",
+    "withdrawUnavailable": "Withdrawal requests are not open yet. No request is accepted and no balance is debited until the withdrawal service is connected."
   }
 }

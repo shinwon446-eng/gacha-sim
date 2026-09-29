@@ -10,7 +10,12 @@ import type { OwnedItem } from "@/stores/inventoryStore";
 
 export const REVIEW_BONUS_USDT = 10;
 export const REVIEW_MIN_CHARS = 5;
-export const REVIEW_MAX_CHARS = 160;
+export const REVIEW_MAX_CHARS = 1200;
+
+/** A tracking number or an in-transit state is not proof of delivery. */
+export function canReview(item: OwnedItem, reviews: Pick<MyReview, "ownedId">[]): boolean {
+  return item.status === "DELIVERED" && !!item.shipping?.deliveredAt && Number.isFinite(Date.parse(item.shipping.deliveredAt)) && !reviews.some(r => r.ownedId === item.id);
+}
 
 export interface Review {
   id: string;
