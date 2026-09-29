@@ -14,7 +14,7 @@ import {
   rtpRangePct,
   totalJackpotValueUsdt,
 } from "../lib/aboutStats";
-import { BOXES, dropTable } from "../lib/products";
+import { BOXES, dropTable, retailReturn } from "../lib/products";
 
 test("잭팟 총액은 각 박스 최고 상품 가치의 합 — 지어낸 값이 아니다", () => {
   const manual = +BOXES.reduce((s, b) => s + dropTable(b)[0].value, 0).toFixed(2);
@@ -47,10 +47,12 @@ test("도전 배수 범위는 실제 라인업의 최소 보장 환급률에서 
   assert.equal(r.max, effectiveAttempts(r.maxRate / 100));
 });
 
-test("RTP 범위는 부록 B 구현값 안에 있다", () => {
+test("RTP range reflects the current catalogue, including the requested loss-making schedule", () => {
   const { min, max } = rtpRangePct();
-  assert.ok(min >= 93 && max < 106, `${min}~${max}%`);
-  assert.ok(max >= min);
+  const actual = BOXES.map(box => retailReturn(box) * 100);
+  assert.equal(min, +Math.min(...actual).toFixed(1));
+  assert.equal(max, +Math.max(...actual).toFixed(1));
+  assert.ok(min > 100);
 });
 
 test("정책 상수 — 95% 즉시 회수 · 3배 보상 · 24시간 출고 기준 · 사후 변조 가능 결과 0", () => {

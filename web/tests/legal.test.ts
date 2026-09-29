@@ -6,7 +6,7 @@ import { createTranslator } from "next-intl";
 import { LEGAL_DOCS, LEGAL_GROUPS, LEGAL_VALUES, LEGAL_VERSION } from "../lib/legal";
 
 for (const locale of ["ko", "en", "zh"]) {
-  test(`${locale}: every linked policy is complete, renders ICU values and is labelled draft`, () => {
+  test(`${locale}: every linked policy has content, renders ICU values and carries its version`, () => {
     const messages = JSON.parse(readFileSync(join(process.cwd(), "messages", `${locale}.json`), "utf8"));
     const errors: unknown[] = [];
     const t = createTranslator({ locale, messages, onError: error => errors.push(error) });

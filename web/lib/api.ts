@@ -17,6 +17,8 @@ import type { LiveDrop } from "@/lib/liveDrops";
 import type { PayoutProof, ShipmentProof } from "@/lib/proofFeed";
 import type { CarrierKey } from "@/lib/carriers";
 import type { TxStatus } from "@/stores/walletStore";
+import type { OwnedItem } from "@/stores/inventoryStore";
+import { accountRequest } from "@/lib/account";
 
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, { ...init, headers: { "content-type": "application/json", ...(init?.headers ?? {}) } });
@@ -34,4 +36,5 @@ export const api = {
   withdraw: (input: { network: Network; address: string; amountUsdt: number; userKey: string }) => call<{ id: string; status: TxStatus; txHash?: string }>("/withdraw", { method: "POST", body: JSON.stringify(input) }),
   withdrawStatus: (id: string) => call<{ status: TxStatus; txHash?: string }>(`/withdraw/${encodeURIComponent(id)}`),
   shipping: (ownedId: string) => call<{ carrier: CarrierKey; trackingNumber: string }>(`/shipping/${encodeURIComponent(ownedId)}`),
+  cancelShipping: async (ownedId: string, requestId: string) => await accountRequest(`/shipping/${encodeURIComponent(ownedId)}/cancel`, { requestId, idempotencyKey: `cancel-shipping:${ownedId}:${requestId}` }, API_BASE) as unknown as { status: "CANCELLED"; item: OwnedItem; wallet: { balance: number; cryptoBalance: number; cardBalance: number } },
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { House, Sparkles, Package, Wallet } from "lucide-react";
+import { House, Sparkles, Package, Wallet, UserRound } from "lucide-react";
 import { useEffect, useState, type MouseEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
@@ -81,6 +81,7 @@ export function MobileBottomNav() {
         <Wallet className="h-5 w-5" strokeWidth={1.7} aria-hidden="true" />
         <span className="truncate">{t("wallet")}</span>
       </button>
+      <Link href="/profile" className={cn(item, pathname.startsWith("/profile") ? on : off)} aria-current={pathname.startsWith("/profile") ? "page" : undefined}><UserRound className="h-5 w-5" strokeWidth={1.7} aria-hidden="true" /><span className="truncate">{t("profile")}</span></Link>
     </nav>
   );
 }

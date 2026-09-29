@@ -4,15 +4,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, animate, motion, useReducedMotion } from "framer-motion";
 import { useModal } from "@/lib/useModal";
 import { useTranslations } from "next-intl";
-import { X, Zap, Package } from "lucide-react";
+import { X, Zap, Package, SkipForward } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
-import { dropTable, sellValueOf, REFUND_RATE, type ProductBox, type ProductItem } from "@/lib/products";
+import { sellValueOf, REFUND_RATE, type ProductBox, type ProductItem } from "@/lib/products";
 import { glow, tierOf, type Tier } from "@/lib/tiers";
-import { calculateRollResult, determineItem } from "@/lib/fairness";
 import { JACKPOT_TIERS } from "@/lib/autoplay";
-import { useFairStore } from "@/stores/fairStore";
 import { useInventoryStore } from "@/stores/inventoryStore";
 import { useWalletStore } from "@/stores/walletStore";
 import { useSettingsStore } from "@/stores/settingsStore";
@@ -20,6 +18,7 @@ import { playWin, playTaDum } from "@/lib/audio";
 import { ProductArt } from "@/components/box/ProductArt";
 import { Money } from "@/components/ui/Money";
 import { MegaWinFX } from "@/components/unboxing/MegaWinFX";
+import type { OpeningResult } from "@/lib/opening";
 import { CRYPTO_ONLY, type FundingRatio } from "@/lib/funding";
 
 export interface BulkResult {
@@ -31,6 +30,7 @@ export interface BulkResult {
 
 interface Props {
   box: ProductBox | null;
+  prepared?: OpeningResult[];
   count: number;
   onClose: () => void;
   /** 미정산(실물·디지털) 당첨의 일괄 회수 — 호출측이 잔액에 반영한다 */
@@ -63,26 +63,23 @@ function CountUp({ value, className, style }: { value: number; className?: strin
  * 릴은 생략하고 1.5초 고속 개봉 연출 뒤 요약 그리드: 상단 [총 투입 vs 총 획득 가치 · 순손익] 카운트업,
  * 최고 등급 카드는 골드 스파크 + 3D 플로팅 하이라이트. 캐시백은 확정 즉시 100% 잔액에 적립된다.
  */
-export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPTO_ONLY }: Props) {
+export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPTO_ONLY, prepared }: Props) {
   const reducedMotion = useReducedMotion();
   const panelRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("bulk");
   const tr = useTranslations();
   const { fmt } = useCurrency();
   const { boxTitle, itemName } = useProductText();
-  const addOwned = useInventoryStore((s) => s.add);
   const sellOwned = useInventoryStore((s) => s.sell);
-  const credit = useWalletStore((s) => s.credit);
-  const creditSplit = useWalletStore((s) => s.creditSplit);
-  const addTransaction = useWalletStore((s) => s.addTransaction);
   const [phase, setPhase] = useState<"opening" | "done">("opening");
   const [progress, setProgress] = useState(0);
   const [results, setResults] = useState<BulkResult[]>([]);
   const [sold, setSold] = useState(false);
   const [mega, setMega] = useState<string | null>(null);
   const ran = useRef(false);
+  const skip = useRef(false);
+  const closePresentation = () => { if (phase === "done") onClose(); else skip.current = true; };
 
-  const items = useMemo(() => (box ? dropTable(box) : []), [box]);
 
   useEffect(() => {
     if (!box || ran.current) return;
@@ -90,33 +87,15 @@ export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPT
     let alive = true;
     (async () => {
       if (!useSettingsStore.getState().muted) playTaDum();
-      const fair = useFairStore.getState();
       const t0 = performance.now();
-      // nonce 는 순서대로 소비하고, HMAC 은 병렬로 계산한다 — 결과는 각 (seed, nonce) 에만 의존하므로 순서와 무관
-      const nonces = Array.from({ length: count }, () => fair.takeNonce());
-      const { serverSeed, serverSeedHash, clientSeed } = useFairStore.getState();
-      const rolls = await Promise.all(nonces.map((nonce) => calculateRollResult(serverSeed, clientSeed, nonce)));
-      const picked = rolls.map((r, i) => {
-        const item = determineItem(r.roll, items);
-        return { item, tier: tierOf(item.value, box.price), nonce: nonces[i], roll: r.roll };
-      });
-      // 보관함에 한 번에 넣고(persist 1회), 캐시백은 한 번에 정산한다
-      const owned = addOwned(picked.map((p) => ({ itemId: p.item.id, boxSlug: box.slug, valueUsdt: p.item.value, tier: p.tier.key, fair: { serverSeedHash, serverSeed, clientSeed, nonce: p.nonce, roll: p.roll }, fundingRatio: funding })));
-      const out: BulkResult[] = picked.map((p, i) => ({ ownedId: owned[i].id, item: p.item, tier: p.tier, settled: p.item.kind === "cash" }));
-      const cashIds = out.filter((r) => r.settled).map((r) => r.ownedId);
-      if (cashIds.length > 0) {
-        const { totalUsdt, toCrypto, toCard } = sellOwned(cashIds, 1);
-        creditSplit(toCrypto, toCard);
-        addTransaction({ type: "sellback", amountUsdt: totalUsdt, ref: `${box.slug}:cashback x${cashIds.length}` });
-      }
-      // 1.5초 고속 개봉 연출 — 결과는 이미 확정돼 있고 카운터만 흘러간다
+      const out: BulkResult[] = prepared ?? [];
       const elapsed = performance.now() - t0;
       const remain = Math.max(0, BULK_OPEN_MS - elapsed);
       const start = performance.now();
       await new Promise<void>((resolve) => {
         const tick = () => {
           if (!alive) return resolve();
-          const p = Math.min(1, (performance.now() - start) / Math.max(1, remain));
+          const p = skip.current || reducedMotion ? 1 : Math.min(1, (performance.now() - start) / Math.max(1, remain));
           setProgress(p);
           if (p >= 1) resolve();
           else requestAnimationFrame(tick);
@@ -137,12 +116,13 @@ export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPT
     return () => {
       alive = false;
     };
-  }, [box, count, items, addOwned, sellOwned, credit, addTransaction]);
+  }, [box, count, prepared, reducedMotion]);
 
   // 닫히면 리셋 — 컴포넌트는 항상 마운트돼 있으므로 다음 대량 개봉이 다시 돌 수 있어야 한다
   useEffect(() => {
     if (box) return;
     ran.current = false;
+    skip.current = false;
     setPhase("opening");
     setProgress(0);
     setResults([]);
@@ -150,7 +130,7 @@ export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPT
     setMega(null);
   }, [box]);
 
-  useModal(Boolean(box), () => { if (phase === "done") onClose(); }, panelRef);
+  useModal(Boolean(box), closePresentation, panelRef);
 
   if (!box) return null;
 
@@ -173,7 +153,7 @@ export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPT
             <div className="caption-luxury">{t("eyebrow", { n: count })}</div>
             <h2 className="truncate font-display text-lg font-bold uppercase tracking-tight text-white sm:text-xl">{boxTitle(box)}</h2>
           </div>
-          <button type="button" disabled={phase !== "done"} onClick={onClose} aria-label={tr("unbox.close")} className="ml-auto flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white disabled:opacity-40">
+          <button type="button" onClick={closePresentation} aria-label={tr(phase === "done" ? "unbox.close" : "unbox.skipToResults")} className="ml-auto flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white disabled:opacity-40">
             <X className="h-5 w-5" strokeWidth={2.2} />
           </button>
         </div>
@@ -185,12 +165,15 @@ export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPT
               <span className="text-2xl text-muted sm:text-3xl"> / {count}</span>
             </motion.div>
             <div className="mt-3 text-sm font-semibold text-secondary">{t("opening")}</div>
+            <p className="mt-4 max-w-xl text-center text-sm leading-relaxed text-secondary">{tr("unbox.batchCloseNote", { n: count })}</p>
+            <button type="button" onClick={() => { skip.current = true; }} className="btn-secondary mt-5 flex min-h-12 items-center gap-2"><SkipForward size={16} />{tr("unbox.skipToResults")}</button>
             <div className="mt-5 h-1.5 w-full max-w-md overflow-hidden rounded-full bg-white/10">
               <div className="h-full rounded-full bg-gold-champagne transition-[width] duration-75" style={{ width: `${progress * 100}%` }} />
             </div>
           </div>
         ) : (
           <div className="flex min-h-0 flex-1 flex-col">
+            <p className="px-[4%] pt-4 text-center text-sm leading-relaxed text-secondary">{tr("unbox.batchComplete", { n: results.length })}</p>
             {/* 손익 요약 — 카운트업 */}
             <div className="border-b border-hairline px-[4%] py-4">
               <div className="mx-auto grid max-w-3xl grid-cols-1 gap-2 text-center sm:grid-cols-3">
@@ -256,7 +239,7 @@ export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPT
                     setSold(true);
                     const ids = pending.map((r) => r.ownedId);
                     const { totalUsdt, toCrypto, toCard } = sellOwned(ids, REFUND_RATE);
-                    onSellBack(ids, totalUsdt || sellAmount, { toCrypto, toCard });
+                    onSellBack(ids, totalUsdt, { toCrypto, toCard });
                   }}
                   className="flex h-12 flex-col items-center justify-center rounded-lg bg-[#f1eee7] text-obsidian transition-colors hover:bg-gold-champagne disabled:opacity-40"
                 >

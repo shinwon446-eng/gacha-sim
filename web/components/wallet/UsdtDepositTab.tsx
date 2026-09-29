@@ -94,13 +94,8 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
 
   // [⚡ 입금 전송 완료] — 체인 확인을 시작한다. live: API 폴링 → confirmed 면 그 금액을 반영. 백엔드가 없으면 확인 대기 상태로 남긴다.
   const confirm = useCallback(async () => {
-    if (!address) return;
+    if (!address || !isLive()) return;
     setStatus({ kind: "checking" });
-    await new Promise((r) => setTimeout(r, 1400));
-    if (!isLive()) {
-      setStatus({ kind: "pending", confirmations: 0, total: meta.confirmations });
-      return;
-    }
     for (let i = 0; i < CHECK_MAX_ROUNDS; i++) {
       try {
         const r = await api.depositCheck({ network, address, userKey, expectedUsdt: amountOk ? expected : undefined });
@@ -121,6 +116,8 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   }, [address, network, userKey, expected, amountOk, meta.confirmations, credit, addTransaction, onCredited]);
 
   const busy = status.kind === "checking";
+
+  if (!isLive()) return <div className="rounded-xl border border-hairline bg-obsidian p-6"><ShieldAlert className="h-6 w-6 text-gold-champagne" aria-hidden="true" /><h3 className="mt-4 text-lg font-semibold text-white">{t("unavailableTitle")}</h3><p className="mt-3 max-w-2xl text-sm leading-7 text-secondary">{t("unavailableBody")}</p></div>;
 
   return (
     <div className="grid gap-5 md:grid-cols-5">

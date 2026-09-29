@@ -13,7 +13,7 @@ export const START_BALANCE_USDT = 0;
 /** 무료 체험 후 1회 지급되는 웰컴 보너스 (CLAUDE.md §4-A) */
 export const WELCOME_BONUS_USDT = 5;
 
-export type TxType = "deposit_usdt" | "deposit_card" | "open" | "sellback" | "withdraw" | "bonus";
+export type TxType = "deposit_usdt" | "deposit_card" | "open" | "sellback" | "withdraw" | "bonus" | "shipping_refund" | "order_refund";
 
 /** PENDING_ADMIN_REVIEW — 부정거래 탐지·서킷 브레이커로 관리자 안전 심사 대기 (lib/fraudScoring.ts) */
 export type TxStatus = "PENDING" | "PENDING_ADMIN_REVIEW" | "BROADCASTING" | "COMPLETED";
@@ -74,6 +74,8 @@ interface WalletState {
 
 /** 두 버킷 → 표시용 총 잔액. balance 는 항상 여기서만 계산된다(어긋날 수 없다). */
 const sync = (cryptoBalance: number, cardBalance: number) => ({ cryptoBalance, cardBalance, balance: +(cryptoBalance + cardBalance).toFixed(2) });
+let transactionSequence = 0;
+const transactionId = () => `tx_${globalThis.crypto?.randomUUID?.() ?? `${Date.now().toString(36)}_${++transactionSequence}`}`;
 
 export const useWalletStore = create<WalletState>()(
   persist(
@@ -89,7 +91,7 @@ export const useWalletStore = create<WalletState>()(
       welcomeClaimed: false,
       hydrated: false,
       addTransaction: (tx) => {
-        const rec: Transaction = { ...tx, id: `tx_${Date.now().toString(36)}_${Math.floor(Math.random() * 1e6).toString(36)}`, at: new Date().toISOString() };
+        const rec: Transaction = { ...tx, id: transactionId(), at: new Date().toISOString() };
         // 롤오버 누계는 여기서만 늘어난다 — 입금(+)은 요구액, 개봉(−)은 가중치가 반영된 인정액
         const depositedCrypto = rec.type === "deposit_usdt" ? Math.max(0, rec.amountUsdt) : 0;
         const depositedCard = rec.type === "deposit_card" ? Math.max(0, rec.amountUsdt) : 0;

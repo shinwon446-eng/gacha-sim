@@ -1,8 +1,8 @@
 import { MIN_DEPOSIT_USDT } from "./depositAddress";
 import { MIN_WITHDRAW_USDT, WITHDRAW_NETWORK_BY_KEY } from "./withdrawal";
 
-// Pre-launch documents describe the design; they do not enable transactions.
-export const LEGAL_VERSION = "2026-09-29-draft.2";
+// Policy publication does not activate unconnected transaction services.
+export const LEGAL_VERSION = "2026-09-29.3";
 export const LEGAL_DOCS = ["terms", "privacy", "payments", "withdrawals", "refunds", "policy", "fairness", "safety", "community", "cookies", "complaints", "business", "faq"] as const;
 export type LegalDoc = (typeof LEGAL_DOCS)[number];
 export const LEGAL_GROUPS = [
@@ -10,7 +10,7 @@ export const LEGAL_GROUPS = [
   { key: "transactions", docs: ["payments", "withdrawals", "refunds", "policy"] },
   { key: "rights", docs: ["fairness", "safety", "community", "complaints", "faq"] },
 ] as const;
-// Shared with transaction screens. Design values, not launch quotes.
+// Shared display values; the transaction flow must confirm availability and final charges.
 export const LEGAL_VALUES = {
   minDeposit: MIN_DEPOSIT_USDT,
   minWithdraw: MIN_WITHDRAW_USDT,

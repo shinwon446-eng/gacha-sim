@@ -56,7 +56,7 @@ export function SiteHeader({ onWallet, onDaily }: { onWallet?: (tab: WalletTab) 
       </div>
     </div>
     {open && <div id="site-menu" className="absolute inset-x-0 top-full max-h-[calc(100dvh-64px)] overflow-y-auto border-b border-hairline bg-obsidian px-5 pb-8 pt-3 sm:px-8 md:max-h-[calc(100dvh-72px)] xl:hidden">
-      <nav aria-label={t("mobileNav.aria")}>{navigation(true)}</nav>
+      <nav aria-label={t("mobileNav.aria")}>{navigation(true)}<Link href="/profile" onClick={() => setOpen(false)} className="flex min-h-11 items-center justify-between border-b border-hairline py-3 text-lg text-secondary">{t("nav.profile")}<ArrowUpRight className="h-4 w-4" aria-hidden="true" /></Link></nav>
       <div className="mt-6 grid grid-cols-2 gap-3"><button type="button" onClick={() => wallet("usdt")} className="flex min-h-12 items-center justify-center gap-2 rounded-lg bg-gold-champagne px-4 text-sm font-semibold text-obsidian"><Wallet className="h-4 w-4" aria-hidden="true" />{t("header.deposit")}</button><button type="button" onClick={() => wallet("withdraw")} className="flex min-h-12 items-center justify-center gap-2 rounded-lg border border-hairline px-4 text-sm font-semibold text-white"><ArrowUpRight className="h-4 w-4" aria-hidden="true" />{t("header.withdraw")}</button></div>
       {onDaily && <button type="button" onClick={() => { setOpen(false); onDaily(); }} className="mt-3 flex min-h-11 items-center gap-2 text-sm text-gold-champagne"><Gift className="h-4 w-4" aria-hidden="true" />{t("daily.title")}</button>}
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-hairline pt-5"><div className="flex gap-2"><LanguageSelector /><CurrencySelector /></div><HeaderAuthControl /></div>

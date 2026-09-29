@@ -8,7 +8,8 @@
     "about": "About",
     "highRoller": "High-Roller",
     "tech": "Tech",
-    "luxury": "Luxury"
+    "luxury": "Luxury",
+    "profile": "Profile"
   },
   "auth": {
     "login": "Log in",
@@ -244,7 +245,8 @@
     "dollar": "$1 Boxes",
     "vault": "Vault",
     "deposit": "Deposit (+)",
-    "wallet": "Wallet"
+    "wallet": "Wallet",
+    "profile": "Profile"
   },
   "delivery": {
     "title": "Ship my item",
@@ -275,7 +277,7 @@
     "doneTitle": "Shipping request received!",
     "doneBody": "Delivery request flow reviewed. No actual dispatch or tracking label is issued at this stage.",
     "waybill": "Waybill",
-    "waybillPending": "Delivery design review · not dispatched",
+    "waybillPending": "Awaiting tracking number",
     "waybillNote": "Only waybill numbers actually issued by the carrier are shown — no tracking link appears before then.",
     "tickerTitle": "📦 Shipment status",
     "tickerFree": "Available destinations and final delivery charges must be shown before a transaction.",
@@ -382,7 +384,12 @@
     "perOpen": "per box",
     "quantity": "{n}",
     "openCount": "Open {n} · {amount}",
-    "quantityNote": "The total cost is deducted from your balance."
+    "quantityNote": "Review the quantity and total before confirming. You can cancel at no cost before confirmation.",
+    "balanceShortfall": "Available balance: {balance} · Additional funds needed: {missing}",
+    "confirmPurchase": "Confirm purchase",
+    "cancelPurchase": "Cancel purchase",
+    "preparingPurchase": "Processing…",
+    "batchCommitment": "Confirming charges the full quantity once and records every result in your vault. After that, X or SKIP only skips the animation; it does not cancel or refund the purchase. Cashback is credited to your balance automatically."
   },
   "fairness": {
     "title": "Provably Fair",
@@ -392,10 +399,10 @@
     "step1": "Before opening, we publish the SHA-256 hash of the server seed.",
     "step2": "You choose a client seed or receive a random one. The nonce increments by 1 per open.",
     "step3": "After opening, the server seed is revealed. Paste it below and the hash, roll and winning item are reproduced exactly.",
-    "serverSeed": "Server seed",
-    "serverSeedHash": "Published server seed hash (optional)",
-    "clientSeed": "Client seed",
-    "nonce": "Nonce",
+    "serverSeed": "Draw source · Server seed",
+    "serverSeedHash": "Hash to compare · Optional",
+    "clientSeed": "Your input · Client seed",
+    "nonce": "Opening counter · From 0",
     "box": "Box",
     "verify": "Verify",
     "verifying": "Computing…",
@@ -405,23 +412,23 @@
     "resultRoll": "Roll number",
     "resultItem": "Winning item",
     "resultRange": "Winning range",
-    "hashMatch": "Matches the published hash",
-    "hashMismatch": "Does not match the published hash — different server seed",
-    "hashSkipped": "No published hash provided",
+    "hashMatch": "Matches the hash you entered.",
+    "hashMismatch": "Does not match the hash you entered.",
+    "hashSkipped": "No hash entered · Source match was not checked.",
     "rangeNote": "Roll range 0 – {max} ({resolution}% resolution)",
     "outOf": "{roll} / {max}",
-    "tryTitle": "Try seed commitment yourself",
-    "tryBody": "Generate a server seed and only its hash is shown. Reveal it, then paste it into the verifier to reproduce a roll.",
+    "tryTitle": "Compare a source and its reference",
+    "tryBody": "Create a new source to see its reference first. Reveal the source, then use it in the fields to compare. This does not create an opening record.",
     "generate": "Generate server seed",
     "reveal": "Reveal server seed",
     "hidden": "Before opening — seed hidden",
     "useInVerifier": "Use in verifier",
-    "invalidInput": "Enter a server seed and a client seed; the nonce must be an integer ≥ 0.",
+    "invalidInput": "Enter a draw source and client input. The opening counter must be a safe integer of 0 or higher. An optional hash must contain 64 hexadecimal characters.",
     "open": "Open Provably Fair",
     "close": "Close",
     "visual": {
       "eyebrow": "Opening verification",
-      "title": "Same record. Same result.",
+      "title": "Check an opening result",
       "body": "Choose a recent opening to check its result in three steps.",
       "expert": "Expert mode",
       "expertTitle": "Manual verifier (server seed · client seed · nonce)",
@@ -449,7 +456,9 @@
       "verdictPassBody": "All three steps passed. Anyone can reproduce this exact result.",
       "verdictFail": "Verification failed",
       "verdictFailBody": "The reproduced values differ from the record. Check the inputs in Expert mode."
-    }
+    },
+    "generateClient": "Create a new client input",
+    "computeError": "The calculation could not be completed. Check the saved record and try again."
   },
   "unbox": {
     "open1": "Open ×1",
@@ -504,12 +513,12 @@
     "claimShipping": "Ship to me",
     "shippingNotice": "International shipping & customs notice",
     "shippingBody": "Destination duties/VAT and international shipping (DHL/FedEx at cost) are billed separately.",
-    "verify": "1-second fairness check",
+    "verify": "Verify this result",
     "close": "Close",
     "keep": "Keep in inventory",
     "kept": "Saved to your vault — it stays after you close this",
     "insufficient": "Insufficient balance — {price} required",
-    "topUp": "Deposit",
+    "topUp": "Add funds, then return to the box to purchase again. A purchase declined for insufficient funds is not charged.",
     "toppedUp": "+{amount} credited",
     "mute": "Mute sound",
     "unmute": "Unmute sound",
@@ -518,7 +527,19 @@
     "clientSeed": "Client seed",
     "nonce": "Nonce",
     "roll": "Roll",
-    "fairNote": "This result was determined by the seeds and nonce below. Reproduce it exactly under [Verify this result]."
+    "fairNote": "This result was determined by the seeds and nonce below. Reproduce it exactly under [Verify this result].",
+    "topUpAction": "Add funds",
+    "openFailed": "Opening could not be completed",
+    "openFailedBody": "Check your vault and transaction history. If the problem continues, check the support information before attempting another purchase.",
+    "skipToResults": "SKIP · View results",
+    "finishingBatch": "Preparing results…",
+    "openCountLabel": "Opening {n} boxes",
+    "batchCloseNote": "All {n} purchased results are recorded. X or SKIP skips the animation and shows the complete results. Cashback goes to your balance; other rewards go to your vault.",
+    "autoCloseNote": "Autoplay charges for each box separately. X or SKIP stops further purchases and shows the results of every box already paid for.",
+    "batchComplete": "{n} boxes opened. Cashback has been credited and items are saved in your vault. Closing this window keeps your records.",
+    "insufficientAuto": "Autoplay stopped: insufficient funds",
+    "autoStoppedEmpty": "Autoplay stopped",
+    "noPurchaseMade": "Stopped before a purchase began. No boxes were charged."
   },
   "deposit": {
     "title": "Deposit",
@@ -561,7 +582,9 @@
     "amount": "Amount (USDT)",
     "belowMin": "Minimum deposit is {min}",
     "creditedToast": "+{amount} credited",
-    "close": "Close"
+    "close": "Close",
+    "unavailableTitle": "Deposits are currently unavailable",
+    "unavailableBody": "The deposit verification service is not connected, so a receiving address cannot be issued and deposits cannot be processed. Do not transfer to addresses received elsewhere. Availability will be shown here when deposits are supported."
   },
   "cardPay": {
     "quick": "Quick top-up",
@@ -662,7 +685,7 @@
     "ship": "📦 Ship to my door",
     "sellShort": "💰 95% back",
     "shipShort": "📦 Ship home",
-    "verify": "1-second fairness check",
+    "verify": "Verify this result",
     "select": "Select",
     "selected": "{n} selected",
     "selectAll": "Select all",
@@ -937,7 +960,7 @@
       "nan": "Enter an amount"
     },
     "processingNote": "Withdrawals are signed and broadcast after a security review. The TxID and explorer link appear here once complete.",
-    "networkNote": "A request is not a transfer. A TxID is provided only after an actual broadcast. Currently at design review stage.",
+    "networkNote": "A request is not a completed transfer. A transaction ID is provided after an actual network broadcast.",
     "requestedToast": "Withdrawal submitted — {amount} deducted",
     "quick25": "+25%",
     "quick50": "+50%",
@@ -985,8 +1008,8 @@
       "summary": "Contract formation, accounts, changes, service closure and user rights.",
       "sections": [
         {
-          "h": "Scope and current status",
-          "p": "These are draft transaction terms for a planned service. The public interface is for design review and does not announce live sales, custody, withdrawals or delivery. Final terms and their effective date will be published after the operator, territories, required reviews and implementation are settled. Separate privacy and storage notices explain current visitor data handling."
+          "h": "Scope and service availability",
+          "p": "These terms set the rules for accounts, orders, balances, goods and user rights. Payment, withdrawal and delivery availability depends on the relevant service connection and published operating territories. The operator and effective date of transaction terms must be confirmed in operating information. Unpublished details or unconnected features are not commitments to provide a service. Current visitor data handling is explained in the privacy and browser-storage policies."
         },
         {
           "h": "Contracting party and territories",
@@ -1023,6 +1046,10 @@
         {
           "h": "Display language and service territories",
           "p": "VOILA provides interfaces for Korean, English and Simplified Chinese speakers. Language selection does not establish nationality, residence, delivery country or transaction eligibility. Actual availability must be separately determined and disclosed for residence, destination, payment method and applicable local rules. Transactions in unapproved territories must not be enabled. Changing language or using a VPN does not override regional restrictions."
+        },
+        {
+          "h": "Account closure and remaining funds or goods",
+          "p": "Review balances, held goods, deliveries and pending transactions in your profile before requesting closure. Resolve funds through original-payment refunds, permitted withdrawals or remaining-funds return, and goods through delivery, optional resale or applicable returns. Canceling preparation returns an item to held inventory; it does not resolve ownership. In-transit goods and pending payments, withdrawals or refunds must be resolved before closure completes. Sold or delivered history alone does not block closure. Users must not be forced to make another purchase or abandon funds or goods to close an account. Final checks require current server records and identity verification; clearing browser data is not account closure. An unconnected service must not report successful closure. Required legal retention and existing claims remain separately handled after closure."
         }
       ]
     },
@@ -1031,12 +1058,12 @@
       "summary": "Supported assets, mistaken transfers, card payments and balance credits.",
       "sections": [
         {
-          "h": "Real deposits are not open",
-          "p": "This design stage has no confirmed operating wallets, processors or real-transaction territories. Screen illustrations are not deposit requests. Do not send funds until an official deposit flow verifies the address, network, asset and conditions for your own account. Do not use addresses sent by messages or accounts claiming to be support."
+          "h": "Verify the official deposit route",
+          "p": "Operating deposit wallets, payment processors and real-transaction territories are not yet confirmed. Transfer funds only when the official deposit flow for your account is enabled and verifies the address, network, asset and deposit conditions. Do not transfer to illustrative addresses or addresses sent by messages or accounts claiming to be support."
         },
         {
           "h": "Networks and minimum amount",
-          "p": "The design lists USDT deposits over TRC-20, BEP-20 and ERC-20 with a displayed minimum of {minDeposit} USDT. Launch conditions remain to be confirmed. Similar address formats do not imply the same network or token contract. Check sender support, the amount arriving after sender fees and any required memo."
+          "p": "The deposit screen lists USDT on TRC-20, BEP-20 and ERC-20 with a minimum of {minDeposit} USDT. Receiving availability and final conditions must be confirmed when deposits are enabled. Similar address formats do not mean the same network or token contract. Check sender support, the amount arriving after sender fees and any required memo."
         },
         {
           "h": "Confirmation, crediting and timers",
@@ -1052,7 +1079,7 @@
         },
         {
           "h": "Funding sources and mixed balances",
-          "p": "The design separates card-funded and crypto-funded balances and allocates resale proceeds from mixed purchases by funding ratio. Card-origin funds are not paid out to an external crypto wallet. This must not justify refusing statutory cancellation or refunds, or requiring another purchase. Actual ledger records, refund routes and displayed balances require implementation and verification."
+          "p": "Card-funded and crypto-funded balances remain separate. Resale proceeds from mixed-funded purchases follow the original funding ratio; card-origin funds are not paid to an external crypto wallet. This distinction does not justify refusing statutory cancellation or refunds, or requiring another purchase. External payments and refunds require reconciliation with authoritative transaction records and processor results; a browser balance alone does not prove completion."
         },
         {
           "h": "Failures, duplicate charges and unauthorized payments",
@@ -1070,11 +1097,11 @@
       "sections": [
         {
           "h": "Withdrawals versus refunds",
-          "p": "External payout of a product-related balance differs from returning unused deposits or statutory refunds. Card funds follow the original-payment cancellation/refund route. Requiring additional box purchases to recover unused funds or statutory refunds is not an approved operating condition; the existing purchase-usage screen remains a design under review."
+          "p": "External withdrawal of a product-related balance, unused-funds return and statutory refunds are separate processes. Card funds follow the original-payment cancellation or refund route. Users are not required to purchase additional boxes to recover unused funds or statutory refunds. Purchase-usage figures or internal risk scores do not replace legal obligations or extinguish return rights."
         },
         {
           "h": "Networks, minimums and costs",
-          "p": "The current design minimum for ordinary withdrawals is {minWithdraw} USDT, with fees of {trcFee} USDT on TRC-20 and {bepFee} USDT on BEP-20. Fees are deducted from the requested amount and the net amount must be displayed. ERC-20 is not a withdrawal option. These are not launch terms; minimums alone must not defeat statutory refunds or remaining-funds claims on closure."
+          "p": "The withdrawal screen shows a minimum ordinary withdrawal of {minWithdraw} USDT, with fees of {trcFee} USDT for TRC-20 and {bepFee} USDT for BEP-20. Review the net amount after fees before requesting. ERC-20 withdrawal is not offered. The withdrawal connection and operating conditions must be confirmed; ordinary minimums alone cannot defeat statutory refunds or remaining-funds claims on account closure."
         },
         {
           "h": "Address checks and broadcast",
@@ -1082,7 +1109,7 @@
         },
         {
           "h": "Identity checks and further review",
-          "p": "The design may restrict affected transactions while checking account compromise, reversals, sanctions, funding sources or lawful requests. Provide the applicable reason, necessary evidence, estimated review time, status and appeal route except where disclosure is legally prohibited. A risk score is a signal, not proof of wrongdoing. Explanations and human review of automated decisions must be available as required."
+          "p": "Affected transactions may be restricted as necessary while checking account compromise, reversals, sanctions, funding sources or lawful requests. Unless disclosure is legally prohibited, explain the reason, necessary evidence, estimated review time, status and appeal route. A risk score is a review signal, not proof of wrongdoing. Provide explanations and human review of automated decisions where applicable law requires them."
         },
         {
           "h": "Delays, failures and balance restoration",
@@ -1099,7 +1126,7 @@
       ]
     },
     "privacy": {
-      "title": "Privacy notice & draft policy",
+      "title": "Privacy policy",
       "summary": "Current browser/hosting data handling and privacy decisions required before launch.",
       "sections": [
         {
@@ -1107,8 +1134,8 @@
           "p": "This notice distinguishes observed processing from launch plans. Public pages use GitHub Pages hosting and browser storage for settings and some activity. The operating data controller, privacy lead and rights contact are unconfirmed, so this is not a completed statutory policy. Do not enter real identity, payment or delivery data."
         },
         {
-          "h": "Information currently stored on your device",
-          "p": "Depending on features used, browser storage may retain language/currency/audio settings, local login label/provider/time, balances and activity, inventory and delivery details, fairness seeds/counters, free-box history, review text/photos and recent opening times. The login label masks a phone number; delivery input is separate. Logging out does not clear other records, and deleting browser data may be irreversible."
+          "h": "Device records and account sessions",
+          "p": "Depending on features used, browser storage may retain language, currency and sound preferences, balances and transactions, inventory and delivery inputs, verification seeds and counters, daily activity, review text and photos, and recent opening times. Account authentication uses session verification by the connected authentication server; passwords and authenticated user details are not persisted in browser storage. Legacy local login records are not restored as authenticated accounts. Logging out does not delete other feature records, and deleting browser data may be irreversible."
         },
         {
           "h": "Hosting and external services",
@@ -1136,7 +1163,7 @@
         },
         {
           "h": "Automated decisions, device signals and optional data",
-          "p": "Withdrawal risk design uses timing, amounts and behavior; country mismatch should only use actual server evidence. A fingerprint utility existing in code does not prove current invocation or transfer. Before introduction disclose purpose, signals, retention and effects; hashes may still be personal data. Implement applicable rights concerning automated decisions, including refusal, explanation and review, and keep optional analytics/advertising off unless appropriately chosen."
+          "p": "Withdrawal risk review may use transaction timing, amounts and behavior; country mismatches require verified evidence. The existence of code alone does not establish that device identification or external transfer currently occurs. Before introduction, disclose purposes, signals, retention and effects; hashes can still be personal data. Provide applicable refusal, explanation and review rights for automated decisions, and keep optional analytics or advertising inactive until lawfully chosen."
         },
         {
           "h": "Safeguards, incidents and changes",
@@ -1179,6 +1206,14 @@
         {
           "h": "Refusals and appeals",
           "p": "A refusal based on an exception, use or consumer fault needs legal and factual grounds and a review route. Internal review cannot arbitrarily shorten legal claim periods or become the only allowed remedy. Reconcile duplicate goods/refund issues from records without arbitrarily deducting unrelated legitimate balances."
+        },
+        {
+          "h": "Canceling before confirmation and closing an opening",
+          "p": "At the quantity and total review step, Cancel purchase stops the order without a charge. After confirmation, the entire selected quantity is processed together and all results are recorded. X or SKIP bypasses the animation to show complete results; it is not a cancellation or refund request. Cashback goes to the balance and other goods to the vault. Stopping autoplay prevents the next purchase and preserves the current purchase results. Duplicate charges, missing results, non-performance and statutory cancellation or refund rights remain subject to separate review and remedies."
+        },
+        {
+          "h": "Canceling a delivery request before dispatch",
+          "p": "A delivery request in preparation can be canceled and the item returned to held inventory. Any shipping fee already charged is returned once, limited to the amount allocated to that item and following its original funding sources. Shared shipping fees follow per-item allocation records without duplicate reimbursement. A request cannot be canceled through the screen while in transit. This operational restriction does not remove statutory withdrawal, return or remedies for defects, wrong delivery, loss or non-performance; those requests follow a separate return or refund review."
         }
       ]
     },
@@ -1192,7 +1227,7 @@
         },
         {
           "h": "Shipping, taxes and regional restrictions",
-          "p": "Current screens model free shipping; real destinations and contracted carriers are unconfirmed. Free shipping does not mean customs or VAT exemption. Before ordering disclose dispatch origin, eligible destinations, freight/remote-area charges, tax responsibility and import conditions. Do not introduce later fees without agreement or unilaterally replace an unavailable product."
+          "p": "Review the shipping fee applicable to the order on the delivery request screen. Orders marked free shipping have a zero shipping fee; this does not waive customs duties or taxes. Actual eligible destinations and contracted carriers require separate confirmation. Before ordering, disclose the origin, eligible destinations, freight and remote-area charges, tax allocation and import conditions as part of the total cost. Do not add charges without assent or unilaterally replace unavailable goods."
         },
         {
           "h": "Requests, dispatch and tracking",
@@ -1200,11 +1235,11 @@
         },
         {
           "h": "Returns, loss, damage and authenticity",
-          "p": "Seller-fault, loss, damage and suspected counterfeits require investigation and applicable remedies under the refund policy. An inspection body and enhanced compensation terms are unconfirmed, so 300% compensation is not presented as an established operating promise. This draft does not retroactively diminish any valid existing commitment or statutory right. Publish the return address, method and cost allocation before launch."
+          "p": "Seller fault, loss, damage and suspected counterfeits require investigation and applicable remedies under the refund policy. An inspection body and enhanced compensation terms are unconfirmed, so 300% compensation is not an established operating promise. This policy does not retroactively diminish valid existing commitments or statutory rights. Publish the return address, method and cost allocation before actual sales."
         },
         {
           "h": "Resale values and confirming a choice",
-          "p": "The design applies 95% to the displayed valuation of physical/digital items and the full displayed amount to balance results. This is not a 95% refund of purchase price or principal protection. Disclose valuation source/time, condition, currency and actual resale amount before confirmation. Avoid simultaneous delivery and resale while retaining separate error, non-performance and statutory remedies."
+          "p": "Optional resale applies 95% to the displayed valuation of physical or digital items; balance results are automatically credited at their full displayed amount. This is not a 95% refund of the purchase price or principal protection. Disclose the valuation basis and time, condition, currency and actual resale amount before confirmation. Delivery and resale cannot proceed simultaneously for the same item; separate error, non-performance and statutory remedies remain available."
         },
         {
           "h": "Digital codes, non-receipt and storage",
@@ -1229,8 +1264,8 @@
           "p": "Current verification checks consistency between disclosed inputs and calculations. Recomputing browser-generated/stored data is not an independent audit, proof of server secrecy, solvency or certification of the entire process. Live operations require commitments before outcomes, secure server randomness/seed handling, per-order records and independently verifiable procedures."
         },
         {
-          "h": "Visual effects and free use",
-          "p": "Reel movement, neighboring items, near stops and reveal effects are presentation, not evidence of odds or other users winning. Free preview results do not entitle users to products or cash. Daily boxes and review bonuses are also design-stage features, not established reward claims. Real promotions require separately published terms."
+          "h": "Opening animations and benefits",
+          "p": "Reel motion, neighboring items and reveal effects are presentation, not evidence of actual odds or other users winning. X or SKIP only bypasses the presentation of recorded results; it does not change outcomes or the purchased quantity. Daily boxes, review rewards and other benefits are offered only when the organizer, eligibility, reward conditions and dates are separately published and the reward service is enabled."
         },
         {
           "h": "Odds changes and errors",
@@ -1260,7 +1295,7 @@
         },
         {
           "h": "Spending, time limits and taking a break",
-          "p": "Do not encourage repeated purchases to recover losses. Development must address user spending/time limits, automatic stops, breaks/self-restriction requests and marketing opt-outs. Lowering limits or stopping should not be obstructed, and must not eliminate unused-fund return or statutory rights. These are pre-launch requirements, not claims of already implemented controls."
+          "p": "Do not encourage repeated purchases to recover losses. Autoplay follows the user's selected count and stop conditions; stopping prevents the next purchase while preserving current results. Service-wide spending or time limits, breaks, self-restriction requests and marketing opt-outs require clear disclosure of actual availability and access. Controls that are not connected must not be presented as active. Reducing limits or stopping use must not be unfairly obstructed, and stopping does not remove unused-funds return or statutory rights."
         },
         {
           "h": "Incidents and impersonation",
@@ -1290,7 +1325,7 @@
         },
         {
           "h": "Separate incentive and event terms",
-          "p": "Each real free-box, review, referral or ranking event needs organizer, eligibility, region/age, dates/timezone, selection, payout timing/method, budget/quantity, use/withdrawal/expiry conditions and tax allocation. Review rewards must not require positive opinions and incentives must be disclosed. Do not retrospectively revoke earned rewards unfairly or imply that design-stage amounts are live promotions."
+          "p": "Each free-box, review, referral or ranking event requires separate disclosure of its organizer, eligibility, region and age limits, dates and timezone, selection, payout timing and method, budget and quantity, use, withdrawal and expiry conditions, and tax allocation. Review rewards must not require positive opinions, and incentives must be disclosed. Do not unfairly revoke earned benefits retroactively or advertise unconfirmed reward amounts as active promotions."
         }
       ]
     },
@@ -1303,8 +1338,8 @@
           "p": "Current screens use browser localStorage. Service marketing/ad tracking and analytics cookies were not identified in this review and are not described as active. Hosting access logs and external-site visits are separate. Absence of cookies does not mean absence of personal data processing."
         },
         {
-          "h": "Preferences and account labels",
-          "p": "gachaflix.locale stores language; gachaflix.currency stores currency; gachaflix.settings stores preferences such as sound; voila-auth-v1 stores the local login identifier, label and time. Legacy-name keys remain in use. These records do not prove server authentication or verified identity."
+          "h": "Preferences and authentication state",
+          "p": "gachaflix.locale stores language, gachaflix.currency stores currency, and gachaflix.settings stores preferences such as sound. voila-auth-v1 is a legacy-compatible storage key, but it does not currently persist authenticated user details or passwords. When the authentication service is connected, sessions are verified through its response. Editing local storage does not establish authenticated identity."
         },
         {
           "h": "Feature activity records",
@@ -1363,12 +1398,12 @@
           "p": "Actual countries, age, governing law, processors/custodians/carriers, currencies, final fees and refund routes are pending. Customer-fund custody, segregation, return, virtual-asset permissions and any required purchase-protection scheme depend on the actual model. Deposit insurance, reserves, escrow, insurance or authentication partnerships are not claimed as established."
         },
         {
-          "h": "Pre-launch review and effect",
-          "p": "Final documents must be reconciled with actual operations, applicable territorial law, consumer rights, data flows and implemented functionality, with qualified local professional review. These drafts are not legal certification or a guarantee of global compliance. Pending operator/territory decisions are not launch approval."
+          "h": "Operating conditions and policy application",
+          "p": "Policies must match actual operations, applicable territorial law, consumer rights, data flows and implemented functions, with qualified local review where needed. Publishing policies is not a license, legal certification or guarantee of compliance in every territory. Unconfirmed operator details, territories or essential service connections must not be treated as evidence that real transactions are available."
         },
         {
           "h": "Version, effective date and notices",
-          "p": "2026-09-29-draft.2 replaces brief text with separate deposit, withdrawal, unused-fund, statutory refund, delivery, privacy, review and dispute drafts. Prepared 2026-09-29; transaction terms have no effective date yet. Live changes must retain old versions, reasons/content, publication/effective dates, required notice/assent and treatment of pending orders. Existing valid rights must not be retroactively reduced."
+          "p": "Policy version 2026-09-29.3, published 2026-09-29. This revision covers cancellation before purchase confirmation, X and SKIP during opening, cancellation before dispatch, and account closure after funds and goods are resolved. The effective date for real-transaction terms will be separately announced after operating information is confirmed. Changes must retain prior versions, reasons and content, publication and effective dates, required notice and assent, and treatment of pending orders without retroactively reducing valid rights."
         }
       ]
     },
@@ -1378,7 +1413,7 @@
       "sections": [
         {
           "h": "Can I deposit real funds now?",
-          "p": "No. This is the design review stage; real transactions, payments and delivery have not launched. Do not enter or send real funds or sensitive personal information."
+          "p": "Payment, withdrawal and delivery availability is shown on the relevant screen. Unconnected services are unavailable; unprocessed requests are never shown as completed. See Business and service information for operator details and supported regions."
         },
         {
           "h": "Is 95% resale the same as a refund?",
@@ -1394,11 +1429,11 @@
         },
         {
           "h": "What are the fees and processing times?",
-          "p": "Design values are a {minWithdraw} USDT minimum, {trcFee} USDT TRC-20 fee and {bepFee} USDT BEP-20 fee. Operating conditions are pending; neither instant transfer nor completion within 24 hours is guaranteed."
+          "p": "The withdrawal screen shows an ordinary minimum of {minWithdraw} USDT and fees of {trcFee} USDT for TRC-20 and {bepFee} USDT for BEP-20. Check service availability and final conditions when requesting. Instant transfer or completion within 24 hours is not guaranteed, and ordinary minimums do not extinguish statutory refunds or remaining-funds claims on closure."
         },
         {
           "h": "How do I delete data or make a request?",
-          "p": "Current local records can be deleted through browser site-data settings but may not be recoverable. Logging out is not complete deletion. Official support and privacy-rights intake are not open; contacts will be published in operating information once confirmed."
+          "p": "Request account closure from your profile after checking balances, held goods and pending transactions and resolving them as needed. Actual account deletion cannot complete without the authentication service connection. Deleting browser site data removes local records, not a server account or legally retained records. Logging out is not complete deletion either. Check operating information for the official privacy-rights contact; unconfirmed intake channels are unavailable."
         }
       ]
     }
@@ -1558,7 +1593,15 @@
       "js-ducati": "Ducati Panigale V2",
       "urb-vanmoof": "VanMoof S5",
       "ctd-brompton": "Brompton P Line Urban",
-      "urb-garmin": "Garmin Edge 1050"
+      "urb-garmin": "Garmin Edge 1050",
+      "cb-085-double": "1.70 USDT instant cashback",
+      "cb-265-double": "5.30 USDT instant cashback",
+      "cb-440-double": "8.80 USDT instant cashback",
+      "cb-1850-double": "37.00 USDT instant cashback",
+      "cb-2300-double": "46.00 USDT instant cashback",
+      "cb-2750-double": "55.00 USDT instant cashback",
+      "cb-4600-double": "92.00 USDT instant cashback",
+      "cb-9500-double": "190.00 USDT instant cashback"
     }
   },
   "editorialPages": {
@@ -1582,7 +1625,7 @@
     "faq2Q": "How do I manage my items?",
     "faq2A": "Your inventory shows shipping eligibility and the return amount for each item. Returns go back to the balance associated with the original payment source.",
     "faq3Q": "Does the free trial award an item?",
-    "faq3A": "The free trial previews the opening experience. It does not change your balance or inventory, and its result cannot be shipped or returned.",
+    "faq3A": "You can cancel without charge before confirming a purchase. Confirmation records every purchased result. Closing with X or skipping keeps all results and does not charge you again.",
     "fairTitle": "Verify your result.",
     "fairBody": "One opening record, from the seed hash to the winning range. Recalculate the result with the same inputs.",
     "recordsTitle": "Payouts and shipments",
@@ -1627,14 +1670,16 @@
     "step3Title": "Make your next move",
     "step3Body": "Request delivery or exchange the item for its displayed refund value.",
     "proofTitle": "Confidence comes from clarity.",
-    "verify": "Verify fairness"
+    "verify": "Verify fairness",
+    "fairnessCta": "Understand verification",
+    "purchaseNote": "Review the price and odds before buying. Check each result yourself."
   },
   "legalCenter": {
     "title": "Policies & your rights",
     "intro": "Understand the proposed conditions for payments, products, refunds and personal data, and how problems should be resolved.",
-    "draftBadge": "Pre-launch review draft",
-    "statusTitle": "Currently at the design review stage",
-    "statusBody": "The operating entity, service countries, payment and delivery providers, and official support are not yet confirmed. Transaction policies are proposals for review, not effective sales terms. Amounts and features illustrate the design: do not send funds, make payments or delivery requests, or enter identity documents or card details. Privacy and storage notices explain current page behavior.",
+    "draftBadge": "Policies and service rules",
+    "statusTitle": "Before using the service",
+    "statusBody": "Display language does not determine service availability. Check support and processing conditions before making a payment, requesting delivery or withdrawing funds. Operator details, supported regions and effective dates appear in Business and service information.",
     "version": "Document version {version}",
     "effective": "Prepared/reviewed: 2026-09-29 / Transaction terms effective date: not set",
     "contents": "On this page",
@@ -1656,12 +1701,12 @@
       "hosting": "GitHub Pages visitor data handling"
     },
     "notice": {
-      "money": "Design review only. Do not transfer real funds or enter card details. Review the draft payment, withdrawal and refund conditions below.",
-      "delivery": "Delivery design review only. Do not enter a real address, phone number or customs identifier. Review the delivery, returns and privacy drafts below.",
+      "money": "Deposits and withdrawals cannot be processed until the payment service is connected. Do not transfer funds without a verified receiving address and supported network.",
+      "delivery": "Delivery requests are currently unavailable. When supported, review delivery fees and destinations before submitting an address.",
       "community": "Current reviews are records stored in this browser. Public posting and reward payouts are not operating. Read the proposed collection, ordering, removal and appeal rules.",
-      "account": "Account design review: the current login is local to this device, not verified identity or live registration. Do not enter real contact details. Reading the documents below is not recorded as agreement."
+      "account": "Check account service availability. Registration and recovery emails are sent only through a connected authentication service."
     },
-    "footerStatus": "Pre-launch design review · Operator and regions pending · Real transactions not launched",
+    "footerStatus": "Terms · Privacy · Payment and delivery policies",
     "footerBusiness": "Legal entity, representative, registration, address and contacts will be published once confirmed. This is not a completed business disclosure."
   },
   "refinement": {
@@ -1810,5 +1855,186 @@
     "storageError": "Could not save. Check browser storage space and permissions. Existing reviews are not automatically removed.",
     "requestDelivery": "Delivery",
     "withdrawUnavailable": "Withdrawal requests are not open yet. No request is accepted and no balance is debited until the withdrawal service is connected."
+  },
+  "cancellation": {
+    "title": "Cancel this shipment request?",
+    "body": "You can cancel while a shipment is being prepared. The item returns to your collection; the opening result and the item are retained.",
+    "keepItem": "Your item stays in your inventory",
+    "feeReturn": "Delivery fee to return",
+    "fundingNote": "Only the delivery fee actually charged is returned to its original balance source. No resale deduction applies.",
+    "rights": "Cancelling a shipment request is separate from cancelling a purchase or returning goods. Applicable refund rights for an opened order depend on its conditions.",
+    "refundPolicy": "Cancellation & refund policy",
+    "keepShipping": "Keep shipment",
+    "confirm": "Cancel shipment",
+    "close": "Close",
+    "processing": "Cancelling",
+    "unknownFee": "This older delivery-fee record does not identify the payment source. The charge must be reconciled before an automatic cancellation refund is possible.",
+    "notPreparing": "This shipment has already started or been processed and cannot be cancelled here.",
+    "changed": "Cancellation was not completed. Check the latest shipment status and try again. No successful refund has been reported.",
+    "done": "Shipment cancelled. Your item is back in your collection.",
+    "inTransit": "A shipment in transit cannot be cancelled here. Separate return, defect and statutory cancellation rights are described in the refund policy."
+  },
+  "account": {
+    "profile": "My account",
+    "profileIntro": "Manage account security, assets, deliveries and account closure in one place.",
+    "guest": "Sign in to your account",
+    "loginNeeded": "Sign in with your email to manage your account.",
+    "verifiedEmail": "Verified email account",
+    "loginTitle": "Sign in with email",
+    "signupTitle": "Create an email account",
+    "recoverTitle": "Reset your password",
+    "recoverIntro": "Enter your account email to request password reset instructions.",
+    "emailIntro": "Keep your account secure with email verification.",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "passwordHint": "Use 12–128 characters. A long password unique to this service is recommended.",
+    "validation": "Use a 12–128 character password, confirm it correctly and review the required agreement.",
+    "consent": "I have reviewed and agree to the required terms.",
+    "terms": "Terms of service",
+    "privacy": "Privacy policy",
+    "close": "Close",
+    "backLogin": "Back to sign in",
+    "forgot": "Forgot your password?",
+    "sendReset": "Request reset instructions",
+    "resetSent": "Request received. If an account exists, reset instructions will be sent to its email address. Check your spam folder too.",
+    "verificationSent": "Email verification requested. Follow the link in your email, then sign in.",
+    "unavailable": "The account authentication service is currently unavailable. Sign-in and registration cannot be processed. Your information will not be submitted.",
+    "wallet": "Balance & funding",
+    "inventory": "Items & deliveries",
+    "reviews": "My reviews",
+    "security": "Account security",
+    "securityIntro": "Verify your identity by email to change your password. If you have forgotten it, use password recovery.",
+    "newPasswordTitle": "Set a new password",
+    "updatePassword": "Change password",
+    "passwordUpdated": "Password changed. Please sign in with your new password.",
+    "closureTitle": "Close your account",
+    "closureIntro": "Settle your balance, resolve stored items and complete pending deliveries and transactions before closing your account. The server checks these conditions again when you submit.",
+    "settled": "Nothing outstanding",
+    "noForfeiture": "You do not need to forfeit funds or items to close your account. Withdraw cryptocurrency funds and request card-funded balance refunds to the original payment method. If minimums, fees or usage conditions prevent settlement, balance settlement support is needed instead of additional purchases.",
+    "retention": "Completed orders and deliveries do not prevent closure. Legally required records and retention periods follow the privacy policy. Deletion of other information must be confirmed by the server.",
+    "closureUnavailable": "Account closure is currently unavailable because the account service is not connected. Your balance and items will not be deleted or deducted.",
+    "reauth": "Current password for identity verification",
+    "closureConsent": "I have reviewed the closure conditions and record retention notice and request deletion of my account.",
+    "closeAccount": "Request account closure",
+    "processing": "Processing…",
+    "deleted": "The server has confirmed account deletion.",
+    "checks": {
+      "balance": {
+        "title": "Remaining balance",
+        "body": "Settle cryptocurrency funds and card-funded balances separately. Funds are not automatically forfeited.",
+        "action": "Check balance & withdrawals"
+      },
+      "held": {
+        "title": "Stored items",
+        "body": "Receive delivery or complete a sellback for stored items. Settle any resulting balance as well.",
+        "action": "Manage stored items"
+      },
+      "shipping": {
+        "title": "Active deliveries",
+        "body": "Delivery requests can be cancelled while preparing. Shipped items must be delivered and any outstanding issues resolved.",
+        "action": "Check delivery status"
+      },
+      "pending": {
+        "title": "Pending transactions",
+        "body": "Wait until queued, under-review or broadcasting transactions reach a final status before requesting closure.",
+        "action": "Check transaction status"
+      }
+    },
+    "errors": {
+      "unavailable": "The account service is unavailable. Please check again later.",
+      "network": "We could not confirm the operation. Check your connection and try again.",
+      "invalid": "We could not validate the information or request. Request a new verification link if the previous one has expired.",
+      "credentials": "Check your sign-in details. Email verification or a fresh sign-in may be required.",
+      "rateLimit": "Too many requests. Please try again later.",
+      "conflict": "The server found unresolved assets or transactions. Check their status before proceeding."
+    }
+  },
+  "fairnessGuide": {
+    "eyebrow": "Fairness · Result verification",
+    "title": "Understand your result. Check it yourself.",
+    "intro": "You do not need to read cryptographic code. Select an opening and we recalculate its source, draw number and item, then show what matches the saved record.",
+    "start": "Check my opening",
+    "stepsTitle": "Three comparisons, explained.",
+    "hashIntro": "A hash is a digital fingerprint for comparing content—not a hashtag (#). Think of the source text as the contents of an envelope, and the hash as a reference number written on the outside.",
+    "step1Title": "Keep the reference number first.",
+    "step1Body": "Before opening, check the hash of the draw source. After the source is revealed, calculate its hash again. If the numbers differ, the source does not match.",
+    "step2Title": "Calculate again with the same inputs.",
+    "step2Body": "The draw source, your input and the opening counter go into the same calculation. The same inputs should always produce the same draw number.",
+    "step3Title": "Find the item assigned to that number.",
+    "step3Body": "Use the odds table saved with that opening to find the number’s item range. Then compare that item with the one you received.",
+    "scopeTitle": "What a matching result tells you",
+    "scopeCanTitle": "What this check establishes",
+    "scopeCan": "Whether the saved hash matches the source, the draw number can be reproduced, and the item matches the odds table saved for that opening.",
+    "scopeCannotTitle": "What it does not establish",
+    "scopeCannot": "This check alone cannot prove when a hash was published, that the entire record was never replaced, the operator’s ability to pay or deliver, or the long-term distribution of results.",
+    "recordSource": "This screen currently checks opening records saved in this browser. Independent evidence is needed to establish a server commitment before opening and a record that cannot be changed.",
+    "hashTitle": "What is a hash?",
+    "hashBody": "SHA-256 turns text into a 64-character string of letters and numbers. Identical text produces an identical hash; changing the text changes the comparison. The hash itself is neither a draw number nor a probability.",
+    "hashTry": "Change a letter in the text field. The reference number below is recalculated immediately.",
+    "hashInput": "Text you can change",
+    "hashOutput": "Reference number for this text · SHA-256",
+    "hashNote": "This tool illustrates how hashing works. It does not change openings, your balance or any result.",
+    "faqTitle": "Questions, answered.",
+    "oddsQuestion": "How do odds lead to an item?",
+    "oddsAnswer": "The calculated draw number is between 0 and 999,999. Items receive number ranges in the order of the odds table, and the range containing the draw number selects the item. A 49% entry receives 490,000 of the 1,000,000 positions. Verification needs the table saved for that opening, not today’s table.",
+    "lossQuestion": "Does a match mean I will receive valuable items more often?",
+    "lossAnswer": "No. A match means the calculation for this record can be reproduced. It does not guarantee a high-value item or profit, and earlier results do not guarantee the next outcome. Review the price and each item’s odds before purchasing.",
+    "mismatchQuestion": "What should I do with a mismatch or partial check?",
+    "mismatchAnswer": "A mismatch means a saved value differs from the recalculated value. Check the detailed inputs and download the record for reference. A partial check means information such as the historical odds table is missing. Missing information alone establishes neither manipulation nor correct processing.",
+    "timingQuestion": "Why should the source stay private before opening?",
+    "timingAnswer": "Anyone with the draw source, client input and opening counter can calculate the result in advance. A trustworthy service needs a hash fixed beforehand, private server custody of the source, and disclosure once that source is retired. A revealed source must not be reused for later paid openings.",
+    "recordsTitle": "View payout and shipment records",
+    "recordsBody": "Payout and shipment records are separate from opening verification. Where an external transaction or tracking link is available, check the linked record too.",
+    "verifierEyebrow": "Recalculate my record",
+    "verifierTitle": "Check an opening result",
+    "verifierBody": "Select a record and choose Compare result. There is no need to copy values or interpret cryptographic strings.",
+    "emptyTitle": "No opening records to check yet.",
+    "emptyBody": "Once you have an opening record, check it here or through Result verification in your inventory. A verification result appears only after a record is checked.",
+    "browse": "Explore items and odds",
+    "pick": "Opening to check",
+    "verify": "Compare result",
+    "verifyAgain": "Compare again",
+    "computing": "Calculating…",
+    "computeError": "The calculation could not be completed. Check the saved record and try again.",
+    "check1Title": "Does the source match the saved reference?",
+    "check1Body": "Recalculate a hash from the revealed draw source and compare it with the hash in the record.",
+    "check1Pass": "Match · The source produces the same reference.",
+    "check1Fail": "Mismatch · The source and saved reference differ.",
+    "check2Title": "Can the draw number be reproduced?",
+    "check2Body": "Calculate the number again using the draw source, client input and opening counter.",
+    "check2Pass": "Match · The saved and recalculated numbers are the same.",
+    "check2Fail": "Mismatch · The saved and recalculated numbers differ.",
+    "check3Title": "Did you receive the item for that number?",
+    "check3Body": "Find the recalculated number’s item range in the odds table saved with the opening.",
+    "check3Pass": "Match · The calculated item is the item received.",
+    "check3Fail": "Mismatch · The calculated item differs from the item received.",
+    "historicalMissing": "Unavailable · This record has no saved odds table.",
+    "savedNumber": "Saved number",
+    "calculatedNumber": "Recalculated number",
+    "savedItem": "Item received:",
+    "calculatedItem": "Calculated item:",
+    "range": "Item number range: {from}–{to} · Table odds {pct}%",
+    "verdictPass": "All three comparisons match.",
+    "verdictPassBody": "The saved source, number and item were reproduced by the same calculation. Review or download the values below.",
+    "verdictFail": "Some values do not match.",
+    "verdictFailBody": "This record cannot be marked as matching. Review the details below and keep a copy of the original record.",
+    "verdictPartial": "The available checks match.",
+    "verdictPartialBody": "The source and number were compared, but the historical odds table is missing. The item cannot be confirmed. Today’s table is not substituted for a past opening.",
+    "resultLimit": "A match means this record’s calculation is reproducible. It does not certify the entire service’s fairness or the time its hash was first published.",
+    "evidenceTitle": "Compared values · Download record",
+    "evidenceBody": "Keep the inputs and saved odds table to use with another verification tool. The file includes the revealed draw source.",
+    "savedHash": "Hash saved in the record",
+    "computedHash": "Hash recalculated from the source",
+    "notCalculated": "Shown after comparison.",
+    "seed": "Draw source · Server seed",
+    "client": "Your input · Client seed",
+    "nonce": "Opening counter · Starts at 0",
+    "tableVersion": "Odds table version at opening",
+    "unknownVersion": "No version recorded",
+    "download": "Download this record · JSON",
+    "formula": "Calculation: read the first 8 hexadecimal characters of HMAC-SHA256(draw source, client input:opening counter) as an integer, then take the remainder after division by 1,000,000. Number range: 0–{max}.",
+    "manualTitle": "Calculate with your own inputs",
+    "manualBody": "Use this for inputs you have kept separately. Item ranges here use the currently selected box’s current odds table, so this tool does not certify the item in a historical opening."
   }
 }

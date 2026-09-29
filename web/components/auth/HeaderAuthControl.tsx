@@ -3,14 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { LogOut, Smartphone } from "lucide-react";
+import { LogOut, Smartphone, Mail, UserRound } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/format";
 import { useAuthStore } from "@/stores/authStore";
 import { GoogleMark, AppleMark } from "@/components/auth/ProviderMarks";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-function ProviderBadge({ provider }: { provider: "google" | "apple" | "phone" }) {
+function ProviderBadge({ provider }: { provider: "google" | "apple" | "phone" | "email" }) {
+  if (provider === "email") return <Mail className="h-3.5 w-3.5 text-gold-champagne" />;
   if (provider === "google") return <GoogleMark className="h-3.5 w-3.5" />;
   if (provider === "apple") return <AppleMark className="h-3.5 w-3.5 text-white" />;
   return <Smartphone className="h-3.5 w-3.5 text-gold-champagne" strokeWidth={2.4} />;
@@ -42,6 +44,7 @@ function OnlineDot() {
  */
 export function HeaderAuthControl({ className }: { className?: string }) {
   const t = useTranslations("auth");
+  const ta = useTranslations("account");
   const user = useAuthStore((s) => s.user);
   const openAuthModal = useAuthStore((s) => s.openAuthModal);
   const logout = useAuthStore((s) => s.logout);
@@ -66,7 +69,7 @@ export function HeaderAuthControl({ className }: { className?: string }) {
 
   const signOut = () => {
     setOpen(false);
-    logout(t("toastLogout"));
+    void logout(t("toastLogout")).catch(() => useAuthStore.getState().pushToast(ta("errors.network"), "neutral"));
   };
 
   if (!user) {
@@ -133,6 +136,7 @@ export function HeaderAuthControl({ className }: { className?: string }) {
               </span>
               <OnlineDot />
             </div>
+            <Link href="/profile" onClick={() => setOpen(false)} className="mt-1 flex min-h-11 items-center gap-2 rounded-lg px-2.5 text-sm font-semibold text-white hover:bg-elevation"><UserRound className="h-4 w-4" />{ta("profile")}</Link>
             <button
               type="button"
 

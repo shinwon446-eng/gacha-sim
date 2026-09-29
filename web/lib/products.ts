@@ -1,15 +1,10 @@
 /**
- * VOILA 랜덤박스 데이터셋 — 마이크로 진입(1.00 USDT~) + 하우스 엣지 모델 (CLAUDE.md §1, §3).
- *
- * 경제 모델
- *   · 가격은 스펙에 명시한다(1 / 3 / 5 / 20 / 25 / 30 / 50 / 100 USDT). 확률표에서 EV 를 계산해 빌더가 밴드를 검증한다.
- *   · 정가 기준 환원율 retailRTP = EV / price ∈ [0.93, 1/REFUND_RATE) — 스펙 94~96%, 바닥이 가격에 붙은 잭팟 박스는 100% 를 조금 넘는다.
- *     상한이 1/0.95 미만이므로 현금 환산(× REFUND_RATE)은 항상 price 미만 — 무위험 차익 없음. 하우스 엣지(현금 기준) ≈ 4~12%.
- *   · 바닥 가치 보장: 모든 박스의 바닥 등급은 "N USDT 즉시 캐시백"(kind=cash, 100% 적립)이며 가격의 80~96%. "꽝이어도 N USDT 는 돌아온다"가 참이 되는 조건.
- *   · 하이브리드 리워드: 상위는 실물, 중위는 배송·관세 없는 글로벌 디지털 자산(기프트카드 · USDT 인스턴트 드롭), 바닥은 USDT 캐시백. 조잡한 저가 실물 꽝은 없다.
- *   · 금액은 USDT 소수 둘째 자리까지. 표기는 lib/formatCurrency 만 통과한다.
- *
- * 이미지 — 이 파일에 URL 을 쓰지 않는다. lib/productImages.ts 가 유일한 경로 원천이다.
+ * VOILA catalogue. SPECS preserve the original baseline and builder validation.
+ * Public BOXES apply the 2026-09-29 schedule: baseline cashback 49%, twice
+ * that amount 49%, all other prizes proportionally share 2%. Prices unchanged.
+ * This schedule has expected payouts above price; paid operation requires an
+ * explicit economics decision. The old builder RTP bands are not current margins.
+ * Prices are in USDT. Product images resolve through productImages.ts.
  */
 
 import { imageFor, type ProductImage } from "./productImages";
@@ -462,7 +457,27 @@ const SPECS: BoxSpec[] = [
   },
 ];
 
-export const BOXES: ProductBox[] = SPECS.map(buildBox);
+export const CATALOG_ODDS_VERSION = "2026-09-29-cashback-49-49-v1";
+
+/** Exact four-decimal probabilities; the remaining 2% retains relative prize weights. */
+function withCashbackSchedule(box: ProductBox): ProductBox {
+  const base = box.items.reduce((a, b) => a.value < b.value ? a : b);
+  if (base.kind !== "cash") throw new Error(`${box.slug}: cashback base missing`);
+  const other = box.items.filter(item => item.id !== base.id);
+  const total = other.reduce((sum, item) => sum + item.dropRate, 0);
+  const quotas = other.map((item, index) => ({ item, index, raw: item.dropRate / total * 20_000, units: Math.floor(item.dropRate / total * 20_000) }));
+  let remaining = 20_000 - quotas.reduce((sum, q) => sum + q.units, 0);
+  const ranked = [...quotas].sort((a, b) => (b.raw - b.units) - (a.raw - a.units) || a.index - b.index);
+  for (let n = 0; n < remaining; n++) ranked[n % ranked.length].units++;
+  if (quotas.some(q => q.units < 1)) throw new Error(`${box.slug}: prize below probability resolution`);
+  const doubled: ProductItem = { ...base, id: `${base.id}-double`, name: `${+(base.value * 2).toFixed(2)} USDT 캐시백`, nameEn: `${+(base.value * 2).toFixed(2)} USDT Cashback`, value: +(base.value * 2).toFixed(2), dropRate: 49, code: `${base.code}X2` };
+  return { ...box, items: [...quotas.map(q => ({ ...q.item, dropRate: q.units / 10_000 })), doubled, { ...base, dropRate: 49 }] };
+}
+
+// Validate the source catalog, then apply the explicitly requested new schedule.
+// This schedule can exceed the purchase price in expected payout. Do not describe
+// it as profitable, or silently change prices to make the old margin checks pass.
+export const BOXES: ProductBox[] = SPECS.map(buildBox).map(withCashbackSchedule);
 
 if (violations.length > 0) {
   throw new Error(["상품 데이터셋 불변식 위반", ...violations].join("\n  - "));
@@ -477,7 +492,7 @@ export const getBoxBySlug = (slug: string): ProductBox | undefined => BOX_BY_SLU
 export const expectedValue = (box: ProductBox): number => box.items.reduce((s, i) => s + (i.value * i.dropRate) / 100, 0);
 /** 정가 기준 환원율 */
 export const retailReturn = (box: ProductBox): number => expectedValue(box) / box.price;
-/** 현금 환급 기준 환원율 — 항상 1 미만. 하우스 엣지 = 1 − 이 값 */
+/** Cash-equivalent expected return. The requested 49/49 schedule can exceed 1. */
 export const cashReturn = (box: ProductBox): number => box.items.reduce((s, i) => s + (sellValueOf(i) * i.dropRate) / 100, 0) / box.price;
 /** 바닥 즉시 환전액(USDT) — 바닥 등급은 USDT 캐시백이라 100% 적립. "꽝이어도 이만큼은 돌아온다" */
 export const floorCash = (box: ProductBox): number => +box.guaranteedMin.toFixed(2);
@@ -528,6 +543,7 @@ export function sortBoxes(list: ProductBox[], key: SortKey): ProductBox[] {
   }
 }
 
-export const formatRate = (r: number): string => (r >= 10 ? r.toFixed(1) + "%" : r >= 1 ? r.toFixed(2) + "%" : r >= 0.01 ? r.toFixed(3) + "%" : r.toFixed(4) + "%");
+/** Preserve the full published million-slot resolution in every probability label. */
+export const formatRate = (r: number): string => `${Number(r.toFixed(4))}%`;
 
 export { REFUND_RATE };

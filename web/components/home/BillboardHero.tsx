@@ -1,24 +1,24 @@
 "use client";
 import { useState } from "react";
-import { ArrowDown, ArrowUpRight, Play } from "lucide-react";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useProductText } from "@/lib/useProductText";
 import { cn } from "@/lib/format";
 import type { ProductBox } from "@/lib/products";
 import { ProductArt } from "@/components/box/ProductArt";
 import { Money } from "@/components/ui/Money";
+import { Link } from "@/i18n/navigation";
 
 export interface BillboardHeroProps {
   boxes: ProductBox[];
   onOpen?: (box: ProductBox) => void;
   onInspect?: (box: ProductBox) => void;
-  onDemo?: (box: ProductBox) => void;
   intervalMs?: number;
   className?: string;
 }
 
 /** Manual selections keep reading and keyboard focus stable. */
-export function BillboardHero({ boxes, onInspect, onDemo, className }: BillboardHeroProps) {
+export function BillboardHero({ boxes, onInspect, className }: BillboardHeroProps) {
   const t = useTranslations("design");
   const { boxTitle } = useProductText();
   const [index, setIndex] = useState(0);
@@ -32,9 +32,9 @@ export function BillboardHero({ boxes, onInspect, onDemo, className }: Billboard
         <p className="hero-description">{t("heroBody")}</p>
         <div className="hero-actions">
           <a href="#boxes" className="btn-primary">{t("explore")}<ArrowDown size={17} aria-hidden /></a>
-          <button type="button" onClick={() => onDemo?.(box)} className="btn-secondary"><Play size={15} aria-hidden />{t("preview")}</button>
+          <Link href="/fairness" className="btn-secondary"><ArrowUpRight size={15} aria-hidden />{t("fairnessCta")}</Link>
         </div>
-        <p className="hero-note">{t("previewNote")}</p>
+        <p className="hero-note">{t("purchaseNote")}</p>
         <div className="hero-signature"><span>VOILA / COLLECTION</span><span>You never know what’s next.</span></div>
       </div>
       <div className="hero-gallery">

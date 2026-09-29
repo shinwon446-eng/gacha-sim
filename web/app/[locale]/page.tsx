@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { BOXES, SORTS, byCategory, floorRatio, heroBox, sortBoxes, type ProductBox, type SortKey } from "@/lib/products";
-import { rolloverContribution } from "@/lib/rollover";
+import { BOXES, SORTS, byCategory, heroBox, sortBoxes, type ProductBox, type SortKey } from "@/lib/products";
+import { createOpeningPurchase, InsufficientOpeningBalance, type OpeningResult } from "@/lib/opening";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { DiscoveryGuide } from "@/components/home/DiscoveryGuide";
 import { BillboardHero } from "@/components/home/BillboardHero";
@@ -17,7 +17,7 @@ import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
 import { Link } from "@/i18n/navigation";
 import { ArrowUpRight } from "lucide-react";
-import { useWalletStore, WELCOME_BONUS_USDT } from "@/stores/walletStore";
+import { useWalletStore } from "@/stores/walletStore";
 import { UnboxingRoulette, type UnboxResult } from "@/components/unboxing/UnboxingRoulette";
 import { BulkOpenModal } from "@/components/unboxing/BulkOpenModal";
 import { BULK_THRESHOLD, type AutoplayConfig } from "@/lib/autoplay";
@@ -58,18 +58,18 @@ export default function BoxesPage() {
   const internalHashUpdate = useRef(false);
   const [sort, setSort] = useState<SortKey>("featured");
   const [shown, setShown] = useState(PAGE_SIZE);
-  const [unbox, setUnbox] = useState<{ box: ProductBox; count: number; demo?: { itemId: string }; auto?: AutoplayConfig; funding?: FundingRatio } | null>(null);
-  const [bulk, setBulk] = useState<{ box: ProductBox; count: number; funding?: FundingRatio } | null>(null);
+  const purchasePending = useRef(false);
+  const [openingPending, setOpeningPending] = useState(false);
+  const [unbox, setUnbox] = useState<{ prepared?: OpeningResult[]; box: ProductBox; count: number; demo?: { itemId: string }; auto?: AutoplayConfig; funding?: FundingRatio } | null>(null);
+  const [bulk, setBulk] = useState<{ prepared?: OpeningResult[]; box: ProductBox; count: number; funding?: FundingRatio } | null>(null);
   const [walletTab, setWalletTab] = useState<"usdt" | "card" | "withdraw">("usdt");
   const depositOpen = useUiStore((s) => s.depositOpen);
   const setDepositOpen = useCallback((on: boolean) => useUiStore.getState()[on ? "openDeposit" : "closeDeposit"](), []);
   const [dailyOpen, setDailyOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const debitSplit = useWalletStore((s) => s.debitSplit);
   const credit = useWalletStore((s) => s.credit);
   const creditSplit = useWalletStore((s) => s.creditSplit);
   const addTransaction = useWalletStore((s) => s.addTransaction);
-  const claimWelcome = useWalletStore((s) => s.claimWelcome);
   const welcomeClaimed = useWalletStore((s) => s.welcomeClaimed);
 
   const pushToast = useCallback((toast: Omit<Toast, "id">) => {
@@ -123,25 +123,32 @@ export default function BoxesPage() {
   }, []);
 
   // 오픈: 가격 × 횟수 차감 → 룰렛. 부족하면 토스트만.
-  const openBox = useCallback(
-    (box: ProductBox, count = 1) => {
-      const cost = box.price * count;
-      const plan = debitSplit(cost);
-      if (!plan) {
-        pushToast({ title: t("unbox.insufficient", { price: fmt(cost) }), body: t("unbox.topUp"), tone: "#E50914" });
-        // 잔고가 없으면 바로 충전 탭을 띄워 준다
-        setWalletTab("usdt");
-        setDepositOpen(true);
-        return;
-      }
-      // 롤오버 인정액 — 저위험(바닥 환전율 90%+) 상자는 30% 만 (lib/rollover.ts)
-      addTransaction({ type: "open", amountUsdt: -cost, ref: `${box.slug}x${count}`, rolloverUsdt: rolloverContribution(cost, floorRatio(box)) });
+  const openDepositForPurchase = useCallback((cost: number) => {
+    pushToast({ title: t("unbox.insufficient", { price: fmt(cost) }), body: t("unbox.topUp"), tone: "#E6CA65" });
+    setDetail(null);
+    setWalletTab("usdt");
+    setDepositOpen(true);
+  }, [pushToast, t, fmt, setDepositOpen]);
+
+  const openBox = useCallback(async (box: ProductBox, count = 1) => {
+    if (purchasePending.current) return;
+    const cost = +(box.price * count).toFixed(2);
+    if (useWalletStore.getState().balance < cost) { openDepositForPurchase(cost); return; }
+    purchasePending.current = true;
+    setOpeningPending(true);
+    try {
+      const prepared = await createOpeningPurchase(box, count)();
       setDetail(null);
-      if (count >= BULK_THRESHOLD) setBulk({ box, count, funding: plan.ratio });
-      else setUnbox({ box, count, funding: plan.ratio });
-    },
-    [debitSplit, addTransaction, pushToast, t, fmt],
-  );
+      if (count >= BULK_THRESHOLD) setBulk({ box, count, prepared });
+      else setUnbox({ box, count, prepared });
+    } catch (error) {
+      if (error instanceof InsufficientOpeningBalance) openDepositForPurchase(cost);
+      else pushToast({ title: t("unbox.openFailed"), body: t("unbox.openFailedBody"), tone: "#E50914" });
+    } finally {
+      purchasePending.current = false;
+      setOpeningPending(false);
+    }
+  }, [openDepositForPurchase, pushToast, t]);
 
   const onSellBack = useCallback(
     (results: UnboxResult[], amount: number, split?: { toCrypto: number; toCard: number }) => {
@@ -152,22 +159,6 @@ export default function BoxesPage() {
       pushToast({ title: t("unbox.sold", { amount: fmt(amount) }), tone: "#E6CA65" });
     },
     [credit, creditSplit, addTransaction, pushToast, t, fmt],
-  );
-
-  // A labelled visual preview of the selected collection; no balance, inventory or nonce changes.
-  const openDemo = useCallback((box: ProductBox) => {
-    const hero = box.items.reduce((top, item) => item.value > top.value ? item : top, box.items[0]);
-    setDetail(null);
-    setUnbox({ box, count: 1, demo: { itemId: hero.id } });
-  }, []);
-  // 데모 → 실제 전환: 웰컴 보너스 1회 지급 후 해당 박스 상세로
-  const convertDemo = useCallback(
-    (box: ProductBox) => {
-      if (claimWelcome()) pushToast({ title: t("header.welcomeToast", { amount: fmt(WELCOME_BONUS_USDT) }), tone: "#E6CA65" });
-      setUnbox(null);
-      setDetail(box);
-    },
-    [claimWelcome, pushToast, t, fmt],
   );
 
   const onShip = useCallback(() => {
@@ -186,7 +177,7 @@ export default function BoxesPage() {
     <main className="min-h-screen bg-canvas">
       <SiteHeader onWallet={(tab) => { setWalletTab(tab); setDepositOpen(true); }} onDaily={() => setDailyOpen(true)} />
 
-      <BillboardHero boxes={billboard} onOpen={setDetail} onInspect={setDetail} onDemo={openDemo} />
+      <BillboardHero boxes={billboard} onOpen={setDetail} onInspect={setDetail} />
 
       <AboutBanner />
 
@@ -209,8 +200,8 @@ export default function BoxesPage() {
         <ProofFeed limit={4} showReserve={false} />
       </section>
 
-      <DetailModal box={detail} onClose={() => setDetail(null)} onOpen={openBox} onAutoplay={(b, cfg) => { setDetail(null); setUnbox({ box: b, count: 1, auto: cfg }); }} />
-      <BulkOpenModal box={bulk?.box ?? null} count={bulk?.count ?? 0} funding={bulk?.funding} onClose={() => setBulk(null)} onSellBack={(ids, amount, split) => { if (split) creditSplit(split.toCrypto, split.toCard); else credit(amount); addTransaction({ type: "sellback", amountUsdt: amount, ref: ids.join(",") }); pushToast({ title: t("unbox.sold", { amount: fmt(amount) }), tone: "#E6CA65" }); }} />
+      <DetailModal pending={openingPending} onDeposit={(box, count) => openDepositForPurchase(box.price * count)} box={detail} onClose={() => setDetail(null)} onOpen={openBox} onAutoplay={(b, cfg) => { if (useWalletStore.getState().balance < b.price) { openDepositForPurchase(b.price); return; } setDetail(null); setUnbox({ box: b, count: 1, auto: cfg }); }} />
+      <BulkOpenModal prepared={bulk?.prepared} box={bulk?.box ?? null} count={bulk?.count ?? 0} funding={bulk?.funding} onClose={() => setBulk(null)} onSellBack={(ids, amount, split) => { if (split) creditSplit(split.toCrypto, split.toCard); else credit(amount); addTransaction({ type: "sellback", amountUsdt: amount, ref: ids.join(",") }); pushToast({ title: t("unbox.sold", { amount: fmt(amount) }), tone: "#E6CA65" }); }} />
 
       <DepositModal
         open={depositOpen}
@@ -226,7 +217,7 @@ export default function BoxesPage() {
       <DailyFreeBoxModal open={dailyOpen} onClose={() => setDailyOpen(false)} onCredited={(amount) => pushToast({ title: t("daily.creditedToast", { amount: fmt(amount) }), tone: "#E6CA65" })} />
 
 
-      <UnboxingRoulette box={unbox?.box ?? null} count={unbox?.count ?? 1} funding={unbox?.funding} demo={unbox?.demo} onDemoConvert={convertDemo} welcomeClaimed={welcomeClaimed} auto={unbox?.auto} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} onRespin={(b) => { setUnbox(null); setTimeout(() => openBox(b, 1), 60); }} />
+      <UnboxingRoulette prepared={unbox?.prepared} onDeposit={() => { setUnbox(null); setWalletTab("usdt"); setDepositOpen(true); }} box={unbox?.box ?? null} count={unbox?.count ?? 1} funding={unbox?.funding} demo={unbox?.demo} welcomeClaimed={welcomeClaimed} auto={unbox?.auto} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} onRespin={(b) => { setUnbox(null); setTimeout(() => openBox(b, 1), 60); }} />
 
       {/* 토스트 */}
       <div className="pointer-events-none fixed bottom-20 right-4 z-[120] flex w-80 max-w-full flex-col gap-2 md:bottom-4">

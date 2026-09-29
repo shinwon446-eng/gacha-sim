@@ -34,10 +34,13 @@ import { TierBadge, TierLegend, TierStrip } from "@/components/box/TierStrip";
 import { AutoplaySettingsModal } from "@/components/unboxing/AutoplaySettingsModal";
 import { AUTOPLAY_SPINS, DEFAULT_AUTOPLAY, OPEN_PRESETS, type AutoplayConfig } from "@/lib/autoplay";
 import { Link } from "@/i18n/navigation";
+import { useWalletStore } from "@/stores/walletStore";
 import { ProductArt } from "@/components/box/ProductArt";
 
 export interface DetailModalProps {
   box: ProductBox | null;
+  pending?: boolean;
+  onDeposit?: (box: ProductBox, count: number) => void;
   onClose: () => void;
   onOpen?: (box: ProductBox, count?: number) => void;
   /** 오토플레이 시작 — 설정 모달에서 확정된 구성으로 */
@@ -126,24 +129,28 @@ function Stat({ label, value, tone = "#FFFFFF" }: { label: string; value: string
  *   하단  에피소드 목록 자리에 "전체 당첨 가능 상품 그리드"
  *         → 등급 색 보더 + 실판매가 + 확률
  */
-export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalProps) {
+export function DetailModal({ box, onClose, onOpen, onAutoplay, onDeposit, pending = false }: DetailModalProps) {
   const t = useTranslations();
   const { fmt } = useCurrency();
   const { boxTitle, boxBadge, itemName } = useProductText();
   // 수량 프리셋 [1x][5x][10x][50x][100x] · 오토플레이 [−][🔄 N회][+]
   const [qty, setQty] = useState<number>(1);
+  const [confirming, setConfirming] = useState(false);
+  const balance = useWalletStore((s) => s.balance);
   const autoIdx = 0;
   const [autoOpen, setAutoOpen] = useState(false);
   const [autoCfg, setAutoCfg] = useState<AutoplayConfig>(DEFAULT_AUTOPLAY);
   useEffect(() => {
     if (!box) return;
     setQty(1);
+    setConfirming(false);
     setAutoOpen(false);
   }, [box]);
   const autoSpins = AUTOPLAY_SPINS[autoIdx];
   const panelRef = useRef<HTMLDivElement>(null);
 
-  useModal(!!box, onClose, panelRef);
+  const close = () => { if (!pending) onClose(); };
+  useModal(!!box, close, panelRef);
   const oddsRef = useRef<HTMLElement>(null);
 
   const meta = useMemo(() => {
@@ -177,12 +184,12 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
       {box && meta && (
         <motion.div className="fixed inset-0 z-[100] overflow-y-auto overscroll-contain bg-black/75 px-3 py-4 backdrop-blur-md md:p-8"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+          onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
           <motion.div ref={panelRef} tabIndex={-1} role="dialog" aria-modal="true"
             aria-label={t("modal.details", { title: boxTitle(box) })}
             className="relative mx-auto max-w-5xl overflow-hidden rounded-2xl border border-hairline bg-surface shadow-2xl outline-none"
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.25, ease: EASE }}>
-            <button type="button" onClick={onClose} aria-label={t("modal.close")}
+            <button type="button" onClick={close} disabled={pending} aria-label={t("modal.close")}
               className="absolute right-3 top-3 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-obsidian/90 text-white hover:bg-elevation">
               <X className="h-5 w-5" strokeWidth={1.8} />
             </button>
@@ -203,23 +210,39 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
                   <div className="mb-3 text-xs font-medium text-secondary">{t("unbox.qty")}</div>
                   <div role="group" className="grid grid-cols-5 gap-1.5" aria-label={t("unbox.qty")}>
                     {OPEN_PRESETS.map((n) => (
-                      <button key={n} type="button" aria-pressed={qty === n} onClick={() => setQty(n)}
+                      <button key={n} type="button" aria-pressed={qty === n} disabled={pending} onClick={() => { setQty(n); setConfirming(false); }}
                         className={cn("flex min-h-11 items-center justify-center rounded-lg border px-1 text-xs font-semibold transition-colors", qty === n ? "border-[#f1eee7] bg-[#f1eee7] text-obsidian" : "border-hairline bg-obsidian text-secondary hover:border-white/40")}>
                         {t("modal.quantity", { n })}
                       </button>
                     ))}
                   </div>
-                  <button type="button" onClick={() => onOpen?.(box, qty)} className="btn-primary mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg px-3 py-3 text-sm">
-                    {t("modal.openCount", { n: qty, amount: fmt(box.price * qty) })}
-                    <ArrowUpRight className="h-4 w-4 flex-none" />
-                  </button>
+                  {balance < box.price * qty ? (
+                    <div className="mt-4 rounded-lg border border-gold-champagne/30 bg-gold-champagne/5 p-4">
+                      <p className="text-sm font-semibold text-white">{t("unbox.insufficient", { price: fmt(box.price * qty) })}</p>
+                      <p className="mt-1 text-sm leading-relaxed text-secondary">{t("modal.balanceShortfall", { balance: fmt(balance), missing: fmt(box.price * qty - balance) })}</p>
+                      <button type="button" onClick={() => onDeposit?.(box, qty)} className="btn-primary mt-3 min-h-12 w-full">{t("unbox.topUpAction")}</button>
+                    </div>
+                  ) : confirming ? (
+                    <div className="mt-4 rounded-lg border border-gold-champagne/30 bg-gold-champagne/5 p-4" role="group" aria-label={t("modal.confirmPurchase")}>
+                      <p className="text-sm font-semibold text-white">{t("modal.openCount", { n: qty, amount: fmt(box.price * qty) })}</p>
+                      <p className="mt-2 text-sm leading-relaxed text-secondary">{t("modal.batchCommitment")}</p>
+                      <div className="mt-4 grid grid-cols-2 gap-2">
+                        <button type="button" disabled={pending} onClick={() => setConfirming(false)} className="btn-secondary min-h-12">{t("modal.cancelPurchase")}</button>
+                        <button type="button" disabled={pending} onClick={() => onOpen?.(box, qty)} className="btn-primary min-h-12 disabled:opacity-50">{t(pending ? "modal.preparingPurchase" : "modal.confirmPurchase")}</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button type="button" onClick={() => setConfirming(true)} className="btn-primary mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg px-3 py-3 text-sm">
+                      {t("modal.openCount", { n: qty, amount: fmt(box.price * qty) })}<ArrowUpRight className="h-4 w-4 flex-none" />
+                    </button>
+                  )}
                   <p className="mt-3 break-keep text-xs leading-relaxed text-muted">{t("modal.quantityNote")}</p>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1">
                   <button type="button" onClick={() => { oddsRef.current?.focus({ preventScroll: true }); oddsRef.current?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); }} className="inline-flex min-h-11 items-center gap-2 text-xs font-medium text-gold-champagne hover:text-white">
                     <Percent className="h-4 w-4" />{t("modal.viewOdds")}
                   </button>
-                  {onAutoplay && <button type="button" onClick={() => setAutoOpen(true)} className="inline-flex min-h-11 items-center gap-2 text-xs text-muted hover:text-white">
+                  {onAutoplay && <button type="button" disabled={pending} onClick={() => setAutoOpen(true)} className="inline-flex min-h-11 items-center gap-2 text-xs text-muted hover:text-white">
                     <RefreshCw className="h-4 w-4" />{t("autoplay.title")}
                   </button>}
                 </div>

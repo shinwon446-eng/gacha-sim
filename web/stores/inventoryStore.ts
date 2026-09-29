@@ -24,14 +24,15 @@ export interface OwnedItem {
   status: OwnedStatus;
   acquiredAt: string;
   /** 공정성 메타 — 검증기 프리필용 */
-  fair: { serverSeedHash: string; serverSeed: string; clientSeed: string; nonce: number; roll: number };
+  fair: { serverSeedHash: string; serverSeed: string; clientSeed: string; nonce: number; roll: number; dropTable?: { id: string; dropRate: number }[]; oddsVersion?: string };
   /** 결제 원천 족보 — 이 아이템을 뽑은 개봉에 쓰인 잔액의 출처 (CLAUDE.md §7-B). 구버전 기록은 crypto 로 본다. */
   fundingSource?: FundingSource;
   fundingRatio?: FundingRatio;
   /** SOLD 시 실제 환급액 */
   soldForUsdt?: number;
   soldAt?: string;
-  shipping?: { address: ShippingAddress; feeUsdt: number; requestedAt: string; carrier?: CarrierKey; trackingNumber?: string; shippedAt?: string; deliveredAt?: string };
+  shipping?: { address: ShippingAddress; feeUsdt: number; requestedAt: string; carrier?: CarrierKey; trackingNumber?: string; shippedAt?: string; deliveredAt?: string; requestId?: string; feeFundingRatio?: FundingRatio };
+  shippingCancellations?: { requestId?: string; requestedAt: string; cancelledAt: string; feeRefundUsdt: number; toCrypto: number; toCard: number }[];
 }
 
 interface InventoryState {
@@ -40,12 +41,14 @@ interface InventoryState {
   add: (items: Omit<OwnedItem, "id" | "status" | "acquiredAt">[]) => OwnedItem[];
   /** 환급 — 합계와 함께 원천별 귀속액(교차 환급 차단)을 돌려준다 */
   sell: (ids: string[], refundRate: number) => { ids: string[]; totalUsdt: number; toCrypto: number; toCard: number };
-  requestShipping: (ids: string[], address: ShippingAddress, feeUsdt: number) => void;
+  requestShipping: (ids: string[], address: ShippingAddress, feeUsdt: number, feeFundingRatio?: FundingRatio) => void;
+  cancelShipping: (id: string) => { ok: boolean; reason?: "notPreparing" | "unknownFee"; refundedUsdt: number; toCrypto: number; toCard: number };
   /** 데모/관리자: 운송장 발급 */
   markShipping: (id: string, carrier: CarrierKey, trackingNumber: string) => void;
 }
 
-const uid = () => `own_${Date.now().toString(36)}_${Math.floor(Math.random() * 1e6).toString(36)}`;
+let nextId = 0;
+const uid = () => `own_${globalThis.crypto?.randomUUID?.() ?? `${Date.now().toString(36)}_${++nextId}`}`;
 
 export const useInventoryStore = create<InventoryState>()(
   persist(
@@ -81,14 +84,44 @@ export const useInventoryStore = create<InventoryState>()(
         const { toCrypto, toCard } = attributeRefunds(refunds);
         return { ids: sold, totalUsdt: +total.toFixed(2), toCrypto, toCard };
       },
-      requestShipping: (ids, address, feeUsdt) => {
+      requestShipping: (ids, address, feeUsdt, feeFundingRatio) => {
+        if (!Number.isFinite(feeUsdt) || feeUsdt < 0) return;
         const now = new Date().toISOString();
         const set_ = new Set(ids);
+        const eligible = get().items.filter(it => set_.has(it.id) && it.status === "IN_STORAGE");
+        if (!eligible.length) return;
+        const requestId = uid();
+        const cents = Math.round(feeUsdt * 100);
+        const fees = new Map(eligible.map((it, index) => [it.id, (Math.floor(cents / eligible.length) + (index < cents % eligible.length ? 1 : 0)) / 100]));
+        // Allocate cents from each original funding bucket once for the batch.
+        // Reusing the same mixed ratio on every tiny fee could round all cents
+        // into crypto and accidentally convert card-funded money.
+        let cryptoCents = feeFundingRatio ? Math.round(attributeRefunds([{ amountUsdt: cents / 100, ratio: normalizeRatio(feeFundingRatio) }]).toCrypto * 100) : 0;
+        const ratios = new Map<string, FundingRatio>();
+        if (feeFundingRatio) for (const it of eligible) {
+          const itemCents = Math.round(fees.get(it.id)! * 100);
+          const fromCrypto = Math.min(itemCents, cryptoCents);
+          cryptoCents -= fromCrypto;
+          ratios.set(it.id, { crypto: itemCents ? fromCrypto / itemCents : 0, card: itemCents ? 1 - fromCrypto / itemCents : 1 });
+        }
         set((s) => ({
           items: s.items.map((it) =>
-            set_.has(it.id) && it.status === "IN_STORAGE" ? { ...it, status: "SHIPPING_REQUESTED", shipping: { address, feeUsdt, requestedAt: now } } : it,
+            fees.has(it.id) ? { ...it, status: "SHIPPING_REQUESTED", shipping: { address, feeUsdt: fees.get(it.id)!, requestedAt: now, requestId, feeFundingRatio: ratios.get(it.id) } } : it,
           ),
         }));
+      },
+      cancelShipping: id => {
+        const item = get().items.find(it => it.id === id);
+        const none = { ok: false, refundedUsdt: 0, toCrypto: 0, toCard: 0 };
+        if (!item || item.status !== "SHIPPING_REQUESTED" || !item.shipping || item.shipping.shippedAt) return { ...none, reason: "notPreparing" };
+        const shipment = item.shipping;
+        // Older records repeat the entire batch fee per item and omit its funding source.
+        // Do not guess a refund or credit a card-funded charge to crypto.
+        if (!Number.isFinite(shipment.feeUsdt) || shipment.feeUsdt < 0 || (shipment.feeUsdt > 0 && (!shipment.requestId || !shipment.feeFundingRatio))) return { ...none, reason: "unknownFee" };
+        const split = attributeRefunds([{ amountUsdt: shipment.feeUsdt, ratio: normalizeRatio(shipment.feeFundingRatio) }]);
+        const cancelled = { requestId: shipment.requestId, requestedAt: shipment.requestedAt, cancelledAt: new Date().toISOString(), feeRefundUsdt: shipment.feeUsdt, ...split };
+        set(s => ({ items: s.items.map(it => it.id === id ? { ...it, status: "IN_STORAGE", shipping: undefined, shippingCancellations: [...(it.shippingCancellations ?? []), cancelled] } : it) }));
+        return { ok: true, refundedUsdt: shipment.feeUsdt, ...split };
       },
       markShipping: (id, carrier, trackingNumber) =>
         set((s) => ({

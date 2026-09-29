@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Check, X, ShieldCheck, RefreshCw, Eye, ArrowDownToLine } from "lucide-react";
+import { Check, X, CircleHelp, ShieldCheck, RefreshCw, Eye, ArrowDownToLine } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
@@ -31,7 +31,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 const inputCls =
-  "w-full rounded-md border border-hairline bg-obsidian px-3 py-2 font-mono text-xs text-white outline-none transition-colors placeholder:text-faint focus:border-gold-champagne";
+  "min-h-11 w-full rounded-md border border-hairline bg-obsidian px-3 py-2 font-mono text-sm text-white outline-none transition-colors placeholder:text-faint focus:border-gold-champagne";
 
 /**
  * Provably Fair 검증기 (PROMPTS 3-1-2).
@@ -67,10 +67,11 @@ export function FairnessVerifier({ initialBox, initial, compact = false }: { ini
 
   const box = useMemo(() => BOXES.find((b) => b.slug === boxSlug) ?? BOXES[0], [boxSlug]);
   const ranges = useMemo(() => rollRanges(dropTable(box)), [box]);
+  useEffect(() => { setResult(null); setError(null); }, [boxSlug, serverSeed, serverSeedHash, clientSeed, nonce]);
 
   const run = useCallback(async () => {
     const n = Number(nonce);
-    if (!serverSeed.trim() || !clientSeed.trim() || !Number.isInteger(n) || n < 0) {
+    if (!serverSeed.trim() || !clientSeed.trim() || !nonce.trim() || !Number.isSafeInteger(n) || n < 0 || (serverSeedHash.trim() && !/^[a-fA-F0-9]{64}$/.test(serverSeedHash.trim()))) {
       setError(t("invalidInput"));
       setResult(null);
       return;
@@ -86,6 +87,9 @@ export function FairnessVerifier({ initialBox, initial, compact = false }: { ini
         items: dropTable(box),
       });
       setResult(out);
+    } catch {
+      setResult(null);
+      setError(t("computeError"));
     } finally {
       setBusy(false);
     }
@@ -118,7 +122,7 @@ export function FairnessVerifier({ initialBox, initial, compact = false }: { ini
   const winTier = result ? tierOf(result.item.value, box.price) : null;
 
   return (
-    <div className={cn("grid gap-6", compact ? "" : "lg:grid-cols-5")}>
+    <fieldset disabled={busy} className={cn("grid min-w-0 gap-6", compact ? "" : "lg:grid-cols-5")}>
       {/* ── 입력 ── */}
       <section className={cn("border-metallic-subtle rounded-xl bg-surface p-4 md:p-5", compact ? "" : "lg:col-span-3")}>
         <div className="grid gap-4">
@@ -137,12 +141,12 @@ export function FairnessVerifier({ initialBox, initial, compact = false }: { ini
           <Field label={t("serverSeedHash")}>
             <input value={serverSeedHash} onChange={(e) => setServerSeedHash(e.target.value)} spellCheck={false} placeholder="64 hex" className={inputCls} />
           </Field>
-          <div className="grid grid-cols-3 gap-3">
-            <div className="col-span-2">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="sm:col-span-2">
               <Field label={t("clientSeed")}>
                 <div className="flex gap-2">
                   <input value={clientSeed} onChange={(e) => setClientSeed(e.target.value)} spellCheck={false} className={inputCls} />
-                  <button type="button" onClick={() => setClientSeed(generateClientSeed())} aria-label={t("generate")} className="glass-dark flex h-9 w-9 flex-none items-center justify-center rounded-md text-muted hover:text-white">
+                  <button type="button" onClick={() => setClientSeed(generateClientSeed())} aria-label={t("generateClient")} className="glass-dark flex h-11 w-11 flex-none items-center justify-center rounded-md text-muted hover:text-white">
                     <RefreshCw className="h-3.5 w-3.5" strokeWidth={2} />
                   </button>
                 </div>
@@ -155,12 +159,12 @@ export function FairnessVerifier({ initialBox, initial, compact = false }: { ini
 
           {error && <p className="text-xs text-crimson">{error}</p>}
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={run}
               disabled={busy}
-              className="flex h-11 items-center gap-2 rounded-md bg-crimson px-5 text-sm font-bold text-white transition-colors hover:bg-red-600 disabled:opacity-50"
+              className="flex h-11 items-center gap-2 rounded-md bg-[#f1eee7] px-5 text-sm font-semibold text-obsidian transition-colors hover:bg-white disabled:opacity-50"
             >
               <ShieldCheck className="h-4 w-4" strokeWidth={2.2} />
               {busy ? t("verifying") : t("verify")}
@@ -168,7 +172,7 @@ export function FairnessVerifier({ initialBox, initial, compact = false }: { ini
             <button type="button" onClick={clear} className="glass-dark h-11 rounded-md px-4 text-sm font-semibold text-secondary hover:text-white">
               {t("clear")}
             </button>
-            <span className="ml-auto text-right text-[10px] leading-tight text-faint">
+            <span className="w-full text-xs leading-6 text-muted">
               {t("rangeNote", { max: ROLL_MAX.toLocaleString("en-US"), resolution: RESOLUTION_PCT })}
             </span>
           </div>
@@ -180,14 +184,14 @@ export function FairnessVerifier({ initialBox, initial, compact = false }: { ini
             <div
               className={cn("flex items-center gap-2 text-xs font-semibold", result.hashMatches === false ? "text-crimson" : result.hashMatches ? "text-gold-champagne" : "text-muted")}
             >
-              {result.hashMatches === false ? <X className="h-4 w-4" strokeWidth={2.5} /> : <Check className="h-4 w-4" strokeWidth={2.5} />}
+              {result.hashMatches === false ? <X className="h-4 w-4" strokeWidth={2.5} /> : result.hashMatches ? <Check className="h-4 w-4" strokeWidth={2.5} /> : <CircleHelp className="h-4 w-4" />}
               {result.hashMatches === null ? t("hashSkipped") : result.hashMatches ? t("hashMatch") : t("hashMismatch")}
             </div>
 
             <dl className="mt-3 grid gap-3 text-xs">
               <Row label={t("resultHash")} mono value={result.serverSeedHash} />
               <Row label={t("resultHmac")} mono value={result.hmac} />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <Row label={t("resultRoll")} mono value={t("outOf", { roll: result.roll.toLocaleString("en-US"), max: ROLL_MAX.toLocaleString("en-US") })} big />
                 <Row label={t("resultRange")} mono value={`${winRange.from.toLocaleString("en-US")} – ${winRange.to.toLocaleString("en-US")}`} />
               </div>
@@ -209,9 +213,9 @@ export function FairnessVerifier({ initialBox, initial, compact = false }: { ini
       {/* ── 시드 커밋 데모 ── */}
       <aside className={cn("border-metallic-subtle rounded-xl bg-surface p-4 md:p-5", compact ? "" : "lg:col-span-2")}>
         <div className="caption-luxury">{t("tryTitle")}</div>
-        <p className="mt-2 text-xs leading-relaxed text-muted">{t("tryBody")}</p>
+        <p className="mt-2 text-sm leading-7 text-muted">{t("tryBody")}</p>
 
-        <button type="button" onClick={generate} className="glass mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-md text-sm font-semibold text-white hover:bg-white/15">
+        <button type="button" onClick={() => { void generate().catch(() => setError(t("computeError"))); }} className="glass mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-md text-sm font-semibold text-white hover:bg-white/15">
           <RefreshCw className="h-4 w-4" strokeWidth={2} />
           {t("generate")}
         </button>
@@ -232,13 +236,13 @@ export function FairnessVerifier({ initialBox, initial, compact = false }: { ini
             </div>
             <div className="flex gap-2">
               {!revealed && (
-                <button type="button" onClick={() => setRevealed(true)} className="glass-dark flex h-9 flex-1 items-center justify-center gap-1.5 rounded-md text-xs font-semibold text-white hover:border-gold-champagne">
+                <button type="button" onClick={() => setRevealed(true)} className="glass-dark flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-md text-sm font-semibold text-white hover:border-gold-champagne">
                   <Eye className="h-3.5 w-3.5" strokeWidth={2} />
                   {t("reveal")}
                 </button>
               )}
               {revealed && (
-                <button type="button" onClick={useDemo} className="flex h-9 flex-1 items-center justify-center gap-1.5 rounded-md bg-gold-champagne text-xs font-bold text-obsidian hover:bg-gold-metallic">
+                <button type="button" onClick={useDemo} className="flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-md bg-gold-champagne text-sm font-semibold text-obsidian hover:bg-gold-metallic">
                   <ArrowDownToLine className="h-3.5 w-3.5" strokeWidth={2.2} />
                   {t("useInVerifier")}
                 </button>
@@ -250,7 +254,7 @@ export function FairnessVerifier({ initialBox, initial, compact = false }: { ini
         {/* 구간표 */}
         <div className="mt-5 border-t border-hairline pt-4">
           <div className="caption-luxury">{boxTitle(box)}</div>
-          <ul className="mt-2 max-h-56 space-y-1 overflow-y-auto pr-1 text-[10px]">
+          <ul className="mt-2 max-h-56 space-y-1 overflow-y-auto pr-1 text-xs">
             {ranges.map((r) => {
               const tier = tierOf(r.item.value, box.price);
               const active = result?.item.id === r.item.id;
@@ -267,7 +271,7 @@ export function FairnessVerifier({ initialBox, initial, compact = false }: { ini
           </ul>
         </div>
       </aside>
-    </div>
+    </fieldset>
   );
 }
 

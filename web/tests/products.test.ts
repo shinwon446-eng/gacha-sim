@@ -1,7 +1,12 @@
 // 실물 상품 데이터셋 무결성 테스트
 //   npm test
 import test from "node:test";
+import { formatRate } from "../lib/products";
 import assert from "node:assert/strict";
+
+test("published probability labels retain every configured decimal place", () => {
+  for (const value of [49, 1.2345, 0.0147, 0.0001]) assert.equal(Number.parseFloat(formatRate(value)), value);
+});
 import { readFileSync } from "node:fs";
 import {
   BOXES,
@@ -91,11 +96,15 @@ test("잭팟 배수: 1달러 박스 1,000배 이상, 럭셔리·잭팟 1,300배 
   assert.ok(luxuryRow().some((b) => top(b) >= 2000), "럭셔리 2,000배 없음");
 });
 
-test("현금 회수 기준 무위험 차익이 없다 — EV × 환급률 < 가격", () => {
-  for (const b of BOXES) {
-    const cash = expectedValue(b) * REFUND_RATE;
-    assert.ok(cash < b.price, `${b.slug}: 현금 기대값 ${Math.round(cash)} >= 가격 ${b.price}`);
-    assert.ok(cashReturn(b) < 1, `${b.slug}: 현금 회수율 ${cashReturn(b)}`);
+test("requested 49/49 cashback keeps existing prices and exposes the payout deficit", () => {
+  for (const box of BOXES) {
+    const base = box.items.find(i => i.value === box.guaranteedMin)!;
+    const doubled = box.items.find(i => i.id === base.id + "-double")!;
+    assert.equal(base.dropRate, 49);
+    assert.equal(doubled.dropRate, 49);
+    assert.equal(doubled.value, +(base.value * 2).toFixed(2));
+    assert.ok(Math.abs(box.items.filter(i => i !== base && i !== doubled).reduce((sum,i) => sum+i.dropRate,0)-2) < 1e-9);
+    assert.ok(cashReturn(box) > 1, "operator must review negative margin before paid operation");
   }
 });
 
@@ -108,12 +117,12 @@ test("최저 구성을 즉시 환급해도 원금을 넘지 못한다", () => {
   }
 });
 
-test("정가 환원율 밴드 [0.93, 1/0.95) — 하우스 엣지(현금) 4~12%", () => {
-  for (const b of BOXES) {
-    const r = retailReturn(b);
-    assert.ok(r >= RETAIL_RTP_MIN && r < RETAIL_RTP_MAX, `${b.slug}: 환원율 ${r.toFixed(3)}`);
-    const edge = 1 - cashReturn(b);
-    assert.ok(edge >= 0.035 && edge <= 0.12, `${b.slug}: 하우스 엣지 ${(edge * 100).toFixed(2)}%`);
+test("probabilities remain representable as one-million exact outcome slots", () => {
+  for (const box of BOXES) {
+    const units = box.items.map(i => Math.round(i.dropRate * 10_000));
+    assert.equal(units.reduce((a,b)=>a+b,0),1_000_000);
+    assert.ok(units.every(n=>n>0));
+    assert.ok(Number.isFinite(retailReturn(box)));
   }
 });
 

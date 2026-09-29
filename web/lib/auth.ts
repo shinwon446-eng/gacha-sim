@@ -1,33 +1,17 @@
-/**
- * 인증 — 순수 규칙(번호 포맷 · 마스킹 · 공급자 설정 여부).
- *
- * **공급자 연결 지점은 여기 하나다.** 화면은 `providerConfigured()` 만 보고 움직인다.
- *   · Google / Apple — `NEXT_PUBLIC_GOOGLE_CLIENT_ID` · `NEXT_PUBLIC_APPLE_CLIENT_ID` 가 있으면 실제 OAuth 로 나간다.
- *   · 휴대폰 OTP    — `NEXT_PUBLIC_API_BASE`(live)가 있으면 서버가 문자를 보내고 서버가 검증한다.
- *
- * 키가 없으면 **이 기기에만 저장되는 로컬 세션**을 만든다(부록 C). 그 상태에서는
- *   ⑴ "구글 계정으로 로그인됨" 처럼 실제로 일어나지 않은 연동을 주장하지 않고(`toastSignedIn` 중립 문구),
- *   ⑵ 모달 하단에 **잔액이 이 브라우저에만 있다**는 사실을 한 줄로 고지한다.
- * 가짜 OAuth 토큰·가짜 서버 OTP 검증은 만들지 않는다 — 검증은 서버가 붙었을 때 서버가 한다.
- */
+/** Authentication types and legacy phone formatting helpers. Real email authentication is in lib/account.ts. */
+import { accountConfigured } from "./account";
+export type AuthProvider = "google" | "apple" | "phone" | "email";
+export type AuthMode = "login" | "signup" | "recover";
 
-export type AuthProvider = "google" | "apple" | "phone";
-export type AuthMode = "login" | "signup";
 
-export const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
-export const APPLE_CLIENT_ID = process.env.NEXT_PUBLIC_APPLE_CLIENT_ID ?? "";
-const API_BASE = (process.env.NEXT_PUBLIC_API_BASE ?? "").replace(/\/+$/, "");
-
-/** 그 공급자가 실제로 연결돼 있는가 — 아니면 로컬 세션이다 */
+/** Public OAuth IDs alone do not enable authenticated sessions. */
 export function providerConfigured(provider: AuthProvider): boolean {
-  // Client IDs alone are not an OAuth/OTP integration. Until a verified server
-  // session exchange exists, every session created by authStore is local.
-  return false;
+  return provider === "email" && accountConfigured();
 }
 
 /** 셋 중 하나라도 연결돼 있으면 실계정 경로가 존재한다 */
 export const anyProviderConfigured = (): boolean =>
-  (["google", "apple", "phone"] as const).some(providerConfigured);
+  (["google", "apple", "phone", "email"] as const).some(providerConfigured);
 
 /* ─────────────────────────── 휴대폰 번호 ─────────────────────────── */
 
@@ -108,11 +92,7 @@ export function maskPhone(raw: string, dial: string): string {
 
 export const OTP_LENGTH = 6;
 
-/**
- * 로컬 세션용 6자리 코드. **서버가 붙으면 쓰이지 않는다** — live 에서는 서버가 발급하고 서버가 검증한다.
- * 상수로 박아 두면 실서버에 그대로 남을 수 있어, 요청할 때마다 새로 만든다.
- * 렌더 중이 아니라 버튼 클릭 시에만 호출되므로 SSR 하이드레이션과 무관하다.
- */
+/** @deprecated Compatibility helper only. Never used for authentication or sent to a user. */
 export function newLocalOtp(): string {
   return String(Math.floor(Math.random() * 10 ** OTP_LENGTH)).padStart(OTP_LENGTH, "0");
 }
@@ -127,4 +107,4 @@ export function localHandle(seed: string): string {
 }
 
 /** 공급자 표시명 — 토스트·뱃지에서 쓴다 */
-export const PROVIDER_LABEL: Record<AuthProvider, string> = { google: "Google", apple: "Apple", phone: "Phone" };
+export const PROVIDER_LABEL: Record<AuthProvider, string> = { google: "Google", apple: "Apple", phone: "Phone", email: "Email" };

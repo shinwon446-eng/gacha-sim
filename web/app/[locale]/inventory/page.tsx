@@ -8,6 +8,7 @@ import { Money } from "@/components/ui/Money";
 import { SellConfirmModal } from "@/components/inventory/SellConfirmModal";
 import { DeliveryModal } from "@/components/inventory/DeliveryModal";
 import { TrackingModal } from "@/components/inventory/TrackingModal";
+import { CancelShipmentModal } from "@/components/inventory/CancelShipmentModal";
 import { WithdrawalModal } from "@/components/wallet/WithdrawalModal";
 import { VisualVerifyModal } from "@/components/fairness/VisualVerifyModal";
 import { Link } from "@/i18n/navigation";
@@ -27,6 +28,7 @@ export default function InventoryPage() {
   const t = useTranslations("inventory");
   const r = useTranslations("refinement");
   const tw = useTranslations("withdraw");
+  const tc = useTranslations("cancellation");
   const locale = useLocale();
   const { fmt } = useCurrency();
   const { itemName, boxTitle } = useProductText();
@@ -43,6 +45,7 @@ export default function InventoryPage() {
   const [sellTarget, setSellTarget] = useState<string[] | null>(null);
   const [shipTarget, setShipTarget] = useState<string[] | null>(null);
   const [track, setTrack] = useState<OwnedItem | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<OwnedItem | null>(null);
   const [verify, setVerify] = useState<OwnedItem | null>(null);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [toast, setToast] = useState("");
@@ -160,7 +163,7 @@ export default function InventoryPage() {
                 <div><dt>{r("acquiredDate")}</dt><dd>{date(item.acquiredAt)}</dd></div>
                 <div><dt>{r("processedDate")}</dt><dd>{at ? new Date(at).toLocaleString(locale) : r("unknownDate")}</dd></div>
                 {tab === "done" && <><div><dt>{r("originalValue")}</dt><dd><Money value={item.valueUsdt} size="sm" /></dd></div><div><dt>{r("settledAmount")}</dt><dd>{typeof item.soldForUsdt === "number" ? <Money value={item.soldForUsdt} size="sm" /> : r("amountUnknown")}</dd></div><div><dt>{r("funding")}</dt><dd>{r(`fundingTypes.${item.fundingSource ?? "unknown"}`)}</dd></div></>}
-              </dl><div className="flex flex-wrap gap-3">{tab === "shipping" && <button className="workspace-button" onClick={() => setTrack(item)}><Truck className="h-4 w-4" />{t("track")}</button>}{item.status === "DELIVERED" && <Link href="/community?tab=eligible" className="workspace-button">{r("writeReview")}</Link>}<button className="workspace-button" onClick={() => setVerify(item)}><ShieldCheck className="h-4 w-4" />{t("verify")}</button></div></div>
+              </dl><div className="flex flex-wrap gap-3">{tab === "shipping" && <button className="workspace-button" onClick={() => setTrack(item)}><Truck className="h-4 w-4" />{t("track")}</button>}{item.status === "SHIPPING_REQUESTED" && <button className="workspace-button" onClick={() => setCancelTarget(item)}>{tc("confirm")}</button>}{item.status === "DELIVERED" && <Link href="/community?tab=eligible" className="workspace-button">{r("writeReview")}</Link>}<button className="workspace-button" onClick={() => setVerify(item)}><ShieldCheck className="h-4 w-4" />{t("verify")}</button></div>{item.status === "SHIPPING" && <p className="mt-4 text-xs leading-6 text-muted">{tc("inTransit")} <Link href="/legal/refunds" className="text-gold-champagne underline">{tc("refundPolicy")}</Link></p>}</div>
             </details>
           </li>;
         })}</ul>
@@ -172,6 +175,7 @@ export default function InventoryPage() {
     <SellConfirmModal open={!!sellTarget} count={targetItems.length} amountUsdt={resaleEstimate(targetItems)} refundRate={REFUND_RATE} onClose={() => setSellTarget(null)} onConfirm={sell} />
     <DeliveryModal open={!!shipTarget} itemCount={shipTarget?.length ?? 0} balanceUsdt={balance} onClose={() => setShipTarget(null)} onSubmit={ship} />
     <TrackingModal item={track} onClose={() => setTrack(null)} />
+    <CancelShipmentModal item={cancelTarget} onClose={() => setCancelTarget(null)} onCancelled={() => { setCancelTarget(null); switchTab("held"); setToast(tc("done")); }} />
     <VisualVerifyModal item={verify} onClose={() => setVerify(null)} />
     <WithdrawalModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onRequested={amount => setToast(tw("requestedToast", { amount: fmt(amount) }))} onBlocked={() => setToast(r("withdrawHelp"))} />
     {toast && <div role="status" className="workspace-toast">{toast}</div>}
