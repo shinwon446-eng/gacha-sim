@@ -1,5 +1,6 @@
 /** Shared account contract; browser and HTTP transports use the same routes. */
 import { normalizeNickname, nicknameIssue, validAvatarData, validAvatarUrl, type NicknameIssue } from "./profilePolicy";
+import { validateNewNickname } from "./nicknameRules";
 export { normalizeNickname, validNickname } from "./profilePolicy";
 export type ProfileErrorReason = NicknameIssue | "nickname_taken" | "nickname_cooldown" | "avatar_invalid" | "storage_unavailable";
 export class AccountError extends Error {
@@ -51,6 +52,7 @@ export const validAccountEmail = (value: string) => browserAccountsEnabled() ? v
 export const validAccountPassword = (value: string) => browserAccountsEnabled() ? value.length > 0 && value.length <= 128 : validPassword(value);
 
 export interface ServerAccount { id: string; email: string; createdAt: string; emailVerified: boolean; provider?: AccountProvider; nickname?: string; nicknameUpdatedAt?: string; nicknameChangedAt?: string; nextNicknameChangeAt?: string; avatarUrl?: string | null; local?: boolean; passwordFailures?: number; passwordChangedAt?: string; sessionVersion?: number; twoFactorEnabled?: boolean }
+export type NicknameAvailability = { available: boolean; reason?: "format" | "same" | "forbidden" | "taken" };
 function accountFrom(data: unknown): ServerAccount {
   const user = (data as { user?: ServerAccount })?.user;
   if (!user || typeof user.id !== "string" || !user.id || typeof user.email !== "string" || !(browserAccountsEnabled() && user.local === true ? validAccountEmail(user.email) : validEmail(user.email)) || typeof user.createdAt !== "string" || !Number.isFinite(Date.parse(user.createdAt)) || (user.emailVerified !== true && !(browserAccountsEnabled() && user.local === true))) throw new AccountError("invalid");
@@ -68,18 +70,33 @@ function accountFrom(data: unknown): ServerAccount {
 }
 
 export async function updateAccountNickname(nickname: string, accountId?: string) {
+  const validation = validateNewNickname(nickname);
+  if (!validation.valid && validation.reason === "format") throw new ProfileError("nickname_format");
+  if (!validation.valid && validation.reason === "forbidden") throw new ProfileError("nickname_prohibited");
   const issue = nicknameIssue(nickname);
   if (issue) throw new ProfileError(issue);
   const user = accountFrom(await accountRequest("/account/profile", { nickname: normalizeNickname(nickname), ...(accountId ? { accountId } : {}) }));
   if (user.nickname !== normalizeNickname(nickname) || !user.nicknameChangedAt || !user.nextNicknameChangeAt) throw new AccountError("invalid");
   return user;
 }
-export async function checkAccountNickname(nickname: string) {
-  const issue = nicknameIssue(nickname);
-  if (issue) throw new ProfileError(issue);
-  const result = await accountRequest("/account/profile/nickname/check", { nickname: normalizeNickname(nickname) });
-  if (typeof result.available !== "boolean" || result.nickname !== normalizeNickname(nickname)) throw new AccountError("invalid");
-  return result.available;
+export async function checkNicknameAvailability(nickname: string, currentUserId?: string): Promise<NicknameAvailability> {
+  const normalized = normalizeNickname(nickname);
+  const validation = validateNewNickname(normalized);
+  if (!validation.valid) return { available: false, reason: validation.reason };
+  const result = await accountRequest("/account/profile/nickname/check", { nickname: normalized, ...(currentUserId ? { accountId: currentUserId } : {}) });
+  if (typeof result.available !== "boolean" || result.nickname !== normalized) throw new AccountError("invalid");
+  if (result.available) return { available: true };
+  const reason = result.reason;
+  if (reason === "format" || reason === "same" || reason === "forbidden" || reason === "taken") return { available: false, reason };
+  return { available: false, reason: "taken" };
+}
+export async function checkAccountNickname(nickname: string, currentUserId?: string) {
+  const availability = await checkNicknameAvailability(nickname, currentUserId);
+  if (availability.available) return true;
+  if (availability.reason === "format") throw new ProfileError("nickname_format");
+  if (availability.reason === "forbidden") throw new ProfileError("nickname_prohibited");
+  if (availability.reason === "taken") throw new ProfileError("nickname_taken");
+  return false;
 }
 export async function updateAccountAvatar(avatar: string | null, accountId?: string) {
   if (avatar !== null && !validAvatarData(avatar)) throw new ProfileError("avatar_invalid");

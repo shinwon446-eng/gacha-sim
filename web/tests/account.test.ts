@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { AccountError, accountRequest, closureReadiness, validAuthBase, validEmail, validPassword } from "../lib/account";
+import { validateNewNickname } from "../lib/nicknameRules";
 
 const empty = { cryptoBalance: 0, cardBalance: 0, items: [], transactions: [] };
 test("closure requires both funding buckets to settle, including cancelling offsets", () => {
@@ -27,6 +28,13 @@ test("email and password boundaries", () => {
   assert.equal(validPassword("12345678901"), false);
   assert.equal(validPassword("long-unique-password"), true);
   assert.equal(validPassword("a".repeat(129)), false);
+});
+test("nickname availability rules require 2–12 Korean or English letters and numbers", () => {
+  assert.deepEqual(validateNewNickname("SunnyUser"), { valid: true });
+  assert.deepEqual(validateNewNickname("가나다12"), { valid: true });
+  assert.deepEqual(validateNewNickname("a_1"), { valid: false, reason: "format" });
+  assert.deepEqual(validateNewNickname("관리자닉"), { valid: false, reason: "forbidden" });
+  assert.deepEqual(validateNewNickname("SameName", "samename"), { valid: false, reason: "same" });
 });
 test("unconfigured account calls never make a request or report success", async () => {
   await assert.rejects(accountRequest("/auth/signup", {}, ""), (error: unknown) => error instanceof AccountError && error.code === "unavailable");

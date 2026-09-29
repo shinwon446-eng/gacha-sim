@@ -2,7 +2,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { AuthMode } from "@/lib/auth";
-import { AccountError, accountConfigured, browserAccountsEnabled, getAccountSession, logoutAccount, updateAccountNickname, updateAccountAvatar, type AccountProvider, type ServerAccount } from "@/lib/account";
+import { AccountError, accountConfigured, browserAccountsEnabled, checkNicknameAvailability as requestNicknameAvailability, getAccountSession, logoutAccount, updateAccountNickname, updateAccountAvatar, type AccountProvider, type NicknameAvailability, type ServerAccount } from "@/lib/account";
 import { useSecurityStore } from "@/stores/securityStore";
 export interface AuthUser { id: string; provider: AccountProvider; label: string; subLabel: string; createdAt: string; local: boolean; email?: string; nickname?: string; nicknameUpdatedAt?: string; nicknameChangedAt?: string; nextNicknameChangeAt?: string; avatarUrl?: string | null; passwordFailures?: number; passwordChangedAt?: string; sessionVersion?: number; twoFactorEnabled?: boolean }
 export interface AuthToast { id: number; text: string; tone: "gold" | "neutral" }
@@ -11,6 +11,7 @@ interface AuthState {
   openAuthModal: (mode?: AuthMode) => void; closeAuthModal: () => void; setModalMode: (mode: AuthMode) => void;
   acceptSession: (user: ServerAccount) => void; clearSession: () => void; logout: (text: string) => Promise<void>;
   updateNickname: (nickname: string) => Promise<boolean>;
+  checkNicknameAvailability: (nickname: string) => Promise<NicknameAvailability>;
   updateAvatar: (avatar: string | null) => Promise<boolean>;
   refreshAccount: () => Promise<boolean>;
   setPasswordFailures: (accountId: string, failures: number) => void;
@@ -33,6 +34,11 @@ export const useAuthStore = create<AuthState>()(persist((set, get) => ({
     if (get().user?.id !== id || updated.id !== id) return false;
     get().acceptSession(updated);
     return true;
+  },
+  checkNicknameAvailability: async (nickname) => {
+    const id = get().user?.id;
+    if (!id) return { available: false, reason: "taken" };
+    return requestNicknameAvailability(nickname, id);
   },
   updateAvatar: async (avatar) => {
     const id = get().user?.id;

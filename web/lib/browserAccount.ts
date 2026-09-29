@@ -1,5 +1,6 @@
 import { AccountError, AccountActionError, ProfileError, browserAccountsEnabled, normalizeNickname, validAccountEmail, validAccountPassword, validPassword, isSocialAccount, closureReadiness, type AccountProvider, type ServerAccount } from "./account";
 import { nicknameIssue, nicknameKey, nextNicknameChangeAt, validAvatarData, NICKNAME_CHANGE_INTERVAL_MS } from "./profilePolicy";
+import { validateNewNickname } from "./nicknameRules";
 import { newTotpSecret, verifyTotp } from "./totp";
 import { HOLD_MS, maskEmail } from "./withdrawHold";
 import { NETWORKS, resolveDepositAddress, validDepositReceipt, type DepositReceipt, type DepositNetwork } from "./depositAddress";
@@ -7,6 +8,7 @@ import { DEPOSIT_ADDRESSES } from "./runtime";
 
 const KEY = "voila.browser-accounts.v1";
 const SESSION = "voila.browser-session.v1";
+const RESERVED_COMMUNITY_NICKNAMES = ["GuideTeam", "EventHost", "NoticeTeam"];
 type Proof = { authorization: string; method: string; unlockAt?: number; emailMasked?: string; draft: string; expiresAt: number };
 type CodePurpose = "password_unlock" | "password_otp" | "closure";
 type AccountCode = { code: string; expiresAt: number; resendAt: number; attempts: number; sessionVersion: number };
@@ -254,10 +256,15 @@ async function request(path: string, input?: unknown): Promise<Record<string, un
   }
   if (path === "/account/profile" || path === "/account/profile/nickname/check") {
     const nickname = normalizeNickname(String(body.nickname ?? ""));
+    const availability = validateNewNickname(nickname, path.endsWith("/check") ? account.user.nickname : undefined);
+    if (path.endsWith("/check") && !availability.valid) return { nickname, available: false, reason: availability.reason };
+    if (!path.endsWith("/check") && !availability.valid && availability.reason === "format") throw new ProfileError("nickname_format");
+    if (!path.endsWith("/check") && !availability.valid && availability.reason === "forbidden") throw new ProfileError("nickname_prohibited");
     const issue = nicknameIssue(String(body.nickname ?? ""));
     if (issue) throw new ProfileError(issue);
-    const taken = accounts.some(x => x.user.id !== account.user.id && x.user.nickname && nicknameKey(x.user.nickname) === nicknameKey(nickname));
-    if (path.endsWith("/check")) return { nickname, available: !taken };
+    const taken = accounts.some(x => x.user.id !== account.user.id && x.user.nickname && nicknameKey(x.user.nickname) === nicknameKey(nickname))
+      || RESERVED_COMMUNITY_NICKNAMES.some(name => nicknameKey(name) === nicknameKey(nickname));
+    if (path.endsWith("/check")) return { nickname, available: !taken, ...(!taken ? {} : { reason: "taken" }) };
     if (nickname === account.user.nickname) return { user: publicUser(account) };
     const next = nextNicknameChangeAt({ ...account.user, nicknameChangedAt: nicknameTimestamp(account.user) });
     if (next && Date.parse(next) > Date.now()) throw new ProfileError("nickname_cooldown", next);
