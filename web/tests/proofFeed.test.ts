@@ -2,8 +2,21 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { buildProofFeed, buildLocalPayouts, buildLocalShipments, maskRecipient } from "../lib/proofFeed";
+import { proofMetrics } from "../components/home/ProofFeed";
+import { BOXES } from "../lib/products";
 import type { OwnedItem } from "../stores/inventoryStore";
 import type { Transaction } from "../stores/walletStore";
+
+test("home proof metrics use catalogue odds and recorded openings and payback", () => {
+  const metrics = proofMetrics([{} as OwnedItem, {} as OwnedItem], [
+    { type: "sellback", amountUsdt: 95 } as Transaction,
+    { type: "open", amountUsdt: -100 } as Transaction,
+  ]);
+  assert.equal(metrics.publishedOdds, BOXES.reduce((sum, box) => sum + box.items.length, 0));
+  assert.equal(metrics.openings, 2);
+  assert.equal(metrics.paybackUsdt, 95);
+  assert.equal("shipments" in metrics, false);
+});
 
 test("single feed uses actual transactions only, sorts before limiting and keeps actual statuses", () => {
   assert.deepEqual(buildProofFeed([], "me"), []);

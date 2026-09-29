@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowUpRight, Camera, Check, ChevronDown, FileText, Globe2, MessageSquare, Package, Pencil, Search, Star, Trash2, X } from "lucide-react";
+import { ArrowUpRight, Camera, Check, ChevronDown, Globe2, MessageSquare, Package, Pencil, Search, Star, Trash2, X } from "lucide-react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { ProductArt } from "@/components/box/ProductArt";
 import { ReviewFormModal } from "@/components/community/ReviewFormModal";
 import { CommunityNavigation } from "@/components/community/CommunityNavigation";
+import { reviewValueNotice } from "@/components/community/reviewValueNotice";
+
 import { useCommunityStore, type MyReview } from "@/stores/communityStore";
 import { useInventoryStore } from "@/stores/inventoryStore";
 import { BOX_BY_SLUG } from "@/lib/products";
@@ -64,17 +66,17 @@ export default function CommunityPage() {
       </nav>
       <div className="journal-layout">
         <div className="min-w-0">
-          <div className="journal-scope"><FileText className="h-4 w-4 shrink-0" aria-hidden="true" /><p>{r("reviewLocalNote")}</p></div>
           {tab === "mine" && mine.length > 0 && <div className="workspace-toolbar">
             <label className="workspace-search"><Search className="h-4 w-4 shrink-0" aria-hidden="true" /><input value={query} onChange={e => setQuery(e.target.value)} placeholder={r("searchReviews")} aria-label={r("searchReviews")} />{query && <button onClick={() => setQuery("")} aria-label={r("clearSearch")}><X className="h-4 w-4" /></button>}</label>
             <select className="workspace-select" aria-label={r("reviewFilter")} value={filter} onChange={e => setFilter(e.target.value)}><option value="all">{r("allReviews")}</option><option value="photo">{r("photoReviews")}</option>{[5, 4, 3, 2, 1].map(n => <option key={n} value={n}>{r("ratingLabel", { n })}</option>)}</select>
             <select className="workspace-select" aria-label={r("sortLabel")} value={sort} onChange={e => setSort(e.target.value)}><option value="newest">{r("sorts.newest")}</option><option value="oldest">{r("sorts.oldest")}</option></select>
           </div>}
-          {!hydrated ? <div className="workspace-empty" role="status">{r("loading")}</div> : tab === "public" ? <div className="workspace-empty journal-empty"><Globe2 aria-hidden="true" /><p className="workspace-eyebrow">COMMUNITY</p><h2>{r("publicEmptyTitle")}</h2><p>{r("publicEmptyBody")}</p><button className="workspace-button" onClick={() => setTab("mine")}>{r("reviewTabs.mine")}<ArrowUpRight className="h-4 w-4" /></button></div> : tab === "eligible" ? eligible.length === 0 ? <div className="workspace-empty journal-empty"><Package aria-hidden="true" /><h2>{r("eligibleEmptyTitle")}</h2><p>{r(hasMinValueItem ? "eligibleEmptyBody" : "minReviewItemValueNotice")}</p><Link href="/inventory" className="workspace-button">{r("checkShipments")}<ArrowUpRight className="h-4 w-4" /></Link></div> : <ul className="grid gap-4">{eligible.map(item => {
+          {!hydrated ? <div className="workspace-empty" role="status">{r("loading")}</div> : tab === "public" ? <div className="workspace-empty journal-empty"><Globe2 aria-hidden="true" /><p className="workspace-eyebrow">COMMUNITY</p><h2>{r("publicEmptyTitle")}</h2><p>{locale === "ko" ? "아직 공개된 후기가 없습니다." : locale === "zh" ? "暂无公开评价。" : "No public reviews yet."}</p><button className="workspace-button" onClick={() => setTab("mine")}>{r("reviewTabs.mine")}<ArrowUpRight className="h-4 w-4" /></button></div> : tab === "eligible" ? eligible.length === 0 ? <div className="workspace-empty journal-empty"><Package aria-hidden="true" /><h2>{r("eligibleEmptyTitle")}</h2><p>{hasMinValueItem ? r("eligibleEmptyBody") : reviewValueNotice(locale)}</p><Link href="/inventory" className="workspace-button">{r("checkShipments")}<ArrowUpRight className="h-4 w-4" /></Link></div> : <ul className="grid gap-4">{eligible.map(item => {
+
             const product = productOf(item);
             return <li key={item.id} className="eligible-item"><div className="record-thumbnail">{product && <ProductArt image={product.image} alt="" fallbackSize="sm" />}</div><div className="min-w-0 flex-1"><p className="text-sm font-medium text-white">{product ? itemName(product) : item.itemId}</p><p className="mt-2 text-xs text-muted">{r("acquiredOn", { date: new Date(item.acquiredAt).toLocaleDateString(locale) })}</p></div><button className="workspace-button" onClick={() => write(item.id)}>{t("write")}</button></li>;
           })}</ul> : reviews.length === 0 ? <div className="workspace-empty journal-empty"><MessageSquare aria-hidden="true" /><h2>{r(mine.length ? "noResults" : "myEmptyTitle")}</h2><p>{r(mine.length ? "changeFilters" : "myEmptyBody")}</p><button className="workspace-button" onClick={() => mine.length ? (setQuery(""), setFilter("all")) : setTab("eligible")}>{r(mine.length ? "resetFilters" : "reviewTabs.eligible")}</button></div> : <>
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-xs text-muted"><p aria-live="polite">{r("results", { n: reviews.length })}</p><span>{r("privateRecords")}</span></div>
+            <div className="mb-4 text-xs text-muted" aria-live="polite">{r("results", { n: reviews.length })}</div>
             <ul className="grid gap-5">{reviews.slice(0, shown).map(review => {
               const box = BOX_BY_SLUG[review.boxSlug]; const product = box?.items.find(i => i.id === review.itemId);
               return <li key={review.id} className="journal-card">
