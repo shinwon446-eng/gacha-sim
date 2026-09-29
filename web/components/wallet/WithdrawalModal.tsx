@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useModal } from "@/lib/useModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight, X } from "lucide-react";
@@ -24,20 +25,7 @@ export function WithdrawalModal({ open, onClose, onRequested, onBlocked }: Withd
   const t = useTranslations("withdraw");
   const panelRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKey);
-    panelRef.current?.focus({ preventScroll: true });
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [open, onClose]);
+  useModal(open, onClose, panelRef);
 
   return (
     <AnimatePresence>
@@ -49,13 +37,13 @@ export function WithdrawalModal({ open, onClose, onRequested, onBlocked }: Withd
             role="dialog"
             aria-modal="true"
             aria-label={t("title")}
-            className="border-metallic-gold relative mx-auto w-full max-w-lg rounded-xl bg-canvas p-5 outline-none md:p-6"
+            className="border border-hairline relative mx-auto w-full max-w-lg rounded-2xl bg-surface p-6 outline-none md:p-6"
             initial={{ opacity: 0, y: 20, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <button type="button" onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
+            <button type="button" onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
               <X className="h-5 w-5" strokeWidth={2} />
             </button>
             <div className="flex items-center gap-2 pr-10">

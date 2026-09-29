@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { LogIn, LogOut, Smartphone } from "lucide-react";
+import { LogOut, Smartphone } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useAuthStore } from "@/stores/authStore";
 import { GoogleMark, AppleMark } from "@/components/auth/ProviderMarks";
@@ -72,28 +72,18 @@ export function HeaderAuthControl({ className }: { className?: string }) {
   if (!user) {
     return (
       <span className={cn("flex flex-none items-center gap-1.5", className)}>
-        {/* sm 미만 — 헤더 폭 예산 때문에 골드 아이콘 하나로 접는다 */}
-        <button
-          type="button"
-          onClick={() => openAuthModal("login")}
-          aria-label={t("login")}
-          className="flex h-7 w-7 flex-none items-center justify-center rounded-full bg-gradient-to-r from-gold-metallic to-gold-champagne text-obsidian transition-transform hover:scale-105 sm:hidden"
-        >
-          <LogIn className="h-3.5 w-3.5" strokeWidth={2.6} />
-        </button>
 
         <button
           type="button"
           onClick={() => openAuthModal("login")}
-          className="hidden h-9 flex-none items-center whitespace-nowrap rounded-md px-2 text-xs font-semibold text-white transition-colors hover:text-gold-champagne sm:flex"
+          className="flex h-11 flex-none items-center whitespace-nowrap rounded-lg px-3 text-xs font-semibold text-white transition-colors hover:text-gold-champagne"
         >
           {t("login")}
         </button>
         <button
           type="button"
           onClick={() => openAuthModal("signup")}
-          className="hidden h-9 flex-none items-center whitespace-nowrap rounded-full bg-gold-champagne px-3 text-xs font-bold text-obsidian transition-transform hover:scale-[1.04] sm:flex"
-          style={{ boxShadow: "0 0 20px rgba(230,202,101,0.32)" }}
+          className="flex h-11 flex-none items-center whitespace-nowrap rounded-lg bg-[#f1eee7] px-4 text-xs font-semibold text-obsidian transition-colors hover:bg-white"
         >
           {t("signup")}
         </button>
@@ -106,13 +96,12 @@ export function HeaderAuthControl({ className }: { className?: string }) {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        aria-haspopup="menu"
         aria-expanded={open}
         aria-label={user.label}
-        className="glass-dark flex h-7 flex-none items-center gap-1.5 whitespace-nowrap rounded-full px-2 transition-colors hover:border-gold-champagne lg:h-9 lg:px-2.5"
+        className="glass-dark flex h-11 flex-none items-center gap-1.5 whitespace-nowrap rounded-full px-2 transition-colors hover:border-gold-champagne lg:h-11 lg:px-2.5"
       >
         <ProviderBadge provider={user.provider} />
-        <span className="hidden max-w-[104px] truncate text-[11px] font-semibold text-white sm:inline">{user.label}</span>
+        <span className="hidden max-w-[104px] truncate text-xs font-semibold text-white sm:inline">{user.label}</span>
         <OnlineDot />
       </button>
 
@@ -120,7 +109,7 @@ export function HeaderAuthControl({ className }: { className?: string }) {
       <button
         type="button"
         onClick={signOut}
-        className="hidden h-9 flex-none items-center gap-1 whitespace-nowrap rounded-md border border-hairline px-2.5 text-[11px] font-semibold text-muted transition-colors hover:border-gold-champagne/50 hover:text-gold-champagne lg:flex"
+        className="hidden h-11 flex-none items-center gap-1 whitespace-nowrap rounded-md border border-hairline px-2.5 text-xs font-semibold text-muted transition-colors hover:border-gold-champagne/50 hover:text-gold-champagne lg:flex"
       >
         <LogOut className="h-3.5 w-3.5" strokeWidth={2.3} />
         {t("logout")}
@@ -129,7 +118,7 @@ export function HeaderAuthControl({ className }: { className?: string }) {
       <AnimatePresence>
         {open && (
           <motion.div
-            role="menu"
+
             className="border-metallic-subtle absolute right-0 top-full z-50 mt-1.5 w-52 overflow-hidden rounded-xl bg-obsidian p-1.5 shadow-2xl"
             initial={{ opacity: 0, y: -6, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -140,15 +129,15 @@ export function HeaderAuthControl({ className }: { className?: string }) {
               <ProviderBadge provider={user.provider} />
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[12px] font-bold text-white">{user.label}</span>
-                <span className="block truncate text-[10px] text-faint">{user.local ? t("accountLocal") : user.subLabel}</span>
+                <span className="block truncate text-xs text-faint">{user.local ? t("accountLocal") : user.subLabel}</span>
               </span>
               <OnlineDot />
             </div>
             <button
               type="button"
-              role="menuitem"
+
               onClick={signOut}
-              className="mt-1 flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-[12px] font-semibold text-secondary transition-colors hover:bg-elevation hover:text-gold-champagne"
+              className="mt-1 flex min-h-11 w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-[12px] font-semibold text-secondary transition-colors hover:bg-elevation hover:text-gold-champagne"
             >
               <LogOut className="h-3.5 w-3.5 flex-none" strokeWidth={2.3} />
               {t("logout")}

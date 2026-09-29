@@ -11,21 +11,21 @@ const config: Config = {
       colors: {
         // ── 배경 (CLAUDE.md §2-A) ──
         /** 최심도 — 헤더·모달 오버레이 */
-        obsidian: "#0B0B0B",
+        obsidian: "#101112",
         /** 넷플릭스 캔버스 */
-        canvas: "#141414",
+        canvas: "#101112",
         /** 카드 표면 */
-        surface: "#181818",
+        surface: "#191B1D",
         /** 호버·활성 표면 */
-        elevation: "#222222",
+        elevation: "#232527",
         /** @deprecated obsidian 사용 */
-        ink: "#0B0B0B",
+        ink: "#101112",
 
         // ── 메탈릭·럭셔리 액센트 ──
         gold: {
-          champagne: "#E6CA65",
-          metallic: "#D4AF37",
-          dark: "#A27B1E",
+          champagne: "#D9C39A",
+          metallic: "#C8AF82",
+          dark: "#A58B62",
         },
         /** 브랜드 CTA 전용 */
         crimson: "#E50914",
@@ -34,11 +34,11 @@ const config: Config = {
 
         // ── 텍스트 ──
         /** 본문 90% 화이트 */
-        secondary: "#E5E5E5",
+        secondary: "#CECFCA",
         /** 캡션 */
-        muted: "#9CA3AF",
+        muted: "#A3A4A2",
         /** 메타·법적 고지 */
-        faint: "#6B7280",
+        faint: "#90928F",
         /** 1px 구분선 (헤어라인 유틸이 우선) */
         line: "#2A2A2A",
         hairline: "rgba(255,255,255,0.08)",
@@ -48,7 +48,7 @@ const config: Config = {
          * ROYAL 20x+ / PRESTIGE 6~20x / EXECUTIVE 2~6x / CURATED 기본 보장
          */
         tier: {
-          royal: "#E6CA65",
+          royal: "#D9C39A",
           prestige: "#93C5FD",
           executive: "#C084FC",
           curated: "#94A3B8",
@@ -63,8 +63,8 @@ const config: Config = {
       },
       fontFamily: {
         /** 전 사이트 단일 서체 — 제목·본문·숫자 모두 Pretendard, 위계는 굵기로만 */
-        display: ["Pretendard Variable", "Pretendard", "-apple-system", "BlinkMacSystemFont", "system-ui", "Roboto", "sans-serif"],
-        sans: ["Pretendard Variable", "Pretendard", "-apple-system", "BlinkMacSystemFont", "system-ui", "Roboto", "sans-serif"],
+        display: ["var(--font-ui)", "Pretendard Variable", "Pretendard", "-apple-system", "BlinkMacSystemFont", "system-ui", "Roboto", "sans-serif"],
+        sans: ["var(--font-ui)", "Pretendard Variable", "Pretendard", "-apple-system", "BlinkMacSystemFont", "system-ui", "Roboto", "sans-serif"],
       },
       transitionTimingFunction: {
         cine: "cubic-bezier(0.16, 1, 0.3, 1)",

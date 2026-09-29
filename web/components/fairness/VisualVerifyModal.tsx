@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useModal } from "@/lib/useModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
@@ -21,20 +22,7 @@ export function VisualVerifyModal({ item, onClose }: VisualVerifyModalProps) {
   const ref = useRef<HTMLDivElement>(null);
   const open = !!item;
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKey);
-    ref.current?.focus({ preventScroll: true });
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [open, onClose]);
+  useModal(open, onClose, ref);
 
   return (
     <AnimatePresence>
@@ -46,14 +34,13 @@ export function VisualVerifyModal({ item, onClose }: VisualVerifyModalProps) {
             role="dialog"
             aria-modal="true"
             aria-label={t("title")}
-            className="border-metallic-gold relative mx-auto w-full max-w-2xl rounded-xl bg-canvas p-5 outline-none md:p-6"
+            className="relative mx-auto w-full max-w-2xl rounded-xl border border-hairline bg-canvas p-6 outline-none md:p-8"
             initial={{ opacity: 0, y: 20, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <span aria-hidden className="pedestal-glow pointer-events-none absolute inset-0 rounded-xl" />
-            <button type="button" onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
+            <button type="button" onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
               <X className="h-5 w-5" strokeWidth={2} />
             </button>
             <VisualVerifier key={item.id} record={item} autoRun embedded />

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useModal } from "@/lib/useModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { RefreshCw, X, Crown, TrendingUp, ShieldAlert, Zap } from "lucide-react";
@@ -21,6 +22,7 @@ interface Props {
  */
 export function AutoplaySettingsModal({ box, initial, onClose, onStart }: Props) {
   const t = useTranslations("autoplay");
+  const panelRef = useRef<HTMLDivElement>(null);
   const { fmt } = useCurrency();
   const [cfg, setCfg] = useState<AutoplayConfig>(initial);
   const [useMultiple, setUseMultiple] = useState(initial.stopOnMultiple !== null);
@@ -35,12 +37,7 @@ export function AutoplaySettingsModal({ box, initial, onClose, onStart }: Props)
     setUseStopLoss(initial.stopLoss !== null);
   }, [box, initial]);
 
-  useEffect(() => {
-    if (!box) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [box, onClose]);
+  useModal(!!box, onClose, panelRef);
 
   const start = () => {
     const m = Number(multiple);
@@ -70,10 +67,12 @@ export function AutoplaySettingsModal({ box, initial, onClose, onStart }: Props)
       {box && (
         <motion.div className="fixed inset-0 z-[130] flex items-end justify-center bg-obsidian/85 px-0 backdrop-blur-sm sm:items-center sm:px-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
           <motion.div
+            ref={panelRef}
+            tabIndex={-1}
             role="dialog"
             aria-modal="true"
             aria-label={t("title")}
-            className="border-metallic-gold w-full max-w-md rounded-t-2xl bg-canvas p-5 outline-none sm:rounded-xl"
+            className="w-full max-w-md max-h-[90dvh] overflow-y-auto rounded-2xl border border-hairline bg-surface p-6 outline-none"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 16 }}
@@ -88,7 +87,7 @@ export function AutoplaySettingsModal({ box, initial, onClose, onStart }: Props)
                 </h2>
                 <div className="mt-1 text-xs text-muted">{box.title} · {fmt(box.price)} / {t("perSpin")}</div>
               </div>
-              <button type="button" onClick={onClose} aria-label={t("close")} className="flex h-9 w-9 flex-none items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
+              <button type="button" onClick={onClose} aria-label={t("close")} className="flex h-11 w-11 flex-none items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
                 <X className="h-5 w-5" strokeWidth={2.2} />
               </button>
             </div>
@@ -112,7 +111,7 @@ export function AutoplaySettingsModal({ box, initial, onClose, onStart }: Props)
                 })}
               </div>
               {Number.isFinite(cfg.spins) && (
-                <div className="mt-1.5 text-right text-[11px] text-faint">
+                <div className="mt-1.5 text-right text-xs text-faint">
                   {t("budget", { amount: fmt(box.price * cfg.spins) })}
                 </div>
               )}
@@ -121,7 +120,7 @@ export function AutoplaySettingsModal({ box, initial, onClose, onStart }: Props)
             {/* 자동 환전 */}
             <div className="mt-4 grid gap-2">
               <Check on={cfg.autoSell} onToggle={() => setCfg((c) => ({ ...c, autoSell: !c.autoSell }))} icon={<Zap className="h-3.5 w-3.5 text-gold-champagne" strokeWidth={2.4} />} label={t("autoSell")}>
-                <span className="mt-0.5 block break-keep text-[11px] leading-relaxed text-muted">{t("autoSellBody")}</span>
+                <span className="mt-0.5 block break-keep text-xs leading-relaxed text-muted">{t("autoSellBody")}</span>
               </Check>
             </div>
 
@@ -131,7 +130,7 @@ export function AutoplaySettingsModal({ box, initial, onClose, onStart }: Props)
               <div className="mt-2 grid gap-2">
                 <Check on={cfg.stopOnJackpot} onToggle={() => setCfg((c) => ({ ...c, stopOnJackpot: !c.stopOnJackpot }))} icon={<Crown className="h-3.5 w-3.5 text-gold-champagne" strokeWidth={2.4} />} label={t("stopJackpot")} />
                 <Check on={useMultiple} onToggle={() => setUseMultiple((v) => !v)} icon={<TrendingUp className="h-3.5 w-3.5 text-tier-prestige" strokeWidth={2.4} />} label={t("stopMultiple")}>
-                  <span className="mt-1.5 flex items-center gap-2 text-[11px] text-muted">
+                  <span className="mt-1.5 flex items-center gap-2 text-xs text-muted">
                     <input
                       value={multiple}
                       onChange={(e) => setMultiple(e.target.value)}
@@ -144,7 +143,7 @@ export function AutoplaySettingsModal({ box, initial, onClose, onStart }: Props)
                   </span>
                 </Check>
                 <Check on={useStopLoss} onToggle={() => setUseStopLoss((v) => !v)} icon={<ShieldAlert className="h-3.5 w-3.5 text-crimson" strokeWidth={2.4} />} label={t("stopLoss")}>
-                  <span className="mt-1.5 flex items-center gap-2 text-[11px] text-muted">
+                  <span className="mt-1.5 flex items-center gap-2 text-xs text-muted">
                     <input
                       value={stopLoss}
                       onChange={(e) => setStopLoss(e.target.value)}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { cn } from "@/lib/format";
 import { glow } from "@/lib/tiers";
 import type { ProductImage } from "@/lib/productImages";
@@ -61,22 +61,23 @@ function BoxSilhouette({ accent, size }: { accent: string; size: "sm" | "md" | "
 
 /** USDT 즉시 캐시백 / 인스턴트 드롭 — 샴페인 골드 토큰 */
 function CashToken({ size }: { size: "sm" | "md" | "lg" }) {
+  const id = useId();
   const dim = size === "lg" ? "w-[40%]" : size === "md" ? "w-[46%]" : "w-[54%]";
   return (
     <svg viewBox="0 0 100 100" aria-hidden className={cn("absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2", dim)} style={{ filter: "drop-shadow(0 12px 16px rgba(0,0,0,0.6)) drop-shadow(0 0 14px rgba(230,202,101,0.35))" }}>
       <defs>
-        <linearGradient id="cash-rim" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={`${id}-cash-rim`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#F3E3A3" />
           <stop offset="0.5" stopColor="#D4AF37" />
           <stop offset="1" stopColor="#8A6D1F" />
         </linearGradient>
-        <radialGradient id="cash-face" cx="0.4" cy="0.35" r="0.8">
+        <radialGradient id={`${id}-cash-face`} cx="0.4" cy="0.35" r="0.8">
           <stop offset="0" stopColor="#2A2417" />
           <stop offset="1" stopColor="#0E0C08" />
         </radialGradient>
       </defs>
-      <circle cx="50" cy="50" r="46" fill="url(#cash-rim)" />
-      <circle cx="50" cy="50" r="39" fill="url(#cash-face)" stroke="rgba(243,227,163,0.35)" strokeWidth="1" />
+      <circle cx="50" cy="50" r="46" fill={`url(#${id}-cash-rim)`} />
+      <circle cx="50" cy="50" r="39" fill={`url(#${id}-cash-face)`} stroke="rgba(243,227,163,0.35)" strokeWidth="1" />
       <text x="50" y="64" textAnchor="middle" fontSize="40" fontWeight="700" fill="#E6CA65" fontFamily="Pretendard Variable, Pretendard, sans-serif">₮</text>
     </svg>
   );
@@ -84,16 +85,17 @@ function CashToken({ size }: { size: "sm" | "md" | "lg" }) {
 
 /** 글로벌 디지털 자산(기프트카드 · 월렛 코드) — 블랙 카드 */
 function GiftCard({ accent, size }: { accent: string; size: "sm" | "md" | "lg" }) {
+  const id = useId();
   const dim = size === "lg" ? "w-[54%]" : size === "md" ? "w-[60%]" : "w-[68%]";
   return (
     <svg viewBox="0 0 160 100" aria-hidden className={cn("absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2", dim)} style={{ filter: "drop-shadow(0 12px 16px rgba(0,0,0,0.6))" }}>
       <defs>
-        <linearGradient id="gc-body" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={`${id}-gc-body`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#262626" />
           <stop offset="1" stopColor="#0C0C0C" />
         </linearGradient>
       </defs>
-      <rect x="4" y="8" width="152" height="86" rx="10" fill="url(#gc-body)" stroke={glow(accent, 0.55)} strokeWidth="1.2" />
+      <rect x="4" y="8" width="152" height="86" rx="10" fill={`url(#${id}-gc-body)`} stroke={glow(accent, 0.55)} strokeWidth="1.2" />
       <rect x="4" y="30" width="152" height="12" fill="rgba(255,255,255,0.06)" />
       <rect x="18" y="58" width="34" height="22" rx="4" fill="#E6CA65" opacity="0.9" />
       <rect x="62" y="64" width="70" height="4" rx="2" fill="rgba(255,255,255,0.35)" />
@@ -121,17 +123,14 @@ export function ProductArt({
   className,
 }: ProductArtProps) {
   // 상태를 src 에 묶는다. src 가 바뀌면 자동으로 "아직 안 됨"이 되므로 리셋 이펙트가 필요 없다.
-  const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
-  const loaded = loadedSrc === image.src;
   const failed = failedSrc === image.src;
 
   // 하이드레이션 전에 캐시에서 이미 완료된 이미지는 onLoad 가 다시 발화하지 않는다.
   const attach = useCallback(
     (el: HTMLImageElement | null) => {
-      if (el && el.complete && image.src) {
-        if (el.naturalWidth > 0) setLoadedSrc(image.src);
-        else setFailedSrc(image.src);
+      if (el && el.complete && image.src && el.naturalWidth === 0) {
+        setFailedSrc(image.src);
       }
     },
     [image.src],
@@ -147,7 +146,6 @@ export function ProductArt({
         aria-hidden
         className="absolute inset-0 transition-opacity duration-500"
         style={{
-          opacity: showImage && !loaded ? 0.4 : 1,
           background: `radial-gradient(60% 55% at 50% 58%, ${glow(accent, glowStrength)} 0%, ${glow(accent, glowStrength * 0.35)} 45%, transparent 100%)`,
         }}
       />
@@ -162,7 +160,6 @@ export function ProductArt({
           loading={priority ? "eager" : "lazy"}
           decoding="async"
           referrerPolicy="no-referrer"
-          onLoad={() => setLoadedSrc(image.src)}
           onError={() => setFailedSrc(image.src)}
           className={cn(
             "absolute inset-0 h-full w-full transition-transform duration-500 ease-out group-hover/art:scale-[1.04]",
@@ -176,11 +173,6 @@ export function ProductArt({
       ) : (
         <BoxSilhouette accent={accent} size={fallbackSize} />
       )}
-      {/* 로딩 매트 — 이미지 위에 덮였다가 로드되면 걷힌다 */}
-      {showImage && (
-        <span aria-hidden className={cn("pointer-events-none absolute inset-0 transition-opacity duration-500", loaded ? "opacity-0" : "opacity-100")} style={{ background: SHOWCASE_BG }} />
-      )}
-
       {/* 중앙 핀조명 — 사진(cover)은 딤 대신 가운데를 밝히고 가장자리만 살짝 누른다 */}
       {showImage && mode === "cover" && (
         <span

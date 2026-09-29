@@ -1,9 +1,11 @@
 "use client";
 
+import { SiteHeader } from "@/components/layout/SiteHeader";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
-import { Camera, Gift, Star, ExternalLink, ShieldCheck, Truck, Heart, Package } from "lucide-react";
+import { Camera, Star, ExternalLink, ShieldCheck, Truck, Heart, Package } from "lucide-react";
 import { cn } from "@/lib/format";
 import { Link } from "@/i18n/navigation";
 import { useCurrency } from "@/lib/useCurrency";
@@ -35,6 +37,7 @@ import { ReviewFormModal } from "@/components/community/ReviewFormModal";
  */
 export default function CommunityPage() {
   const t = useTranslations();
+  const e = useTranslations("editorialPages");
   const locale = useLocale();
   const { fmt } = useCurrency();
   const { boxTitle, itemName } = useProductText();
@@ -67,60 +70,30 @@ export default function CommunityPage() {
 
   return (
     <main className="min-h-screen bg-canvas pb-24">
-      <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-hairline bg-obsidian/90 px-[4%] backdrop-blur-md sm:gap-5">
-        <BrandLogo />
-        <nav className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap text-[11px] text-muted [scrollbar-width:none] sm:gap-4 sm:text-xs">
-          <Link href="/" className="hidden hover:text-white sm:inline">
-            {t("nav.boxes")}
-          </Link>
-          {/* 모바일은 현재 페이지명만 — 나머지 이동은 하단 내비·푸터 */}
-          <Link href="/inventory" className="hidden hover:text-white md:inline">
-            {t("nav.inventory")}
-          </Link>
-          <Link href="/fairness" className="hidden hover:text-white md:inline">
-            {t("nav.fairness")}
-          </Link>
-          <span className="font-semibold text-white">{t("nav.community")}</span>
-        </nav>
-        <div className="ml-auto flex flex-none items-center gap-2">
-          <div className="glass-dark hidden h-9 items-center gap-2 rounded-md px-3 sm:flex">
-            <Money value={balance} size="sm" />
-          </div>
-          <LanguageSelector />
-          <CurrencySelector />
-          <HeaderAuthControl />
-        </div>
-      </header>
+      <SiteHeader />
 
-      <section className="mx-auto w-full max-w-7xl px-[4%] pt-6 md:pt-8">
-        <div className="border-metallic-gold relative overflow-hidden rounded-xl bg-surface px-4 py-4 md:px-6 md:py-5">
-          <span aria-hidden className="pedestal-glow pointer-events-none absolute inset-0" />
-          <div className="relative flex flex-wrap items-center justify-between gap-4">
-            <div className="min-w-0">
-              <div className="caption-luxury">{t("community.eyebrow")}</div>
-              <h1 className="mt-0.5 font-display text-xl font-bold uppercase tracking-tight text-white md:text-2xl">{t("community.title")}</h1>
-              <p className="mt-1.5 flex flex-wrap items-baseline gap-1 text-sm text-secondary">
-                <Gift className="h-4 w-4 self-center text-gold-champagne" strokeWidth={2.2} />
-                {t("community.bonusBanner")} <Money value={REVIEW_BONUS_USDT} size="sm" numberClassName="text-gold-gradient" /> {t("community.bonusBannerTail")}
-              </p>
-            </div>
-            <button type="button" onClick={() => setWriteOpen(true)} className="flex h-10 items-center gap-2 whitespace-nowrap rounded-md bg-gold-champagne px-4 text-sm font-bold text-obsidian hover:bg-gold-metallic">
-              <Camera className="h-4 w-4" strokeWidth={2.4} />
-              {t("community.write")}
+      <section className="mx-auto max-w-[1440px] px-6 pt-14 lg:px-14 md:pt-20">
+        <div className="grid gap-8 border-b border-hairline pb-10 md:grid-cols-[1.2fr_1fr] md:gap-16 md:pb-14">
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">VOILA JOURNAL</p>
+            <h1 className="mt-6 text-4xl font-semibold leading-[1.2] tracking-[-0.045em] text-white md:text-[52px]">{e("communityTitle")}</h1>
+          </div>
+          <div className="md:pt-8">
+            <p className="max-w-lg text-base leading-8 text-muted">{e("communityBody")}</p>
+            <button type="button" onClick={() => setWriteOpen(true)} className="mt-6 inline-flex min-h-12 items-center gap-3 rounded-md bg-[#f1eee7] px-6 text-sm font-semibold text-obsidian hover:bg-white">
+              <Camera className="h-4 w-4" strokeWidth={1.7} />{t("community.write")}
             </button>
+            <p className="mt-4 flex flex-wrap items-baseline gap-2 text-xs text-muted"><span>{e("communityNote")}</span><Money value={REVIEW_BONUS_USDT} size="xs" numberClassName="text-gold-champagne" /></p>
           </div>
         </div>
 
         {mounted && reviews.length === 0 ? (
-          <div className="border-metallic-subtle mt-6 flex flex-col items-center rounded-xl bg-surface px-6 py-14 text-center">
-            <Package className="h-8 w-8 text-faint" strokeWidth={1.5} />
-            <p className="mt-3 max-w-md text-sm leading-relaxed text-muted">{t("community.empty")}</p>
-            <Link href="/" className="mt-5 rounded-md bg-crimson px-5 py-2.5 text-sm font-bold text-white hover:bg-red-600">
-              {t("community.emptyCta")}
-            </Link>
+          <div className="my-12 grid items-center gap-8 rounded-lg border border-hairline bg-surface px-7 py-12 md:grid-cols-[1fr_1.8fr] md:px-14 md:py-16">
+            <div aria-hidden className="mx-auto flex aspect-square w-full max-w-48 items-center justify-center rounded-full border border-hairline bg-obsidian"><Package className="h-20 w-20 text-gold-champagne" strokeWidth={0.7} /></div>
+            <div><h2 className="text-2xl font-medium tracking-tight text-white md:text-3xl">{e("communityEmptyTitle")}</h2><p className="mt-4 max-w-lg text-sm leading-7 text-muted">{e("communityEmptyBody")}</p><Link href="/inventory" className="mt-6 inline-flex min-h-11 items-center gap-3 text-sm font-medium text-gold-champagne">{e("communityEmptyAction")}<ExternalLink className="h-4 w-4" /></Link></div>
           </div>
         ) : (
-          <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <ul className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {reviews.map((r) => {
               const box = BOX_BY_SLUG[r.boxSlug];
               const item = box?.items.find((i) => i.id === r.itemId);
@@ -135,13 +108,13 @@ export default function CommunityPage() {
                       <ProductArt image={item.image} alt={itemName(item)} accent={tier?.accent} glowStrength={0.25} fallbackSize="md" />
                     ) : null}
                     {tier && (
-                      <span className="absolute left-2 top-2 rounded-sm px-1.5 py-1 text-[10px] font-bold uppercase tracking-widest" style={{ color: tier.accent, backgroundColor: glow(tier.accent, 0.12), border: `1px solid ${glow(tier.accent, 0.45)}` }}>
+                      <span className="absolute left-2 top-2 rounded-sm px-1.5 py-1 text-xs font-bold uppercase tracking-widest" style={{ color: tier.accent, backgroundColor: glow(tier.accent, 0.12), border: `1px solid ${glow(tier.accent, 0.45)}` }}>
                         {tier.label}
                       </span>
                     )}
-                    {r.mine && <span className="absolute right-2 top-2 rounded-sm bg-obsidian/85 px-1.5 py-1 text-[10px] font-semibold text-gold-champagne">{t("community.you")}</span>}
+                    {r.mine && <span className="absolute right-2 top-2 rounded-sm bg-obsidian/85 px-1.5 py-1 text-xs font-semibold text-gold-champagne">{t("community.you")}</span>}
                   </div>
-                  <div className="p-3">
+                  <div className="p-5">
                     <div className="flex items-center justify-between gap-2">
                       <span className="truncate text-sm font-bold text-white">{item ? itemName(item) : r.itemId}</span>
                       <span className="flex flex-none items-center gap-0.5">
@@ -150,9 +123,9 @@ export default function CommunityPage() {
                         ))}
                       </span>
                     </div>
-                    <div className="truncate text-[10px] text-faint">{box ? boxTitle(box) : r.boxSlug}</div>
-                    <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-secondary">{r.text}</p>
-                    <div className="mt-2 flex items-center justify-between text-[10px] text-faint">
+                    <div className="truncate text-xs text-faint">{box ? boxTitle(box) : r.boxSlug}</div>
+                    <p className="mt-2 line-clamp-3 text-sm leading-7 text-secondary">{r.text}</p>
+                    <div className="mt-2 flex items-center justify-between text-xs text-faint">
                       <span className="font-mono">{r.user}</span>
                       <span className="flex items-center gap-2">
                         {mounted && <span>{new Date(r.at).toLocaleDateString(locale)}</span>}
@@ -166,14 +139,14 @@ export default function CommunityPage() {
                     </div>
                     <div className="mt-2.5 flex flex-wrap gap-1.5">
                       {r.proof.carrier && r.proof.trackingNumber && (
-                        <a href={trackingUrl(r.proof.carrier, r.proof.trackingNumber)} target="_blank" rel="noopener noreferrer" className="border-metallic-subtle flex h-6 items-center gap-1 rounded-sm bg-obsidian px-1.5 text-[10px] font-semibold text-secondary hover:border-gold-champagne hover:text-white">
+                        <a href={trackingUrl(r.proof.carrier, r.proof.trackingNumber)} target="_blank" rel="noopener noreferrer" className="border-metallic-subtle flex h-6 items-center gap-1 rounded-sm bg-obsidian px-1.5 text-xs font-semibold text-secondary hover:border-gold-champagne hover:text-white">
                           <Truck className="h-3 w-3 text-tier-prestige" strokeWidth={2.2} />
                           {t("community.badgeShipping")}
                           <ExternalLink className="h-2.5 w-2.5 text-faint" strokeWidth={2.4} />
                         </a>
                       )}
                       {r.proof.network && r.proof.txHash && (
-                        <a href={explorerTxUrl(r.proof.network, r.proof.txHash)} target="_blank" rel="noopener noreferrer" className="border-metallic-gold flex h-6 items-center gap-1 rounded-sm bg-obsidian px-1.5 text-[10px] font-semibold text-gold-champagne hover:bg-gold-champagne/10">
+                        <a href={explorerTxUrl(r.proof.network, r.proof.txHash)} target="_blank" rel="noopener noreferrer" className="border-metallic-gold flex h-6 items-center gap-1 rounded-sm bg-obsidian px-1.5 text-xs font-semibold text-gold-champagne hover:bg-gold-champagne/10">
                           <ShieldCheck className="h-3 w-3" strokeWidth={2.2} />
                           {t("community.badgeOnchain", { explorer: EXPLORERS[r.proof.network].name })}
                           <ExternalLink className="h-2.5 w-2.5" strokeWidth={2.4} />
@@ -192,7 +165,7 @@ export default function CommunityPage() {
 
       <AnimatePresence>
         {toast && (
-          <motion.div key={toast.id} className="border-metallic-subtle fixed bottom-6 right-4 z-50 rounded-lg bg-obsidian p-3 text-xs font-bold text-gold-champagne" style={{ boxShadow: `0 0 20px ${glow("#E6CA65", 0.2)}` }} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 24 }}>
+          <motion.div key={toast.id} className="border-metallic-subtle fixed bottom-24 right-4 md:bottom-6 z-50 rounded-lg bg-obsidian p-3 text-xs font-bold text-gold-champagne" style={{ boxShadow: `0 0 20px ${glow("#E6CA65", 0.2)}` }} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 24 }}>
             {toast.text}
           </motion.div>
         )}

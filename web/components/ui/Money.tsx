@@ -12,9 +12,9 @@ export type MoneySize = "xs" | "sm" | "md" | "lg";
  */
 const SIZES: Record<MoneySize, { number: string; unit: string; gap: string }> = {
   lg: { number: "text-2xl md:text-3xl", unit: "text-xs md:text-sm", gap: "gap-1.5" },
-  md: { number: "text-lg md:text-xl", unit: "text-[11px] md:text-xs", gap: "gap-1" },
-  sm: { number: "text-sm md:text-base", unit: "text-[10px] md:text-[11px]", gap: "gap-1" },
-  xs: { number: "text-xs", unit: "text-[9px]", gap: "gap-0.5" },
+  md: { number: "text-lg md:text-xl", unit: "text-xs", gap: "gap-1" },
+  sm: { number: "text-sm md:text-base", unit: "text-xs", gap: "gap-1" },
+  xs: { number: "text-xs", unit: "text-xs", gap: "gap-0.5" },
 };
 
 export interface MoneyProps {

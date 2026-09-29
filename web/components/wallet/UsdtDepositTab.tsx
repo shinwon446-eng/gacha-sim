@@ -143,7 +143,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
                   <span className="min-w-0">
                     <span className="block text-sm font-bold text-white">{n.token}</span>
                     <span className="block text-xs text-muted">{n.chain}</span>
-                    {n.recommended && <span className="mt-1 inline-block text-[10px] font-semibold text-gold-champagne">{t("recommended")}</span>}
+                    {n.recommended && <span className="mt-1 inline-block text-xs font-semibold text-gold-champagne">{t("recommended")}</span>}
                   </span>
                 </label>
               );
@@ -159,7 +159,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
               <span className="caption-luxury">{t("sessionTitle")}</span>
             </span>
             {expired ? (
-              <button type="button" onClick={() => setSessionStart(Date.now())} className="h-7 whitespace-nowrap rounded border border-gold-champagne/40 px-2 text-[11px] font-bold text-gold-champagne hover:bg-gold-champagne/10">
+              <button type="button" onClick={() => setSessionStart(Date.now())} className="h-7 whitespace-nowrap rounded border border-gold-champagne/40 px-2 text-xs font-bold text-gold-champagne hover:bg-gold-champagne/10">
                 {t("sessionRenew")}
               </button>
             ) : (
@@ -169,9 +169,9 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
           <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
             <div className={cn("h-full rounded-full", expired ? "bg-crimson" : "bg-gold-champagne")} style={{ width: `${Math.round((msLeft / SESSION_MS) * 100)}%` }} />
           </div>
-          {expired && <div className="mt-1.5 text-[11px] font-semibold text-crimson">{t("sessionExpired")}</div>}
+          {expired && <div className="mt-1.5 text-xs font-semibold text-crimson">{t("sessionExpired")}</div>}
           {/* 거래소 전송 지연 사고 방지 — 만료 후에도 72시간 유예 */}
-          <p className="mt-2 break-keep text-[10px] leading-relaxed text-secondary">{t("graceNote")}</p>
+          <p className="mt-2 break-keep text-xs leading-relaxed text-secondary">{t("graceNote")}</p>
         </div>
 
         <div>
@@ -182,14 +182,14 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
               <button
                 type="button"
                 onClick={copy}
-                className={cn("flex h-9 flex-none items-center gap-1.5 whitespace-nowrap rounded-md px-3 text-xs font-bold transition-colors", copied ? "bg-gold-champagne text-obsidian" : "bg-crimson text-white hover:bg-red-600")}
+                className={cn("flex h-11 flex-none items-center gap-1.5 whitespace-nowrap rounded-md px-3 text-xs font-bold transition-colors", copied ? "bg-gold-champagne text-obsidian" : "bg-crimson text-white hover:bg-red-600")}
               >
                 {copied ? <Check className="h-3.5 w-3.5" strokeWidth={2.5} /> : <Copy className="h-3.5 w-3.5" strokeWidth={2.2} />}
                 {copied ? t("copied") : `📋 ${t("copy")}`}
               </button>
             </div>
           ) : (
-            <div className="mt-2 flex items-start gap-2 rounded-md border border-hairline bg-obsidian p-3 text-[11px] leading-relaxed text-secondary">
+            <div className="mt-2 flex items-start gap-2 rounded-md border border-hairline bg-obsidian p-3 text-xs leading-relaxed text-secondary">
               <ShieldAlert className="mt-0.5 h-3.5 w-3.5 flex-none text-gold-champagne" strokeWidth={2.2} />
               <span className="break-keep">{isLive() ? (addrError ? t("addressError") : t("addressIssuing")) : t("addressPending")}</span>
             </div>
@@ -207,7 +207,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
                   key={p}
                   type="button"
                   onClick={() => setAmount(String(p))}
-                  className={cn("h-9 rounded-md text-xs font-bold transition-colors", on ? "border-metallic-gold bg-gold-champagne/15 text-gold-champagne" : "border-metallic-subtle bg-obsidian text-secondary hover:text-white")}
+                  className={cn("h-11 rounded-md text-xs font-bold transition-colors", on ? "border-metallic-gold bg-gold-champagne/15 text-gold-champagne" : "border-metallic-subtle bg-obsidian text-secondary hover:text-white")}
                 >
                   +{p} USDT
                 </button>
@@ -222,7 +222,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
             placeholder={t("amount")}
             className="mt-2 w-full rounded-md border border-hairline bg-obsidian px-3 py-2.5 font-mono text-sm text-white outline-none focus:border-gold-champagne"
           />
-          {!amountOk && amount !== "" && <p className="mt-1 text-[11px] text-crimson">{t("belowMin", { min: fmt(MIN_DEPOSIT_USDT) })}</p>}
+          {!amountOk && amount !== "" && <p className="mt-1 text-xs text-crimson">{t("belowMin", { min: fmt(MIN_DEPOSIT_USDT) })}</p>}
         </div>
 
         {/* 안내 */}
@@ -231,7 +231,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
             <AlertTriangle className="h-3.5 w-3.5 text-gold-champagne" strokeWidth={2.2} />
             <span className="caption-luxury !text-gold-champagne">{t("guideTitle")}</span>
           </div>
-          <ul className="mt-2 space-y-1 text-[11px] leading-relaxed text-secondary">
+          <ul className="mt-2 space-y-1 text-xs leading-relaxed text-secondary">
             <li className="font-semibold text-white">· {t("dustWarn", { min: fmt(MIN_DEPOSIT_USDT) })}</li>
             <li>· {t("guideConfirm", { n: meta.confirmations })} ({t("guideTime", { sec: meta.blockSeconds, min: Math.ceil((meta.confirmations * meta.blockSeconds) / 60) })})</li>
             <li>· {t("guideToken")}</li>
@@ -244,14 +244,14 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
         {address && (
           <div className="border-metallic-gold mx-auto flex w-fit flex-col items-center rounded-lg bg-white p-4 md:mx-0 md:w-full">
             <QRCodeSVG value={address} size={168} level="M" bgColor="#ffffff" fgColor="#0B0B0B" includeMargin={false} />
-            <span className="mt-2 text-center text-[10px] text-neutral-600">{t("qrHint")}</span>
+            <span className="mt-2 text-center text-xs text-neutral-600">{t("qrHint")}</span>
           </div>
         )}
 
         <div className="border-metallic-subtle rounded-lg bg-obsidian p-3">
           <div className="flex items-center justify-between">
             <span className="caption-luxury">{t("status")}</span>
-            <span className={cn("flex items-center gap-1.5 text-[11px] font-semibold", status.kind === "credited" ? "text-gold-champagne" : status.kind === "waiting" ? "text-muted" : "text-white")}>
+            <span className={cn("flex items-center gap-1.5 text-xs font-semibold", status.kind === "credited" ? "text-gold-champagne" : status.kind === "waiting" ? "text-muted" : "text-white")}>
               <Radio className={cn("h-3 w-3", status.kind !== "waiting" && status.kind !== "credited" && "animate-pulse")} strokeWidth={2.2} />
               {status.kind === "waiting" && t("waiting")}
               {status.kind === "checking" && t("checking")}
@@ -266,14 +266,14 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
             })}
           </div>
           {status.kind === "credited" && <div className="mt-2 text-right font-mono text-xs tabular-nums text-white">{fmt(status.amount)}</div>}
-          <p className="mt-2 break-keep text-[10px] leading-relaxed text-faint">{status.kind === "pending" ? t("pendingNote") : t("watching")}</p>
+          <p className="mt-2 break-keep text-xs leading-relaxed text-faint">{status.kind === "pending" ? t("pendingNote") : t("watching")}</p>
         </div>
 
         <button
           type="button"
           onClick={confirm}
           disabled={!address || busy || status.kind === "credited"}
-          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-gold-champagne text-sm font-bold text-obsidian shadow-[0_0_24px_rgba(230,202,101,0.35)] transition-colors hover:bg-gold-metallic disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-[#f1eee7] text-sm font-bold text-obsidian shadow-[0_0_24px_rgba(230,202,101,0.35)] transition-colors hover:bg-gold-metallic disabled:cursor-not-allowed disabled:opacity-40"
         >
           {busy && <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2.4} />}
           {busy ? t("checking") : t("confirmSent")}

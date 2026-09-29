@@ -1,79 +1,51 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Rocket } from "lucide-react";
+import { ArrowUpRight, ArrowRight, Box, Fingerprint, PackageCheck, ChevronDown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { BrandLogo } from "@/components/layout/BrandLogo";
-import { LanguageSelector } from "@/components/layout/LanguageSelector";
-import { CurrencySelector } from "@/components/layout/CurrencySelector";
-import { HeaderAuthControl } from "@/components/auth/HeaderAuthControl";
-import { VaultHero } from "@/components/about/VaultHero";
-import { LineupShowcase } from "@/components/about/LineupShowcase";
-import { TrustScenes } from "@/components/about/TrustScenes";
-import { GlobalLiveFeed } from "@/components/about/GlobalLiveFeed";
-import { ImpactStats, FaqAccordion, FinaleCta } from "@/components/about/ImpactStats";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { ProductArt } from "@/components/box/ProductArt";
+import { BOXES } from "@/lib/products";
+import { useProductText } from "@/lib/useProductText";
 
-/**
- * /about — 플랫폼 소개 (시네마틱 랜딩).
- *
- *   ① 히어로(진입 즉시 슬로건·헤드라인·CTA·상품 4점, 스크롤은 패럴랙스만) ② 4대 라인업 프리미엄 쇼케이스
- *   ③ 스티키 3씬(95% 페이백 목업 · SHA-256 검증 대시보드 · 정품 보증/무료 특송 트래킹)
- *   ④ 글로벌 언박싱·특송 네트워크 ⑤ 임팩트 숫자 ⑥ FAQ ⑦ 피날레 CTA
- *
- * 헤더 내비는 메인과 같은 목적지를 모바일·데스크톱 모두에서 제공한다(홈·보관함·공정성 검증·커뮤니티).
- * 하단 고정 내비에는 커뮤니티·공정성 검증이 없으므로 이 네 개는 헤더에서 **잘리지 않고** 다 보여야 한다
- * — 폭 예산은 EN 기준으로 맞춘다(`Provably Fair` 가 가장 길다, 부록 A ⑤).
- *
- * SSR 안전: 스크롤·카운터·해시는 전부 마운트 후에만 값이 바뀌고 첫 렌더는 서버와 같은 상수다.
- */
+const STEPS = [Box, Fingerprint, PackageCheck];
+
 export default function AboutPage() {
-  const t = useTranslations();
-  const links = [
-    { href: "/", label: t("nav.boxes") },
-    { href: "/inventory", label: t("nav.inventory") },
-    { href: "/fairness", label: t("nav.fairness") },
-    { href: "/community", label: t("nav.community") },
-  ] as const;
-
+  const t = useTranslations("editorialPages");
+  const { boxTitle } = useProductText();
+  const feature = BOXES.find((box) => box.slug === "vault-submariner") ?? BOXES[0];
   return (
-    <main className="min-h-screen bg-canvas pb-0">
-      <header className="sticky top-0 z-40 flex h-14 items-center gap-2 border-b border-hairline bg-obsidian/90 px-3 backdrop-blur-md sm:gap-4 sm:px-[4%]">
-        {/* 375px 에서 로고는 sm(16px) — md(20px)면 내비에 줄 폭이 16px 모자란다 */}
-        <BrandLogo size="sm" className="sm:hidden" />
-        <BrandLogo className="hidden sm:inline-flex" />
-        {/* 네 항목이 375px 에 다 들어가야 한다. 기준 로케일은 항상 **EN**(`Provably Fair` 가 가장 길다 — 부록 A ⑤).
-            현재 페이지(`플랫폼 소개`)를 비활성 라벨로 끼워 두면 234px 가 되어 마지막 항목이 잘렸다(2026-09-28 운영자 지적)
-            — 자기 페이지 이름은 히어로가 이미 말하므로 뺀다 */}
-        <nav className="flex min-w-0 flex-1 items-center gap-2.5 overflow-x-auto whitespace-nowrap text-[10.5px] text-muted [scrollbar-width:none] sm:gap-4 sm:text-xs">
-          {links.map((l) => (
-            <Link key={l.href} href={l.href} className="flex-none transition-colors hover:text-white">
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-        <Link
-          href="/"
-          className="hidden h-8 flex-none items-center gap-1.5 whitespace-nowrap rounded-md bg-crimson px-2.5 text-[11px] font-bold text-white transition-colors hover:bg-red-600 sm:flex sm:h-9 sm:px-3 sm:text-xs"
-        >
-          <Rocket className="h-3.5 w-3.5" strokeWidth={2.4} />
-          <span className="hidden sm:inline">{t("about.navOpen")}</span>
-        </Link>
-        {/* sm 미만에서는 [상자 열러 가기] 를 접고 그 자리를 인증 컨트롤에 준다 —
-            히어로 바로 아래에 같은 CTA 가 크게 있고, 로그인은 여기가 유일한 길이다 */}
-        <HeaderAuthControl />
-        <span className="hidden flex-none items-center gap-2 lg:flex">
-          <LanguageSelector />
-          <CurrencySelector />
-        </span>
-      </header>
-
-      <VaultHero />
-      <LineupShowcase />
-      <TrustScenes />
-      <GlobalLiveFeed />
-      <ImpactStats />
-      <FaqAccordion />
-      <FinaleCta />
+    <main className="min-h-screen bg-canvas">
+      <SiteHeader />
+      <div className="mx-auto max-w-[1440px] px-6 lg:px-14">
+        <section className="grid items-center gap-10 py-14 md:grid-cols-2 md:gap-16 md:py-24">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold-champagne">THE WORLD OF VOILA</p>
+            <h1 className="mt-6 max-w-xl break-keep text-4xl font-semibold leading-[1.18] tracking-[-0.045em] text-white md:text-[56px]">{t("aboutTitle")}</h1>
+            <p className="mt-6 max-w-lg text-base leading-8 text-muted">{t("aboutBody")}</p>
+            <Link href="/#boxes" className="mt-8 inline-flex min-h-12 items-center gap-6 rounded-md bg-[#f1eee7] px-6 text-sm font-semibold text-obsidian transition-colors hover:bg-white">{t("explore")}<ArrowUpRight className="h-4 w-4" /></Link>
+          </div>
+          <div className="relative aspect-square overflow-hidden rounded-lg border border-hairline bg-surface">
+            <ProductArt image={feature.image} alt={boxTitle(feature)} accent="#d9c39a" glowStrength={0.04} bordered={false} priority />
+            <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 bg-gradient-to-t from-obsidian p-6 pt-16">
+              <div><p className="text-xs tracking-[0.16em] text-muted">VOILA SELECTION</p><p className="mt-2 text-base text-white">{boxTitle(feature)}</p></div>
+              <span className="text-xs text-gold-champagne">01</span>
+            </div>
+          </div>
+        </section>
+        <section className="border-t border-hairline py-14 md:py-20">
+          <div className="grid gap-5 md:grid-cols-[1fr_1.4fr] md:gap-16"><p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">HOW IT WORKS</p><div><h2 className="text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("stepsTitle")}</h2><p className="mt-4 text-base leading-7 text-muted">{t("stepsBody")}</p></div></div>
+          <ol className="mt-10 grid gap-8 md:mt-14 md:grid-cols-3 md:gap-10">{STEPS.map((Icon, i) => <li key={i} className="border-t border-hairline pt-6"><div className="flex items-center justify-between"><span className="text-xs tabular-nums text-muted">0{i + 1}</span><Icon className="h-5 w-5 text-gold-champagne" strokeWidth={1.5} /></div><h3 className="mt-8 text-xl font-medium text-white">{t(`step${i + 1}Title`)}</h3><p className="mt-3 text-sm leading-7 text-muted">{t(`step${i + 1}Body`)}</p></li>)}</ol>
+        </section>
+        <section className="grid gap-8 rounded-lg border border-hairline bg-surface p-7 md:grid-cols-[1fr_1.3fr] md:gap-16 md:p-12">
+          <div><Fingerprint className="h-8 w-8 text-gold-champagne" strokeWidth={1.3} /><h2 className="mt-5 text-3xl font-semibold tracking-tight text-white">{t("trustTitle")}</h2></div>
+          <div><p className="text-base leading-8 text-muted">{t("trustBody")}</p><Link href="/fairness" className="mt-6 inline-flex min-h-11 items-center gap-3 text-sm font-medium text-gold-champagne">{t("verify")}<ArrowRight className="h-4 w-4" /></Link></div>
+        </section>
+        <section className="grid gap-8 py-16 md:grid-cols-[1fr_1.4fr] md:gap-16 md:py-24">
+          <div><p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">GOOD TO KNOW</p><h2 className="mt-5 text-3xl font-semibold tracking-tight text-white">{t("faqTitle")}</h2></div>
+          <div className="border-t border-hairline">{[1, 2, 3].map((n) => <details key={n} className="group border-b border-hairline"><summary className="flex min-h-20 cursor-pointer list-none items-center justify-between gap-5 py-5 text-base font-medium text-white [&::-webkit-details-marker]:hidden">{t(`faq${n}Q`)}<ChevronDown className="h-4 w-4 shrink-0 text-muted transition-transform group-open:rotate-180" /></summary><p className="pb-6 pr-6 text-sm leading-7 text-muted">{t(`faq${n}A`)}</p></details>)}</div>
+        </section>
+      </div>
     </main>
   );
 }

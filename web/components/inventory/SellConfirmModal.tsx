@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useModal } from "@/lib/useModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Wallet } from "lucide-react";
@@ -21,15 +22,7 @@ export function SellConfirmModal({ open, count, amountUsdt, refundRate, onClose,
   const { fmt } = useCurrency();
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    ref.current?.focus({ preventScroll: true });
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  useModal(open, onClose, ref);
 
   const rate = `${Math.round(refundRate * 100)}%`;
 
@@ -43,7 +36,7 @@ export function SellConfirmModal({ open, count, amountUsdt, refundRate, onClose,
             role="alertdialog"
             aria-modal="true"
             aria-label={t("sellTitle")}
-            className="border-metallic-gold w-full max-w-sm rounded-xl bg-canvas p-5 outline-none"
+            className="border border-hairline w-full max-w-sm rounded-2xl bg-surface p-6 outline-none"
             initial={{ opacity: 0, scale: 0.96, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98 }}
@@ -61,7 +54,7 @@ export function SellConfirmModal({ open, count, amountUsdt, refundRate, onClose,
               <button type="button" onClick={onClose} className="glass-dark h-11 rounded-md text-sm font-semibold text-secondary hover:text-white">
                 {t("cancel")}
               </button>
-              <button type="button" onClick={onConfirm} className="h-11 rounded-md bg-gold-champagne text-sm font-bold text-obsidian hover:bg-gold-metallic">
+              <button type="button" onClick={onConfirm} className="h-11 rounded-md bg-[#f1eee7] text-sm font-bold text-obsidian hover:bg-gold-metallic">
                 {t("confirm")}
               </button>
             </div>

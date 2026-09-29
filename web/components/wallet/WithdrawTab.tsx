@@ -48,7 +48,7 @@ type TFn = ReturnType<typeof useTranslations<"withdraw">>;
 
 function StatusPill({ status, t }: { status: TxStatus; t: TFn }) {
   return (
-    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-bold", status === "PENDING_ADMIN_REVIEW" ? "bg-crimson/15 text-crimson" : status === "PENDING" ? "bg-white/10 text-secondary" : status === "BROADCASTING" ? "bg-gold-champagne/15 text-gold-champagne" : "bg-emerald-500/15 text-emerald-300")}>
+    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold", status === "PENDING_ADMIN_REVIEW" ? "bg-crimson/15 text-crimson" : status === "PENDING" ? "bg-white/10 text-secondary" : status === "BROADCASTING" ? "bg-gold-champagne/15 text-gold-champagne" : "bg-emerald-500/15 text-emerald-300")}>
       {status === "PENDING_ADMIN_REVIEW" ? <Gavel className="h-3 w-3" strokeWidth={2.4} /> : status === "PENDING" ? <Clock className="h-3 w-3" strokeWidth={2.4} /> : status === "BROADCASTING" ? <Loader2 className="h-3 w-3 animate-spin" strokeWidth={2.4} /> : <CheckCircle2 className="h-3 w-3" strokeWidth={2.4} />}
       {t(`status.${status}`)}
     </span>
@@ -58,14 +58,14 @@ function StatusPill({ status, t }: { status: TxStatus; t: TFn }) {
 /** TxID + 복사 + 익스플로러 링크 (CLAUDE.md §6-B) */
 function TxLink({ network, hash, compact, t, copied, onCopy }: { network: Network; hash: string; compact?: boolean; t: TFn; copied: string | null; onCopy: (h: string) => void }) {
   return (
-    <div className={cn("flex items-center gap-1.5", compact ? "text-[10px]" : "text-xs")}>
+    <div className={cn("flex items-center gap-1.5", compact ? "text-xs" : "text-xs")}>
       <code className={cn("min-w-0 truncate font-mono text-secondary", compact ? "max-w-[9rem]" : "flex-1")} title={hash}>
         {compact ? `${hash.slice(0, 10)}…${hash.slice(-6)}` : hash}
       </code>
       <button type="button" onClick={() => onCopy(hash)} aria-label={t("copyHash")} className="glass-dark flex h-7 w-7 flex-none items-center justify-center rounded-md text-gold-champagne hover:border-gold-champagne">
         {copied === hash ? <Check className="h-3 w-3" strokeWidth={2.6} /> : <Copy className="h-3 w-3" strokeWidth={2.2} />}
       </button>
-      <a href={explorerTxUrl(network, hash)} target="_blank" rel="noopener noreferrer" className="border-gold-gradient flex h-7 flex-none items-center gap-1 whitespace-nowrap rounded-md px-2 text-[10px] font-bold text-gold-champagne hover:bg-gold-champagne/10">
+      <a href={explorerTxUrl(network, hash)} target="_blank" rel="noopener noreferrer" className="border-gold-gradient flex h-7 flex-none items-center gap-1 whitespace-nowrap rounded-md px-2 text-xs font-bold text-gold-champagne hover:bg-gold-champagne/10">
         {t("viewOnExplorer", { explorer: EXPLORERS[network].name })}
         <ExternalLink className="h-3 w-3" strokeWidth={2.4} />
       </a>
@@ -88,14 +88,14 @@ function RolloverBar({ t }: { t: TFn }) {
         {met ? <ShieldCheck className="mt-0.5 h-4 w-4 flex-none text-emerald-300" strokeWidth={2.2} /> : <ShieldAlert className="mt-0.5 h-4 w-4 flex-none text-gold-champagne" strokeWidth={2.2} />}
         <div className="min-w-0 flex-1">
           <div className={cn("break-keep text-[12px] font-bold leading-snug", met ? "text-emerald-300" : "text-gold-champagne")}>{met ? t("amlMet") : t("amlTitle")}</div>
-          {!met && <div className="mt-0.5 break-keep text-[11px] leading-relaxed text-secondary">{t("amlRule")}</div>}
+          {!met && <div className="mt-0.5 break-keep text-xs leading-relaxed text-secondary">{t("amlRule")}</div>}
         </div>
         <span className={cn("flex-none font-display text-lg font-bold tabular-nums", met ? "text-emerald-300" : "text-gold-champagne")}>{pct}%</span>
       </div>
       <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
         <div className={cn("h-full rounded-full transition-[width] duration-500", met ? "bg-emerald-400" : "bg-gold-champagne")} style={{ width: `${pct}%` }} />
       </div>
-      <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-[10px] text-faint">
+      <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-xs text-faint">
         <span className="flex items-baseline gap-1">
           {t("amlRequired")} <span className="font-mono text-secondary">{fmt(required)}</span>
         </span>
@@ -103,10 +103,10 @@ function RolloverBar({ t }: { t: TFn }) {
           {t("amlCurrent")} <span className="font-mono text-secondary">{fmt(current)}</span>
         </span>
       </div>
-      {!met && remaining > 0 && <div className="mt-1.5 break-keep text-[11px] font-semibold text-white">{t("amlRemaining", { amount: fmt(remaining) })}</div>}
+      {!met && remaining > 0 && <div className="mt-1.5 break-keep text-xs font-semibold text-white">{t("amlRemaining", { amount: fmt(remaining) })}</div>}
       {/* 안티 그라인딩 — 저위험 상자만 반복해 롤오버를 채우는 우회를 막는다 */}
-      <p className="mt-2 break-keep text-[10px] leading-relaxed text-faint">{t("amlGrinding", { pct: Math.round(LOW_RISK_WEIGHT * 100) })}</p>
-      <p className="mt-1 break-keep text-[10px] leading-relaxed text-faint">{t("amlWhy")}</p>
+      <p className="mt-2 break-keep text-xs leading-relaxed text-faint">{t("amlGrinding", { pct: Math.round(LOW_RISK_WEIGHT * 100) })}</p>
+      <p className="mt-1 break-keep text-xs leading-relaxed text-faint">{t("amlWhy")}</p>
     </div>
   );
 }
@@ -120,10 +120,10 @@ function CircuitBanner({ t, used, limit, remaining, tripped }: { t: TFn; used: n
       <div className="flex items-start gap-2">
         <Activity className={cn("mt-0.5 h-3.5 w-3.5 flex-none", tripped ? "text-crimson" : "text-muted")} strokeWidth={2.2} />
         <div className="min-w-0 flex-1">
-          <div className={cn("break-keep text-[11px] font-bold", tripped ? "text-crimson" : "text-secondary")}>{tripped ? t("circuitTripped") : t("circuitTitle")}</div>
-          <div className="mt-0.5 break-keep text-[10px] leading-relaxed text-faint">{tripped ? t("circuitTrippedNote") : t("circuitNote", { limit: fmt(limit), remaining: fmt(remaining) })}</div>
+          <div className={cn("break-keep text-xs font-bold", tripped ? "text-crimson" : "text-secondary")}>{tripped ? t("circuitTripped") : t("circuitTitle")}</div>
+          <div className="mt-0.5 break-keep text-xs leading-relaxed text-faint">{tripped ? t("circuitTrippedNote") : t("circuitNote", { limit: fmt(limit), remaining: fmt(remaining) })}</div>
         </div>
-        <span className={cn("flex-none font-mono text-[11px] tabular-nums", tripped ? "text-crimson" : "text-faint")}>{fmt(used)}</span>
+        <span className={cn("flex-none font-mono text-xs tabular-nums", tripped ? "text-crimson" : "text-faint")}>{fmt(used)}</span>
       </div>
       <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
         <div className={cn("h-full rounded-full transition-[width] duration-500", tripped ? "bg-crimson" : "bg-secondary/60")} style={{ width: `${pct}%` }} />
@@ -285,14 +285,14 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
             );
           })}
         </ol>
-        <div className="mt-1 flex justify-between text-[9px] uppercase tracking-wider text-faint">
+        <div className="mt-1 flex justify-between text-xs uppercase tracking-wider text-faint">
           <span>{t("status.PENDING")}</span>
           <span>{t("status.BROADCASTING")}</span>
           <span>{t("status.COMPLETED")}</span>
         </div>
         <div className="mt-3">
           <Money value={netReceive(stage.amountUsdt, stage.network)} size="lg" numberClassName="text-gold-gradient" />
-          <div className="mt-1 text-[11px] text-faint">{t("netLabel")}</div>
+          <div className="mt-1 text-xs text-faint">{t("netLabel")}</div>
         </div>
         <dl className="mt-4 grid gap-2 text-xs">
           {[
@@ -318,22 +318,22 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
         </div>
         {stage.review ? (
           <div className="mt-3 rounded-md border border-crimson/40 bg-crimson/[0.08] p-2.5">
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-crimson">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-crimson">
               <Gavel className="h-3.5 w-3.5" strokeWidth={2.4} />
               {t("reviewTitle")}
             </div>
-            <p className="mt-1 break-keep text-[10px] leading-relaxed text-secondary">{t("reviewNote")}</p>
-            <p className="mt-1 break-keep text-[10px] leading-relaxed text-faint">{t("riskScore", { score: stage.riskScore, threshold: REVIEW_THRESHOLD })}</p>
+            <p className="mt-1 break-keep text-xs leading-relaxed text-secondary">{t("reviewNote")}</p>
+            <p className="mt-1 break-keep text-xs leading-relaxed text-faint">{t("riskScore", { score: stage.riskScore, threshold: REVIEW_THRESHOLD })}</p>
           </div>
         ) : (
-          <p className="mt-3 text-[10px] leading-relaxed text-faint">{isLive() ? t("processingNote") : t("networkNote")}</p>
+          <p className="mt-3 text-xs leading-relaxed text-faint">{isLive() ? t("processingNote") : t("networkNote")}</p>
         )}
         <div className={cn("mt-4 grid gap-2", onDone ? "grid-cols-2" : "grid-cols-1")}>
           <button type="button" onClick={reset} className="glass-dark h-11 rounded-md text-sm font-semibold text-secondary hover:text-white">
             {t("another")}
           </button>
           {onDone && (
-            <button type="button" onClick={onDone} className="flex h-11 items-center justify-center gap-2 rounded-md bg-gold-champagne text-sm font-bold text-obsidian hover:bg-gold-metallic">
+            <button type="button" onClick={onDone} className="flex h-11 items-center justify-center gap-2 rounded-md bg-[#f1eee7] text-sm font-bold text-obsidian hover:bg-gold-metallic">
               <Check className="h-4 w-4" strokeWidth={2.5} />
               {t("done")}
             </button>
@@ -356,10 +356,10 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
             <CreditCard className="mt-0.5 h-3.5 w-3.5 flex-none text-muted" strokeWidth={2.2} />
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline justify-between gap-2">
-                <span className="text-[11px] font-semibold text-secondary">{t("cardLocked")}</span>
+                <span className="text-xs font-semibold text-secondary">{t("cardLocked")}</span>
                 <Money value={cardBalance} size="xs" numberClassName="text-secondary" />
               </div>
-              <p className="mt-0.5 break-keep text-[10px] leading-relaxed text-faint">{t("cardLockedNote")}</p>
+              <p className="mt-0.5 break-keep text-xs leading-relaxed text-faint">{t("cardLockedNote")}</p>
             </div>
           </div>
         )}
@@ -383,7 +383,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
                 <span className="min-w-0 flex-1">
                   <span className="block text-sm font-bold text-white">{n.token}</span>
                   <span className="block text-xs text-muted">{n.chain}</span>
-                  <span className="mt-1 flex items-baseline gap-1 text-[10px] text-faint">
+                  <span className="mt-1 flex items-baseline gap-1 text-xs text-faint">
                     {t("feeShort")} <Money value={n.feeUsdt} size="xs" numberClassName="text-secondary" />
                   </span>
                 </span>
@@ -397,14 +397,14 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
       <label className="mt-4 block">
         <span className="caption-luxury">{t("address")}</span>
         <input value={address} onChange={(e) => setAddress(e.target.value)} onBlur={() => setTouched(true)} spellCheck={false} autoComplete="off" placeholder={t("addressHint", { hint: meta.addressHint })} className={cn(inputCls, has("address") && "border-crimson")} />
-        {has("address") && <span className="mt-1 block text-[11px] text-crimson">{t(`errors.${network}`)}</span>}
+        {has("address") && <span className="mt-1 block text-xs text-crimson">{t(`errors.${network}`)}</span>}
       </label>
 
       {/* 수량 + 퀵 비율 */}
       <label className="mt-3 block">
         <span className="flex items-center justify-between">
           <span className="caption-luxury">{t("amount")}</span>
-          <span className="text-[10px] text-faint">{t("min", { min: fmt(MIN_WITHDRAW_USDT) })}</span>
+          <span className="text-xs text-faint">{t("min", { min: fmt(MIN_WITHDRAW_USDT) })}</span>
         </span>
         <input value={amountText} onChange={(e) => setAmountText(e.target.value)} onBlur={() => setTouched(true)} inputMode="decimal" placeholder={currency} className={cn(inputCls, (has("min") || has("insufficient") || has("nan")) && "border-crimson")} />
         <span className="mt-2 grid grid-cols-3 gap-1.5">
@@ -415,14 +415,14 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
               [t("quickMax"), 1],
             ] as const
           ).map(([label, ratio]) => (
-            <button key={label} type="button" onClick={() => setRatio(ratio)} className="glass-dark h-9 whitespace-nowrap rounded-md px-1 text-xs font-bold text-gold-champagne hover:border-gold-champagne">
+            <button key={label} type="button" onClick={() => setRatio(ratio)} className="glass-dark h-11 whitespace-nowrap rounded-md px-1 text-xs font-bold text-gold-champagne hover:border-gold-champagne">
               {label}
             </button>
           ))}
         </span>
-        {has("min") && <span className="mt-1 block text-[11px] text-crimson">{t("errors.min", { min: fmt(MIN_WITHDRAW_USDT) })}</span>}
-        {has("insufficient") && <span className="mt-1 block text-[11px] text-crimson">{t("errors.insufficient")}</span>}
-        {has("nan") && !has("min") && <span className="mt-1 block text-[11px] text-crimson">{t("errors.nan")}</span>}
+        {has("min") && <span className="mt-1 block text-xs text-crimson">{t("errors.min", { min: fmt(MIN_WITHDRAW_USDT) })}</span>}
+        {has("insufficient") && <span className="mt-1 block text-xs text-crimson">{t("errors.insufficient")}</span>}
+        {has("nan") && !has("min") && <span className="mt-1 block text-xs text-crimson">{t("errors.nan")}</span>}
       </label>
 
       {/* 계산기 */}
@@ -443,7 +443,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
         </div>
       </div>
 
-      {!amlOk && <p className="mt-3 break-keep rounded-md border border-gold-champagne/40 bg-gold-champagne/10 p-2.5 text-[11px] leading-relaxed text-gold-champagne">{t("amlBlocked", { pct: amlPct })}</p>}
+      {!amlOk && <p className="mt-3 break-keep rounded-md border border-gold-champagne/40 bg-gold-champagne/10 p-2.5 text-xs leading-relaxed text-gold-champagne">{t("amlBlocked", { pct: amlPct })}</p>}
 
       <button
         type="button"
@@ -464,7 +464,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
       {recent.length > 0 && (
         <div className="mt-4">
           <div className="caption-luxury">{t("history")}</div>
-          <ul className="mt-2 space-y-1.5 text-[11px]">
+          <ul className="mt-2 space-y-1.5 text-xs">
             {recent.map((x) => {
               const { network: net2, address: addr } = parseRef(x.ref);
               return (

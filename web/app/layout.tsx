@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
 import { CurrencyHydrator } from "@/components/layout/CurrencyHydrator";
 
@@ -9,22 +10,17 @@ import { CurrencyHydrator } from "@/components/layout/CurrencyHydrator";
  *   가변 폰트 CSS 를 <head> 에서 preload + 동기 로드하고, globals.css 가 * 선택자로 폰트를 고정해
  *   정적 렌더링 직후에도 글꼴이 바뀌며 깜빡이지 않는다.
  */
-const PRETENDARD_CSS = "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css";
+const pretendard = localFont({ src: "../public/assets/fonts/PretendardVariable.woff2", variable: "--font-ui", display: "swap", weight: "45 920" });
 
 export const metadata: Metadata = {
   title: "VOILA — You never know what’s next. | OPEN IT, OWN IT",
   description:
-    "스위스 명품 워치부터 테슬라 사이버트럭까지. 100% 온체인 공정성 · 전 품목 95% 즉시 캐시백 · 정품 300% 보증 실물 무료 배송. 글로벌 럭셔리 언박싱 플랫폼 VOILA (voila.gg).",
+    "취향에 맞는 컬렉션을 발견하세요. 구성품과 확률을 확인하고, 개봉 결과부터 배송과 환급까지 VOILA에서 선택하세요.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko">
-      <head>
-        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
-        <link rel="preload" as="style" href={PRETENDARD_CSS} />
-        <link rel="stylesheet" href={PRETENDARD_CSS} />
-      </head>
+    <html lang="ko" className={pretendard.variable}>
       <body className="min-h-screen bg-canvas font-sans text-white antialiased">
         <CurrencyHydrator />
         {children}

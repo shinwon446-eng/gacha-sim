@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useModal } from "@/lib/useModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
-import { X, Play, Percent, Minus, Plus, RefreshCw } from "lucide-react";
+import { X, ArrowUpRight, Percent, RefreshCw } from "lucide-react";
 import {
   formatRate,
   dropTable,
@@ -29,9 +30,9 @@ import {
   topMultiple,
   type Tier,
 } from "@/lib/tiers";
-import { GameTierBar, TierBadge, TierLegend, TierStrip } from "@/components/box/TierStrip";
+import { TierBadge, TierLegend, TierStrip } from "@/components/box/TierStrip";
 import { AutoplaySettingsModal } from "@/components/unboxing/AutoplaySettingsModal";
-import { AUTOPLAY_SPINS, BULK_THRESHOLD, DEFAULT_AUTOPLAY, OPEN_PRESETS, type AutoplayConfig } from "@/lib/autoplay";
+import { AUTOPLAY_SPINS, DEFAULT_AUTOPLAY, OPEN_PRESETS, type AutoplayConfig } from "@/lib/autoplay";
 import { Link } from "@/i18n/navigation";
 import { ProductArt } from "@/components/box/ProductArt";
 
@@ -52,7 +53,7 @@ function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
   const { itemName } = useProductText();
   return (
     <li
-      className="relative overflow-hidden rounded-sm border bg-[#181818] transition-colors duration-200 hover:bg-[#282828]"
+      className="relative overflow-hidden rounded-xl border bg-obsidian transition-colors duration-200 hover:bg-elevation"
       style={{ borderColor: glow(tier.accent, 0.38) }}
     >
       {/* 상단 등급 라인 */}
@@ -72,13 +73,13 @@ function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
         </span>
       </div>
 
-      <div className="p-2">
-        <div className="line-clamp-2 min-h-[26px] text-[11px] font-semibold leading-tight text-white">
+      <div className="p-3 sm:p-4">
+        <div className="line-clamp-2 min-h-[40px] text-sm font-semibold leading-snug text-white">
           {itemName(item)}
         </div>
         <div className="mt-1.5 flex items-end justify-between gap-2 border-t border-white/10 pt-1.5">
           <div>
-            <div className="text-[7px] font-semibold uppercase tracking-[0.16em] text-[#757575]">
+            <div className="text-xs font-semibold uppercase tracking-[0.16em] text-[#757575]">
               {t("marketValue")}
             </div>
             <div
@@ -88,12 +89,12 @@ function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
               {fmt(item.value)}
             </div>
           </div>
-          <div className="hidden text-right sm:block">
-            <div className="text-[7px] font-semibold uppercase tracking-[0.16em] text-[#757575]">
-              {t("tierLabel")}
+          <div className="text-right">
+            <div className="text-xs font-semibold uppercase tracking-[0.16em] text-[#757575]">
+              {t("odds")}
             </div>
-            <div className="text-[10px] font-bold uppercase leading-none tracking-[0.12em]" style={{ color: tier.accent }}>
-              {tier.gameLabel}
+            <div className="text-xs font-semibold leading-none tabular-nums" style={{ color: tier.accent }}>
+              {formatRate(item.dropRate)}
             </div>
           </div>
         </div>
@@ -104,8 +105,8 @@ function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
 
 function Stat({ label, value, tone = "#FFFFFF" }: { label: string; value: string; tone?: string }) {
   return (
-    <div className="border-l border-white/10 pl-3 first:border-l-0 first:pl-0">
-      <div className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#757575]">{label}</div>
+    <div className="min-w-0">
+      <div className="text-xs font-semibold uppercase tracking-[0.16em] text-[#757575]">{label}</div>
       <div
         className="mt-1 font-display text-[22px] font-bold leading-none tracking-tight"
         style={{ color: tone }}
@@ -131,7 +132,7 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
   const { boxTitle, boxBadge, itemName } = useProductText();
   // 수량 프리셋 [1x][5x][10x][50x][100x] · 오토플레이 [−][🔄 N회][+]
   const [qty, setQty] = useState<number>(1);
-  const [autoIdx, setAutoIdx] = useState(0);
+  const autoIdx = 0;
   const [autoOpen, setAutoOpen] = useState(false);
   const [autoCfg, setAutoCfg] = useState<AutoplayConfig>(DEFAULT_AUTOPLAY);
   useEffect(() => {
@@ -142,21 +143,8 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
   const autoSpins = AUTOPLAY_SPINS[autoIdx];
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // ESC 닫기 + 배경 스크롤 잠금
-  useEffect(() => {
-    if (!box) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKey);
-    panelRef.current?.focus({ preventScroll: true });
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [box, onClose]);
+  useModal(!!box, onClose, panelRef);
+  const oddsRef = useRef<HTMLElement>(null);
 
   const meta = useMemo(() => {
     if (!box) return null;
@@ -187,289 +175,99 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay }: DetailModalPro
   return (
     <AnimatePresence>
       {box && meta && (
-        <motion.div
-          className="fixed inset-0 z-[100] overflow-y-auto overscroll-contain bg-black/80 px-3 py-6 backdrop-blur-[2px] md:px-6 md:py-10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) onClose();
-          }}
-        >
-          <motion.div
-            ref={panelRef}
-            tabIndex={-1}
-            role="dialog"
-            aria-modal="true"
+        <motion.div className="fixed inset-0 z-[100] overflow-y-auto overscroll-contain bg-black/75 px-3 py-4 backdrop-blur-md md:p-8"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+          <motion.div ref={panelRef} tabIndex={-1} role="dialog" aria-modal="true"
             aria-label={t("modal.details", { title: boxTitle(box) })}
-            className="relative mx-auto w-full max-w-5xl overflow-hidden rounded-md bg-[#181818] shadow-[0_24px_80px_rgba(0,0,0,0.9)] outline-none"
-            initial={{ opacity: 0, y: 24, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.98 }}
-            transition={{ duration: 0.35, ease: EASE }}
-          >
-            {/* ── 와이드 히어로 ── */}
-            {/* 모바일: 커버(16:9) 아래로 카피가 흐름 배치 — 프리셋·버튼이 커버보다 길어 오버레이로는 잘린다. md+: 21:9 커버 위 오버레이 */}
-            <header className="relative w-full overflow-hidden bg-surface md:aspect-[21/9] md:max-h-[52vh] md:bg-[#0A0A0A]">
-              <div className="absolute inset-x-0 top-0 aspect-[16/9] md:inset-0 md:aspect-auto">
-              <ProductArt
-                image={box.image}
-                alt={boxTitle(box)}
-                accent={meta.top.accent}
-                glowStrength={0.2}
-                fallbackSize="lg"
-                bordered={false}
-                priority
-                className="absolute inset-0"
-              />
-
-              {/* 비네트 + 하단 완전 융합 페이드 */}
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    "radial-gradient(120% 100% at 50% 32%, transparent 0%, rgba(0,0,0,0.42) 60%, rgba(0,0,0,0.85) 100%)",
-                }}
-              />
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(to top, #181818 0%, #181818 8%, rgba(24,24,24,0.9) 24%, rgba(24,24,24,0.4) 52%, transparent 78%)",
-                }}
-              />
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-y-0 left-0 w-2/3"
-                style={{
-                  background:
-                    "linear-gradient(to right, rgba(24,24,24,0.92) 0%, rgba(24,24,24,0.55) 40%, transparent 100%)",
-                }}
-              />
+            className="relative mx-auto max-w-5xl overflow-hidden rounded-2xl border border-hairline bg-surface shadow-2xl outline-none"
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.25, ease: EASE }}>
+            <button type="button" onClick={onClose} aria-label={t("modal.close")}
+              className="absolute right-3 top-3 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-obsidian/90 text-white hover:bg-elevation">
+              <X className="h-5 w-5" strokeWidth={1.8} />
+            </button>
+            <header className="grid md:grid-cols-[0.95fr_1.05fr]">
+              <div className="relative min-h-[240px] overflow-hidden border-b border-hairline bg-obsidian md:min-h-[480px] md:border-b-0 md:border-r">
+                <ProductArt image={box.image} alt={boxTitle(box)} accent={meta.top.accent} glowStrength={0.12} fallbackSize="lg" bordered={false} priority className="absolute inset-0" />
+                <div className="absolute left-5 top-5"><TierBadge tier={meta.top} size="md" /></div>
+                <p className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-obsidian via-obsidian/90 to-transparent px-5 pb-4 pt-10 text-xs leading-relaxed text-secondary">{t("modal.imageNote")}</p>
               </div>
-
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label={t("modal.close")}
-                className="absolute right-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-[#181818]/90 text-white transition-colors duration-200 hover:bg-[#282828]"
-              >
-                <X className="h-5 w-5" strokeWidth={2} />
-              </button>
-
-              {/* 히어로 카피 */}
-              <div className="relative z-10 px-5 pb-5 pt-[40vw] md:absolute md:inset-x-0 md:bottom-0 md:px-9 md:pb-7 md:pt-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <TierBadge tier={meta.top} size="md" />
-                  <span className="rounded-sm border border-[#2A2A2A] bg-black/60 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#AAAAAA]">
-                    {boxBadge(box)}
-                  </span>
-                  {typeof box.trendingRank === "number" && (
-                    <span className="rounded-sm bg-[#E50914] px-2 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white">
-                      {t("modal.topRank", { n: box.trendingRank })}
-                    </span>
-                  )}
+              <div className="flex flex-col justify-center px-5 py-7 sm:px-8 md:py-10">
+                <p className="eyebrow pr-8">{boxBadge(box)}</p>
+                <h2 className="mt-3 break-keep font-display text-3xl font-semibold leading-tight tracking-[-0.04em] text-white md:text-4xl">{boxTitle(box)}</h2>
+                <div className="mt-5 flex items-baseline gap-3">
+                  <span className="font-display text-3xl font-semibold tracking-tight text-white">{fmt(box.price)}</span>
+                  <span className="text-xs text-muted">{t("modal.perOpen")}</span>
                 </div>
-
-                <h2 className="mt-2.5 font-display text-[30px] font-bold uppercase leading-[0.95] tracking-tight text-white md:text-[46px]">
-                  {boxTitle(box)}
-                </h2>
-
-                {/* 수량 프리셋 */}
-                {/* 수량 프리셋 — 배속으로 오해되는 1x/5x 표기 대신 '개수 + 금액' 뱃지 */}
-                <div className="mt-4 flex flex-wrap gap-1.5" role="radiogroup" aria-label={t("unbox.qty")}>
-                  {OPEN_PRESETS.map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      role="radio"
-                      aria-checked={qty === n}
-                      onClick={() => setQty(n)}
-                      className={cn(
-                        "flex h-9 items-center gap-1.5 whitespace-nowrap rounded-md border px-3 text-[12px] font-bold transition-colors",
-                        qty === n ? "border-gold-champagne bg-gold-champagne/15 text-gold-champagne shadow-[0_0_12px_rgba(230,202,101,0.25)]" : "border-white/15 bg-obsidian/70 text-secondary hover:border-white/40 hover:text-white",
-                      )}
-                    >
-                      <span>{t(`unbox.preset.${n}`)}</span>
-                      <span className="font-mono text-[11px] tabular-nums opacity-80">({fmt(box.price * n)})</span>
-                    </button>
-                  ))}
-                </div>
-
-                <div className="mt-3 flex flex-wrap items-center gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => onOpen?.(box, qty)}
-                    className="flex h-11 items-center gap-2 whitespace-nowrap rounded-sm bg-crimson px-4 text-xs font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors duration-200 hover:bg-red-600 sm:px-5 sm:text-sm"
-                  >
-                    <Play className="h-4 w-4 fill-current" strokeWidth={0} />
-                    {qty === 100 ? t("unbox.openAllIn", { n: qty, amount: fmt(box.price * qty) }) : qty >= BULK_THRESHOLD ? t("unbox.openBulk", { n: qty, amount: fmt(box.price * qty) }) : t("unbox.openNow", { n: qty, amount: fmt(box.price * qty) })}
+                <div className="mt-6 border-t border-hairline pt-5">
+                  <div className="mb-3 text-xs font-medium text-secondary">{t("unbox.qty")}</div>
+                  <div role="group" className="grid grid-cols-5 gap-1.5" aria-label={t("unbox.qty")}>
+                    {OPEN_PRESETS.map((n) => (
+                      <button key={n} type="button" aria-pressed={qty === n} onClick={() => setQty(n)}
+                        className={cn("flex min-h-11 items-center justify-center rounded-lg border px-1 text-xs font-semibold transition-colors", qty === n ? "border-[#f1eee7] bg-[#f1eee7] text-obsidian" : "border-hairline bg-obsidian text-secondary hover:border-white/40")}>
+                        {t("modal.quantity", { n })}
+                      </button>
+                    ))}
+                  </div>
+                  <button type="button" onClick={() => onOpen?.(box, qty)} className="btn-primary mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg px-3 py-3 text-sm">
+                    {t("modal.openCount", { n: qty, amount: fmt(box.price * qty) })}
+                    <ArrowUpRight className="h-4 w-4 flex-none" />
                   </button>
-
-                  {/* 프라그마틱 스타일 오토플레이 [−] [🔄 N회] [+] */}
-                  {onAutoplay && (
-                    <div className="flex h-11 items-center overflow-hidden rounded-sm border border-gold-champagne/50 bg-obsidian/70">
-                      <button type="button" aria-label="−" onClick={() => setAutoIdx((i) => Math.max(0, i - 1))} className="flex h-full w-9 items-center justify-center text-gold-champagne hover:bg-gold-champagne/10">
-                        <Minus className="h-4 w-4" strokeWidth={2.4} />
-                      </button>
-                      <button type="button" onClick={() => setAutoOpen(true)} className="flex h-full items-center gap-1.5 whitespace-nowrap border-x border-gold-champagne/30 px-3 text-xs font-bold text-gold-champagne hover:bg-gold-champagne/10 sm:text-sm">
-                        <RefreshCw className="h-4 w-4" strokeWidth={2.4} />
-                        {t("autoplay.button", { n: Number.isFinite(autoSpins) ? String(autoSpins) : "∞" })}
-                      </button>
-                      <button type="button" aria-label="+" onClick={() => setAutoIdx((i) => Math.min(AUTOPLAY_SPINS.length - 1, i + 1))} className="flex h-full w-9 items-center justify-center text-gold-champagne hover:bg-gold-champagne/10">
-                        <Plus className="h-4 w-4" strokeWidth={2.4} />
-                      </button>
-                    </div>
-                  )}
-
-                  <a
-                    href="#provably-fair"
-                    className="flex h-11 items-center gap-2 whitespace-nowrap rounded-sm border border-white/25 bg-[#282828]/80 px-4 text-xs font-semibold text-white transition-colors duration-200 hover:border-white hover:bg-[#333333] sm:text-sm"
-                  >
-                    <Percent className="h-4 w-4" strokeWidth={2} />
-                    {t("modal.viewOdds")}
-                  </a>
+                  <p className="mt-3 break-keep text-xs leading-relaxed text-muted">{t("modal.quantityNote")}</p>
                 </div>
-                <p className="mt-2 break-keep text-[11px] leading-relaxed text-muted">{t("unbox.qtyNote")}</p>
+                <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1">
+                  <button type="button" onClick={() => { oddsRef.current?.focus({ preventScroll: true }); oddsRef.current?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); }} className="inline-flex min-h-11 items-center gap-2 text-xs font-medium text-gold-champagne hover:text-white">
+                    <Percent className="h-4 w-4" />{t("modal.viewOdds")}
+                  </button>
+                  {onAutoplay && <button type="button" onClick={() => setAutoOpen(true)} className="inline-flex min-h-11 items-center gap-2 text-xs text-muted hover:text-white">
+                    <RefreshCw className="h-4 w-4" />{t("autoplay.title")}
+                  </button>}
+                </div>
               </div>
             </header>
-
-            {/* ── 핵심 수치 ── */}
-            <section className="grid grid-cols-2 gap-x-3 gap-y-4 px-5 pt-5 md:grid-cols-4 md:px-9">
-              <Stat label={t("modal.openPrice")} value={fmt(box.price)} />
-              <Stat label={t("modal.guaranteedMin")} value={fmt(meta.floor)} tone={meta.floorTier.accent} />
-              <Stat
-                label={t("modal.topPrize")}
-                value={`${fmt(meta.table[0].value)}`}
-                tone={meta.top.accent}
-              />
-              <Stat label={t("modal.topMultiple")} value={t("tiers.multiple", { n: formatMultiple(meta.mult) })} tone={meta.top.accent} />
+            <section className="grid grid-cols-2 gap-5 border-y border-hairline bg-obsidian/40 px-5 py-6 sm:grid-cols-4 sm:px-8">
+              <Stat label={t("modal.guaranteedMin")} value={fmt(meta.floor)} />
+              <Stat label={t("modal.topPrize")} value={fmt(meta.table[0].value)} />
+              <Stat label={t("modal.rtpLabel")} value={`${(meta.retail * 100).toFixed(1)}%`} />
+              <Stat label={t("modal.topMultiple")} value={t("tiers.multiple", { n: formatMultiple(meta.mult) })} />
             </section>
-
-            {/* ── ⚡ 전 품목 1클릭 95% USDT 즉시 정산 · 개인지갑 출금 보장 ── */}
-            <section className="px-5 pt-5 md:px-9">
-              <div className="flex items-start gap-3 rounded-lg border border-gold-champagne/50 bg-gold-champagne/[0.07] px-4 py-3 shadow-[0_0_16px_rgba(230,202,101,0.18)]">
-                <div className="min-w-0">
-                  <div className="break-keep text-[13px] font-bold leading-snug text-gold-champagne">{t("modal.settleBadge")}</div>
-                  <div className="mt-0.5 break-keep text-[11px] leading-relaxed text-secondary">{t("modal.settleBody")}</div>
-                </div>
+            <section ref={oddsRef} tabIndex={-1} aria-label={t("modal.allPrizes")} id="drop-table" className="scroll-mt-5 px-5 py-7 outline-none sm:px-8">
+              <div className="mb-5 flex flex-wrap items-baseline justify-between gap-2">
+                <h3 className="text-lg font-semibold text-white">{t("modal.allPrizes")} <span className="ml-1 text-sm font-normal text-muted">{t("modal.count", { n: meta.table.length })}</span></h3>
+                <span className="text-xs text-muted">{t("modal.sortedByValue")}</span>
               </div>
-            </section>
-
-            {/* ── 도파민 수치 3종 + 게임형 등급 바 (확률 숫자 없음) ── */}
-            <section className="px-5 md:px-9">
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { label: t("modal.upToLabel"), value: t("tiers.multiple", { n: formatMultiple(meta.mult) }), tone: meta.top.accent },
-                  { label: t("modal.rtpLabel"), value: `${(meta.retail * 100).toFixed(1)}%`, tone: "#93C5FD" },
-                  { label: t("modal.floorLabel"), value: t("modal.floorPct", { pct: meta.floorPct }), tone: "#E6CA65" },
-                ].map((x) => (
-                  <div key={x.label} className="min-w-0 rounded-lg border border-white/10 bg-obsidian px-2 py-3 text-center sm:px-3">
-                    <div className="truncate text-[9px] font-semibold uppercase tracking-[0.12em] text-[#8A8A8A] sm:tracking-[0.16em]">{x.label}</div>
-                    <div className="mt-1 whitespace-nowrap font-display text-lg font-bold leading-none tracking-tight sm:text-xl md:text-2xl" style={{ color: x.tone }}>{x.value}</div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 flex items-baseline justify-between gap-3">
-                <h3 className="text-[13px] font-bold text-white">{t("modal.tierBar")}</h3>
-                <a href="#provably-fair" className="text-[11px] font-semibold text-gold-champagne hover:underline">
-                  {t("modal.preciseOddsLink")} ↗
-                </a>
-              </div>
-              <GameTierBar slices={meta.slices} className="mt-2.5" />
-            </section>
-
-            {/* ── 전체 당첨 가능 상품 ── */}
-            <section id="drop-table" className="scroll-mt-4 px-5 pb-8 pt-6 md:px-9">
-              <div className="mb-3 flex items-baseline justify-between gap-3 border-b border-[#2A2A2A] pb-2">
-                <h3 className="text-[13px] font-bold text-white">
-                  {t("modal.allPrizes")}{" "}
-                  <span className="ml-1 font-mono text-[11px] tabular-nums text-[#757575]">
-                    {t("modal.count", { n: meta.table.length })}
-                  </span>
-                </h3>
-                <span className="text-[10px] uppercase tracking-[0.16em] text-[#757575]">
-                  {t("modal.sortedByValue")}
-                </span>
-              </div>
-
-              <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
-                {meta.table.map((item) => (
-                  <PrizeCard key={item.id} item={item} tier={tierOf(item.value, box.price)} />
-                ))}
+              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                {meta.table.map((item) => <PrizeCard key={item.id} item={item} tier={tierOf(item.value, box.price)} />)}
               </ul>
             </section>
-
-            {/* ── 공정성 검증 (Provably Fair) — 정밀 소수점 확률은 여기서만 ── */}
-            <section id="provably-fair" className="scroll-mt-4 px-5 pb-8 md:px-9">
-              <details className="group rounded-lg border border-hairline bg-obsidian">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-[12px] font-bold text-white [&::-webkit-details-marker]:hidden">
-                  <span className="flex items-center gap-2">
-                    <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-gold-champagne shadow-[0_0_6px_rgba(230,202,101,0.7)]" />
-                    {t("modal.preciseOdds")}
-                  </span>
-                  <span className="text-[10px] font-semibold text-muted group-open:hidden">{t("modal.expand")}</span>
-                  <span className="hidden text-[10px] font-semibold text-muted group-open:inline">{t("modal.collapse")}</span>
-                </summary>
-                <div className="border-t border-hairline px-4 py-3">
-                  <TierStrip slices={meta.slices} height={8} />
-                  <TierLegend slices={meta.slices} className="mt-2" />
-                  <ul className="mt-3 divide-y divide-hairline">
-                    {meta.table.map((item) => {
-                      const tier = tierOf(item.value, box.price);
-                      return (
-                        <li key={item.id} className="flex items-center justify-between gap-3 py-1.5 text-[11px]">
-                          <span className="min-w-0 flex-1 truncate text-secondary">{itemName(item)}</span>
-                          <span className="hidden flex-none text-[9px] font-bold uppercase tracking-[0.12em] sm:inline" style={{ color: tier.accent }}>{tier.gameLabel}</span>
-                          <span aria-hidden className="h-2 w-2 flex-none rounded-full sm:hidden" style={{ background: tier.accent, boxShadow: `0 0 6px ${glow(tier.accent, 0.6)}` }} />
-                          <span className="w-16 flex-none text-right font-mono tabular-nums text-white sm:w-20">{formatRate(item.dropRate)}</span>
-                        </li>
-                      );
-                    })}
+            <section id="provably-fair" className="px-5 pb-8 sm:px-8">
+              <details open className="rounded-xl border border-hairline bg-obsidian">
+                <summary className="min-h-12 cursor-pointer px-5 py-4 text-sm font-semibold text-white">{t("modal.preciseOdds")}</summary>
+                <div className="border-t border-hairline p-5">
+                  <TierStrip slices={meta.slices} height={6} />
+                  <TierLegend slices={meta.slices} className="mt-3" />
+                  <ul className="mt-4 divide-y divide-hairline">
+                    {meta.table.map((item) => <li key={item.id} className="flex items-center justify-between gap-4 py-3 text-sm">
+                      <span className="min-w-0 text-secondary">{itemName(item)}</span>
+                      <span className="flex-none font-mono text-white"><span className="sr-only">{t("modal.odds")} </span>{formatRate(item.dropRate)}</span>
+                    </li>)}
                   </ul>
-                  <p className="mt-3 break-keep border-l-2 border-line pl-3 text-[11px] leading-relaxed text-faint">
-                    {t("modal.explain", {
-                      ev: fmt(meta.ev),
-                      retail: `${(meta.retail * 100).toFixed(1)}%`,
-                      refund: `${Math.round(REFUND_RATE * 100)}%`,
-                      cash: `${(meta.cash * 100).toFixed(1)}%`,
-                    })}{" "}
+                  <p className="mt-5 break-keep border-t border-hairline pt-4 text-xs leading-relaxed text-muted">
+                    {t("modal.explain", { ev: fmt(meta.ev), retail: `${(meta.retail * 100).toFixed(1)}%`, refund: `${Math.round(REFUND_RATE * 100)}%`, cash: `${(meta.cash * 100).toFixed(1)}%` })}{" "}
                     {meta.guaranteed ? t("modal.guaranteedYes", { min: fmt(box.guaranteedMin) }) : t("modal.guaranteedNo", { min: fmt(box.guaranteedMin) })}
                   </p>
-                  <Link href="/fairness" className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-md border border-gold-champagne/50 px-3 text-[11px] font-bold text-gold-champagne hover:bg-gold-champagne/10">
-                    {t("modal.openVerifier")} ↗
-                  </Link>
+                  <Link href="/fairness" className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm text-gold-champagne hover:text-white">{t("modal.openVerifier")}<ArrowUpRight className="h-4 w-4" /></Link>
                 </div>
               </details>
+              <p className="mt-5 break-keep text-xs leading-relaxed text-muted">{t("modal.settleBody")}</p>
             </section>
-
-            {/* 이미지 출처 — CC BY / BY-SA 자산은 표기 의무가 있다 */}
-            {credits.length > 0 && (
-              <footer className="border-t border-line px-5 py-4 md:px-9">
-                <div className="text-[9px] font-semibold uppercase tracking-[0.16em] text-faint">{t("modal.imageCredits")}</div>
-                <ul className="mt-1.5 space-y-0.5">
-                  {credits.map((c) => (
-                    <li key={c} className="truncate text-[10px] leading-relaxed text-faint">
-                      {c}
-                    </li>
-                  ))}
-                </ul>
-              </footer>
-            )}
+            {credits.length > 0 && <footer className="border-t border-hairline px-5 py-5 sm:px-8">
+              <details><summary className="cursor-pointer text-xs text-muted">{t("modal.imageCredits")}</summary>
+                <ul className="mt-3 space-y-2">{credits.map((credit) => <li key={credit} className="break-words text-xs leading-relaxed text-muted">{credit}</li>)}</ul>
+              </details>
+            </footer>}
           </motion.div>
-          <AutoplaySettingsModal
-            box={autoOpen ? box : null}
-            initial={{ ...autoCfg, spins: autoSpins }}
-            onClose={() => setAutoOpen(false)}
-            onStart={(cfg) => {
-              setAutoCfg(cfg);
-              setAutoOpen(false);
-              onAutoplay?.(box, cfg);
-            }}
-          />
+          <AutoplaySettingsModal box={autoOpen ? box : null} initial={{ ...autoCfg, spins: autoSpins }} onClose={() => setAutoOpen(false)} onStart={(config) => { setAutoCfg(config); setAutoOpen(false); onAutoplay?.(box, config); }} />
         </motion.div>
       )}
     </AnimatePresence>

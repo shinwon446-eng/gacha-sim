@@ -105,8 +105,7 @@ export function VisualVerifier({ className, record, autoRun = false, embedded = 
   const rollPct = out ? (out.roll / ROLL_RANGE) * 100 : 0;
 
   return (
-    <section className={cn(embedded ? "relative" : "border-metallic-gold relative overflow-hidden rounded-xl bg-surface p-5 md:p-6", className)} aria-label={t("title")}>
-      {!embedded && <span aria-hidden className="pedestal-glow pointer-events-none absolute inset-0" />}
+    <section className={cn(embedded ? "relative" : "relative min-w-0 overflow-hidden rounded-lg border border-hairline bg-surface p-6 md:p-8", className)} aria-label={t("title")}>
       {/* 모달 안에서는 우상단 닫기 버튼(absolute right-3, 36px) 자리를 비워 둔다 — 전문가 모드 칩이 X 아래로 들어가지 않게 */}
       <div className={cn("relative flex flex-wrap items-start justify-between gap-3", embedded && "pr-10")}>
         <div>
@@ -114,10 +113,10 @@ export function VisualVerifier({ className, record, autoRun = false, embedded = 
             <ShieldCheck className="h-5 w-5 text-gold-champagne" strokeWidth={2.2} />
             <span className="caption-luxury !text-gold-champagne">{t("eyebrow")}</span>
           </div>
-          <h2 className="mt-1 font-display text-2xl font-bold uppercase tracking-tight text-white">{t("title")}</h2>
-          {!embedded && <p className="mt-1 max-w-2xl text-xs leading-relaxed text-muted">{t("body")}</p>}
+          <h2 className="mt-3 text-2xl font-medium tracking-tight text-white">{t("title")}</h2>
+          {!embedded && <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">{t("body")}</p>}
         </div>
-        <button type="button" onClick={() => setExpert((v) => !v)} aria-expanded={expert} className="glass-dark flex h-9 items-center gap-1.5 rounded-md px-3 text-xs font-semibold text-secondary hover:text-white">
+        <button type="button" onClick={() => setExpert((v) => !v)} aria-expanded={expert} className="flex min-h-11 items-center gap-2 rounded-md border border-hairline px-4 text-sm text-muted hover:text-white">
           {t("expert")}
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", expert && "rotate-180")} strokeWidth={2.2} />
         </button>
@@ -129,7 +128,7 @@ export function VisualVerifier({ className, record, autoRun = false, embedded = 
           <div className="border-metallic-subtle flex min-w-0 items-baseline gap-2 rounded-lg bg-obsidian px-3 py-2.5 text-sm">
             <span className="truncate font-semibold text-white">{(() => { const it = box.items.find((i) => i.id === record.itemId); return it ? itemName(it) : record.itemId; })()}</span>
             <span className="truncate text-xs text-muted">{boxTitle(box)}</span>
-            <span className="ml-auto flex-none font-mono text-[10px] text-faint">nonce #{record.fair.nonce}</span>
+            <span className="ml-auto flex-none font-mono text-xs text-faint">nonce #{record.fair.nonce}</span>
           </div>
         ) : recent.length === 0 ? (
           <div className="border-metallic-subtle rounded-lg bg-obsidian p-4 text-sm text-muted">
@@ -142,7 +141,7 @@ export function VisualVerifier({ className, record, autoRun = false, embedded = 
           <label className="block">
             <span className="caption-luxury">{t("pick")}</span>
             <span className="relative mt-1.5 block">
-              <select value={picked?.id ?? ""} onChange={(e) => setPickedId(e.target.value)} className="w-full appearance-none rounded-md border border-hairline bg-obsidian px-3 py-2.5 pr-9 text-sm text-white outline-none focus:border-gold-champagne">
+              <select value={picked?.id ?? ""} disabled={busy} onChange={(e) => setPickedId(e.target.value)} className="w-full appearance-none rounded-md border border-hairline bg-obsidian px-3 py-2.5 pr-9 text-sm text-white outline-none focus:border-gold-champagne disabled:cursor-wait disabled:opacity-60">
                 {recent.map((o) => {
                   const b = BOX_BY_SLUG[o.boxSlug];
                   const it = b?.items.find((i) => i.id === o.itemId);
@@ -161,7 +160,7 @@ export function VisualVerifier({ className, record, autoRun = false, embedded = 
           type="button"
           onClick={run}
           disabled={!picked || busy}
-          className="flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-crimson px-6 text-sm font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+          className="flex min-h-12 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-[#f1eee7] px-6 text-sm font-semibold text-obsidian transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2.4} /> : <ShieldCheck className="h-4 w-4" strokeWidth={2.4} />}
           {busy ? t("verifying") : out ? t("reverify") : t("verify")}
@@ -169,16 +168,16 @@ export function VisualVerifier({ className, record, autoRun = false, embedded = 
       </div>
 
       {/* 3-Step 타임라인 */}
-      <ol className="relative mt-6 grid gap-3">
+      <ol className="relative mt-8 grid gap-5">
         {/* Step 1 */}
         <li className="flex gap-3">
           <StepIcon i={0} s={steps[0]} />
           <div className="min-w-0 flex-1 border-b border-hairline pb-4">
             <div className="text-sm font-bold text-white">{t("s1Title")}</div>
-            <p className="mt-0.5 text-xs leading-relaxed text-muted">{t("s1Body")}</p>
+            <p className="mt-2 text-sm leading-7 text-muted">{t("s1Body")}</p>
             <AnimatePresence>
               {steps[0] !== "idle" && steps[0] !== "running" && out === null && picked && (
-                <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="mt-2 font-mono text-[10px] text-secondary">
+                <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="mt-2 font-mono text-xs text-secondary">
                   <span className="text-faint">SHA-256 → </span>
                   {picked.fair.serverSeedHash.slice(0, 24)}…
                 </motion.div>
@@ -186,7 +185,7 @@ export function VisualVerifier({ className, record, autoRun = false, embedded = 
               {out && (
                 <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className={cn("mt-2 text-xs font-semibold", out.hashMatch ? "text-gold-champagne" : "text-crimson")}>
                   {out.hashMatch ? t("s1Pass") : t("s1Fail")}
-                  <div className="mt-1 break-all font-mono text-[10px] font-normal text-secondary">{out.hash}</div>
+                  <div className="mt-1 break-all font-mono text-xs font-normal text-secondary">{out.hash}</div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -197,14 +196,14 @@ export function VisualVerifier({ className, record, autoRun = false, embedded = 
           <StepIcon i={1} s={steps[1]} />
           <div className="min-w-0 flex-1 border-b border-hairline pb-4">
             <div className="text-sm font-bold text-white">{t("s2Title")}</div>
-            <p className="mt-0.5 text-xs leading-relaxed text-muted">{t("s2Body")}</p>
+            <p className="mt-2 text-sm leading-7 text-muted">{t("s2Body")}</p>
             <AnimatePresence>
               {(steps[1] === "pass" || out) && (
                 <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <span className="text-xs text-faint">{t("rollLabel")}</span>
                   <RollNumber value={out?.roll ?? picked?.fair.roll ?? 0} animate={!!out} />
-                  <span className="font-mono text-[10px] text-faint">/ {ROLL_RANGE.toLocaleString("en-US")}</span>
-                  {picked && <span className="font-mono text-[10px] text-faint">nonce #{picked.fair.nonce}</span>}
+                  <span className="font-mono text-xs text-faint">/ {ROLL_RANGE.toLocaleString("en-US")}</span>
+                  {picked && <span className="font-mono text-xs text-faint">nonce #{picked.fair.nonce}</span>}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -215,7 +214,7 @@ export function VisualVerifier({ className, record, autoRun = false, embedded = 
           <StepIcon i={2} s={steps[2]} />
           <div className="min-w-0 flex-1 pb-1">
             <div className="text-sm font-bold text-white">{t("s3Title")}</div>
-            <p className="mt-0.5 text-xs leading-relaxed text-muted">{t("s3Body")}</p>
+            <p className="mt-2 text-sm leading-7 text-muted">{t("s3Body")}</p>
             {box && (
               <div className="mt-3">
                 <Gauge ranges={ranges} box={box} rollPct={out ? rollPct : null} winId={out?.itemId ?? null} />
@@ -227,7 +226,7 @@ export function VisualVerifier({ className, record, autoRun = false, embedded = 
                         <span className="text-xs text-white">{itemName(winRange.item)}</span>
                         <Money value={winRange.item.value} size="xs" numberClassName="text-secondary" />
                       </div>
-                      <span className="font-mono text-[10px] text-faint">
+                      <span className="font-mono text-xs text-faint">
                         {t("bracket", { from: winRange.from.toLocaleString("en-US"), to: winRange.to.toLocaleString("en-US"), pct: winRange.item.dropRate })}
                       </span>
                     </motion.div>
@@ -240,6 +239,7 @@ export function VisualVerifier({ className, record, autoRun = false, embedded = 
       </ol>
 
       {/* 최종 판정 */}
+      <div role="status" aria-live="polite">
       <AnimatePresence>
         {out && (
           <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className={cn("relative mt-5 flex items-center gap-3 rounded-lg p-4", allPass ? "border-metallic-gold bg-gold-champagne/10" : "border border-crimson/40 bg-crimson/10")}>
@@ -251,6 +251,8 @@ export function VisualVerifier({ className, record, autoRun = false, embedded = 
           </motion.div>
         )}
       </AnimatePresence>
+
+      </div>
 
       {/* 전문가 모드 — hex 입력형 검증기 */}
       <AnimatePresence initial={false}>
@@ -332,14 +334,14 @@ function Gauge({ ranges, box, rollPct, winId }: { ranges: RollRange<ProductItem>
           )}
         </AnimatePresence>
       </div>
-      <div className="mt-3 flex justify-between font-mono text-[9px] text-faint">
+      <div className="mt-3 flex justify-between font-mono text-xs text-faint">
         <span>0</span>
         <span>{t("gaugeHint")}</span>
         <span>{(ROLL_RANGE - 1).toLocaleString("en-US")}</span>
       </div>
       <ul className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1">
         {Object.values(TIER_BY_KEY).map((tier) => (
-          <li key={tier.key} className="flex items-center gap-1 text-[10px]">
+          <li key={tier.key} className="flex items-center gap-1 text-xs">
             <span aria-hidden className="h-2 w-2 rounded-[1px]" style={{ background: tier.accent }} />
             <span style={{ color: tier.accent }}>{tier.label}</span>
           </li>

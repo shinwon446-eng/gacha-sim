@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, animate, motion, useMotionTemplate, useMotionValue } from "framer-motion";
+import { AnimatePresence, animate, motion, useReducedMotion, useMotionTemplate, useMotionValue } from "framer-motion";
+import { useModal } from "@/lib/useModal";
 import { MegaWinFX } from "@/components/unboxing/MegaWinFX";
 import { useTranslations } from "next-intl";
 import { Wallet, Truck, ShieldCheck, X, Volume2, VolumeX, Play } from "lucide-react";
@@ -94,6 +95,9 @@ const GAP = 10;
  * 연출(3)은 결과(1)를 바꿀 수 없다. 5연속은 1~3 을 짧게 반복하고 마지막에 목록으로 보여준다.
  */
 export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRespin, auto, funding, demo, onDemoConvert, welcomeClaimed }: UnboxingRouletteProps) {
+  const reducedMotion = useReducedMotion();
+  const panelRef = useRef<HTMLDivElement>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("unbox");
   const tr = useTranslations();
   const { fmt } = useCurrency();
@@ -259,7 +263,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       // 3. 감속
       const target = offsetForTarget({ tileWidth: TILE_W, gap: GAP, viewportWidth: viewportW.current }, REEL_TARGET_INDEX, jitter);
       const track = viewportRef.current?.querySelector<HTMLElement>("[data-reel]");
-      if (track) startTicks(track);
+      if (track && !reducedMotion) startTicks(track);
       // Phase 1 초광속(속도 → 모션 블러) · Phase 2 안티시페이션(고등급 근처 0.3배속 + 스파크)
       const step = TILE_W + GAP;
       const isHigh = (i: number) => {
@@ -272,9 +276,10 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       let lastT = performance.now();
       let tense = false;
       const anim = animate(x, target, {
-        duration,
+        duration: reducedMotion ? 0.01 : duration,
         ease: REEL_EASE,
         onUpdate: (v) => {
+          if (reducedMotion) return;
           const now = performance.now();
           const dt = Math.max(1, now - lastT);
           const vel = (Math.abs(v - lastV) / dt) * 1000; // px/s (60타일/초 ≈ 9,500px/s)
@@ -300,7 +305,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       setTension(false);
       stopTicks();
       // 니어미스 텐션 셰이크: 인디케이터 0.4초 미세 진동 + 릴 ±1.5px 멈칫 (경계는 넘지 않는다)
-      if (nearMissRef.current) {
+      if (!reducedMotion && nearMissRef.current) {
         setShake(true);
         if (!useSettingsStore.getState().muted) playTension();
         const dir = nearMissRef.current === "left" ? 1 : -1;
@@ -313,7 +318,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       setPhase("landed");
       const big = res.tier.key === "royal" || res.tier.key === "prestige";
       const forced = process.env.NODE_ENV !== "production" ? (window as unknown as { __gfForce?: { fakeout?: boolean } }).__gfForce?.fakeout : undefined;
-      const fakeout = big && !demo && !auto && count === 1 && (forced ?? Math.random() < FAKEOUT_RATE);
+      const fakeout = !reducedMotion && big && !demo && !auto && count === 1 && (forced ?? Math.random() < FAKEOUT_RATE);
       if (fakeout) {
         // 승급 반전: 바닥(캐시백)으로 위장한 채 회색 플래시 → 0.5초 뒤 글리치·번개 → 진짜 결과 각성
         const floor = items[items.length - 1];
@@ -345,7 +350,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       setTimeout(() => setFlash(null), 600);
       return res;
     },
-    [box, items, fair, x, blurMv, startTicks, addOwned, sellOwned, credit, addTransaction, demo, auto, count],
+    [box, items, fair, x, blurMv, startTicks, addOwned, sellOwned, credit, addTransaction, demo, auto, count, reducedMotion],
   );
 
   // 오픈 시작 — box 가 들어오면 한 번. 리사이즈는 스핀을 취소하지 않는다.
@@ -356,7 +361,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       // 뷰포트 폭이 측정될 때까지 한두 프레임 기다린다
       for (let i = 0; i < 20 && viewportW.current === 0; i++) await new Promise((r) => requestAnimationFrame(() => r(null)));
       if (cancelled.current) return;
-      if (!demo && !auto) {
+      if (!reducedMotion && !demo && !auto) {
         // 3단계 문지기 컷인 — 휠 잠금 해제 → 틈새 아우라 → 암전·심장 박동
         setPhase("gate");
         await new Promise((r) => setTimeout(r, GATE_TOTAL_MS));
@@ -435,19 +440,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
     nearMissRef.current = null;
   }, [box]);
 
-  useEffect(() => {
-    if (!box) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && phase === "results") onClose();
-    };
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [box, phase, onClose]);
+  useModal(Boolean(box), () => { if (phase === "results") onClose(); }, phase === "results" && results.length > 0 ? resultRef : panelRef);
 
   if (!box) return null;
 
@@ -466,7 +459,12 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
     <AnimatePresence>
       <motion.div
         key="unbox"
-        className="fixed inset-0 z-[100] flex flex-col bg-obsidian backdrop-blur-sm md:bg-obsidian/95"
+        ref={panelRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-label={boxTitle(box)}
+        className="outline-none fixed inset-0 z-[100] flex flex-col bg-obsidian backdrop-blur-sm md:bg-obsidian/95"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -479,22 +477,22 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
             <div className="truncate font-display text-lg font-bold uppercase tracking-tight text-white md:text-2xl">{boxTitle(box)}</div>
           </div>
           <div className="ml-auto flex items-center gap-2">
-            <span className={cn("hidden max-w-xs truncate font-mono text-[10px] text-faint md:inline", demo && "md:hidden")} title={fair.serverSeedHash}>
+            <span className={cn("hidden max-w-xs truncate font-mono text-xs text-faint md:inline", demo && "md:hidden")} title={fair.serverSeedHash}>
               {t("seedHash")}: {fair.serverSeedHash.slice(0, 16)}…
             </span>
-            <button type="button" onClick={toggleMuted} aria-label={muted ? t("unmute") : t("mute")} className="glass-dark flex h-9 w-9 items-center justify-center rounded-md text-muted hover:text-white">
+            <button type="button" onClick={toggleMuted} aria-label={muted ? t("unmute") : t("mute")} className="glass-dark flex h-11 w-11 items-center justify-center rounded-md text-muted hover:text-white">
               {muted ? <VolumeX className="h-4 w-4" strokeWidth={2} /> : <Volume2 className="h-4 w-4" strokeWidth={2} />}
             </button>
-            <button type="button" onClick={onClose} disabled={phase === "spinning" || phase === "gate"} aria-label={t("close")} className="glass-dark flex h-9 w-9 items-center justify-center rounded-md text-muted hover:text-white disabled:opacity-40">
+            <button type="button" onClick={onClose} disabled={phase === "spinning" || phase === "gate"} aria-label={t("close")} className="glass-dark flex h-11 w-11 items-center justify-center rounded-md text-muted hover:text-white disabled:opacity-40">
               <X className="h-4 w-4" strokeWidth={2} />
             </button>
           </div>
         </header>
 
         {/* ── Phase 3: 메가 윈 폭발 축제 · 승급 반전 번개 · 문지기 컷인 ── */}
-        <AnimatePresence>{mega && <MegaWinFX key="mega" accent={mega} />}</AnimatePresence>
-        <AnimatePresence>{upgradeFx && <UpgradeFX key="upgrade" accent={upgradeFx} />}</AnimatePresence>
-        <AnimatePresence>{phase === "gate" && <VaultGateFX key="gate" />}</AnimatePresence>
+        <AnimatePresence>{!reducedMotion && mega && <MegaWinFX key="mega" accent={mega} />}</AnimatePresence>
+        <AnimatePresence>{!reducedMotion && upgradeFx && <UpgradeFX key="upgrade" accent={upgradeFx} />}</AnimatePresence>
+        <AnimatePresence>{!reducedMotion && phase === "gate" && <VaultGateFX key="gate" />}</AnimatePresence>
 
         {/* ── 룰렛 스트립 ── */}
         <div className="relative flex flex-1 flex-col items-center justify-center px-0">
@@ -506,18 +504,18 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
             </div>
           )}
 
-          <div ref={viewportRef} className={cn("reel-viewport relative w-full overflow-hidden transition-shadow duration-200", tension && "reel-tension")} style={{ height: TILE_W + 70 }}>
+          <div ref={viewportRef} className={cn("reel-viewport relative w-full overflow-hidden transition-shadow duration-200", !reducedMotion && tension && "reel-tension")} style={{ height: TILE_W + 70 }}>
             <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 z-20 w-32 bg-gradient-to-r from-obsidian to-transparent" />
             <span aria-hidden className="pointer-events-none absolute inset-y-0 right-0 z-20 w-32 bg-gradient-to-l from-obsidian to-transparent" />
 
             {/* 중앙 인디케이터 — 레드/골드 */}
-            <span aria-hidden className={cn("pointer-events-none absolute inset-y-0 left-1/2 z-30 w-0.5 -translate-x-1/2 bg-gradient-to-b from-crimson via-gold-champagne to-crimson shadow-[0_0_14px_rgba(230,202,101,0.8)]", shake && "marker-shake")} />
-            <span aria-hidden className="pointer-events-none absolute left-1/2 top-0 z-30 -translate-x-1/2 border-x-8 border-t-[10px] border-x-transparent border-t-crimson" />
-            <span aria-hidden className="pointer-events-none absolute bottom-0 left-1/2 z-30 -translate-x-1/2 border-x-8 border-b-[10px] border-x-transparent border-b-crimson" />
+            <span aria-hidden className={cn("pointer-events-none absolute inset-y-0 left-1/2 z-30 w-0.5 -translate-x-1/2 bg-gold-champagne", !reducedMotion && shake && "marker-shake")} />
+            <span aria-hidden className="pointer-events-none absolute left-1/2 top-0 z-30 -translate-x-1/2 border-x-8 border-t-[10px] border-x-transparent border-t-gold-champagne" />
+            <span aria-hidden className="pointer-events-none absolute bottom-0 left-1/2 z-30 -translate-x-1/2 border-x-8 border-b-[10px] border-x-transparent border-b-gold-champagne" />
 
             {/* 플래시 */}
             <AnimatePresence>
-              {flash && (
+              {!reducedMotion && flash && (
                 <motion.span
                   aria-hidden
                   className="pointer-events-none absolute inset-0 z-40"
@@ -530,14 +528,14 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
               )}
             </AnimatePresence>
 
-            <motion.ul data-reel className="absolute left-0 top-1/2 flex items-center" style={{ gap: GAP, willChange: "transform, filter", x, y: "-50%", filter: blurFilter }}>
+            <motion.ul aria-hidden="true" data-reel className="absolute left-0 top-1/2 flex items-center" style={{ gap: GAP, willChange: "transform, filter", x, y: "-50%", filter: blurFilter }}>
               {strip.map((it, i) => {
                 const tier = tierOf(it.value, box.price);
                 const isTarget = phase !== "spinning" && i === REEL_TARGET_INDEX;
                 return (
                   <li
                     key={`${it.id}-${i}`}
-                    className={cn("relative flex flex-none flex-col overflow-hidden rounded-lg bg-surface transition-shadow duration-300", isTarget ? "border-metallic-gold" : "border-metallic-subtle")}
+                    className={cn("relative flex flex-none flex-col overflow-hidden rounded-lg bg-surface transition-shadow duration-300", isTarget ? "border border-hairline" : "border border-hairline")}
                     style={{ width: TILE_W, boxShadow: isTarget ? `0 0 0 1px ${glow(tier.accent, 0.7)}, 0 0 36px ${glow(tier.accent, 0.5)}` : undefined }}
                   >
                     <span aria-hidden className="absolute inset-x-0 top-0 z-10 h-0.5" style={{ background: tier.accent, boxShadow: `0 0 8px ${glow(tier.accent, 0.6)}` }} />
@@ -545,8 +543,8 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                       <ProductArt image={it.image} alt="" accent={tier.accent} glowStrength={0.22} fallbackSize="sm" kind={it.kind} />
                     </div>
                     <div className="px-2 py-1.5">
-                      <div className="truncate text-[10px] leading-tight text-white">{itemName(it)}</div>
-                      <div className="font-mono text-[10px] font-bold tabular-nums" style={{ color: tier.accent }}>
+                      <div className="truncate text-xs leading-tight text-white">{itemName(it)}</div>
+                      <div className="font-mono text-xs font-bold tabular-nums" style={{ color: tier.accent }}>
                         {fmt(it.value)}
                       </div>
                     </div>
@@ -564,12 +562,12 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                   stopRef.current = true;
                 }}
                 disabled={stopRef.current}
-                className="flex h-12 items-center gap-2 rounded-lg border border-crimson/60 bg-crimson/15 px-6 text-sm font-bold text-white shadow-[0_0_18px_rgba(229,9,20,0.3)] transition-colors hover:bg-crimson/30 disabled:opacity-60"
+                className="flex h-12 items-center gap-2 rounded-lg border border-hairline bg-surface px-6 text-sm font-bold text-white  transition-colors hover:bg-elevation disabled:opacity-60"
               >
                 {/* 라벨(autoStop)에 ⏹ 이모지가 이미 있다 — lucide 아이콘을 같이 두면 ■■ 로 겹친다 */}
                 {t("autoStop", { n: Number.isFinite(remainingSpins(auto, autoState.done)) ? String(remainingSpins(auto, autoState.done)) : "∞" })}
               </button>
-              <div className="flex items-center gap-3 font-mono text-[11px] tabular-nums text-muted">
+              <div className="flex items-center gap-3 font-mono text-xs tabular-nums text-muted">
                 <span>{t("autoSpent")} <span className="text-white">{fmt(autoState.spent)}</span></span>
                 <span>{t("autoWon")} <span className="text-gold-champagne">{fmt(autoState.won)}</span></span>
                 <span className={netOf(autoState) >= 0 ? "text-tier-prestige" : "text-crimson"}>{netOf(autoState) >= 0 ? "+" : ""}{fmt(netOf(autoState))}</span>
@@ -590,19 +588,20 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
         <AnimatePresence>
           {(phase === "results" || (phase === "landed" && disguise)) && last && (
             <motion.div
-              className="absolute inset-0 z-50 flex items-center justify-center overflow-y-auto px-4 py-6"
+              className="absolute inset-0 z-50 flex items-start justify-center overflow-y-auto bg-obsidian/80 px-4 py-6 sm:items-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
               <motion.div
-                className="border-metallic-gold relative w-full max-w-lg rounded-2xl bg-canvas p-6"
-                style={{ boxShadow: `0 0 80px ${glow((shownTier ?? last.tier).accent, 0.3)}, 0 30px 80px rgba(0,0,0,0.8)` }}
-                initial={{ opacity: 0, scale: 0.92, y: 20 }}
+                ref={resultRef}
+                tabIndex={-1}
+                className="outline-none border border-hairline relative my-auto w-full max-w-lg rounded-xl bg-surface p-5 sm:p-7"
+
+                initial={reducedMotion ? false : { opacity: 0, scale: 0.98, y: 12 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
               >
-                <span aria-hidden className="pedestal-glow-strong pointer-events-none absolute inset-0 rounded-2xl" />
 
                 {results.length === 1 ? (
                   <div className="relative text-center">
@@ -611,16 +610,16 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                     </div>
                     <motion.div
                       className="relative mx-auto mt-3 overflow-hidden rounded-xl"
-                      style={{ width: 240, height: 200, transformPerspective: 900, boxShadow: `0 30px 60px rgba(0,0,0,0.7), 0 0 40px ${glow(shownTier.accent, 0.35)}` }}
-                      initial={{ scale: 0.55, rotateX: 38, opacity: 0 }}
-                      animate={{ scale: 1, rotateX: 0, opacity: 1 }}
+                      style={{ width: "min(100%, 240px)", height: 200 }}
+                      initial={reducedMotion ? false : { scale: 0.97, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
                       transition={{ type: "spring", stiffness: 180, damping: 18, mass: 0.9 }}
                     >
                       <ProductArt image={shownItem.image} alt={itemName(shownItem)} accent={shownTier.accent} kind={shownItem.kind} glowStrength={0.4} fallbackSize="md" priority />
                     </motion.div>
                     <h2 className="mt-4 text-2xl font-bold text-white">{itemName(shownItem)}</h2>
                     <div className="mt-1">
-                      <Money value={shownItem.value} size="lg" numberClassName="text-gold-gradient" />
+                      <Money value={shownItem.value} size="lg" numberClassName="text-gold-champagne" />
                     </div>
                     {!demo && <div className="mt-1 text-xs text-faint">{t("paid", { price: fmt(box.price) })}</div>}
                     {shownSettled && (
@@ -634,18 +633,18 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                     <div className="caption-luxury">{t("results", { n: results.length })}</div>
                     <ul className="mt-3 max-h-64 space-y-1.5 overflow-y-auto pr-1">
                       {results.map((r, i) => (
-                        <li key={i} className="border-metallic-subtle flex items-center gap-3 rounded-md bg-surface p-2">
+                        <li key={i} className="border border-hairline flex items-center gap-3 rounded-md bg-surface p-2">
                           <div className="relative h-12 w-14 flex-none overflow-hidden rounded">
                             <ProductArt image={r.item.image} alt="" accent={r.tier.accent} glowStrength={0.25} kind={r.item.kind} fallbackSize="sm" />
                           </div>
-                          <span className="caption-luxury w-20 flex-none" style={{ color: r.tier.accent }}>
+                          <span className="caption-luxury hidden w-20 flex-none sm:inline" style={{ color: r.tier.accent }}>
                             {r.tier.label}
                           </span>
                           <span className="min-w-0 flex-1 truncate text-sm text-white">{itemName(r.item)}</span>
                           <span className="font-mono text-sm font-bold tabular-nums" style={{ color: r.tier.accent }}>
                             {fmt(r.item.value)}
                           </span>
-                          <button type="button" disabled={!r.ownedId} onClick={() => r.ownedId && setVerifyId(r.ownedId)} aria-label={t("verify")} title={t("verify")} className="glass-dark flex h-7 w-7 flex-none items-center justify-center rounded-md text-gold-champagne hover:border-gold-champagne disabled:opacity-40">
+                          <button type="button" disabled={!r.ownedId} onClick={() => r.ownedId && setVerifyId(r.ownedId)} aria-label={t("verify")} title={t("verify")} className="glass-dark flex h-11 w-11 flex-none items-center justify-center rounded-md text-gold-champagne hover:border-gold-champagne disabled:opacity-40">
                             <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2.2} />
                           </button>
                         </li>
@@ -653,7 +652,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                     </ul>
                     <div className="mt-3 flex items-baseline justify-between border-t border-hairline pt-3">
                       <span className="caption-luxury">{t("total")}</span>
-                      <Money value={totalValue} size="md" numberClassName="text-gold-gradient" />
+                      <Money value={totalValue} size="md" numberClassName="text-gold-champagne" />
                     </div>
                     <div className="text-right text-xs text-faint">{t("paid", { price: fmt(box.price * results.length) })}</div>
                     {auto && (
@@ -670,12 +669,12 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                   <div className="relative mt-5 grid gap-2">
                     <p className="break-keep text-center text-sm font-semibold leading-snug text-white">{t("trialCongrats", { item: itemName(last.item), n: tr("tiers.multiple", { n: formatMultiple(last.item.value / box.price) }) })}</p>
                     <p className="break-keep text-center text-xs text-secondary">{t("trialBody", { bonus: fmt(WELCOME_BONUS_USDT) })}</p>
-                    <button type="button" onClick={() => onDemoConvert?.(box)} className="mt-2 flex h-12 items-center justify-center gap-2 rounded-lg bg-crimson text-sm font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600">
+                    <button type="button" onClick={() => onDemoConvert?.(box)} className="mt-2 flex h-12 items-center justify-center gap-2 rounded-lg bg-[#f1eee7] text-sm font-semibold text-obsidian transition-colors hover:bg-gold-champagne">
                       <Play className="h-4 w-4 fill-current" strokeWidth={0} />
                       {welcomeClaimed ? t("trialCtaClaimed") : t("trialCta")}
                     </button>
-                    <p className="break-keep text-center text-[10px] leading-relaxed text-faint">{t("trialNote")}</p>
-                    <button type="button" onClick={onClose} className="relative mt-1 h-10 w-full rounded-lg text-sm font-semibold text-muted transition-colors hover:text-white">
+                    <p className="break-keep text-center text-xs leading-relaxed text-faint">{t("trialNote")}</p>
+                    <button type="button" onClick={onClose} className="relative mt-1 h-11 w-full rounded-lg text-sm font-semibold text-muted transition-colors hover:text-white">
                       {t("close")}
                     </button>
                   </div>
@@ -684,14 +683,14 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                 {/* 액션 — 즉시 회수와 집으로 배송을 같은 비중으로. 승급 반전 위장 중에는 진짜 금액이 새지 않게 숨긴다 */}
                 <div className={cn("relative mt-5 grid gap-2", disguise && "invisible")}>
                   {settledAmount > 0 && results.length > 1 && (
-                    <p className="break-keep text-center text-[11px] font-semibold text-gold-champagne">⚡ {t("cashCredited", { amount: fmt(settledAmount) })}</p>
+                    <p className="break-keep text-center text-xs font-semibold text-gold-champagne">⚡ {t("cashCredited", { amount: fmt(settledAmount) })}</p>
                   )}
                   {allSettled ? (
                     <button
                       type="button"
                       onClick={() => onRespin?.(box)}
                       disabled={!onRespin}
-                      className="flex h-12 items-center justify-center gap-2 rounded-lg bg-crimson text-sm font-bold text-white shadow-[0_0_24px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600 disabled:opacity-50"
+                      className="flex h-12 items-center justify-center gap-2 rounded-lg bg-[#f1eee7] text-sm font-semibold text-obsidian transition-colors hover:bg-gold-champagne disabled:opacity-50"
                     >
                       <Play className="h-4 w-4 fill-current" strokeWidth={0} />
                       {t("respin", { price: fmt(box.price) })}
@@ -707,13 +706,13 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                           const { totalUsdt, toCrypto, toCard } = sellOwned(ids, REFUND_RATE);
                           onSellBack(pending, totalUsdt || sellAmount, { toCrypto, toCard });
                         }}
-                        className="flex h-14 flex-col items-center justify-center rounded-lg bg-gold-champagne px-2 text-obsidian transition-colors hover:bg-gold-metallic disabled:opacity-50"
+                        className="flex h-14 flex-col items-center justify-center rounded-lg bg-[#f1eee7] px-3 text-obsidian transition-colors hover:bg-gold-champagne disabled:opacity-50"
                       >
                         <span className="flex items-center gap-1.5 text-sm font-bold leading-none">
                           <Wallet className="h-4 w-4" strokeWidth={2.2} />
                           {t("cashoutCta")}
                         </span>
-                        <span className="mt-1 font-mono text-[11px] font-bold leading-none tabular-nums">{fmt(sellAmount)} · {t("noFee")}</span>
+                        <span className="mt-1 font-mono text-xs font-bold leading-none tabular-nums">{fmt(sellAmount)} · {t("noFee")}</span>
                       </button>
                       <button
                         type="button"
@@ -725,19 +724,19 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                           <Truck className="h-4 w-4" strokeWidth={2} />
                           {t("claimShipping")}
                         </span>
-                        <span className="mt-1 text-[11px] leading-none text-secondary">{t("shipSub")}</span>
+                        <span className="mt-1 text-xs leading-none text-secondary">{t("shipSub")}</span>
                       </button>
                     </div>
                   )}
-                  <button type="button" disabled={!last?.ownedId} onClick={() => last?.ownedId && setVerifyId(last.ownedId)} className="glass-dark flex h-10 items-center justify-center gap-2 rounded-lg text-xs font-semibold text-gold-champagne hover:border-gold-champagne disabled:opacity-50">
+                  <button type="button" disabled={!last?.ownedId} onClick={() => last?.ownedId && setVerifyId(last.ownedId)} className="glass-dark flex h-11 items-center justify-center gap-2 rounded-lg text-xs font-semibold text-gold-champagne hover:border-gold-champagne disabled:opacity-50">
                     <ShieldCheck className="h-4 w-4" strokeWidth={2.2} />
                     {t("verify")}
                   </button>
                 </div>
 
                 {/* 공정성 메타 */}
-                <details className="relative mt-4 rounded-md border border-hairline bg-obsidian p-3 text-[10px] text-faint">
-                  <summary className="cursor-pointer text-muted">{t("fairNote")}</summary>
+                <details className="relative mt-4 rounded-md border border-hairline bg-obsidian p-3 text-xs text-faint">
+                  <summary className="min-h-11 cursor-pointer py-3 text-muted">{t("fairNote")}</summary>
                   <dl className="mt-2 grid gap-1 font-mono">
                     <div><dt className="inline text-faint">{t("serverSeed")}: </dt><dd className="inline break-all text-secondary">{last.serverSeed}</dd></div>
                     <div><dt className="inline text-faint">{t("clientSeed")}: </dt><dd className="inline break-all text-secondary">{last.clientSeed}</dd></div>
@@ -746,13 +745,13 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                   </dl>
                 </details>
 
-                <p className="relative mt-3 text-center text-[10px] text-faint">
+                <p className="relative mt-3 text-center text-xs text-faint">
                   {sold ? "" : shipped ? "" : t("kept")}{" "}
                   <Link href="/inventory" className="text-gold-champagne underline-offset-2 hover:underline">
                     {t("keep")}
                   </Link>
                 </p>
-                <button type="button" onClick={onClose} className="relative mt-2 h-10 w-full rounded-lg text-sm font-semibold text-muted transition-colors hover:text-white">
+                <button type="button" onClick={onClose} className="relative mt-2 h-11 w-full rounded-lg text-sm font-semibold text-muted transition-colors hover:text-white">
                   {t("close")}
                 </button>
                 </>

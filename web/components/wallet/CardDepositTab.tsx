@@ -20,7 +20,7 @@ const usd = (n: number) => `$${n.toFixed(2)}`;
 function BrandMark({ brand }: { brand: ReturnType<typeof detectBrand> }) {
   if (brand === "visa")
     return (
-      <span className="rounded-sm bg-white px-1.5 py-0.5 font-display text-[11px] font-bold italic tracking-tight text-[#1A1F71]">
+      <span className="rounded-sm bg-white px-1.5 py-0.5 font-display text-xs font-bold italic tracking-tight text-[#1A1F71]">
         VISA
       </span>
     );
@@ -125,14 +125,14 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
         <div className={cn("mt-4 flex items-start gap-2 rounded-md border p-2.5", liabilityShiftApplied(r) ? "border-emerald-500/40 bg-emerald-500/[0.07]" : "border-white/10 bg-elevation")}>
           <ShieldCheck className={cn("mt-0.5 h-3.5 w-3.5 flex-none", liabilityShiftApplied(r) ? "text-emerald-300" : "text-muted")} strokeWidth={2.4} />
           <div className="min-w-0">
-            <div className={cn("text-[11px] font-bold", liabilityShiftApplied(r) ? "text-emerald-300" : "text-secondary")}>
+            <div className={cn("text-xs font-bold", liabilityShiftApplied(r) ? "text-emerald-300" : "text-secondary")}>
               {liabilityShiftApplied(r) ? "3DS Verified (Liability Shift Applied)" : t(`threeDS.${r.threeDSecure ?? "unknown"}`)}
             </div>
-            <div className="mt-0.5 break-keep text-[10px] leading-relaxed text-faint">{t("threeDSNote")}</div>
+            <div className="mt-0.5 break-keep text-xs leading-relaxed text-faint">{t("threeDSNote")}</div>
           </div>
         </div>
 
-        <button type="button" onClick={() => setStage({ kind: "form" })} className="mt-5 flex h-11 w-full items-center justify-center gap-2 rounded-md bg-gold-champagne text-sm font-bold text-obsidian hover:bg-gold-metallic">
+        <button type="button" onClick={() => setStage({ kind: "form" })} className="mt-5 flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#f1eee7] text-sm font-bold text-obsidian hover:bg-gold-metallic">
           <Check className="h-4 w-4" strokeWidth={2.5} />
           {t("done")}
         </button>
@@ -150,7 +150,7 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
               <Lock className="h-6 w-6 text-gold-champagne" strokeWidth={2.2} />
             </motion.div>
             <div className="mt-4 text-sm font-bold text-white">{t("threeDSTitle")}</div>
-            <div className="mt-1 text-[11px] text-muted">{t("threeDsBody", { brand: brand === "mastercard" ? "Mastercard" : "Visa" })}</div>
+            <div className="mt-1 text-xs text-muted">{t("threeDsBody", { brand: brand === "mastercard" ? "Mastercard" : "Visa" })}</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -170,7 +170,7 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
                   className={cn("flex h-14 flex-col items-center justify-center rounded-md transition-colors", active ? "border-metallic-gold bg-gold-champagne/15 text-gold-champagne" : "border-metallic-subtle bg-obsidian text-secondary hover:text-white")}
                 >
                   <span className="font-display text-sm font-bold leading-none sm:text-base">{usd(p)}</span>
-                  <span className="mt-1 font-mono text-[10px] leading-none opacity-80">= {fmt(p)}</span>
+                  <span className="mt-1 font-mono text-xs leading-none opacity-80">= {fmt(p)}</span>
                 </button>
               );
             })}
@@ -194,24 +194,24 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
                 <BrandMark brand={brand} />
               </span>
             </span>
-            {(touched || dirty.number) && errors.number && <span className="mt-1 block text-[11px] text-crimson">{t("errCardNumber")}</span>}
+            {(touched || dirty.number) && errors.number && <span className="mt-1 block text-xs text-crimson">{t("errCardNumber")}</span>}
           </label>
           <div className="grid grid-cols-2 gap-3">
             <label className="block">
               <span className="caption-luxury">{t("expiry")}</span>
               <input value={expiry} onChange={(e) => { setExpiry(formatExpiry(e.target.value)); mark("expiry"); }} inputMode="numeric" autoComplete="cc-exp" placeholder="MM/YY" className={cn(field, "mt-2", (touched || dirty.expiry) && errors.expiry ? "border-crimson" : "border-hairline")} />
-              {(touched || dirty.expiry) && errors.expiry && <span className="mt-1 block text-[11px] text-crimson">{t("errExpiry")}</span>}
+              {(touched || dirty.expiry) && errors.expiry && <span className="mt-1 block text-xs text-crimson">{t("errExpiry")}</span>}
             </label>
             <label className="block">
               <span className="caption-luxury">{t("cvc")}</span>
               <input value={cvc} onChange={(e) => { setCvc(e.target.value.replace(/\D/g, "").slice(0, 3)); mark("cvc"); }} inputMode="numeric" autoComplete="cc-csc" placeholder="123" className={cn(field, "mt-2", (touched || dirty.cvc) && errors.cvc ? "border-crimson" : "border-hairline")} />
-              {(touched || dirty.cvc) && errors.cvc && <span className="mt-1 block text-[11px] text-crimson">{t("errCvc")}</span>}
+              {(touched || dirty.cvc) && errors.cvc && <span className="mt-1 block text-xs text-crimson">{t("errCvc")}</span>}
             </label>
           </div>
           <label className="block">
             <span className="caption-luxury">{t("holder")}</span>
             <input value={holder} onChange={(e) => { setHolder(e.target.value.toUpperCase()); mark("holder"); }} autoComplete="cc-name" placeholder="HONG GILDONG" className={cn(field, "mt-2 font-sans uppercase", (touched || dirty.holder) && errors.holder ? "border-crimson" : "border-hairline")} />
-            {(touched || dirty.holder) && errors.holder && <span className="mt-1 block text-[11px] text-crimson">{t("errHolder")}</span>}
+            {(touched || dirty.holder) && errors.holder && <span className="mt-1 block text-xs text-crimson">{t("errHolder")}</span>}
           </label>
         </div>
 
@@ -219,20 +219,20 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
         <div className="border-metallic-subtle rounded-lg bg-obsidian p-3">
           <div className="flex items-center justify-between">
             <span className="caption-luxury">{t("provider")}</span>
-            <span className={cn("text-[11px] font-semibold", configured ? "text-gold-champagne" : "text-muted")}>{providerLabel}</span>
+            <span className={cn("text-xs font-semibold", configured ? "text-gold-champagne" : "text-muted")}>{providerLabel}</span>
           </div>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            <span className="flex items-center gap-1 rounded-sm border border-white/10 bg-elevation px-2 py-1 text-[10px] font-semibold text-secondary">
+            <span className="flex items-center gap-1 rounded-sm border border-white/10 bg-elevation px-2 py-1 text-xs font-semibold text-secondary">
               <Lock className="h-3 w-3 text-gold-champagne" strokeWidth={2.4} /> 🔒 256-Bit SSL Encrypted
             </span>
-            <span className="flex items-center gap-1 rounded-sm border border-white/10 bg-elevation px-2 py-1 text-[10px] font-semibold text-secondary">
+            <span className="flex items-center gap-1 rounded-sm border border-white/10 bg-elevation px-2 py-1 text-xs font-semibold text-secondary">
               <ShieldCheck className="h-3 w-3 text-gold-champagne" strokeWidth={2.4} /> PCI-DSS Level 1
             </span>
-            <span className="flex items-center gap-1 rounded-sm border border-white/10 bg-elevation px-2 py-1 text-[10px] font-semibold text-secondary">
+            <span className="flex items-center gap-1 rounded-sm border border-white/10 bg-elevation px-2 py-1 text-xs font-semibold text-secondary">
               <BrandMark brand="visa" /> <BrandMark brand="mastercard" />
             </span>
           </div>
-          {!configured && <p className="mt-2 break-keep text-[10px] leading-relaxed text-faint">{t("cardSoon")}</p>}
+          {!configured && <p className="mt-2 break-keep text-xs leading-relaxed text-faint">{t("cardSoon")}</p>}
         </div>
 
         {stage.kind === "declined" && (
@@ -241,7 +241,7 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
             <div>
               <div className="font-bold text-white">{t("declined")}</div>
               <div className="mt-0.5 break-all text-muted">{stage.result.reason}</div>
-              <button type="button" onClick={() => setStage({ kind: "form" })} className="mt-2 text-[11px] font-semibold text-gold-champagne hover:underline">{t("retry")}</button>
+              <button type="button" onClick={() => setStage({ kind: "form" })} className="mt-2 text-xs font-semibold text-gold-champagne hover:underline">{t("retry")}</button>
             </div>
           </div>
         )}
@@ -264,7 +264,7 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
           <div className="mt-1 font-display text-3xl font-bold text-white">{usd(amountUsd)}</div>
           <div className="caption-luxury mt-3">{t("summaryCredit")}</div>
           <div className="text-gold-gradient mt-1 font-display text-2xl font-bold">{fmt(amountUsdt)}</div>
-          <div className="mt-2 text-[10px] text-faint">{t("rateNote")}</div>
+          <div className="mt-2 text-xs text-faint">{t("rateNote")}</div>
         </div>
         <div className="border-metallic-subtle rounded-lg bg-obsidian p-4">
           <div className="caption-luxury">{t("recent")}</div>

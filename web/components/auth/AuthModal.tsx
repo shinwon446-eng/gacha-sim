@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useModal } from "@/lib/useModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import { Loader2, Smartphone, X, Zap } from "lucide-react";
@@ -47,6 +48,7 @@ export function AuthModal() {
   const [otp, setOtp] = useState("");
   const [code, setCode] = useState<string | null>(null);
   const otpRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const isSignup = modalMode === "signup";
   const phoneLive = providerConfigured("phone");
@@ -66,14 +68,7 @@ export function AuthModal() {
     setDial(DIAL_BY_LOCALE[locale] ?? "+82");
   }, [locale]);
 
-  useEffect(() => {
-    if (!isModalOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeAuthModal();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [isModalOpen, closeAuthModal]);
+  useModal(isModalOpen, closeAuthModal, panelRef);
 
   const oauth = (provider: "google" | "apple") =>
     void authenticateWithOAuth(provider, modalMode, (name) => {
@@ -124,7 +119,7 @@ export function AuthModal() {
           //    보이지는 않지만 z-100 전체 화면이라 페이지 전체의 클릭을 먹는다(2026-09-28 실측).
           //    pointerEvents 를 variant 에 넣어 혹시 남더라도 클릭을 막지 않게 이중으로 잠근다.
           key="auth-overlay"
-          className="fixed inset-0 z-[100] flex items-end justify-center bg-black/72 px-4 pb-4 pt-6 backdrop-blur-sm sm:items-center sm:p-6"
+          className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/75 px-4 py-6 backdrop-blur-md sm:py-12"
           initial={{ opacity: 0, pointerEvents: "none" }}
           animate={{ opacity: 1, pointerEvents: "auto" }}
           exit={{ opacity: 0, pointerEvents: "none" }}
@@ -137,24 +132,26 @@ export function AuthModal() {
           aria-label={isSignup ? t("tabSignup") : t("tabLogin")}
         >
           <motion.div
-            className="border-metallic-gold relative max-h-full w-full max-w-[404px] overflow-y-auto rounded-2xl bg-obsidian p-5 [scrollbar-width:none] sm:p-6"
+            ref={panelRef}
+            tabIndex={-1}
+            className="relative my-auto w-full max-w-[440px] rounded-2xl border border-hairline bg-surface p-6 outline-none sm:p-8"
             initial={{ opacity: 0, y: 34, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.98 }}
             transition={{ duration: 0.32, ease: EASE }}
-            style={{ boxShadow: "0 40px 100px rgba(0,0,0,0.75), 0 0 70px rgba(230,202,101,0.12)" }}
+            style={{ boxShadow: "0 32px 100px rgba(0,0,0,0.5)" }}
           >
             <button
               type="button"
               onClick={closeAuthModal}
               aria-label={t("close")}
-              className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-muted transition-colors hover:bg-white/5 hover:text-white"
+              className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full text-muted transition-colors hover:bg-white/5 hover:text-white"
             >
               <X className="h-4 w-4" strokeWidth={2.4} />
             </button>
 
             {/* ① 슬라이딩 듀얼 탭 */}
-            <div className="mt-1 flex rounded-xl border border-hairline bg-surface p-1">
+            <div className="mt-7 flex rounded-xl border border-hairline bg-surface p-1">
               {(["login", "signup"] as AuthMode[]).map((m) => {
                 const on = modalMode === m;
                 return (
@@ -164,16 +161,15 @@ export function AuthModal() {
                     onClick={() => setModalMode(m)}
                     aria-pressed={on}
                     className={cn(
-                      "relative flex-1 whitespace-nowrap rounded-lg px-2 py-2.5 text-[12.5px] font-bold transition-colors sm:text-[13px]",
+                      "relative flex-1 whitespace-nowrap rounded-lg px-2 py-2.5 text-sm font-bold transition-colors sm:text-[13px]",
                       on ? "text-obsidian" : "text-muted hover:text-white",
                     )}
                   >
                     {on && (
                       <motion.span
                         layoutId="authTabPill"
-                        className="absolute inset-0 rounded-lg bg-gradient-to-r from-gold-metallic to-gold-champagne"
+                        className="absolute inset-0 rounded-lg bg-[#f1eee7]"
                         transition={SPRING}
-                        style={{ boxShadow: "0 0 22px rgba(230,202,101,0.4)" }}
                       />
                     )}
                     <span className="relative">{m === "login" ? t("tabLogin") : t("tabSignup")}</span>
@@ -182,26 +178,10 @@ export function AuthModal() {
               })}
             </div>
 
-            {/* 회원가입 전용 골드 배지 */}
-            <AnimatePresence initial={false}>
-              {isSignup && (
-                <motion.p
-                  key="perk"
-                  className="mt-3 flex items-center justify-center rounded-lg border border-gold-champagne/45 bg-gold-champagne/[0.08] px-3 py-2 text-center text-[11px] font-bold text-gold-champagne"
-                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                  animate={{ opacity: 1, height: "auto", marginTop: 12 }}
-                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                  transition={{ duration: 0.25, ease: EASE }}
-                >
-                  {t("signupPerk")}
-                </motion.p>
-              )}
-            </AnimatePresence>
-
-            <h2 className="mt-4 break-keep text-center font-display text-[19px] font-black leading-tight tracking-[-0.02em] text-white sm:text-xl">
+            <h2 className="mt-4 break-keep text-center font-display text-2xl font-black leading-tight tracking-[-0.02em] text-white sm:text-xl">
               {isSignup ? t("titleSignup") : t("titleLogin")}
             </h2>
-            <p className="mt-1.5 break-keep text-center text-[11.5px] leading-relaxed text-secondary">
+            <p className="mt-1.5 break-keep text-center text-sm leading-relaxed text-secondary">
               {isSignup ? t("subSignup") : t("subLogin")}
             </p>
 
@@ -230,7 +210,7 @@ export function AuthModal() {
             {/* ③ 휴대폰 빠른 인증 */}
             <div className="my-4 flex items-center gap-3">
               <span className="h-px flex-1 bg-hairline" />
-              <span className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.1em] text-faint">{t("orPhone")}</span>
+              <span className="whitespace-nowrap text-xs font-semibold uppercase tracking-[0.1em] text-faint">{t("orPhone")}</span>
               <span className="h-px flex-1 bg-hairline" />
             </div>
 
@@ -250,7 +230,7 @@ export function AuthModal() {
                       }}
                       aria-pressed={on}
                       className={cn(
-                        "flex h-7 flex-none items-center gap-1 rounded-full border px-2 text-[11px] font-bold tabular-nums transition-colors",
+                        "flex h-11 flex-none items-center gap-1 rounded-full border px-2 text-xs font-bold tabular-nums transition-colors",
                         on ? "border-gold-champagne/70 bg-gold-champagne/[0.14] text-gold-champagne" : "border-hairline text-secondary hover:text-white",
                       )}
                     >
@@ -276,7 +256,7 @@ export function AuthModal() {
                     }}
                     placeholder={formatPhone(spec.quickFill, dial)}
                     aria-label={t("phoneLabel")}
-                    className="h-10 w-full rounded-lg border border-hairline bg-obsidian pl-8 pr-2.5 text-[13px] font-semibold tabular-nums text-white outline-none transition-colors placeholder:text-faint/60 focus:border-gold-champagne/60"
+                    className="h-11 w-full rounded-lg border border-hairline bg-obsidian pl-8 pr-2.5 text-[13px] font-semibold tabular-nums text-white outline-none transition-colors placeholder:text-faint/60 focus:border-gold-champagne/60"
                   />
                 </span>
                 <button
@@ -284,9 +264,9 @@ export function AuthModal() {
                   onClick={requestCode}
                   disabled={!phoneReady}
                   className={cn(
-                    "h-10 flex-none whitespace-nowrap rounded-lg px-3 text-[12px] font-bold transition-all",
+                    "h-11 flex-none whitespace-nowrap rounded-lg px-3 text-[12px] font-bold transition-all",
                     phoneReady
-                      ? "bg-gradient-to-r from-gold-metallic to-gold-champagne text-obsidian hover:brightness-110"
+                      ? "bg-[#f1eee7] text-obsidian hover:brightness-110"
                       : "cursor-not-allowed border border-hairline text-faint",
                   )}
                 >
@@ -298,7 +278,7 @@ export function AuthModal() {
               <button
                 type="button"
                 onClick={() => setPhone(formatPhone(spec.quickFill, dial))}
-                className="mt-2 inline-flex items-center gap-1 rounded-full border border-hairline px-2.5 py-1 text-[10.5px] font-semibold text-secondary transition-colors hover:border-gold-champagne/50 hover:text-gold-champagne"
+                className="mt-2 inline-flex min-h-11 items-center gap-1 rounded-full border border-hairline px-2.5 py-1 text-[10.5px] font-semibold text-secondary transition-colors hover:border-gold-champagne/50 hover:text-gold-champagne"
               >
                 <Zap className="h-3 w-3" strokeWidth={2.6} />
                 {t("quickFill")}
@@ -328,17 +308,17 @@ export function AuthModal() {
                         maxLength={OTP_LENGTH}
                         placeholder="000000"
                         aria-label={t("otpLabel")}
-                        className="h-10 w-full rounded-lg border border-hairline bg-obsidian px-2 text-center font-mono text-[15px] font-bold tracking-[0.3em] text-white outline-none placeholder:text-faint/50 focus:border-gold-champagne/60"
+                        className="h-11 w-full rounded-lg border border-hairline bg-obsidian px-2 text-center font-mono text-[15px] font-bold tracking-[0.3em] text-white outline-none placeholder:text-faint/50 focus:border-gold-champagne/60"
                       />
                       {code && (
                         <button
                           type="button"
                           onClick={() => onOtpChange(code)}
-                          className="flex h-10 min-w-0 items-center justify-center gap-1.5 rounded-lg border border-gold-champagne/60 bg-gold-champagne/[0.1] px-2 text-[11.5px] font-bold text-gold-champagne transition-colors hover:bg-gold-champagne/20"
+                          className="flex h-11 min-w-0 items-center justify-center gap-1.5 rounded-lg border border-gold-champagne/60 bg-gold-champagne/[0.1] px-2 text-sm font-bold text-gold-champagne transition-colors hover:bg-gold-champagne/20"
                         >
                           <Zap className="h-3.5 w-3.5 flex-none" strokeWidth={2.6} />
                           <span className="truncate">{t("otpAutofill")}</span>
-                          <span className="flex-none rounded bg-gold-champagne/20 px-1.5 py-0.5 font-mono text-[11px] tracking-wider">{code}</span>
+                          <span className="flex-none rounded bg-gold-champagne/20 px-1.5 py-0.5 font-mono text-xs tracking-wider">{code}</span>
                         </button>
                       )}
                     </div>
@@ -358,7 +338,7 @@ export function AuthModal() {
             </button>
 
             {/* 공급자 미연결 — 잔액이 이 브라우저에만 있다는 사실을 숨기지 않는다 */}
-            {showLocalNote && <p className="mt-3 break-keep text-center text-[10px] leading-relaxed text-faint">{t("localNote")}</p>}
+            {showLocalNote && <p className="mt-3 break-keep text-center text-xs leading-relaxed text-faint">{t("localNote")}</p>}
           </motion.div>
         </motion.div>
       )}

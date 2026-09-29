@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useModal } from "@/lib/useModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Camera, X, Star, Gift, ImagePlus } from "lucide-react";
@@ -59,6 +60,8 @@ export function ReviewFormModal({ open, onClose, onSubmitted }: ReviewFormModalP
   const [rating, setRating] = useState(5);
   const [photo, setPhoto] = useState<string | undefined>();
   const [error, setError] = useState<string | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useModal(open, onClose, panelRef);
 
   useEffect(() => {
     if (!open) return;
@@ -67,11 +70,6 @@ export function ReviewFormModal({ open, onClose, onSubmitted }: ReviewFormModalP
     setRating(5);
     setPhoto(undefined);
     setError(null);
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
@@ -96,13 +94,13 @@ export function ReviewFormModal({ open, onClose, onSubmitted }: ReviewFormModalP
     <AnimatePresence>
       {open && (
         <motion.div className="fixed inset-0 z-[120] overflow-y-auto bg-obsidian/85 px-3 py-6 backdrop-blur-sm md:px-6 md:py-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-          <motion.div role="dialog" aria-modal="true" aria-label={t("writeTitle")} className="border-metallic-gold relative mx-auto w-full max-w-lg rounded-xl bg-canvas p-5 md:p-6" initial={{ opacity: 0, y: 20, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
-            <button type="button" onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
+          <motion.div ref={panelRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label={t("writeTitle")} className="relative mx-auto w-full max-w-xl rounded-lg border border-hairline bg-canvas p-6 outline-none md:p-8" initial={{ opacity: 0, y: 20, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
+            <button type="button" onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
               <X className="h-5 w-5" strokeWidth={2} />
             </button>
             <div className="flex items-center gap-2">
               <Camera className="h-5 w-5 text-gold-champagne" strokeWidth={2.2} />
-              <h2 className="font-display text-xl font-bold uppercase tracking-tight text-white">{t("writeTitle")}</h2>
+              <h2 className="pr-9 text-2xl font-medium tracking-tight text-white">{t("writeTitle")}</h2>
             </div>
             <p className="mt-1 flex flex-wrap items-baseline gap-1 text-xs text-muted">
               <Gift className="h-3.5 w-3.5 self-center text-gold-champagne" strokeWidth={2.2} />
@@ -148,7 +146,7 @@ export function ReviewFormModal({ open, onClose, onSubmitted }: ReviewFormModalP
                   <span className="caption-luxury">{t("rating")}</span>
                   <div className="mt-1.5 flex gap-1">
                     {[1, 2, 3, 4, 5].map((n) => (
-                      <button key={n} type="button" onClick={() => setRating(n)} aria-label={`${n}`} className="p-0.5">
+                      <button key={n} type="button" onClick={() => setRating(n)} aria-label={`${t("rating")} ${n} / 5`} aria-pressed={n === rating} className="flex h-11 w-11 items-center justify-center rounded-md hover:bg-elevation">
                         <Star className={cn("h-5 w-5", n <= rating ? "fill-gold-champagne text-gold-champagne" : "text-faint")} strokeWidth={1.8} />
                       </button>
                     ))}
@@ -158,10 +156,10 @@ export function ReviewFormModal({ open, onClose, onSubmitted }: ReviewFormModalP
                 <label className="block">
                   <span className="caption-luxury">{t("text")}</span>
                   <textarea value={text} onChange={(e) => setText(e.target.value)} rows={3} maxLength={160} placeholder={t("textHint")} className="mt-1.5 w-full resize-none rounded-md border border-hairline bg-obsidian px-3 py-2.5 text-sm text-white outline-none placeholder:text-faint focus:border-gold-champagne" />
-                  <span className="mt-1 block text-right font-mono text-[10px] text-faint">{text.length}/160</span>
+                  <span className="mt-1 block text-right font-mono text-xs text-muted">{text.length}/160</span>
                 </label>
 
-                {error && <p className="text-xs text-crimson">{t(`errors.${error}`)}</p>}
+                {error && <p role="alert" className="text-sm text-crimson">{t(`errors.${error}`)}</p>}
 
                 <button type="button" onClick={submit} className="flex h-12 items-center justify-center gap-2 rounded-md bg-gold-champagne text-sm font-bold text-obsidian hover:bg-gold-metallic">
                   <Camera className="h-4 w-4" strokeWidth={2.4} />
@@ -169,7 +167,7 @@ export function ReviewFormModal({ open, onClose, onSubmitted }: ReviewFormModalP
                 </button>
               </div>
             )}
-            <p className="mt-3 text-[10px] leading-relaxed text-faint">{t("bonusNote", { bonus: fmt(REVIEW_BONUS_USDT) })}</p>
+            <p className="mt-5 text-xs leading-6 text-muted">{t("bonusNote", { bonus: fmt(REVIEW_BONUS_USDT) })}</p>
           </motion.div>
         </motion.div>
       )}

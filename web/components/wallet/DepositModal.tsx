@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useModal } from "@/lib/useModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { X, Wallet, Coins, CreditCard, ArrowUpRight } from "lucide-react";
@@ -36,13 +37,13 @@ function BalanceSplit() {
   const cryptoBalance = useWalletStore((s) => s.cryptoBalance);
   const cardBalance = useWalletStore((s) => s.cardBalance);
   return (
-    <div className="mt-4 grid grid-cols-2 gap-2">
+    <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
       <div className="border-metallic-subtle rounded-lg bg-obsidian p-2.5">
-        <div className="break-keep text-[10px] leading-tight text-faint">{t("availableCrypto")}</div>
+        <div className="break-keep text-xs leading-tight text-faint">{t("availableCrypto")}</div>
         <Money value={cryptoBalance} size="sm" className="mt-1" numberClassName="text-gold-gradient" />
       </div>
       <div className="border-metallic-subtle rounded-lg bg-obsidian p-2.5">
-        <div className="break-keep text-[10px] leading-tight text-faint">{t("cardLocked")}</div>
+        <div className="break-keep text-xs leading-tight text-faint">{t("cardLocked")}</div>
         <Money value={cardBalance} size="sm" className="mt-1" numberClassName="text-secondary" />
       </div>
     </div>
@@ -59,20 +60,7 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
     if (open) setTab(initialTab);
   }, [open, initialTab]);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKey);
-    panelRef.current?.focus({ preventScroll: true });
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [open, onClose]);
+  useModal(open, onClose, panelRef);
 
   return (
     <AnimatePresence>
@@ -93,17 +81,17 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
             role="dialog"
             aria-modal="true"
             aria-label={t("title")}
-            className="border-metallic-gold relative mx-auto w-full max-w-3xl rounded-xl bg-canvas p-5 outline-none md:p-7"
+            className="border border-hairline relative mx-auto w-full max-w-3xl rounded-2xl bg-surface p-6 outline-none md:p-8"
             initial={{ opacity: 0, y: 20, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <button type="button" onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full text-muted transition-colors hover:bg-elevation hover:text-white">
+            <button type="button" onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full text-muted transition-colors hover:bg-elevation hover:text-white">
               <X className="h-5 w-5" strokeWidth={2} />
             </button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3 pr-10">
               <Wallet className="h-5 w-5 text-gold-champagne" strokeWidth={2.2} />
               <div>
                 <div className="caption-luxury">{tab === "withdraw" ? t("eyebrowWithdraw") : t("eyebrow")}</div>
@@ -112,7 +100,7 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
             </div>
 
             {/* 탭 */}
-            <div role="tablist" className="mt-5 flex gap-1 rounded-lg bg-obsidian p-1">
+            <div aria-label={t("title")} className="mt-5 flex gap-1 rounded-lg bg-obsidian p-1">
               {(
                 [
                   { key: "usdt", label: t("tabUsdt"), Icon: Coins },
@@ -122,13 +110,12 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
               ).map(({ key, label, Icon }) => (
                 <button
                   key={key}
-                  role="tab"
                   type="button"
-                  aria-selected={tab === key}
+                  aria-pressed={tab === key}
                   onClick={() => setTab(key)}
                   className={cn(
-                    "flex h-10 flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-md px-1.5 text-xs font-semibold transition-colors sm:gap-2 sm:px-2 sm:text-sm",
-                    tab === key ? "border-metallic-gold bg-surface text-gold-champagne" : "text-muted hover:text-white",
+                    "flex min-h-12 flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-md px-1.5 text-xs font-semibold transition-colors sm:gap-2 sm:px-2 sm:text-sm",
+                    tab === key ? "bg-[#f1eee7] text-obsidian" : "text-muted hover:text-white",
                   )}
                 >
                   <Icon className="h-4 w-4" strokeWidth={2} />

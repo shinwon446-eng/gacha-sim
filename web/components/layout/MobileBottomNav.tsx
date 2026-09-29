@@ -1,5 +1,6 @@
 "use client";
 
+import { House, Sparkles, Package, Wallet } from "lucide-react";
 import { useEffect, useState, type MouseEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
@@ -34,7 +35,7 @@ export function MobileBottomNav() {
   const onDollar = isHome && hash === DOLLAR_HASH;
   const onVault = pathname.startsWith("/inventory");
 
-  const item = "flex h-full min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-bold leading-none transition-colors";
+  const item = "flex min-h-16 min-w-0 flex-1 flex-col items-center justify-center gap-1.5 text-[11px] font-medium leading-none transition-colors";
   const on = "text-gold-champagne";
   const off = "text-secondary active:text-white";
 
@@ -61,23 +62,23 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label={t("aria")}
-      className="fixed inset-x-0 bottom-0 z-50 flex h-14 items-stretch border-t border-hairline bg-obsidian/95 backdrop-blur-lg md:hidden"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      className="fixed inset-x-0 bottom-0 z-50 flex items-stretch border-t border-hairline bg-obsidian/95 backdrop-blur-lg md:hidden"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)", minHeight: "calc(64px + env(safe-area-inset-bottom))" }}
     >
       <Link href="/" onClick={goHome} className={cn(item, isHome && !onDollar ? on : off)} aria-current={isHome && !onDollar ? "page" : undefined}>
-        <span aria-hidden className="text-lg leading-none">🔥</span>
+        <House className="h-5 w-5" strokeWidth={1.7} aria-hidden="true" />
         <span className="truncate">{t("home")}</span>
       </Link>
       <Link href={`/${DOLLAR_HASH}`} onClick={goDollar} className={cn(item, onDollar ? on : off)} aria-current={onDollar ? "page" : undefined}>
-        <span aria-hidden className="text-lg leading-none">👑</span>
+        <Sparkles className="h-5 w-5" strokeWidth={1.7} aria-hidden="true" />
         <span className="truncate">{t("dollar")}</span>
       </Link>
       <Link href="/inventory" className={cn(item, onVault ? on : off)} aria-current={onVault ? "page" : undefined}>
-        <span aria-hidden className="text-lg leading-none">📦</span>
+        <Package className="h-5 w-5" strokeWidth={1.7} aria-hidden="true" />
         <span className="truncate">{t("vault")}</span>
       </Link>
       <button type="button" onClick={deposit} className={cn(item, "text-gold-champagne active:text-gold-metallic")}>
-        <span aria-hidden className="text-lg leading-none">💳</span>
+        <Wallet className="h-5 w-5" strokeWidth={1.7} aria-hidden="true" />
         <span className="truncate">{t("wallet")}</span>
       </button>
     </nav>

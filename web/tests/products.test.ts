@@ -2,6 +2,7 @@
 //   npm test
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import {
   BOXES,
   BOX_BY_SLUG,
@@ -211,7 +212,7 @@ test("카피와 데이터에 이모지가 없다", () => {
   for (const s of strings) assert.ok(!emoji.test(s), `이모지 포함: ${s}`);
 });
 
-test("이미지 URL 은 https 이며 출처 표기를 동반하고, imageUrl 은 image.src 의 별칭이다", () => {
+test("컬렉션 이미지는 유효한 로컬 WebP이며 출처와 imageUrl 별칭을 보존한다", () => {
   let have = 0;
   for (const b of BOXES) {
     assert.equal(b.imageUrl, b.image.src, b.slug);
@@ -221,9 +222,14 @@ test("이미지 URL 은 https 이며 출처 표기를 동반하고, imageUrl 은
         have += 1;
         assert.match(
           x.image.src,
-          /^https:\/\/images\.unsplash\.com\//,
-          `${x.id}: Unsplash 다크 럭셔리 컬렉션만 허용 (위키백과·스톡 금지)`,
+          /^\/(?:gacha-sim\/)?assets\/photography\/photo-[\w-]+\.webp$/,
+          `${x.id}: 검증된 로컬 이미지 경로 필요`,
         );
+        const assetPath = x.image.src.slice(x.image.src.indexOf("/assets/"));
+        const image = readFileSync(new URL(`../public${assetPath}`, import.meta.url));
+        assert.ok(image.length > 1000, `${x.id}: 빈 이미지`);
+        assert.equal(image.toString("ascii", 0, 4), "RIFF", `${x.id}: 잘못된 WebP 헤더`);
+        assert.equal(image.toString("ascii", 8, 12), "WEBP", `${x.id}: 잘못된 WebP 형식`);
         assert.ok(x.image.credit && x.image.credit.length > 8, `${x.id}: 출처 누락`);
         assert.match(x.image.credit!, /Unsplash License/, `${x.id}: 라이선스 표기 누락`);
       }

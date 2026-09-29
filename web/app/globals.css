@@ -1,4 +1,4 @@
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+@import "./design.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,7 +6,7 @@
 :root {
   color-scheme: dark;
   /* 전 사이트 단일 서체 — 제목·본문·숫자·통화기호가 한 벌로 렌더된다 */
-  --font-pretendard: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  --font-pretendard: var(--font-ui), "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
   --font-sans: var(--font-pretendard);
   --font-display: var(--font-pretendard);
 }
@@ -21,8 +21,8 @@ body,
 
 html,
 body {
-  background-color: #141414;
-  color: #fff;
+  background-color: #101112;
+  color: #f1eee7;
 }
 
 /* 가로 클리핑은 html(=뷰포트)에만. body 에도 걸면 body 가 스크롤 컨테이너가 되어 position: sticky 헤더·탭이 뷰포트에 붙지 않는다 */
@@ -31,8 +31,7 @@ html {
 }
 
 body {
-  background-image: radial-gradient(circle at center, #1f1f1f 0%, #141414 100%);
-  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* 언어별 줄바꿈 규칙 (LocaleHtmlLang 이 <html lang> 을 맞춘다)
@@ -57,7 +56,7 @@ html[lang^="zh"] body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b0b0b;
+  background: #101112;
 }
 ::-webkit-scrollbar-thumb {
   background: #2a2a2a;
@@ -78,20 +77,20 @@ html[lang^="zh"] body {
 /* ── 럭셔리 유틸리티 (CLAUDE.md §2-B) ───────────────── */
 
 :root {
-  --bg-obsidian: #0b0b0b;
-  --bg-canvas: #141414;
-  --bg-surface: #181818;
-  --bg-surface-elevated: #222222;
-  --gold-champagne: #e6ca65;
-  --gold-metallic: #d4af37;
+  --bg-obsidian: #101112;
+  --bg-canvas: #101112;
+  --bg-surface: #191b1d;
+  --bg-surface-elevated: #232527;
+  --gold-champagne: #d9c39a;
+  --gold-metallic: #c8af82;
   --gold-dark: #a27b1e;
   --crimson-netflix: #e50914;
   --platinum-ice: #e5e4e2;
   --bronze-executive: #c5a059;
   --text-primary: #ffffff;
   --text-secondary: #e5e5e5;
-  --text-muted: #9ca3af;
-  --text-faint: #6b7280;
+  --text-muted: #a3a4a2;
+  --text-faint: #90928f;
 }
 
 /* 극미세 화이트 헤어라인 + 상단 1px 하이라이트. 평범한 회색 보더를 대체한다. */
@@ -126,7 +125,7 @@ html[lang^="zh"] body {
 
 /* 샴페인 골드 메탈릭 텍스트 */
 .text-gold-gradient {
-  background: linear-gradient(180deg, #f3e3a1 0%, #e6ca65 38%, #d4af37 62%, #a27b1e 100%);
+  background: linear-gradient(180deg, #f3e3a1 0%, #d9c39a 38%, #c8af82 62%, #a27b1e 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -251,7 +250,7 @@ html[lang^="zh"] body {
 /* ── 표면 ───────────────────────────────────────────── */
 
 .vignette-bg {
-  background: radial-gradient(circle at center, #1f1f1f 0%, #141414 100%);
+  background: radial-gradient(circle at center, #1f1f1f 0%, #101112 100%);
 }
 
 /* 타일링 노이즈 오버레이 */
@@ -312,7 +311,7 @@ html[lang^="zh"] body {
   line-height: 1.2;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  color: #9ca3af;
+  color: #a3a4a2;
   font-weight: 600;
 }
 
@@ -320,7 +319,7 @@ html[lang^="zh"] body {
 
 /* 빌보드 하단 페이드 */
 .billboard-fade {
-  background: linear-gradient(180deg, transparent 40%, rgba(20, 20, 20, 0.85) 75%, #141414 100%);
+  background: linear-gradient(180deg, transparent 40%, rgba(20, 20, 20, 0.85) 75%, #101112 100%);
 }
 
 .vignette {
@@ -500,3 +499,7 @@ html[lang^="zh"] body {
 @media (prefers-reduced-motion: reduce) {
   .hot-pulse, .gold-rimlight::after { animation: none; }
 }
+
+:focus-visible { outline: 2px solid #d9c39a; outline-offset: 4px; }
+::selection { background: #d9c39a; color: #101112; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }

@@ -2,33 +2,26 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { cn } from "@/lib/format";
-import { BOXES, CATEGORY_FILTERS, SORTS, byCategory, floorRatio, heroBox, sortBoxes, type BoxCategory, type ProductBox, type SortKey } from "@/lib/products";
+import { BOXES, SORTS, byCategory, floorRatio, heroBox, sortBoxes, type ProductBox, type SortKey } from "@/lib/products";
 import { rolloverContribution } from "@/lib/rollover";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { DiscoveryGuide } from "@/components/home/DiscoveryGuide";
 import { BillboardHero } from "@/components/home/BillboardHero";
 import { AboutBanner } from "@/components/home/AboutBanner";
-import { HotBoxes } from "@/components/home/HotBoxes";
-import { HallOfFame } from "@/components/home/HallOfFame";
-import { LiveTicker } from "@/components/home/LiveTicker";
-import { DailyFreeBoxModal, DailyFreeBoxPill } from "@/components/home/DailyFreeBox";
+import { DailyFreeBoxModal } from "@/components/home/DailyFreeBox";
 import { QuickTabs, type CategoryTab } from "@/components/home/QuickTabs";
 import { ProofFeed } from "@/components/fairness/ProofFeed";
 import { BoxCard } from "@/components/box/BoxCard";
 import { DetailModal } from "@/components/box/DetailModal";
-import { CurrencySelector } from "@/components/layout/CurrencySelector";
-import { HeaderAuthControl } from "@/components/auth/HeaderAuthControl";
 import { useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
-import { LanguageSelector } from "@/components/layout/LanguageSelector";
-import { BrandLogo } from "@/components/layout/BrandLogo";
 import { Link } from "@/i18n/navigation";
-import { Wallet, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useWalletStore, WELCOME_BONUS_USDT } from "@/stores/walletStore";
 import { UnboxingRoulette, type UnboxResult } from "@/components/unboxing/UnboxingRoulette";
 import { BulkOpenModal } from "@/components/unboxing/BulkOpenModal";
 import { BULK_THRESHOLD, type AutoplayConfig } from "@/lib/autoplay";
 import { DepositModal } from "@/components/wallet/DepositModal";
-import { Money } from "@/components/ui/Money";
 import { glow as glowOf } from "@/lib/tiers";
 import { useUiStore } from "@/stores/uiStore";
 import type { FundingRatio } from "@/lib/funding";
@@ -45,10 +38,10 @@ interface Toast {
   tone: string;
 }
 
-/** 2열(모바일) → 3 → 4 → 5열 고밀도 카드 그리드 */
+/** Two mobile columns and three desktop columns keep covers and prices readable. */
 function BoxGrid({ boxes, onPick }: { boxes: ProductBox[]; onPick: (b: ProductBox) => void }) {
   return (
-    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-x-3 sm:gap-y-5 md:grid-cols-4 xl:grid-cols-5">
+    <div className="collection-grid">
       {boxes.map((box, i) => (
         <BoxCard key={box.id} box={box} edge={i % 4 === 0 ? "first" : i % 4 === 3 ? "last" : "middle"} onInspect={onPick} onOpen={onPick} />
       ))}
@@ -62,6 +55,7 @@ export default function BoxesPage() {
   const [detail, setDetail] = useState<ProductBox | null>(null);
   const [category, setCategory] = useState<CategoryTab>("all");
   const gridRef = useRef<HTMLElement>(null);
+  const internalHashUpdate = useRef(false);
   const [sort, setSort] = useState<SortKey>("featured");
   const [shown, setShown] = useState(PAGE_SIZE);
   const [unbox, setUnbox] = useState<{ box: ProductBox; count: number; demo?: { itemId: string }; auto?: AutoplayConfig; funding?: FundingRatio } | null>(null);
@@ -71,10 +65,6 @@ export default function BoxesPage() {
   const setDepositOpen = useCallback((on: boolean) => useUiStore.getState()[on ? "openDeposit" : "closeDeposit"](), []);
   const [dailyOpen, setDailyOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const balance = useWalletStore((s) => s.balance);
-  const cryptoBalance = useWalletStore((s) => s.cryptoBalance);
-  const cardBalance = useWalletStore((s) => s.cardBalance);
-  const debit = useWalletStore((s) => s.debit);
   const debitSplit = useWalletStore((s) => s.debitSplit);
   const credit = useWalletStore((s) => s.credit);
   const creditSplit = useWalletStore((s) => s.creditSplit);
@@ -92,9 +82,10 @@ export default function BoxesPage() {
   const pickCategory = useCallback((key: CategoryTab, scroll = true) => {
     setCategory(key);
     setShown(PAGE_SIZE);
-    const next = key === "dollar" ? "#category-dollar" : "";
+    const next = key === "all" ? "" : `#category-${key}`;
     if (window.location.hash !== next) {
       window.history.replaceState(null, "", next || window.location.pathname + window.location.search);
+      internalHashUpdate.current = true;
       window.dispatchEvent(new HashChangeEvent("hashchange"));
     }
     if (scroll) gridRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
@@ -103,14 +94,18 @@ export default function BoxesPage() {
   // 하단 내비 · 외부 링크: #category-x → 탭, #deposit → 충전 모달
   useEffect(() => {
     const apply = () => {
+      if (internalHashUpdate.current) { internalHashUpdate.current = false; return; }
       const h = window.location.hash;
       const m = HASH_CATEGORY.exec(h);
       if (m) {
         setCategory(m[1] as CategoryTab);
         setShown(PAGE_SIZE);
         gridRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
-      } else if (h === DEPOSIT_HASH) {
-        setWalletTab("usdt");
+      } else if (h === "") {
+        setCategory("all");
+        setShown(PAGE_SIZE);
+      } else if (h === DEPOSIT_HASH || h === "#withdraw") {
+        setWalletTab(h === "#withdraw" ? "withdraw" : "usdt");
         useUiStore.getState().openDeposit();
         window.history.replaceState(null, "", window.location.pathname + window.location.search);
       }
@@ -159,12 +154,11 @@ export default function BoxesPage() {
     [credit, creditSplit, addTransaction, pushToast, t, fmt],
   );
 
-  // 손맛 보기: 서브마리너 볼트를 잔액 없이 가상으로 돌린다. 결과는 서브마리너로 고정 — 잔액·보관함·nonce 무변화.
+  // A labelled visual preview of the selected collection; no balance, inventory or nonce changes.
   const openDemo = useCallback((box: ProductBox) => {
-    const rolex = BOXES.find((b) => b.slug === "vault-submariner") ?? box;
-    const hero = rolex.items.find((i) => i.id === "rlx-sub") ?? rolex.items[0];
+    const hero = box.items.reduce((top, item) => item.value > top.value ? item : top, box.items[0]);
     setDetail(null);
-    setUnbox({ box: rolex, count: 1, demo: { itemId: hero.id } });
+    setUnbox({ box, count: 1, demo: { itemId: hero.id } });
   }, []);
   // 데모 → 실제 전환: 웰컴 보너스 1회 지급 후 해당 박스 상세로
   const convertDemo = useCallback(
@@ -182,186 +176,36 @@ export default function BoxesPage() {
 
   // 빌보드: 사이버트럭 / 롤렉스 / 하이엔드 테크 순환
   const billboard = useMemo(
-    () => ["dollar-apple", "starter-macbook", "vault-gold"].map((slug) => BOXES.find((b) => b.slug === slug) ?? heroBox()),
+    () => ["vault-submariner", "dollar-apple", "vault-gold"].map((slug) => BOXES.find((b) => b.slug === slug) ?? heroBox()),
     [],
   );
   const grid = useMemo(() => sortBoxes(byCategory(category), sort), [category, sort]);
   const visible = grid.slice(0, shown);
 
   return (
-    <main className="min-h-screen bg-canvas pb-0 md:pb-24">
-      {/* 상단 바 — h-14 고정(스티키 퀵 탭이 top-14 로 이어 붙는다) */}
-      <header className="sticky top-0 z-[60] flex h-14 items-center gap-2 border-b border-hairline bg-obsidian/90 px-3 backdrop-blur-md sm:gap-5 sm:px-[4%]">
-        {/* 모바일은 한 단계 작은 워드마크 — 헤더 최소폭 375px 규범(부록 A ⑤) */}
-        <BrandLogo size="sm" asLink={false} className="sm:hidden" />
-        <BrandLogo size="md" asLink={false} className="hidden sm:inline-flex" />
-        {/* 데스크톱 텍스트 내비 — 모바일은 하단 고정 내비(MobileBottomNav)가 대신한다 */}
-        <nav className="hidden min-w-0 flex-1 items-center gap-3 overflow-x-auto whitespace-nowrap text-[12px] text-muted [scrollbar-width:none] sm:gap-4 md:flex">
-          <span className="font-semibold text-white">{t("nav.boxes")}</span>
-          <Link href="/about" className="transition-colors hover:text-white">
-            {t("nav.about")}
-          </Link>
-          <Link href="/inventory" className="transition-colors hover:text-white">
-            {t("nav.inventory")}
-          </Link>
-          <Link href="/fairness" className="transition-colors hover:text-white">
-            {t("nav.fairness")}
-          </Link>
-          <Link href="/community" className="hidden transition-colors hover:text-white lg:inline">
-            {t("nav.community")}
-          </Link>
-        </nav>
-        <div className="ml-auto flex flex-none items-center gap-1.5 sm:gap-2">
-          <DailyFreeBoxPill onOpen={() => setDailyOpen(true)} className="hidden lg:flex" />
-          {/* 잔액 — 데모 고정값. 선택 통화로만 표기된다. */}
-          {/* 잔액 — 카드 충전분이 있으면 출금 가능(USDT)/플레이 전용(카드)을 분리해 보여준다 (CLAUDE.md §7-B) */}
-          <button
-            type="button"
-            onClick={() => {
-              setWalletTab(cardBalance > 0 ? "withdraw" : "usdt");
-              setDepositOpen(true);
-            }}
-            className="glass-dark flex h-9 flex-none flex-col items-end justify-center gap-0 whitespace-nowrap rounded-md px-2 text-left sm:px-3"
-            aria-label={t("header.balance")}
-          >
-            <span className="flex items-center gap-2">
-              <Wallet className="hidden h-3.5 w-3.5 text-muted sm:block" strokeWidth={2} />
-              <span className="caption-luxury hidden sm:inline">{t("header.balance")}</span>
-              <AnimatePresence mode="popLayout" initial={false}>
-                <motion.span key={balance} className="inline-flex" initial={{ y: -6, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 6, opacity: 0 }} transition={{ duration: 0.2 }}>
-                  <Money value={balance} size="xs" className="sm:hidden" />
-                  <Money value={balance} size="sm" className="hidden sm:inline-flex" />
-                </motion.span>
-              </AnimatePresence>
-            </span>
-            {/* 크립토/카드 분리 표기는 sm 이상에서만 — 모바일 헤더 폭을 넘기지 않는다(모달 지갑 탭에 같은 분리가 있다) */}
-            {cardBalance > 0 && (
-              <span className="hidden items-center gap-1.5 text-[9px] leading-none tabular-nums text-faint sm:flex">
-                <span className="text-gold-champagne">↗ {fmt(cryptoBalance)}</span>
-                <span>💳 {fmt(cardBalance)}</span>
-              </span>
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setWalletTab("usdt");
-              setDepositOpen(true);
-            }}
-            className="hidden h-9 flex-none items-center gap-1.5 whitespace-nowrap rounded-md bg-crimson px-2.5 text-xs font-bold text-white shadow-[0_0_18px_rgba(229,9,20,0.35)] transition-colors hover:bg-red-600 sm:px-3 lg:flex"
-          >
-            <Wallet className="h-3.5 w-3.5" strokeWidth={2.2} />
-            <span className="hidden sm:inline">{t("header.deposit")}</span>
-          </button>
-          {/* 출금 — 모바일에서도 항상 보이는 콤팩트 골드 뱃지(지갑 모달 출금 탭) */}
-          <button
-            type="button"
-            onClick={() => {
-              setWalletTab("withdraw");
-              setDepositOpen(true);
-            }}
-            className="flex h-7 flex-none items-center gap-1 whitespace-nowrap rounded border border-gold-champagne/40 px-2 text-[11px] font-bold text-gold-champagne transition-colors hover:bg-gold-champagne/10 lg:h-9 lg:gap-1.5 lg:px-3 lg:text-xs"
-          >
-            <ArrowUpRight className="h-3 w-3 lg:h-3.5 lg:w-3.5" strokeWidth={2.4} />
-            {t("header.withdraw")}
-          </button>
-          <LanguageSelector />
-          <CurrencySelector />
-          <HeaderAuthControl />
-        </div>
-      </header>
+    <main className="min-h-screen bg-canvas">
+      <SiteHeader onWallet={(tab) => { setWalletTab(tab); setDepositOpen(true); }} onDaily={() => setDailyOpen(true)} />
 
-      {/* 1. 라이브 드랍 티커 */}
-      <LiveTicker />
-
-      {/* 2. 히어로 — 다이어트판 */}
       <BillboardHero boxes={billboard} onOpen={setDetail} onInspect={setDetail} onDemo={openDemo} />
 
-      {/* 2-b. 플랫폼 소개 한 줄 배너 — 모바일 헤더에 텍스트 내비가 없어 /about 으로 가는 길을 여기서 연다 */}
       <AboutBanner />
 
-      {/* 3. 스티키 퀵 카테고리 탭 — 아래 그리드를 즉시 필터링 (TOP10·카테고리 캐러셀·전체 그리드 3중 나열을 하나로) */}
-      <QuickTabs value={category} onChange={pickCategory} />
-
-      {/* 4. 박스 그리드 — 모바일 2열 고밀도(한 화면 4~6개) → sm 3열 → md 4열 → xl 5열 */}
-      <section ref={gridRef} id="boxes" className="scroll-mt-[118px] px-4 pt-4 sm:px-[4%] sm:pt-5">
-        <div className="mb-3 flex items-center gap-3 border-b border-line pb-2.5">
-          <h2 className="text-[15px] font-bold text-white sm:text-[17px]">
-            {category === "all" ? t("grid.title") : t(`categories.${category}`)}
-            <span className="ml-2 font-mono text-[12px] font-normal tabular-nums text-faint">
-              {grid.length} / {BOXES.length}
-            </span>
-          </h2>
-
-          <label className="ml-auto flex items-center gap-2 whitespace-nowrap text-[11px] text-faint">
-            <span className="hidden sm:inline">{t("grid.sort")}</span>
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
-              aria-label={t("grid.sort")}
-              className="rounded-sm border border-line bg-surface px-2 py-1 text-[11px] text-white outline-none focus:border-white"
-            >
-              {SORTS.map((s) => (
-                <option key={s.key} value={s.key}>
-                  {t(`sorts.${s.key}`)}
-                </option>
-              ))}
-            </select>
-          </label>
+      <section ref={gridRef} id="boxes" className="collection-section page-shell" aria-labelledby="collection-title">
+        <div className="collection-heading">
+          <div><p className="eyebrow">CURATED COLLECTIONS</p><h2 id="collection-title">{t("design.collectionTitle")}</h2><p className="collection-intro">{t("design.collectionBody")}</p></div>
+          <span className="collection-count">{t("design.collectionCount", { count: BOXES.length })}</span>
         </div>
-
-        {/* [전체] 탭은 4대 카테고리 소제목으로 구역을 나눠 12박스를 하나도 빠짐없이 보여준다 (모바일 누락 인지 방지) */}
-        {category === "all" ? (
-          <div className="grid gap-7">
-            {CATEGORY_FILTERS.filter((f) => f.key !== "all").map((f) => {
-              const boxes = sortBoxes(byCategory(f.key as BoxCategory), sort);
-              if (boxes.length === 0) return null;
-              const min = Math.min(...boxes.map((b) => b.price));
-              const max = Math.max(...boxes.map((b) => b.price));
-              return (
-                <section key={f.key} id={`category-${f.key}`} className="scroll-mt-[118px]">
-                  <div className="mb-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                    <h3 className="break-keep text-[14px] font-bold text-white sm:text-[15px]">{t(`sections.${f.key}`)}</h3>
-                    <span className="whitespace-nowrap font-mono text-[11px] tabular-nums text-faint">
-                      {min === max ? fmt(min) : `${fmt(min)} ~ ${fmt(max)}`} · {boxes.length}
-                    </span>
-                  </div>
-                  <BoxGrid boxes={boxes} onPick={setDetail} />
-                </section>
-              );
-            })}
-          </div>
-        ) : (
-          <>
-            <BoxGrid boxes={visible} onPick={setDetail} />
-            {shown < grid.length && (
-              <div className="mt-8 flex justify-center">
-                <button
-                  type="button"
-                  onClick={() => setShown((n) => n + PAGE_SIZE)}
-                  className="rounded-sm border border-[#555555] px-6 py-2.5 text-[13px] font-semibold text-white transition-colors duration-200 hover:border-white hover:bg-elevation"
-                >
-                  {t("grid.loadMore", { n: grid.length - shown })}
-                </button>
-              </div>
-            )}
-          </>
-        )}
+        <div className="collection-toolbar">
+          <QuickTabs value={category} onChange={(key) => pickCategory(key, false)} />
+          <label className="collection-sort"><span className="sr-only">{t("grid.sort")}</span><select value={sort} onChange={(e) => setSort(e.target.value as SortKey)}>{SORTS.map((s) => <option key={s.key} value={s.key}>{t(`sorts.${s.key}`)}</option>)}</select></label>
+        </div>
+        <p className="sr-only" role="status">{t("design.resultsCount", { count: grid.length })}</p>
+        <BoxGrid boxes={visible} onPick={setDetail} />
+        {shown < grid.length && <div className="mt-10 flex justify-center"><button type="button" onClick={() => setShown((n) => n + PAGE_SIZE)} className="btn-secondary">{t("grid.loadMore", { n: grid.length - shown })}</button></div>}
       </section>
-
-      {/* 5. 킬러 섹션 — 핫 박스 TOP 3 · 명예의 전당 (튜토리얼 카드 대체) */}
-      <HotBoxes onPick={setDetail} className="pt-8" />
-      <HallOfFame onPick={setDetail} className="pt-8" />
-
-
-      {/* 6. 실지급/실배송 라이브 피드 — 요약 4행, 전체는 /fairness */}
-      <section className="px-[4%] pt-12">
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <h2 className="text-[17px] font-bold text-white">{t("proof.title")}</h2>
-          <Link href="/fairness" className="text-xs font-semibold text-gold-champagne hover:underline">
-            {t("nav.fairness")} →
-          </Link>
-        </div>
+      <DiscoveryGuide />
+      <section className="page-shell pb-20" aria-labelledby="proof-section-title">
+        <div className="guide-heading"><div><p className="eyebrow">TRANSPARENCY, BY DESIGN</p><h2 id="proof-section-title">{t("design.proofTitle")}</h2></div><Link href="/fairness" className="text-link">{t("design.verify")}<ArrowUpRight size={16} aria-hidden /></Link></div>
         <ProofFeed limit={4} showReserve={false} />
       </section>
 

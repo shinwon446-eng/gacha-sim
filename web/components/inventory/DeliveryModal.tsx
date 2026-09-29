@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useModal } from "@/lib/useModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { X, Truck, ShieldCheck, PackageCheck, Lock, ExternalLink, Loader2, Check } from "lucide-react";
@@ -55,7 +56,7 @@ function GuaranteeCards({ t, fee }: { t: ReturnType<typeof useTranslations<"deli
           <Icon className={cn("mt-0.5 h-4 w-4 flex-none", tone === "gold" ? "text-gold-champagne" : "text-emerald-300")} strokeWidth={2.2} />
           <div className="min-w-0">
             <div className={cn("break-keep text-[12px] font-bold leading-snug", tone === "gold" ? "text-gold-champagne" : "text-emerald-300")}>{title}</div>
-            <div className="mt-0.5 break-keep text-[11px] leading-relaxed text-secondary">{body}</div>
+            <div className="mt-0.5 break-keep text-xs leading-relaxed text-secondary">{body}</div>
           </div>
         </li>
       ))}
@@ -84,22 +85,11 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
   const [touched, setTouched] = useState(false);
   const [stage, setStage] = useState<"form" | "inspecting" | "done">("form");
 
+  useModal(open, onClose, panelRef);
   useEffect(() => {
-    if (!open) return;
-    setStage("form");
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKey);
-    panelRef.current?.focus({ preventScroll: true });
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, [open, onClose]);
+    if (open) setStage("form");
+    return () => { if (timer.current) clearTimeout(timer.current); };
+  }, [open]);
 
   const fee = shippingFee(form.country);
   const customs = customsKindFor(form.country);
@@ -144,13 +134,13 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
             role="dialog"
             aria-modal="true"
             aria-label={t("title")}
-            className="border-metallic-gold relative mx-auto w-full max-w-lg rounded-xl bg-canvas p-5 outline-none md:p-6"
+            className="border border-hairline relative mx-auto w-full max-w-lg rounded-2xl bg-surface p-6 outline-none md:p-6"
             initial={{ opacity: 0, y: 20, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <button type="button" onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
+            <button type="button" onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
               <X className="h-5 w-5" strokeWidth={2} />
             </button>
 
@@ -170,9 +160,9 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
                   <div className="border-metallic-subtle mt-3 rounded-md bg-canvas p-3">
                     <div className="caption-luxury">{t("waybill")}</div>
                     <div className="mt-1 text-[12px] font-semibold text-white">{t("waybillPending")}</div>
-                    <p className="mt-1 break-keep text-[10px] leading-relaxed text-faint">{t("waybillNote")}</p>
+                    <p className="mt-1 break-keep text-xs leading-relaxed text-faint">{t("waybillNote")}</p>
                   </div>
-                  <dl className="mt-3 grid gap-1.5 text-[11px]">
+                  <dl className="mt-3 grid gap-1.5 text-xs">
                     <div className="flex items-baseline justify-between gap-3 border-b border-hairline pb-1">
                       <dt className="text-faint">{t("recipient")}</dt>
                       <dd className="text-right text-secondary">{form.recipient}</dd>
@@ -191,7 +181,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
                     </div>
                   </dl>
                 </div>
-                <button type="button" onClick={onClose} className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-md bg-gold-champagne text-sm font-bold text-obsidian hover:bg-gold-metallic">
+                <button type="button" onClick={onClose} className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#f1eee7] text-sm font-bold text-obsidian hover:bg-gold-metallic">
                   {t("doneCta")}
                 </button>
               </div>
@@ -204,7 +194,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
                   <label className="block">
                     <span className="caption-luxury">{t("recipient")}</span>
                     <input value={form.recipient} onChange={(e) => set("recipient", e.target.value)} placeholder={t("recipientHint")} className={cn(inputCls, has("recipient") && "border-crimson")} />
-                    {has("recipient") && <span className="mt-1 block text-[11px] text-crimson">{ti("errors.recipient")}</span>}
+                    {has("recipient") && <span className="mt-1 block text-xs text-crimson">{ti("errors.recipient")}</span>}
                   </label>
 
                   <div className="grid grid-cols-2 gap-3">
@@ -227,7 +217,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
                         placeholder={form.country === "KR" ? "010-0000-0000" : "+00 000 0000"}
                         className={cn(inputCls, "font-mono", has("phone") && "border-crimson")}
                       />
-                      {has("phone") && <span className="mt-1 block text-[11px] text-crimson">{ti("errors.phone")}</span>}
+                      {has("phone") && <span className="mt-1 block text-xs text-crimson">{ti("errors.phone")}</span>}
                     </label>
                   </div>
 
@@ -244,7 +234,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
                   <label className="block">
                     <span className="caption-luxury">{t("detail")}</span>
                     <input value={detail} onChange={(e) => setDetail(e.target.value)} placeholder={t("detailHint")} className={inputCls} />
-                    {has("address") && <span className="mt-1 block text-[11px] text-crimson">{ti("errors.address")}</span>}
+                    {has("address") && <span className="mt-1 block text-xs text-crimson">{ti("errors.address")}</span>}
                   </label>
 
                   {customs !== "none" && (
@@ -252,15 +242,15 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
                       <span className="flex flex-wrap items-baseline justify-between gap-x-2">
                         <span className="caption-luxury">{customs === "pccc" ? ti("pccc") : ti("residentId")}</span>
                         {customs === "pccc" && (
-                          <a href={UNIPASS_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 whitespace-nowrap text-[10px] font-bold text-gold-champagne hover:underline">
+                          <a href={UNIPASS_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 whitespace-nowrap text-xs font-bold text-gold-champagne hover:underline">
                             {t("unipass")}
                             <ExternalLink className="h-3 w-3" strokeWidth={2.4} />
                           </a>
                         )}
                       </span>
                       <input value={form.customsId ?? ""} onChange={(e) => set("customsId", e.target.value.toUpperCase())} placeholder={customs === "pccc" ? "P000000000000" : "000000000000000000"} className={cn(inputCls, "font-mono", has("customsId") && "border-crimson")} />
-                      <span className="mt-1 block break-keep text-[10px] leading-relaxed text-faint">{customs === "pccc" ? t("pcccHint") : ti("residentIdHint")}</span>
-                      {has("customsId") && <span className="mt-1 block text-[11px] text-crimson">{ti("errors.customsId")}</span>}
+                      <span className="mt-1 block break-keep text-xs leading-relaxed text-faint">{customs === "pccc" ? t("pcccHint") : ti("residentIdHint")}</span>
+                      {has("customsId") && <span className="mt-1 block text-xs text-crimson">{ti("errors.customsId")}</span>}
                     </label>
                   )}
                 </div>
@@ -272,11 +262,11 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
                 <div className="border-metallic-subtle mt-4 flex items-center justify-between rounded-lg bg-obsidian p-3">
                   <span className="text-xs text-muted">{t("fee")}</span>
                   <span className="flex items-center gap-2">
-                    {fee === 0 && <span className="rounded border border-emerald-500/40 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-bold text-emerald-300">{t("freeEvent")}</span>}
+                    {fee === 0 && <span className="rounded border border-emerald-500/40 bg-emerald-500/10 px-1.5 py-0.5 text-xs font-bold text-emerald-300">{t("freeEvent")}</span>}
                     <Money value={fee} size="sm" numberClassName={fee === 0 ? "text-emerald-300" : "text-white"} />
                   </span>
                 </div>
-                {insufficient && <p className="mt-2 text-[11px] text-crimson">{ti("shipInsufficient", { fee: String(fee) })}</p>}
+                {insufficient && <p className="mt-2 text-xs text-crimson">{ti("shipInsufficient", { fee: String(fee) })}</p>}
 
                 <button
                   type="button"

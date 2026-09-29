@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useModal } from "@/lib/useModal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import { Truck, X, Check, Circle, Copy, ExternalLink } from "lucide-react";
@@ -37,15 +38,7 @@ export function TrackingModal({ item, onClose }: TrackingModalProps) {
   const ref = useRef<HTMLDivElement>(null);
   const open = !!item;
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    ref.current?.focus({ preventScroll: true });
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  useModal(open, onClose, ref);
 
   const product = item ? BOX_BY_SLUG[item.boxSlug]?.items.find((i) => i.id === item.itemId) : undefined;
   const done = item ? doneCount(item) : 0;
@@ -63,13 +56,13 @@ export function TrackingModal({ item, onClose }: TrackingModalProps) {
             role="dialog"
             aria-modal="true"
             aria-label={t("trackingTitle")}
-            className="border-metallic-gold relative mx-auto w-full max-w-md rounded-xl bg-canvas p-5 outline-none md:p-6"
+            className="border border-hairline relative mx-auto w-full max-w-md rounded-2xl bg-surface p-6 outline-none md:p-6"
             initial={{ opacity: 0, y: 20, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <button type="button" onClick={onClose} aria-label={t("cancel")} className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
+            <button type="button" onClick={onClose} aria-label={t("cancel")} className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
               <X className="h-5 w-5" strokeWidth={2} />
             </button>
             <div className="flex items-center gap-2">
@@ -85,19 +78,19 @@ export function TrackingModal({ item, onClose }: TrackingModalProps) {
             <div className="border-metallic-subtle mt-4 rounded-lg bg-obsidian p-3">
               <div className="flex items-center justify-between gap-3">
                 <span className="caption-luxury">{t("tracking")}</span>
-                <span className="rounded-full bg-gold-champagne/15 px-2.5 py-1 text-[11px] font-bold text-gold-champagne">{t(`status.${item.status}`)}</span>
+                <span className="rounded-full bg-gold-champagne/15 px-2.5 py-1 text-xs font-bold text-gold-champagne">{t(`status.${item.status}`)}</span>
               </div>
               {carrier && <div className="mt-1.5 text-xs font-semibold text-white">{t(`carriers.${carrier}`)}</div>}
               <div className="mt-2 flex items-center gap-2">
                 <code className={cn("min-w-0 flex-1 break-all font-mono text-sm", tracking ? "text-white" : "text-faint")}>{tracking ?? t("trackingPending")}</code>
                 {tracking && (
-                  <button type="button" onClick={() => navigator.clipboard?.writeText(tracking)} aria-label={t("copyTracking")} className="glass-dark flex h-8 w-8 flex-none items-center justify-center rounded-md text-gold-champagne hover:border-gold-champagne">
+                  <button type="button" onClick={() => navigator.clipboard?.writeText(tracking)} aria-label={t("copyTracking")} className="glass-dark flex h-11 w-11 flex-none items-center justify-center rounded-md text-gold-champagne hover:border-gold-champagne">
                     <Copy className="h-3.5 w-3.5" strokeWidth={2.2} />
                   </button>
                 )}
               </div>
               {tracking && carrier && (
-                <a href={trackingUrl(carrier, tracking)} target="_blank" rel="noopener noreferrer" className="border-gold-gradient mt-2 flex h-9 items-center justify-center gap-1.5 rounded-md text-xs font-bold text-gold-champagne hover:bg-gold-champagne/10">
+                <a href={trackingUrl(carrier, tracking)} target="_blank" rel="noopener noreferrer" className="border-gold-gradient mt-2 flex h-11 items-center justify-center gap-1.5 rounded-md text-xs font-bold text-gold-champagne hover:bg-gold-champagne/10">
                   {t("trackOnCarrier", { carrier: t(`carriers.${carrier}`) })}
                   <ExternalLink className="h-3.5 w-3.5" strokeWidth={2.4} />
                 </a>
@@ -119,9 +112,9 @@ export function TrackingModal({ item, onClose }: TrackingModalProps) {
                     </div>
                     <div className="pb-4">
                       <div className={cn("text-sm font-semibold", isDone ? "text-white" : "text-faint")}>{t(`steps.${s}`)}</div>
-                      {s === "requested" && item.shipping?.requestedAt && <div className="text-[11px] text-faint">{new Date(item.shipping.requestedAt).toLocaleString(locale)}</div>}
-                      {s === "label" && item.shipping?.shippedAt && <div className="text-[11px] text-faint">{new Date(item.shipping.shippedAt).toLocaleString(locale)}</div>}
-                      {isCurrent && <div className="text-[11px] text-gold-champagne">{t("stepCurrent")}</div>}
+                      {s === "requested" && item.shipping?.requestedAt && <div className="text-xs text-faint">{new Date(item.shipping.requestedAt).toLocaleString(locale)}</div>}
+                      {s === "label" && item.shipping?.shippedAt && <div className="text-xs text-faint">{new Date(item.shipping.shippedAt).toLocaleString(locale)}</div>}
+                      {isCurrent && <div className="text-xs text-gold-champagne">{t("stepCurrent")}</div>}
                     </div>
                   </li>
                 );
@@ -144,7 +137,7 @@ export function TrackingModal({ item, onClose }: TrackingModalProps) {
                 ))}
               </dl>
             )}
-            <p className="mt-3 text-[10px] leading-relaxed text-faint">{tracking && carrier ? t("trackingIssuedNote", { carrier: t(`carriers.${carrier}`) }) : t("trackingNote")}</p>
+            <p className="mt-3 text-xs leading-relaxed text-faint">{tracking && carrier ? t("trackingIssuedNote", { carrier: t(`carriers.${carrier}`) }) : t("trackingNote")}</p>
           </motion.div>
         </motion.div>
       )}

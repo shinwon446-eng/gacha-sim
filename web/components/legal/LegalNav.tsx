@@ -18,9 +18,9 @@ export function LegalNav({ items, current }: { items: { key: string; title: stri
     nav.scrollTo({ left: Math.max(0, target) });
   }, [current]);
   return (
-    <nav ref={ref} className="relative flex min-w-0 flex-1 items-center gap-4 overflow-x-auto pr-[4%] text-xs text-muted [scrollbar-width:none]">
+    <nav ref={ref} className="relative flex min-w-0 flex-1 items-center gap-4 overflow-x-auto pr-[4%] text-sm text-muted [scrollbar-width:none]">
       {items.map((d) => (
-        <Link key={d.key} href={`/legal/${d.key}`} data-current={d.key === current ? "" : undefined} className={cn("flex-none whitespace-nowrap", d.key === current ? "font-semibold text-white" : "hover:text-white")}>
+        <Link key={d.key} href={`/legal/${d.key}`} aria-current={d.key === current ? "page" : undefined} data-current={d.key === current ? "" : undefined} className={cn("flex min-h-11 flex-none items-center whitespace-nowrap", d.key === current ? "font-semibold text-white" : "hover:text-white")}>
           {d.title}
         </Link>
       ))}
