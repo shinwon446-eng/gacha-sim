@@ -11,10 +11,10 @@ import { browserAccountsEnabled } from "@/lib/account";
 import { restoreBrowserAssets } from "@/lib/browserWallet";
 
 /**
- * 전역 인증 호스트, `app/[locale]/layout.tsx` 한 곳에 마운트한다.
- *   ① 저장된 세션 복원(`skipHydration` 이라 마운트 후에만 적용 → 서버, 클라 첫 렌더 동일)
- *   ② 로그인/회원가입 모달, 어느 페이지에서든 열린다
- *   ③ 상단 확인 토스트, 페이지마다 토스트를 따로 굴리지 않고 여기서 하나로 띄운다
+ * 전역 인증 호스트 — `app/[locale]/layout.tsx` 한 곳에 마운트한다.
+ *   ① 저장된 세션 복원(`skipHydration` 이라 마운트 후에만 적용 → 서버·클라 첫 렌더 동일)
+ *   ② 로그인/회원가입 모달 — 어느 페이지에서든 열린다
+ *   ③ 상단 확인 토스트 — 페이지마다 토스트를 따로 굴리지 않고 여기서 하나로 띄운다
  */
 export function AuthHost() {
   const toast = useAuthStore((s) => s.toast);

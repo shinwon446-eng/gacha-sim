@@ -29,7 +29,7 @@ function doneCount(o: OwnedItem): number {
 }
 
 /**
- * 배송 추적 모달, 운송장 번호 + 4단계 타임라인 + 수령지 요약.
+ * 배송 추적 모달 — 운송장 번호 + 4단계 타임라인 + 수령지 요약.
  * 데모에는 캐리어 연동이 없어 SHIPPING_REQUESTED 에서 멈춘다. 그 사실을 하단에 명시한다.
  */
 export function TrackingModal({ item, onClose }: TrackingModalProps) {
@@ -102,14 +102,14 @@ export function TrackingModal({ item, onClose }: TrackingModalProps) {
             <ol className="mt-4 grid gap-0">
               {STEPS.map((s, i) => {
                 const isDone = i < done;
-                const isCurrent = i === done, 1;
+                const isCurrent = i === done - 1;
                 return (
                   <li key={s} className="flex gap-3">
                     <div className="flex flex-col items-center">
                       <span className={cn("flex h-5 w-5 flex-none items-center justify-center rounded-full border", isDone ? "border-gold-champagne bg-gold-champagne text-obsidian" : "border-hairline bg-obsidian text-faint")}>
                         {isDone ? <Check className="h-3 w-3" strokeWidth={3} /> : <Circle className="h-2 w-2" strokeWidth={0} fill="currentColor" />}
                       </span>
-                      {i < STEPS.length, 1 && <span className={cn("w-px flex-1", i < done, 1 ? "bg-gold-champagne/60" : "bg-hairline")} />}
+                      {i < STEPS.length - 1 && <span className={cn("w-px flex-1", i < done - 1 ? "bg-gold-champagne/60" : "bg-hairline")} />}
                     </div>
                     <div className="pb-4">
                       <div className={cn("text-sm font-semibold", isDone ? "text-white" : "text-faint")}>{t(`steps.${s}`)}</div>

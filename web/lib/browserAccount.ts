@@ -32,7 +32,7 @@ function providerOf(account: Account): AccountProvider {
   const legacy = /^(google|apple|microsoft)@device\.invalid$/.exec(account.user.email)?.[1];
   return legacy && !account.passwordHash && !account.quick ? legacy as AccountProvider : "email";
 }
-const nicknameTimestamp = (user: ServerAccount) => [user.nicknameUpdatedAt, user.nicknameChangedAt].filter((value): value is string => !!value).sort((a, b) => Date.parse(b), Date.parse(a))[0];
+const nicknameTimestamp = (user: ServerAccount) => [user.nicknameUpdatedAt, user.nicknameChangedAt].filter((value): value is string => !!value).sort((a, b) => Date.parse(b) - Date.parse(a))[0];
 const publicUser = (account: Account): ServerAccount => ({ ...account.user, provider: providerOf(account),
   nicknameUpdatedAt: nicknameTimestamp(account.user), nicknameChangedAt: nicknameTimestamp(account.user),
   passwordFailures: account.passwordFailures ?? 0, twoFactorEnabled: Boolean(account.secret), sessionVersion: account.user.sessionVersion ?? 0,

@@ -156,14 +156,14 @@ export function AccountClosureFlow() {
     {stage && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4" onMouseDown={event => { if (event.target === event.currentTarget) close(); }}>
       <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="closure-dialog-title" tabIndex={-1} className="w-full max-w-md rounded-2xl border border-hairline bg-surface p-6 shadow-2xl outline-none sm:p-7">
         {stage === "balance" && <>
-          <h2 id="closure-dialog-title" className="text-xl font-semibold text-white">탈퇴 불가 , 출금 필요</h2>
+          <h2 id="closure-dialog-title" className="text-xl font-semibold text-white">탈퇴 불가 · 출금 필요</h2>
           <p className="mt-4 text-sm text-secondary">현재 지갑 잔액: <strong className="text-white">{gate.stage === "balance" ? gate.balance.toLocaleString() : 0} USDT</strong></p>
           {gate.stage === "balance" && gate.pendingCount > 0 && <p className="mt-2 text-sm text-secondary">처리 중인 입출금: {gate.pendingCount}건</p>}
           <p className="mt-4 text-sm leading-7 text-secondary">계정에 남은 잔액이 있어 탈퇴할 수 없습니다. 모든 잔액을 출금하신 후 다시 신청해 주세요.</p>
           <div className="mt-6 flex flex-wrap gap-3"><Link href="/#withdraw" onClick={close} className="inline-flex min-h-11 items-center rounded-xl bg-[#f1eee7] px-4 text-sm font-semibold text-obsidian">출금하러 가기</Link><button type="button" onClick={close} className="min-h-11 rounded-xl border border-hairline px-4 text-sm text-white">닫기</button></div>
         </>}
         {stage === "inventory" && <>
-          <h2 id="closure-dialog-title" className="text-xl font-semibold text-white">탈퇴 불가 , 상품 정리 필요</h2>
+          <h2 id="closure-dialog-title" className="text-xl font-semibold text-white">탈퇴 불가 · 상품 정리 필요</h2>
           <p className="mt-4 text-sm text-secondary">정리할 상품: <strong className="text-white">{gate.stage === "inventory" ? gate.count : 0}개</strong></p>
           <p className="mt-4 text-sm leading-7 text-secondary">보관함에 정리되지 않은 상품이 있어 탈퇴할 수 없습니다. 실물 배송 수령 또는 95% 즉시 페이백으로 상품을 모두 정리한 뒤 다시 시도해 주세요.</p>
           <div className="mt-6 flex flex-wrap gap-3"><Link href="/inventory?tab=held" onClick={close} className="inline-flex min-h-11 items-center rounded-xl bg-[#f1eee7] px-4 text-sm font-semibold text-obsidian">보관함에서 정리하기</Link><button type="button" onClick={close} className="min-h-11 rounded-xl border border-hairline px-4 text-sm text-white">닫기</button></div>

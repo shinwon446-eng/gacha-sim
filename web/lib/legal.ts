@@ -21,7 +21,7 @@ export const LEGAL_VALUES = {
   registrationNumber: legalSetting("NEXT_PUBLIC_LEGAL_REGISTRATION_NUMBER", "VOILA-2026-001"),
   companyAddress: legalSetting("NEXT_PUBLIC_LEGAL_COMPANY_ADDRESS", "Seoul, Republic of Korea"),
   supportEmail: legalSetting("NEXT_PUBLIC_LEGAL_SUPPORT_EMAIL", "support@voila.global"),
-  csHours: legalSetting("NEXT_PUBLIC_LEGAL_CS_HOURS", "Monday~Friday, 09:00~18:00 KST"),
+  csHours: legalSetting("NEXT_PUBLIC_LEGAL_CS_HOURS", "Monday–Friday, 09:00–18:00 KST"),
 };
 export const LEGAL_SOURCES = [
   { key: "consumer", href: "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=282793" },

@@ -22,7 +22,7 @@ export function BillboardHero({ boxes, onInspect, className }: BillboardHeroProp
   const t = useTranslations("design");
   const { boxTitle } = useProductText();
   const [index, setIndex] = useState(0);
-  const box = boxes[Math.min(index, boxes.length, 1)];
+  const box = boxes[Math.min(index, boxes.length - 1)];
   if (!box) return null;
   return (
     <section className={cn("editorial-hero page-shell", className)} aria-labelledby="hero-title">
@@ -42,7 +42,7 @@ export function BillboardHero({ boxes, onInspect, className }: BillboardHeroProp
           <ProductArt image={box.image} alt={boxTitle(box)} accent="#d9c39a" glowStrength={0} bordered={false} priority />
         </div>
         <div className="hero-gallery-top"><span>VOILA SELECTION</span><span>{String(index + 1).padStart(2, "0")} / {String(boxes.length).padStart(2, "0")}</span></div>
-        <button type="button" onClick={() => onInspect?.(box)} className="hero-feature" aria-label={boxTitle(box) + " , " + t("details")}>
+        <button type="button" onClick={() => onInspect?.(box)} className="hero-feature" aria-label={boxTitle(box) + " · " + t("details")}>
           <span className="min-w-0"><span className="eyebrow mb-2 block">{t("featured")}</span><span className="block text-xl font-semibold tracking-tight sm:text-2xl">{boxTitle(box)}</span><span className="mt-2 inline-flex items-baseline gap-2 text-muted"><span className="text-xs">{t("perOpen")}</span><Money value={box.price} size="sm" /></span></span>
           <span className="hero-feature-arrow"><ArrowUpRight size={23} strokeWidth={1.5} aria-hidden /></span>
         </button>

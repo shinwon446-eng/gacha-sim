@@ -17,19 +17,19 @@ type Tab = "usdt" | "withdraw" | "history";
 export interface DepositModalProps {
   open: boolean;
   onClose: () => void;
-  /** 입금이 잔액에 반영된 뒤, 호출측이 토스트를 띄운다 */
+  /** 입금이 잔액에 반영된 뒤 — 호출측이 토스트를 띄운다 */
   onCredited: (amountUsdt: number) => void;
-  /** 출금 신청 확정 후, 호출측이 토스트를 띄운다 */
+  /** 출금 신청 확정 후 — 호출측이 토스트를 띄운다 */
   onWithdrawn?: (amountUsdt: number) => void;
   /** 롤오버 미달로 출금이 막혔을 때 */
   onWithdrawBlocked?: (progressPct: number) => void;
-  /** 열리자마자 보여줄 탭, 모바일 [출금] 진입용 */
+  /** 열리자마자 보여줄 탭 — 모바일 [출금] 진입용 */
   initialTab?: Tab;
 }
 
 /**
  * 지갑 모달. 탭: [USDT 암호화폐 입금] / [↗ 출금]
- * 출금은 자체 모달이라 탭을 누르면 이 모달을 닫고 그쪽을 연다, 모바일에서 하단 내비 [💳 충전]이 유일한 지갑 진입점이므로 여기서 출금까지 닿아야 한다.
+ * 출금은 자체 모달이라 탭을 누르면 이 모달을 닫고 그쪽을 연다 — 모바일에서 하단 내비 [💳 충전]이 유일한 지갑 진입점이므로 여기서 출금까지 닿아야 한다.
  */
 /** 출금 가능한 USDT 잔액 */
 function BalanceSplit() {

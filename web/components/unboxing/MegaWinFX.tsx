@@ -8,11 +8,11 @@ const COINS = 34;
 const CONFETTI = 60;
 const PALETTE = ["#E6CA65", "#FFFFFF", "#E50914", "#F3E3A3", "#D4AF37"];
 
-/** 연출 전용 난수, 결과와 무관 */
-const rnd = (a: number, b: number) => a + Math.random() * (b, a);
+/** 연출 전용 난수 — 결과와 무관 */
+const rnd = (a: number, b: number) => a + Math.random() * (b - a);
 
 /**
- * Phase 3 메가 윈 폭발 축제, 고등급(ROYAL / PRESTIGE) 적중 시.
+ * Phase 3 메가 윈 폭발 축제 — 고등급(ROYAL / PRESTIGE) 적중 시.
  *   1) 화면 전체 화이트 → 골드 플래시
  *   2) 골드 코인 샤워 (CSS 3D 회전 낙하)
  *   3) 컨페티 폭죽

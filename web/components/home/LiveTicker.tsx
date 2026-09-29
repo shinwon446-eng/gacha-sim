@@ -16,11 +16,11 @@ import { useInventoryStore } from "@/stores/inventoryStore";
 import { useWalletStore } from "@/stores/walletStore";
 import { useFairStore } from "@/stores/fairStore";
 
-/** 상대 시간, 초/분/시간 */
+/** 상대 시간 — 초/분/시간 */
 function useRelative(locale: string) {
   const rtf = useMemo(() => new Intl.RelativeTimeFormat(locale === "zh" ? "zh-CN" : locale, { numeric: "always" }), [locale]);
   return (iso: string, now: number) => {
-    const s = Math.max(1, Math.round((now, new Date(iso).getTime()) / 1000));
+    const s = Math.max(1, Math.round((now - new Date(iso).getTime()) / 1000));
     if (s < 60) return rtf.format(-s, "second");
     if (s < 3600) return rtf.format(-Math.round(s / 60), "minute");
     if (s < 86400) return rtf.format(-Math.round(s / 3600), "hour");
@@ -28,7 +28,7 @@ function useRelative(locale: string) {
   };
 }
 
-/** 20px 썸네일, 이미지가 없으면 종류 글리프(₮ 캐시 , ▤ 기프트카드), 깨지면 자리만 남긴다 */
+/** 20px 썸네일 — 이미지가 없으면 종류 글리프(₮ 캐시 · ▤ 기프트카드), 깨지면 자리만 남긴다 */
 function Thumb({ src, alt, accent, kind }: { src: string | null; alt: string; accent?: string; kind?: ItemKind }) {
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [src]);
@@ -42,10 +42,10 @@ function Thumb({ src, alt, accent, kind }: { src: string | null; alt: string; ac
 }
 
 /**
- * 최상단 라이브 드랍 티커 (CLAUDE.md §4-1), 헤더 바로 아래, 히어로 위.
- * live 모드: API 스트림(30초 폴링). preview 모드: 이 기기의 실제 당첨, 환전, 출고 기록. 기록이 없으면 공개 잭팟 라인업(사실)을 흘린다, 타인 활동을 지어내지 않는다.
- * 항목: [LIVE] 뱃지 , 마스킹 핸들 , 박스/상품 썸네일 , "박스 ➔ 상품 획득" , 경과 시간 뱃지. ROYAL 당첨은 골드 네온 테두리.
- * 목록을 두 번 렌더해 좌로 무한 루프(.ticker-track). 호버, 터치 중에는 멈춘다. 시각은 마운트 후에만 렌더한다.
+ * 최상단 라이브 드랍 티커 (CLAUDE.md §4-1) — 헤더 바로 아래, 히어로 위.
+ * live 모드: API 스트림(30초 폴링). preview 모드: 이 기기의 실제 당첨·환전·출고 기록. 기록이 없으면 공개 잭팟 라인업(사실)을 흘린다 — 타인 활동을 지어내지 않는다.
+ * 항목: [LIVE] 뱃지 · 마스킹 핸들 · 박스/상품 썸네일 · "박스 ➔ 상품 획득" · 경과 시간 뱃지. ROYAL 당첨은 골드 네온 테두리.
+ * 목록을 두 번 렌더해 좌로 무한 루프(.ticker-track). 호버·터치 중에는 멈춘다. 시각은 마운트 후에만 렌더한다.
  */
 export function LiveTicker({ className }: { className?: string }) {
   const t = useTranslations("ticker");
@@ -129,12 +129,12 @@ export function LiveTicker({ className }: { className?: string }) {
     );
   };
 
-  // 항목이 적으면 루프가 비어 보인다, 최소 8칸이 되도록 반복
+  // 항목이 적으면 루프가 비어 보인다 — 최소 8칸이 되도록 반복
   const list = drops.length >= 8 ? drops : Array.from({ length: Math.ceil(8 / drops.length) }, () => drops).flat().slice(0, 8);
 
   return (
     <div className={cn("relative flex items-center overflow-hidden border-b border-hairline bg-obsidian/90 px-[4%] py-2 backdrop-blur-md", className)} aria-label={t("label")}>
-      {/* 좌측 고정, 🏆 잭팟 풀(히어로에서 이사) + LIVE 램프 */}
+      {/* 좌측 고정 — 🏆 잭팟 풀(히어로에서 이사) + LIVE 램프 */}
       <JackpotPoolBadge className="mr-2 sm:mr-3" />
       <span className="z-10 hidden flex-none items-center gap-1.5 pr-3 text-[10px] font-bold uppercase tracking-[0.18em] text-crimson sm:flex">
         <span aria-hidden className="h-1.5 w-1.5 animate-pulse rounded-full bg-crimson" />

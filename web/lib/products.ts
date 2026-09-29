@@ -17,7 +17,7 @@ export interface CategoryFilter {
   label: string;
 }
 
-/** 라벨은 messages `categories.*` 가 로케일별로 덮어쓴다, 여기 값은 한국어 기본값 */
+/** 라벨은 messages `categories.*` 가 로케일별로 덮어쓴다 — 여기 값은 한국어 기본값 */
 export const CATEGORY_FILTERS: CategoryFilter[] = [
   { key: "all", label: "전체" },
   { key: "dollar", label: "1달러의 행복" },
@@ -36,9 +36,9 @@ export const SORTS: { key: SortKey; label: string }[] = [
 ];
 
 /**
- * physical, 실물(배송 또는 95% 즉시 회수)
- * digital, 글로벌 디지털 자산(기프트카드 코드 발송 또는 95% 즉시 회수, 배송, 관세 없음)
- * cash, USDT 즉시 캐시백. 개봉 즉시 100% 잔액에 적립된다(보관함을 거치지 않음)
+ * physical — 실물(배송 또는 95% 즉시 회수)
+ * digital  — 글로벌 디지털 자산(기프트카드 코드 발송 또는 95% 즉시 회수, 배송·관세 없음)
+ * cash     — USDT 즉시 캐시백. 개봉 즉시 100% 잔액에 적립된다(보관함을 거치지 않음)
  */
 export type ItemKind = "physical" | "digital" | "cash";
 
@@ -64,7 +64,7 @@ export interface ProductBox {
   titleEn: string;
   /** 1회 오픈 가격(USDT) */
   price: number;
-  /** 최저 실판매가(USDT), items 에서 파생 */
+  /** 최저 실판매가(USDT) — items 에서 파생 */
   guaranteedMin: number;
   category: BoxCategory;
   code: string;
@@ -100,7 +100,7 @@ interface BoxSpec {
   tone: string;
   badge: string;
   tagline: string;
-  /** 1회 오픈 가격, 스펙 고정값 */
+  /** 1회 오픈 가격 — 스펙 고정값 */
   price: number;
   trendingRank?: number;
   releasedAt: string;
@@ -108,28 +108,28 @@ interface BoxSpec {
   items: ItemSpec[];
 }
 
-/** 정가 기준 환원율 밴드, 상한은 1/REFUND_RATE(현금 차익 방지) */
+/** 정가 기준 환원율 밴드 — 상한은 1/REFUND_RATE(현금 차익 방지) */
 export const RETAIL_RTP_MIN = 0.93;
 export const RETAIL_RTP_MAX = 1 / REFUND_RATE;
 /** 바닥 즉시 환전액 / 가격 밴드 */
 export const FLOOR_CASH_MIN = 0.8;
 export const FLOOR_CASH_MAX = 0.96;
 
-/** 즉시 회수액(USDT), 실물, 디지털은 실판매가의 95%, USDT 캐시백은 100% */
+/** 즉시 회수액(USDT) — 실물·디지털은 실판매가의 95%, USDT 캐시백은 100% */
 export const sellValueOf = (item: Pick<ProductItem, "kind" | "value">): number => +(item.kind === "cash" ? item.value : item.value * REFUND_RATE).toFixed(2);
 export const isCashItem = (item: Pick<ProductItem, "kind">): boolean => item.kind === "cash";
 
 const violations: string[] = [];
-const cents = (n: number) => Math.abs(n * 100, Math.round(n * 100)) < 1e-9;
+const cents = (n: number) => Math.abs(n * 100 - Math.round(n * 100)) < 1e-9;
 
 function buildBox(spec: BoxSpec): ProductBox {
   const declared = spec.items.filter((i) => i[4] !== REST);
-  const restCount = spec.items.length, declared.length;
+  const restCount = spec.items.length - declared.length;
   if (restCount > 1) throw new Error(`${spec.slug}: REST 는 마지막 1개 항목에만 쓴다`);
   const sum = declared.reduce((s, i) => s + i[4], 0);
-  const rest = +(100, sum).toFixed(4);
+  const rest = +(100 - sum).toFixed(4);
   if (restCount === 1 && rest <= 0) throw new Error(`${spec.slug}: 잔여 확률이 0 이하 (${rest})`);
-  if (restCount === 0 && Math.abs(sum, 100) > 1e-9) throw new Error(`${spec.slug}: 확률 합 ${sum}`);
+  if (restCount === 0 && Math.abs(sum - 100) > 1e-9) throw new Error(`${spec.slug}: 확률 합 ${sum}`);
   if (!cents(spec.price)) throw new Error(`${spec.slug}: price 는 소수 둘째 자리까지 (${spec.price})`);
 
   const items: ProductItem[] = spec.items.map(([id, name, nameEn, value, dropRate, code, tone, kind = "physical"]) => {
@@ -150,7 +150,7 @@ function buildBox(spec: BoxSpec): ProductBox {
   if (retailRtp < RETAIL_RTP_MIN || retailRtp >= RETAIL_RTP_MAX) {
     violations.push(`${spec.slug}: 정가 환원율 ${(retailRtp * 100).toFixed(2)}% 가 밴드[${RETAIL_RTP_MIN * 100}, ${(RETAIL_RTP_MAX * 100).toFixed(2)}) 밖 (EV ${ev.toFixed(4)})`);
   }
-  if (cashEv >= price) violations.push(`${spec.slug}: 현금 기대값 ${cashEv.toFixed(2)} >= 가격 ${price}, 무위험 차익`);
+  if (cashEv >= price) violations.push(`${spec.slug}: 현금 기대값 ${cashEv.toFixed(2)} >= 가격 ${price} — 무위험 차익`);
   if (floorCash < FLOOR_CASH_MIN || floorCash > FLOOR_CASH_MAX) {
     violations.push(`${spec.slug}: 바닥 환전액 ${(floorCash * 100).toFixed(1)}% 가 밴드[${FLOOR_CASH_MIN * 100}, ${FLOOR_CASH_MAX * 100}] 밖 (최저 ${guaranteedMin})`);
   }
@@ -232,7 +232,7 @@ const SPECS: BoxSpec[] = [
     code: "DGM",
     tone: T.graphite,
     badge: "1달러",
-    tagline: "1달러로 RTX 5090, 스위치 2 도전. 미당첨 시 0.85 USDT 즉시 페이백.",
+    tagline: "1달러로 RTX 5090·스위치 2 도전. 미당첨 시 0.85 USDT 즉시 페이백.",
     price: 1,
     trendingRank: 3,
     releasedAt: "2026-09-18",
@@ -349,7 +349,7 @@ const SPECS: BoxSpec[] = [
     code: "VOM",
     tone: T.steel,
     badge: "워치",
-    tagline: "25달러로 오메가, 튜더, 티쏘 도전. 미당첨 시 23 USDT 즉시 페이백.",
+    tagline: "25달러로 오메가·튜더·티쏘 도전. 미당첨 시 23 USDT 즉시 페이백.",
     price: 25,
     releasedAt: "2026-09-18",
     popularity: 74800,
@@ -466,8 +466,8 @@ function withCashbackSchedule(box: ProductBox): ProductBox {
   const other = box.items.filter(item => item.id !== base.id);
   const total = other.reduce((sum, item) => sum + item.dropRate, 0);
   const quotas = other.map((item, index) => ({ item, index, raw: item.dropRate / total * 20_000, units: Math.floor(item.dropRate / total * 20_000) }));
-  let remaining = 20_000, quotas.reduce((sum, q) => sum + q.units, 0);
-  const ranked = [...quotas].sort((a, b) => (b.raw, b.units), (a.raw, a.units) || a.index, b.index);
+  let remaining = 20_000 - quotas.reduce((sum, q) => sum + q.units, 0);
+  const ranked = [...quotas].sort((a, b) => (b.raw - b.units) - (a.raw - a.units) || a.index - b.index);
   for (let n = 0; n < remaining; n++) ranked[n % ranked.length].units++;
   if (quotas.some(q => q.units < 1)) throw new Error(`${box.slug}: prize below probability resolution`);
   const doubled: ProductItem = { ...base, id: `${base.id}-double`, name: `${+(base.value * 2).toFixed(2)} USDT 캐시백`, nameEn: `${+(base.value * 2).toFixed(2)} USDT Cashback`, value: +(base.value * 2).toFixed(2), dropRate: 49, code: `${base.code}X2` };
@@ -480,7 +480,7 @@ function withCashbackSchedule(box: ProductBox): ProductBox {
 export const BOXES: ProductBox[] = SPECS.map(buildBox).map(withCashbackSchedule);
 
 if (violations.length > 0) {
-  throw new Error(["상품 데이터셋 불변식 위반", ...violations].join("\n , "));
+  throw new Error(["상품 데이터셋 불변식 위반", ...violations].join("\n  - "));
 }
 
 export const BOX_BY_SLUG: Record<string, ProductBox> = Object.fromEntries(BOXES.map((b) => [b.slug, b]));
@@ -488,33 +488,33 @@ export const getBoxBySlug = (slug: string): ProductBox | undefined => BOX_BY_SLU
 
 // ── 파생 계산 ──────────────────────────────────────────────
 
-/** 정가 기준 기대값(USDT). 바닥이 가격에 붙은 박스는 price 를 넘을 수 있다, 현금 환산은 항상 미만. */
+/** 정가 기준 기대값(USDT). 바닥이 가격에 붙은 박스는 price 를 넘을 수 있다 — 현금 환산은 항상 미만. */
 export const expectedValue = (box: ProductBox): number => box.items.reduce((s, i) => s + (i.value * i.dropRate) / 100, 0);
 /** 정가 기준 환원율 */
 export const retailReturn = (box: ProductBox): number => expectedValue(box) / box.price;
 /** Cash-equivalent expected return. The requested 49/49 schedule can exceed 1. */
 export const cashReturn = (box: ProductBox): number => box.items.reduce((s, i) => s + (sellValueOf(i) * i.dropRate) / 100, 0) / box.price;
-/** 바닥 즉시 환전액(USDT), 바닥 등급은 USDT 캐시백이라 100% 적립. "꽝이어도 이만큼은 돌아온다" */
+/** 바닥 즉시 환전액(USDT) — 바닥 등급은 USDT 캐시백이라 100% 적립. "꽝이어도 이만큼은 돌아온다" */
 export const floorCash = (box: ProductBox): number => +box.guaranteedMin.toFixed(2);
 /** 바닥 환전액 / 가격 */
 export const floorRatio = (box: ProductBox): number => floorCash(box) / box.price;
-/** 바닥 보장, 모든 박스가 참(빌더가 밴드를 강제). 표기 조건용으로 남긴다. */
+/** 바닥 보장 — 모든 박스가 참(빌더가 밴드를 강제). 표기 조건용으로 남긴다. */
 export const isValueGuaranteed = (box: ProductBox): boolean => floorRatio(box) >= FLOOR_CASH_MIN;
 
-export const dropTable = (box: ProductBox): ProductItem[] => [...box.items].sort((a, b) => b.value, a.value);
+export const dropTable = (box: ProductBox): ProductItem[] => [...box.items].sort((a, b) => b.value - a.value);
 export const ceilingValue = (box: ProductBox): number => Math.max(...box.items.map((i) => i.value));
 
 // ── 행(Row) 셀렉터 ─────────────────────────────────────────
 
-/** TOP 10, trendingRank 우선, 나머지는 인기순 */
+/** TOP 10 — trendingRank 우선, 나머지는 인기순 */
 export const trending = (limit = 10): ProductBox[] =>
   [...BOXES]
     .filter((b) => typeof b.trendingRank === "number")
-    .sort((a, b) => a.trendingRank!, b.trendingRank!)
-    .concat([...BOXES].filter((b) => typeof b.trendingRank !== "number").sort((a, b) => b.popularity, a.popularity))
+    .sort((a, b) => a.trendingRank! - b.trendingRank!)
+    .concat([...BOXES].filter((b) => typeof b.trendingRank !== "number").sort((a, b) => b.popularity - a.popularity))
     .slice(0, limit);
 
-const rowOf = (c: BoxCategory) => (): ProductBox[] => BOXES.filter((b) => b.category === c).sort((a, b) => b.popularity, a.popularity);
+const rowOf = (c: BoxCategory) => (): ProductBox[] => BOXES.filter((b) => b.category === c).sort((a, b) => b.popularity - a.popularity);
 /** 🔥 1달러의 행복 */
 export const dollarRow = rowOf("dollar");
 /** ⚡ 애플&테크 */
@@ -524,7 +524,7 @@ export const luxuryRow = rowOf("luxury");
 /** 🚗 슈퍼카&골드바 */
 export const jackpotRow = rowOf("jackpot");
 
-/** 히어로, 1 USDT 박스 우선 */
+/** 히어로 — 1 USDT 박스 우선 */
 export const heroBox = (): ProductBox => dollarRow()[0] ?? trending(1)[0];
 
 export const byCategory = (key: BoxCategory | "all"): ProductBox[] => (key === "all" ? BOXES : BOXES.filter((b) => b.category === key));
@@ -533,13 +533,13 @@ export function sortBoxes(list: ProductBox[], key: SortKey): ProductBox[] {
   const out = [...list];
   switch (key) {
     case "price-asc":
-      return out.sort((a, b) => a.price, b.price);
+      return out.sort((a, b) => a.price - b.price);
     case "price-desc":
-      return out.sort((a, b) => b.price, a.price);
+      return out.sort((a, b) => b.price - a.price);
     case "popularity":
-      return out.sort((a, b) => b.popularity, a.popularity);
+      return out.sort((a, b) => b.popularity - a.popularity);
     default:
-      return out.sort((a, b) => (a.trendingRank ?? 99), (b.trendingRank ?? 99) || b.popularity, a.popularity);
+      return out.sort((a, b) => (a.trendingRank ?? 99) - (b.trendingRank ?? 99) || b.popularity - a.popularity);
   }
 }
 

@@ -1,19 +1,19 @@
 /**
  * 일일 무료 상자 (CLAUDE.md §7-A, PROMPTS 4-1).
- *   , 24시간마다 1회. 로그인이 없으므로 브라우저(localStorage) 단위로 센다, 실서비스는 계정 단위.
- *   , 보상 0.1 ~ 1.0 USDT. 결과는 유료 박스와 같은 Provably Fair 엔진(HMAC 롤 → 구간)으로 정해진다.
- *     카드 선택은 연출일 뿐 결과를 바꾸지 않는다, 화면에 그 사실을 적는다.
+ *   · 24시간마다 1회. 로그인이 없으므로 브라우저(localStorage) 단위로 센다 — 실서비스는 계정 단위.
+ *   · 보상 0.1 ~ 1.0 USDT. 결과는 유료 박스와 같은 Provably Fair 엔진(HMAC 롤 → 구간)으로 정해진다.
+ *     카드 선택은 연출일 뿐 결과를 바꾸지 않는다 — 화면에 그 사실을 적는다.
  */
 import { determineItem, type WithProbability } from "@/lib/fairness";
 
 export interface DailyReward extends WithProbability {
   /** USDT */
   amount: number;
-  /** 등급 색, 연출용 */
+  /** 등급 색 — 연출용 */
   tone: "curated" | "executive" | "prestige" | "royal";
 }
 
-/** 확률표, 합 100. 기대값 ≈ 0.243 USDT */
+/** 확률표 — 합 100. 기대값 ≈ 0.243 USDT */
 export const DAILY_REWARDS: DailyReward[] = [
   { amount: 0.1, dropRate: 45, tone: "curated" },
   { amount: 0.2, dropRate: 25, tone: "curated" },

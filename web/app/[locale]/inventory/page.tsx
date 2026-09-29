@@ -84,15 +84,15 @@ export default function InventoryPage() {
 
   const counts = useMemo(() => items.reduce((acc, item) => { acc[vaultTab(item)]++; return acc; }, { held: 0, shipping: 0, done: 0 }), [items]);
   const visible = useMemo(() => {
-    const cutoff = period === "all" ? 0 : Date.now(), Number(period) * 86400000;
+    const cutoff = period === "all" ? 0 : Date.now() - Number(period) * 86400000;
     return items.filter(item => {
       const product = productOf(item);
       const box = BOX_BY_SLUG[item.boxSlug];
       const haystack = [product ? itemName(product) : item.itemId, box ? boxTitle(box) : item.boxSlug, item.id].join(" ").toLocaleLowerCase(locale);
       return vaultTab(item) === tab && (kind === "all" || recordKind(item) === kind) && haystack.includes(query.trim().toLocaleLowerCase(locale)) && (!cutoff || Date.parse(processedAt(item) ?? "") >= cutoff);
     }).sort((a, b) => {
-      if (sort === "valueDesc") return (tab === "done" ? b.soldForUsdt ?? 0 : b.valueUsdt), (tab === "done" ? a.soldForUsdt ?? 0 : a.valueUsdt);
-      const delta = (Date.parse(processedAt(b) ?? "") || 0), (Date.parse(processedAt(a) ?? "") || 0);
+      if (sort === "valueDesc") return (tab === "done" ? b.soldForUsdt ?? 0 : b.valueUsdt) - (tab === "done" ? a.soldForUsdt ?? 0 : a.valueUsdt);
+      const delta = (Date.parse(processedAt(b) ?? "") || 0) - (Date.parse(processedAt(a) ?? "") || 0);
       return sort === "oldest" ? -delta : delta;
     });
   }, [items, tab, query, kind, period, sort, itemName, boxTitle, locale]);
@@ -201,7 +201,7 @@ export default function InventoryPage() {
           </li>;
         })}</ul>
       </div>}
-      {shown < visible.length && <div className="mt-6 flex justify-center"><button className="workspace-button" onClick={() => setShown(n => n + PAGE)}>{r("loadMore", { n: visible.length, shown })}</button></div>}
+      {shown < visible.length && <div className="mt-6 flex justify-center"><button className="workspace-button" onClick={() => setShown(n => n + PAGE)}>{r("loadMore", { n: visible.length - shown })}</button></div>}
     </section>
     {tab === "held" && selectedItems.length > 0 && <div className="vault-selection-bar"><div><p>{t("selected", { n: selectedItems.length })}</p><Money value={resaleEstimate(selectedItems)} size="sm" numberClassName="text-gold-champagne" /></div><button className="workspace-button" onClick={() => setSelected(new Set())} aria-label={t("clearSelection")}><X className="h-4 w-4" /></button><button className="workspace-button" onClick={() => setShipTarget(selectedItems.map(o => o.id))}>{r("requestDelivery")}</button><button className="workspace-button primary" onClick={() => setSellTarget(selectedItems.map(o => o.id))}>{r("sellback")}</button></div>}
     <SellConfirmModal open={!!sellTarget} count={targetItems.length} amountUsdt={resaleEstimate(targetItems)} refundRate={REFUND_RATE} onClose={() => setSellTarget(null)} onConfirm={sell} />

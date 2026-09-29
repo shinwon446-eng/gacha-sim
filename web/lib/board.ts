@@ -59,7 +59,7 @@ export function applyBoardCommand(posts: BoardPost[], command: BoardCommand, act
 export function selectBoardPosts(posts: BoardPost[], options: { category: string; query: string; mine: boolean; userId?: string; sort: string }) {
   const query = options.query.trim().toLocaleLowerCase();
   return posts.filter(p => (options.category === "all" || p.category === options.category) && (!options.mine || p.authorId === options.userId) && `${p.title} ${p.body} ${p.authorName}`.toLocaleLowerCase().includes(query))
-    .sort((a, b) => Number(b.pinned), Number(a.pinned) || (options.sort === "discussed" ? b.comments.length, a.comments.length : 0) || (options.sort === "oldest" ? 1 : -1) * (Date.parse(a.createdAt), Date.parse(b.createdAt)) || a.id.localeCompare(b.id));
+    .sort((a, b) => Number(b.pinned) - Number(a.pinned) || (options.sort === "discussed" ? b.comments.length - a.comments.length : 0) || (options.sort === "oldest" ? 1 : -1) * (Date.parse(a.createdAt) - Date.parse(b.createdAt)) || a.id.localeCompare(b.id));
 }
 /** Reject corrupt persistence or malformed API responses rather than overwriting existing records. */
 export function parseBoardPosts(value: unknown): BoardPost[] {

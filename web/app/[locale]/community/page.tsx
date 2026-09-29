@@ -53,7 +53,7 @@ export default function CommunityPage() {
     const product = BOX_BY_SLUG[review.boxSlug]?.items.find(i => i.id === review.itemId);
     const text = [review.text, product ? itemName(product) : review.itemId].join(" ").toLocaleLowerCase(locale);
     return text.includes(query.trim().toLocaleLowerCase(locale)) && (filter === "all" || (filter === "photo" ? !!review.photo : review.rating === Number(filter)));
-  }).sort((a, b) => (sort === "newest" ? 1 : -1) * (Date.parse(b.at), Date.parse(a.at))), [tab, publicReviews, mine, query, filter, sort, locale, itemName]);
+  }).sort((a, b) => (sort === "newest" ? 1 : -1) * (Date.parse(b.at) - Date.parse(a.at))), [tab, publicReviews, mine, query, filter, sort, locale, itemName]);
   const write = (ownedId?: string) => { setEditing(null); setInitialOwnedId(ownedId); setWriteOpen(true); };
   const remove = (id: string) => {
     try { useCommunityStore.getState().remove(id); setDeleting(null); setToast(r("reviewDeleted")); }
@@ -97,7 +97,7 @@ export default function CommunityPage() {
                 {isMine && deleting === review.id && <div className="mt-3 rounded-lg border border-hairline bg-obsidian p-4"><p className="text-sm leading-6 text-secondary">{r("deleteConfirmation")}</p><div className="mt-3 flex gap-2"><button className="workspace-button" onClick={() => setDeleting(null)}>{r("cancel")}</button><button className="workspace-button primary" onClick={() => remove(review.id)}>{r("delete")}</button></div></div>}
               </li>;
             })}</ul>
-            {shown < reviews.length && <button className="workspace-button mx-auto mt-6 flex" onClick={() => setShown(n => n + 12)}>{r("loadMore", { n: reviews.length, shown })}</button>}
+            {shown < reviews.length && <button className="workspace-button mx-auto mt-6 flex" onClick={() => setShown(n => n + 12)}>{r("loadMore", { n: reviews.length - shown })}</button>}
           </>}
         </div>
         <aside className="journal-guide">

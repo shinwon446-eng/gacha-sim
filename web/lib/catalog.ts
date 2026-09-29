@@ -1,14 +1,14 @@
 /**
- * 상품 목업 데이터셋, 단일 원천(single source of truth).
+ * 상품 목업 데이터셋 — 단일 원천(single source of truth).
  *
  * 스키마는 지정된 형태를 그대로 따른다:
  *   id, name_en, name_zh, price_usd, guaranteed_min_value, probability_table, image_placeholder
  *
  * 규칙
- * , 이모지 금지. 마케팅성 과장 표현 금지. 톤은 미니멀, 냉정, 정확.
- * , probability_table 의 weight 합계는 박스마다 정확히 100 이어야 한다 (tests 에서 검증).
- * , image_placeholder 는 AssetPlate 에 렌더되는 애셋 코드다. 2~6자 대문자 A-Z0-9, 하이픈 1개 허용.
- * , guaranteed_min_value 는 probability_table 내 최저 value_usd 와 일치해야 한다 (tests 에서 검증).
+ *  - 이모지 금지. 마케팅성 과장 표현 금지. 톤은 미니멀·냉정·정확.
+ *  - probability_table 의 weight 합계는 박스마다 정확히 100 이어야 한다 (tests 에서 검증).
+ *  - image_placeholder 는 AssetPlate 에 렌더되는 애셋 코드다. 2~6자 대문자 A-Z0-9, 하이픈 1개 허용.
+ *  - guaranteed_min_value 는 probability_table 내 최저 value_usd 와 일치해야 한다 (tests 에서 검증).
  */
 
 export interface CatalogEntry {
@@ -32,7 +32,7 @@ export interface CatalogBox {
   name_zh: string;
   /** 1회 재생 가격(USD) */
   price_usd: number;
-  /** 최저 보장가(USD), 어떤 결과든 이 값 이상의 실판매가를 수령한다 */
+  /** 최저 보장가(USD) — 어떤 결과든 이 값 이상의 실판매가를 수령한다 */
   guaranteed_min_value: number;
   image_placeholder: string;
   probability_table: CatalogEntry[];
@@ -117,6 +117,6 @@ export const CATALOG_MAP: Record<string, CatalogBox> = Object.fromEntries(CATALO
 export const computeGuaranteedMin = (box: CatalogBox): number =>
   Math.min(...box.probability_table.map((e) => e.value_usd));
 
-/** 가중치 합계, 100 이어야 한다. */
+/** 가중치 합계 — 100 이어야 한다. */
 export const weightSum = (box: CatalogBox): number =>
   box.probability_table.reduce((s, e) => s + e.weight, 0);

@@ -33,16 +33,16 @@ interface Props {
   prepared?: OpeningResult[];
   count: number;
   onClose: () => void;
-  /** 미정산(실물, 디지털) 당첨의 일괄 회수, 호출측이 잔액에 반영한다 */
+  /** 미정산(실물·디지털) 당첨의 일괄 회수 — 호출측이 잔액에 반영한다 */
   onSellBack: (ids: string[], amountUsdt: number, split?: { toCrypto: number; toCard: number }) => void;
-  /** 이 개봉에 쓰인 잔액의 원천 비율, 당첨 아이템 족보로 박힌다 */
+  /** 이 개봉에 쓰인 잔액의 원천 비율 — 당첨 아이템 족보로 박힌다 */
   funding?: FundingRatio;
 }
 
 /** 스펙: 대량 개봉은 릴 없이 1.5초 고속 개봉 */
 export const BULK_OPEN_MS = 1500;
 
-/** 카운트업 숫자, 0 → value */
+/** 카운트업 숫자 — 0 → value */
 function CountUp({ value, className, style }: { value: number; className?: string; style?: React.CSSProperties }) {
   const reducedMotion = useReducedMotion();
   const [v, setV] = useState(0);
@@ -59,8 +59,8 @@ function CountUp({ value, className, style }: { value: number; className?: strin
 }
 
 /**
- * 50 / 100개 대량 개봉, 결과는 스핀마다 Provably Fair(서버 시드 , 클라이언트 시드 , nonce)로 확정한다.
- * 릴은 생략하고 1.5초 고속 개봉 연출 뒤 요약 그리드: 상단 [총 투입 vs 총 획득 가치 , 순손익] 카운트업,
+ * 50 / 100개 대량 개봉 — 결과는 스핀마다 Provably Fair(서버 시드 · 클라이언트 시드 · nonce)로 확정한다.
+ * 릴은 생략하고 1.5초 고속 개봉 연출 뒤 요약 그리드: 상단 [총 투입 vs 총 획득 가치 · 순손익] 카운트업,
  * 최고 등급 카드는 골드 스파크 + 3D 플로팅 하이라이트. 캐시백은 확정 즉시 100% 잔액에 적립된다.
  */
 export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPTO_ONLY, prepared }: Props) {
@@ -89,13 +89,13 @@ export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPT
       if (!useSettingsStore.getState().muted) playTaDum();
       const t0 = performance.now();
       const out: BulkResult[] = prepared ?? [];
-      const elapsed = performance.now(), t0;
-      const remain = Math.max(0, BULK_OPEN_MS, elapsed);
+      const elapsed = performance.now() - t0;
+      const remain = Math.max(0, BULK_OPEN_MS - elapsed);
       const start = performance.now();
       await new Promise<void>((resolve) => {
         const tick = () => {
           if (!alive) return resolve();
-          const p = skip.current || reducedMotion ? 1 : Math.min(1, (performance.now(), start) / Math.max(1, remain));
+          const p = skip.current || reducedMotion ? 1 : Math.min(1, (performance.now() - start) / Math.max(1, remain));
           setProgress(p);
           if (p >= 1) resolve();
           else requestAnimationFrame(tick);
@@ -103,7 +103,7 @@ export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPT
         tick();
       });
       if (!alive) return;
-      const sorted = [...out].sort((a, b) => b.item.value, a.item.value);
+      const sorted = [...out].sort((a, b) => b.item.value - a.item.value);
       setResults(sorted);
       setPhase("done");
       const best = sorted[0];
@@ -118,7 +118,7 @@ export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPT
     };
   }, [box, count, prepared, reducedMotion]);
 
-  // 닫히면 리셋, 컴포넌트는 항상 마운트돼 있으므로 다음 대량 개봉이 다시 돌 수 있어야 한다
+  // 닫히면 리셋 — 컴포넌트는 항상 마운트돼 있으므로 다음 대량 개봉이 다시 돌 수 있어야 한다
   useEffect(() => {
     if (box) return;
     ran.current = false;
@@ -136,7 +136,7 @@ export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPT
 
   const spent = +(box.price * count).toFixed(2);
   const won = +results.reduce((s, r) => s + r.item.value, 0).toFixed(2);
-  const net = +(won, spent).toFixed(2);
+  const net = +(won - spent).toFixed(2);
   const pending = results.filter((r) => !r.settled);
   const sellAmount = +pending.reduce((s, r) => s + sellValueOf(r.item), 0).toFixed(2);
   const cashCredited = +results.filter((r) => r.settled).reduce((s, r) => s + r.item.value, 0).toFixed(2);
@@ -174,7 +174,7 @@ export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPT
         ) : (
           <div className="flex min-h-0 flex-1 flex-col">
             <p className="px-[4%] pt-4 text-center text-sm leading-relaxed text-secondary">{tr("unbox.batchComplete", { n: results.length })}</p>
-            {/* 손익 요약, 카운트업 */}
+            {/* 손익 요약 — 카운트업 */}
             <div className="border-b border-hairline px-[4%] py-4">
               <div className="mx-auto grid max-w-3xl grid-cols-1 gap-2 text-center sm:grid-cols-3">
                 <div className="rounded-lg border border-white/10 bg-obsidian px-2 py-3">
@@ -229,7 +229,7 @@ export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPT
 
             {/* 액션 */}
             <div className="border-t border-hairline px-[4%] py-3">
-              {/* 전부 캐시백(자동 정산)이면 회수할 게 없다, 비활성 "0개 회수" 대신 확인 버튼만 전폭으로 */}
+              {/* 전부 캐시백(자동 정산)이면 회수할 게 없다 — 비활성 "0개 회수" 대신 확인 버튼만 전폭으로 */}
               <div className={cn("mx-auto grid max-w-3xl gap-2", pending.length > 0 ? "grid-cols-2" : "grid-cols-1")}>
                 {pending.length > 0 && (
                 <button

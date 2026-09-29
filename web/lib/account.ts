@@ -65,7 +65,7 @@ function accountFrom(data: unknown): ServerAccount {
   if (user.passwordFailures !== undefined && (!Number.isInteger(user.passwordFailures) || user.passwordFailures < 0 || user.passwordFailures > PASSWORD_FAILURE_LIMIT)) throw new AccountError("invalid");
   if (user.sessionVersion !== undefined && (!Number.isInteger(user.sessionVersion) || user.sessionVersion < 0)) throw new AccountError("invalid");
   if (user.twoFactorEnabled !== undefined && typeof user.twoFactorEnabled !== "boolean") throw new AccountError("invalid");
-  const nicknameAt = [user.nicknameUpdatedAt, user.nicknameChangedAt].filter((value): value is string => !!value).sort((a, b) => Date.parse(b), Date.parse(a))[0];
+  const nicknameAt = [user.nicknameUpdatedAt, user.nicknameChangedAt].filter((value): value is string => !!value).sort((a, b) => Date.parse(b) - Date.parse(a))[0];
   return { ...user, provider: user.provider ?? "email", nicknameUpdatedAt: nicknameAt, nicknameChangedAt: nicknameAt };
 }
 

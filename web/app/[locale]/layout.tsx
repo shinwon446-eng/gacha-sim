@@ -8,16 +8,16 @@ import { Footer } from "@/components/layout/Footer";
 import { AuthHost } from "@/components/auth/AuthHost";
 import { MotionPreferences } from "@/components/layout/MotionPreferences";
 
-/** 정적 export, 세 로케일을 전부 미리 생성한다. 목록 밖 로케일은 404. */
+/** 정적 export — 세 로케일을 전부 미리 생성한다. 목록 밖 로케일은 404. */
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 export const dynamicParams = false;
 
 const SITE = "https://shinwon446-eng.github.io/gacha-sim";
-const TITLE = "VOILA, You never know what’s next.";
+const TITLE = "VOILA — You never know what’s next.";
 const OG_IMAGE = `${SITE}/assets/photography/photo-1610375461246-83df859d849d.webp`;
-/** 로케일별 메타 설명, /en/, /zh/ 에 한국어가 새지 않게 여기서 분기한다 */
+/** 로케일별 메타 설명 — /en/, /zh/ 에 한국어가 새지 않게 여기서 분기한다 */
 const DESCRIPTION: Record<Locale, string> = {
   ko: "롤렉스부터 하이엔드 테크까지, 1달러에 여는 럭셔리 언박싱. 정품 무료 배송 또는 95% 즉시 페이백.",
   en: "From Rolex to high-end tech, luxury unboxing from $1. Free authentic shipping or 95% instant payback.",

@@ -5,7 +5,7 @@ import { CATALOG, type CatalogBox, type CatalogEntry } from "./catalog";
  * 카탈로그 → 앱 모델 어댑터.
  *
  * lib/catalog.ts 가 유일한 상품 데이터 원천이며, 이 파일은 표시 계층이 쓰는 형태로 옮기기만 한다.
- * 가격, 가중치, 확률, 인증번호는 어떤 경우에도 여기서 변형하지 않는다.
+ * 가격·가중치·확률·인증번호는 어떤 경우에도 여기서 변형하지 않는다.
  */
 
 /** 애셋 톤 램프. 전부 무채색이며, 박스당 최고 실판매가 1개에만 crimson 을 허용한다. */
@@ -38,7 +38,7 @@ function toItem(e: CatalogEntry, rank: number, total: number): Item {
   };
 }
 
-/** 시리즈별 표시 메타, 카탈로그에 없는 순수 표시 문구만 여기서 보강한다. */
+/** 시리즈별 표시 메타 — 카탈로그에 없는 순수 표시 문구만 여기서 보강한다. */
 const PRESENTATION: Record<
   string,
   {
@@ -53,7 +53,7 @@ const PRESENTATION: Record<
 > = {
   "black-label-apex-tech": {
     category: "apex",
-    subtitle: "플래그십 컴퓨팅 , XR , 모바일",
+    subtitle: "플래그십 컴퓨팅 · XR · 모바일",
     tagline: "최상위 실리콘만 수록한 시리즈.",
     description:
       "MacBook Pro M4 Max, Vision Pro, 폴더블 플래그십으로 구성된 시리즈. 전 항목 시리얼 기반 정품 인증이며 실물 발송 또는 즉시 회수를 선택한다.",
@@ -63,7 +63,7 @@ const PRESENTATION: Record<
   },
   "overclock-battle-station": {
     category: "battle",
-    subtitle: "GPU , 디스플레이 , 입력장치",
+    subtitle: "GPU · 디스플레이 · 입력장치",
     tagline: "한 번의 시퀀스로 워크스테이션을 구성한다.",
     description:
       "풀빌드 데스크톱, RTX 5090, 49인치 OLED 울트라와이드를 포함한 시리즈. 전 항목 인보이스 또는 시리얼로 인증된다.",
@@ -73,7 +73,7 @@ const PRESENTATION: Record<
   },
   "studio-zero-sound-stage": {
     category: "sound",
-    subtitle: "모니터링 , 마이크 , 인터페이스",
+    subtitle: "모니터링 · 마이크 · 인터페이스",
     tagline: "레퍼런스 체인 전체를 수록했다.",
     description:
       "Genelec 모니터, Neumann U 87 Ai, Apollo x8p 로 구성된 음향 시리즈. 전 항목 시리얼 기반 정품 인증.",
@@ -86,7 +86,7 @@ const PRESENTATION: Record<
 function toBox(c: CatalogBox): Box {
   const p = PRESENTATION[c.id];
   if (!p) throw new Error(`presentation meta missing for ${c.id}`);
-  const ranked = [...c.probability_table].sort((a, b) => b.value_usd, a.value_usd);
+  const ranked = [...c.probability_table].sort((a, b) => b.value_usd - a.value_usd);
   const rankOf = new Map(ranked.map((e, i) => [e.item_id, i]));
   return {
     id: c.id,

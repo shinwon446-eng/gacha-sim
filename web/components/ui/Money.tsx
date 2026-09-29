@@ -6,7 +6,7 @@ import { useCurrency } from "@/lib/useCurrency";
 export type MoneySize = "xs" | "sm" | "md" | "lg";
 
 /**
- * 금액 타이포, 숫자와 통화 단위를 분리해 황금비율로 배치한다.
+ * 금액 타이포 — 숫자와 통화 단위를 분리해 황금비율로 배치한다.
  *   숫자: font-display bold tabular-nums tracking-tight   단위: 작은 semibold, 숫자 우측(또는 기호는 좌측) 베이스라인 정렬
  * 문자열은 formatCurrency 와 동일한 규칙(단일 통화)에서 나온다. `nowrap` 로 KRW 큰 값도 줄바꿈되지 않는다.
  */
@@ -22,12 +22,12 @@ export interface MoneyProps {
   value: number;
   native?: boolean;
   size?: MoneySize;
-  /** 숫자 색 클래스, 기본 흰색. 등급색은 style 로 */
+  /** 숫자 색 클래스 — 기본 흰색. 등급색은 style 로 */
   className?: string;
   numberClassName?: string;
   unitClassName?: string;
   style?: React.CSSProperties;
-  /** 부호 접두, "+", "-" */
+  /** 부호 접두 — "+", "-" */
   sign?: string;
 }
 

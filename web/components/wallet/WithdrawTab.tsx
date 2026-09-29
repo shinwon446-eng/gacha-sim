@@ -21,9 +21,9 @@ import { ConfirmStep, EmailHoldStep, OtpStep } from "@/components/wallet/Withdra
 import { HOLD_HOURS } from "@/lib/withdrawHold";
 
 export interface WithdrawTabProps {
-  /** 출금 신청 확정 후, 호출측이 토스트를 띄운다 */
+  /** 출금 신청 확정 후 — 호출측이 토스트를 띄운다 */
   onRequested?: (amountUsdt: number, network: Network) => void;
-  /** 롤오버 미달로 막혔을 때, 호출측이 경고 토스트를 띄운다 */
+  /** 롤오버 미달로 막혔을 때 — 호출측이 경고 토스트를 띄운다 */
   onBlocked?: (progressPct: number) => void;
   /** [확인] 으로 모달을 닫을 수 있을 때 */
   onDone?: () => void;
@@ -32,7 +32,7 @@ export interface WithdrawTabProps {
 /**
  * 출금 상태 머신 (2026-09-29 운영자 지시)
  *   form → confirm(수수료 제외 후 실수령액) → otp(2차 인증) → 성공: submitting → done
- *                                                        └ 실패, 대체: email(이메일 인증 + 72시간 대기) → submitting → done
+ *                                                        └ 실패·대체: email(이메일 인증 + 72시간 대기) → submitting → done
  * 2FA 미등록 계정은 form 앞에 gate(Google OTP 설정)가 붙는다.
  */
 type Draft = { amountUsdt: number; network: Network; address: string };
@@ -82,10 +82,10 @@ function TxLink({ network, hash, compact, t, copied, onCopy }: { network: Networ
 }
 
 /**
- * USDT 출금 탭, 지갑 모달 3번째 탭이자 출금 모달의 본문.
+ * USDT 출금 탭 — 지갑 모달 3번째 탭이자 출금 모달의 본문.
  * 네트워크(TRC-20 / BEP-20) → 개인 지갑 주소 → 수량(최소 20 USDT, +25%/+50%/전액) → 실수령액 → 신청.
- * 신청 시 잔액을 즉시 차감하고 거래를 PENDING 으로 기록한다. live 모드는 API 가 서명, 브로드캐스트 뒤 상태, TxID 를 주고,
- * preview 모드(백엔드 없음)는 PENDING 에 머문다, TxID 를 지어내지 않는다 (CLAUDE.md 부록 C).
+ * 신청 시 잔액을 즉시 차감하고 거래를 PENDING 으로 기록한다. live 모드는 API 가 서명·브로드캐스트 뒤 상태·TxID 를 주고,
+ * preview 모드(백엔드 없음)는 PENDING 에 머문다 — TxID 를 지어내지 않는다 (CLAUDE.md 부록 C).
  */
 export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps) {
   const t = useTranslations("withdraw");
@@ -98,7 +98,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const addTransaction = useWalletStore((s) => s.addTransaction);
   const transactions = useWalletStore((s) => s.transactions);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
-  // 1단계 관문, Google OTP(2FA) 등록 여부
+  // 1단계 관문 — Google OTP(2FA) 등록 여부
   const twoFactorEnabled = useSecurityStore((s) => s.twoFactorEnabled);
   const user = useAuthStore(s => s.user);
   const securityReady = useSecurityStore(s => s.hydrated && s.userId === user?.id);
@@ -138,7 +138,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
 
   const meta = WITHDRAW_NETWORK_BY_KEY[network];
   const decimals = currency === "KRW" ? 0 : 2;
-  // 입력은 선택 통화 단위, 잔액 반영, 온체인 금액은 USDT 로 환산
+  // 입력은 선택 통화 단위 — 잔액 반영·온체인 금액은 USDT 로 환산
   const amountNative = Number(amountText);
   const amountUsdt = useMemo(() => (Number.isFinite(amountNative) ? +(amountNative / rates[currency]).toFixed(2) : NaN), [amountNative, rates, currency]);
   const errors = useMemo(() => validateWithdrawal({ network, address, amountUsdt, balanceUsdt: balance }), [network, address, amountUsdt, balance]);
@@ -152,7 +152,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
     setAmountText((usdt * rates[currency]).toFixed(decimals));
   };
 
-  /** [출금 신청], 바로 보내지 않고 반드시 [수수료 제외 후 출금 확인] 요약을 거친다 */
+  /** [출금 신청] — 바로 보내지 않고 반드시 [수수료 제외 후 출금 확인] 요약을 거친다 */
   const beginConfirm = useCallback(() => {
     setTouched(true);
     if (stage.kind !== "form" || !user || !securityReady || submission.current) return;
@@ -167,9 +167,9 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   }, [user, securityReady, stage.kind, errors.length, amountUsdt, network, address]);
 
   /**
-   * 2차 인증을 통과한 뒤에만 불린다, 여기서 잔액이 차감되고 출금 내역이 생긴다.
+   * 2차 인증을 통과한 뒤에만 불린다 — 여기서 잔액이 차감되고 출금 내역이 생긴다.
    * 이메일 경로는 `PENDING_72H_HOLD` 로 기록되고 `unlockAt` 이 붙는다.
-   * TxID, COMPLETED 는 백엔드가 준 값으로만 올라간다, preview 는 신청 상태에 머문다(부록 C).
+   * TxID·COMPLETED 는 백엔드가 준 값으로만 올라간다 — preview 는 신청 상태에 머문다(부록 C).
    */
   const commit = useCallback(async (draft: Draft, proof: WithdrawalProof) => {
     if (submission.current || !user || useAuthStore.getState().user?.id !== user.id) return;
@@ -240,7 +240,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
     );
   }
 
-  // ── 3~4단계: 2차 인증 확인 → 성공 / 이메일, 72시간 대기 ──
+  // ── 3~4단계: 2차 인증 확인 → 성공 / 이메일·72시간 대기 ──
   if (stage.kind === "otp") {
     const draft: Draft = { amountUsdt: stage.amountUsdt, network: stage.network, address: stage.address };
     return (
@@ -305,14 +305,14 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
             </div>
           ))}
         </dl>
-        {/* 온체인 TxID, BROADCASTING 이후 */}
+        {/* 온체인 TxID — BROADCASTING 이후 */}
         <div className="border-metallic-subtle mt-3 rounded-md bg-canvas p-2.5">
           <div className="caption-luxury">{t("txHash")}</div>
           <div className="mt-1.5">
             {liveTx?.txHash ? <TxLink network={stage.network} hash={liveTx.txHash} t={t} copied={copied} onCopy={copy} /> : <span className="text-xs text-faint">{t("txHashPending")}</span>}
           </div>
         </div>
-        {/* 이메일 인증 경로, 72시간 보안 대기 후 자동 송금. 남은 시간과 취소 경로를 내역 탭이 이어받는다 */}
+        {/* 이메일 인증 경로 — 72시간 보안 대기 후 자동 송금. 남은 시간과 취소 경로를 내역 탭이 이어받는다 */}
         {stage.hold ? (
           <div className="mt-3 rounded-md border border-gold-champagne/45 bg-gold-champagne/[0.07] p-2.5">
             <div className="flex items-center gap-1.5 text-xs font-bold text-gold-champagne">
@@ -351,12 +351,12 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   return (
     <>
       {submitError && <p role="alert" className="mt-3 text-sm text-red-200">{submitError}</p>}
-      {/* 2FA 보호 중, 1단계 관문을 통과한 계정 */}
+      {/* 2FA 보호 중 — 1단계 관문을 통과한 계정 */}
       <p className="mt-4 flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/[0.07] px-3 py-2 text-xs font-bold text-emerald-300">
         <ShieldCheck className="h-3.5 w-3.5 flex-none" strokeWidth={2.4} />
         {t("gateProtected")}
       </p>
-      {/* 출금 가능액은 암호화폐 입금분만, 카드 충전분은 온체인 출금 불가 (CLAUDE.md §7-B) */}
+      {/* 출금 가능액은 암호화폐 입금분만 — 카드 충전분은 온체인 출금 불가 (CLAUDE.md §7-B) */}
       <div className="mt-2 grid gap-1.5">
         <div className="flex items-baseline justify-between gap-3">
           <span className="text-xs text-muted">{t("availableCrypto")}</span>
@@ -462,7 +462,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
                 <li key={x.id} className="border-metallic-subtle rounded-md bg-obsidian p-2">
                   <div className="flex items-center justify-between gap-2">
                     <span className="truncate font-mono text-faint">
-                      {WITHDRAW_NETWORK_BY_KEY[net2].token} , {addr.slice(0, 10)}…
+                      {WITHDRAW_NETWORK_BY_KEY[net2].token} · {addr.slice(0, 10)}…
                     </span>
                     <span className="flex items-center gap-2">
                       <StatusPill status={x.status ?? "PENDING"} t={t} />

@@ -71,7 +71,7 @@ export function ProofFeed({ limit = 4 }: { limit?: number }) {
       {openings.length ? <ul className="mt-3 divide-y divide-hairline">{openings.map(row => {
         const box = BOX_BY_SLUG[row.boxSlug];
         const product = box?.items.find(item => item.id === row.itemId);
-        return <li key={row.id} className="flex items-center justify-between gap-4 py-3 text-sm"><div className="min-w-0"><p className="truncate text-white">{product ? itemName(product) : row.itemId}</p><p className="mt-1 truncate text-xs text-muted">{box ? boxTitle(box) : row.boxSlug} , {new Date(row.at).toLocaleDateString(locale)}</p></div><Money value={row.amountUsdt ?? product?.value ?? 0} size="sm" /></li>;
+        return <li key={row.id} className="flex items-center justify-between gap-4 py-3 text-sm"><div className="min-w-0"><p className="truncate text-white">{product ? itemName(product) : row.itemId}</p><p className="mt-1 truncate text-xs text-muted">{box ? boxTitle(box) : row.boxSlug} · {new Date(row.at).toLocaleDateString(locale)}</p></div><Money value={row.amountUsdt ?? product?.value ?? 0} size="sm" /></li>;
       })}</ul> : <p className="mt-4 text-sm text-muted">{c.empty}</p>}
     </div>
   </div>;

@@ -18,7 +18,7 @@ interface Props {
 }
 
 /**
- * 프라그마틱 스타일 오토플레이 설정, 회전 수 , 자동 환전 , 스마트 정지 조건.
+ * 프라그마틱 스타일 오토플레이 설정 — 회전 수 · 자동 환전 · 스마트 정지 조건.
  */
 export function AutoplaySettingsModal({ box, initial, onClose, onStart }: Props) {
   const t = useTranslations("autoplay");
@@ -85,7 +85,7 @@ export function AutoplaySettingsModal({ box, initial, onClose, onStart }: Props)
                   <RefreshCw className="h-5 w-5 text-gold-champagne" strokeWidth={2.2} />
                   {t("title")}
                 </h2>
-                <div className="mt-1 text-xs text-muted">{box.title} , {fmt(box.price)} / {t("perSpin")}</div>
+                <div className="mt-1 text-xs text-muted">{box.title} · {fmt(box.price)} / {t("perSpin")}</div>
               </div>
               <button type="button" onClick={onClose} aria-label={t("close")} className="flex h-11 w-11 flex-none items-center justify-center rounded-full text-muted hover:bg-elevation hover:text-white">
                 <X className="h-5 w-5" strokeWidth={2.2} />

@@ -6,7 +6,7 @@ import { glow, tierBreakdown, type Tier, type TierSlice } from "@/lib/tiers";
 
 /**
  * 티어 뱃지. 액센트 색 텍스트 + 같은 색 저알파 배경 + 1px 보더.
- * 채도 높은 배경에 검은 글씨를 쓰지 않는다, 다크 서페이스 위에서 색이 튀어 위계가 무너진다.
+ * 채도 높은 배경에 검은 글씨를 쓰지 않는다 — 다크 서페이스 위에서 색이 튀어 위계가 무너진다.
  */
 export function TierBadge({
   tier,
@@ -76,7 +76,7 @@ export function TierStrip({
 }
 
 /**
- * 넷플릭스 게임형 등급 바, 확률에 비례하지 않는다. 존재하는 등급을 같은 폭으로 늘어놓고
+ * 넷플릭스 게임형 등급 바 — 확률에 비례하지 않는다. 존재하는 등급을 같은 폭으로 늘어놓고
  * LEGENDARY / EPIC / RARE / CASHBACK 라벨만 붙인다. 정밀 확률은 Provably Fair 섹션에서만 본다.
  */
 export function GameTierBar({ slices, compact = false, className }: { slices: TierSlice[]; compact?: boolean; className?: string }) {
@@ -105,7 +105,7 @@ export function GameTierBar({ slices, compact = false, className }: { slices: Ti
   );
 }
 
-/** 바 아래에 붙는 텍스트 범례. 실제 수치는 여기서 읽힌다, Provably Fair 정밀 확률 섹션 전용. */
+/** 바 아래에 붙는 텍스트 범례. 실제 수치는 여기서 읽힌다 — Provably Fair 정밀 확률 섹션 전용. */
 export function TierLegend({ slices, className }: { slices: TierSlice[]; className?: string }) {
   return (
     <ul className={cn("flex flex-wrap items-center gap-x-3 gap-y-1", className)}>

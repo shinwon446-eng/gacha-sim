@@ -19,7 +19,7 @@ import { Money } from "@/components/ui/Money";
 function useRelative(locale: string) {
   const rtf = useMemo(() => new Intl.RelativeTimeFormat(locale === "zh" ? "zh-CN" : locale, { numeric: "auto" }), [locale]);
   return (iso: string, now: number) => {
-    const diffMin = Math.round((new Date(iso).getTime(), now) / 60_000);
+    const diffMin = Math.round((new Date(iso).getTime() - now) / 60_000);
     if (Math.abs(diffMin) < 60) return rtf.format(diffMin, "minute");
     if (Math.abs(diffMin) < 1440) return rtf.format(Math.round(diffMin / 60), "hour");
     return rtf.format(Math.round(diffMin / 1440), "day");
@@ -143,7 +143,7 @@ export function ProofFeed({ limit, showReserve = true, className }: ProofFeedPro
       <div className="border-metallic-subtle overflow-hidden rounded-xl bg-surface">
         <div className="flex items-center gap-2 border-b border-hairline p-4 text-sm font-semibold text-secondary">
           <Gem className="h-4 w-4 text-gold-champagne" aria-hidden />
-          {ko ? "실제 거래 , 개봉 기록" : zh ? "真实交易与开箱记录" : "Actual transactions and openings"}
+          {ko ? "실제 거래 · 개봉 기록" : zh ? "真实交易与开箱记录" : "Actual transactions and openings"}
         </div>
         {feedError && <p role="status" className="px-4 pt-4 text-xs text-muted">{ko ? "서버 기록을 새로 불러오지 못했습니다. 마지막으로 확인된 기록을 표시합니다." : zh ? "无法刷新服务器记录，正在显示最近确认的记录。" : "Server records could not be refreshed. Showing the last available records."}</p>}
         {payouts.length === 0 ? <Empty text={ko ? "아직 실제 거래 기록이 없습니다." : zh ? "暂无真实交易记录。" : "No transactions have been recorded yet."} cta={t("emptyCta")} /> : (

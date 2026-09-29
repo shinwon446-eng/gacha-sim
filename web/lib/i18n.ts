@@ -1,7 +1,7 @@
 /**
- * 카피 사전, 단일 진입점.
+ * 카피 사전 — 단일 진입점.
  *
- * 규칙: 이모지 금지. 마케팅성 과장 표현 금지. 톤은 미니멀, 냉정, 정확.
+ * 규칙: 이모지 금지. 마케팅성 과장 표현 금지. 톤은 미니멀·냉정·정확.
  * en / zh 값은 지정된 사전을 그대로 옮긴 것이며 임의 수정하지 않는다.
  * ko 는 기존 UI 회귀를 막기 위해 유지하되 동일한 레지스터로 정렬했다.
  */
@@ -16,7 +16,7 @@ export const DEFAULT_LOCALE: Locale = "ko";
 
 type Dict = Record<Locale, string>;
 
-/** 사전 키, UI 텍스트 노드는 전부 이 키를 통해 렌더한다. */
+/** 사전 키 — UI 텍스트 노드는 전부 이 키를 통해 렌더한다. */
 export const COPY = {
   // ── 지정 사전 (정확히 일치시킬 것) ──────────────────────
   boxOpen: {
@@ -69,7 +69,7 @@ export const useLocale = create<{ locale: Locale; setLocale: (l: Locale) => void
   setLocale: (locale) => set({ locale }),
 }));
 
-/** 컴포넌트에서 쓰는 헬퍼, 현재 로케일로 키를 해석한다. */
+/** 컴포넌트에서 쓰는 헬퍼 — 현재 로케일로 키를 해석한다. */
 export const useCopy = () => {
   const locale = useLocale((s) => s.locale);
   return { locale, t: (key: CopyKey) => t(key, locale) };

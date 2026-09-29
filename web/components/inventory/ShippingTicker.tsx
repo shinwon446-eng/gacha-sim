@@ -10,10 +10,10 @@ import { CARRIERS } from "@/lib/carriers";
 import { useInventoryStore } from "@/stores/inventoryStore";
 
 /**
- * 📦 실배송 출고 인증 티커 (CLAUDE.md §8 , 부록 C).
+ * 📦 실배송 출고 인증 티커 (CLAUDE.md §8 · 부록 C).
  *
  * 흐르는 줄은 **이 기기의 실제 배송 기록**(출고 준비 / 배송 중)뿐이다.
- * 기록이 없으면 다른 사람의 배송을 지어내지 않고, 운영자가 내건 배송 보증(무료 배송, 정품 검수, 보험)을 대신 흘린다.
+ * 기록이 없으면 다른 사람의 배송을 지어내지 않고, 운영자가 내건 배송 보증(무료 배송·정품 검수·보험)을 대신 흘린다.
  * live 모드에서 API 가 마스킹된 실제 출고 피드를 주면 같은 자리에 그대로 올린다.
  */
 export function ShippingTicker({ className }: { className?: string }) {
@@ -32,7 +32,7 @@ export function ShippingTicker({ className }: { className?: string }) {
       const no = o.shipping?.trackingNumber;
       const label =
         o.status === "SHIPPING" && no
-          ? ti("doneShipping") + " , " + (carrier ?? "") + " " + no.slice(0, 4) + "-****"
+          ? ti("doneShipping") + " · " + (carrier ?? "") + " " + no.slice(0, 4) + "-****"
           : ti("donePreparing");
       return { id: o.id, name, label, shipped: o.status === "SHIPPING" };
     });

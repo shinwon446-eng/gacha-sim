@@ -17,18 +17,18 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 const CYCLE_MS = 3500;
 
 /**
- * Section 4, 글로벌 물류 , 결제 인터랙티브 센터.
+ * Section 4 — 글로벌 물류 · 결제 인터랙티브 센터.
  *
  * 좌측(파트 A) 다크 글래스 월드 그리드 + 5대 허브 선택기. 도시를 누르면 그 도시에서 뻗어 나가는 황금 아크가
- * 다시 그려지고, **물류 등급 , 평균 배송 , 통관/세금 , 정품 보증** 4줄 스펙 카드가 입체적으로 교체된다.
+ * 다시 그려지고, **물류 등급 · 평균 배송 · 통관/세금 · 정품 보증** 4줄 스펙 카드가 입체적으로 교체된다.
  * 3.5초마다 자동 순환하고, 유저가 탭을 누르면 그 순간부터 타이머가 다시 돈다.
  *
  * 우측(파트 B) 토스 알림 스타일 3D 스트림. 활성 도시의 카드가 항상 맨 위로 올라오고(`layout` 리오더),
- * 실물 썸네일 , 국기 , 처리 상태 , USDT + 현지 통화 환산액이 함께 붙는다.
+ * 실물 썸네일 · 국기 · 처리 상태 · USDT + 현지 통화 환산액이 함께 붙는다.
  *
- * ⚠️ **카드에 적히는 건 "무엇이 어디로 나갈 수 있는지"** 다. `DHL #4829-****` 처럼 **존재하지 않는 운송장, TxID 를
- *    지어내 실제 배송인 것처럼 보이게 하지 않는다**(부록 C, 그건 우리가 가진 적 없는 사건을 실제로 위장하는 것이다).
- *    식별자 칩은 "언제 발급되는지"를 적는다. live 모드에서 백엔드가 마스킹된 실제 운송장, TxID 를 주면 그 자리에 들어간다.
+ * ⚠️ **카드에 적히는 건 "무엇이 어디로 나갈 수 있는지"** 다. `DHL #4829-****` 처럼 **존재하지 않는 운송장·TxID 를
+ *    지어내 실제 배송인 것처럼 보이게 하지 않는다**(부록 C — 그건 우리가 가진 적 없는 사건을 실제로 위장하는 것이다).
+ *    식별자 칩은 "언제 발급되는지"를 적는다. live 모드에서 백엔드가 마스킹된 실제 운송장·TxID 를 주면 그 자리에 들어간다.
  */
 
 interface StreamCard {
@@ -41,7 +41,7 @@ interface StreamCard {
   idKey: "stIdShip" | "stIdChain";
 }
 
-/** 파트 A, 월드 그리드 + 황금 아크 + 허브 노드 */
+/** 파트 A — 월드 그리드 + 황금 아크 + 허브 노드 */
 function HubMap({ hub }: { hub: ShippingHub }) {
   const arcs = useMemo(() => arcsFrom(hub), [hub]);
   return (
@@ -49,7 +49,7 @@ function HubMap({ hub }: { hub: ShippingHub }) {
       className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl"
       style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)" }}
     >
-      <svg viewBox="0 0 400 200" className="block h-auto w-full" role="img" aria-label={`VOILA network , ${hub.code}`}>
+      <svg viewBox="0 0 400 200" className="block h-auto w-full" role="img" aria-label={`VOILA network · ${hub.code}`}>
         <defs>
           <pattern id="voila-grid" width="10" height="10" patternUnits="userSpaceOnUse">
             <circle cx="1.6" cy="1.6" r="1" fill="rgba(255,255,255,0.10)" />
@@ -94,7 +94,7 @@ function HubMap({ hub }: { hub: ShippingHub }) {
                   fill="none"
                   stroke="rgba(230,202,101,0.85)"
                   strokeWidth="1"
-                  // SVG 의 `r` 속성은 framer 가 첫 프레임에 undefined 로 써 버린다, transform(scale)으로 퍼뜨린다
+                  // SVG 의 `r` 속성은 framer 가 첫 프레임에 undefined 로 써 버린다 — transform(scale)으로 퍼뜨린다
                   initial={{ scale: 1, opacity: 0.9 }}
                   animate={{ scale: [1, 3.2], opacity: [0.9, 0] }}
                   transition={{ duration: 1.8, repeat: Infinity, ease: "easeOut" }}
@@ -111,7 +111,7 @@ function HubMap({ hub }: { hub: ShippingHub }) {
 }
 
 /**
- * 파트 A, 선택된 허브의 4줄 스펙 카드.
+ * 파트 A — 선택된 허브의 4줄 스펙 카드.
  * `mode="popLayout"` 이라야 나가는 카드만 흐름에서 빠진다. `mode="wait"` 로 두면 교체 사이 0.45초 동안
  * 카드가 통째로 사라져 좌측 칼럼이 빈다(데스크톱 1280 에서 실측).
  */
@@ -159,7 +159,7 @@ function HubSpec({ hub }: { hub: ShippingHub }) {
   );
 }
 
-/** 파트 B, 토스 알림 스타일 3D 처리 스트림. 활성 도시가 항상 맨 위로 올라온다 */
+/** 파트 B — 토스 알림 스타일 3D 처리 스트림. 활성 도시가 항상 맨 위로 올라온다 */
 function ProofStream({ cards, activeCode }: { cards: StreamCard[]; activeCode: string }) {
   const t = useTranslations("about");
   const { itemName } = useProductText();
@@ -252,7 +252,7 @@ export function GlobalLiveFeed({ className }: { className?: string }) {
   const [idx, setIdx] = useState(0);
   const hub = SHIPPING_HUBS[idx];
 
-  // 3.5초 자동 순환, 탭을 누르면 idx 가 바뀌어 타이머가 처음부터 다시 돈다
+  // 3.5초 자동 순환 — 탭을 누르면 idx 가 바뀌어 타이머가 처음부터 다시 돈다
   useEffect(() => {
     const id = window.setTimeout(() => setIdx((i) => (i + 1) % SHIPPING_HUBS.length), CYCLE_MS);
     return () => window.clearTimeout(id);
@@ -289,7 +289,7 @@ export function GlobalLiveFeed({ className }: { className?: string }) {
         </h2>
         <p className="mx-auto mt-3 max-w-2xl break-keep text-center text-sm leading-relaxed text-secondary">{t("globalSub")}</p>
 
-        {/* 도시 탭, 모바일은 가로 스크롤 */}
+        {/* 도시 탭 — 모바일은 가로 스크롤 */}
         <div className="mt-7 flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none] sm:justify-center">
           {SHIPPING_HUBS.map((h, i) => {
             const on = i === idx;

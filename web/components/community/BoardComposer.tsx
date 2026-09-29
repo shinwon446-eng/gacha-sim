@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { useModal } from "@/lib/useModal";
 import { validateDraft, type BoardDraft, type BoardPost } from "@/lib/board";
-export const CATEGORY_LABELS = { general: "자유", question: "질문", tips: "정보, 팁", notice: "공지사항" };
+export const CATEGORY_LABELS = { general: "자유", question: "질문", tips: "정보·팁", notice: "공지사항" };
 export function BoardComposer({ userId, editing, canPublishNotice, busy, error, onClose, onSave }: {
   userId: string; editing?: BoardPost; canPublishNotice: boolean; busy: boolean; error: string;
   onClose: () => void; onSave: (draft: BoardDraft) => Promise<boolean>;

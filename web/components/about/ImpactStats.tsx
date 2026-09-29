@@ -24,12 +24,12 @@ import { Approx } from "@/components/ui/Approx";
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 /**
- * Section 5, 임팩트 숫자 그리드.
+ * Section 5 — 임팩트 숫자 그리드.
  *
  * 네 수치 전부 **카탈로그 실측이거나 운영자가 집행하는 정책 상수**다.
  * "총 누적 지급액 1,482,920 USDT" 같은 운영 실적은 우리가 가진 적이 없으므로 쓰지 않는다(부록 C).
  *
- * 각 타일은 USDT 기준값 아래에 **현지 통화 환산액을 골드 배지로 병기**한다(`<Approx always>`), "455,714 USDT" 만으로는
+ * 각 타일은 USDT 기준값 아래에 **현지 통화 환산액을 골드 배지로 병기**한다(`<Approx always>`) — "455,714 USDT" 만으로는
  * 규모가 체감되지 않기 때문이다(2026-09-28 운영자 지시). 환산은 표시 전용이고 항상 `≈` 를 붙인다(`lib/localFiat.ts`).
  */
 export function ImpactStats({ className }: { className?: string }) {
@@ -97,7 +97,7 @@ export function ImpactStats({ className }: { className?: string }) {
               <CountUp value={tile.value} decimals={tile.decimals} />
               {tile.unit && <span className="ml-1 text-[12px] font-semibold text-muted">{tile.unit}</span>}
             </div>
-            {/* 현지 통화 병기, USDT 만으로는 규모가 체감되지 않는다 */}
+            {/* 현지 통화 병기 — USDT 만으로는 규모가 체감되지 않는다 */}
             {tile.approx !== null && <Approx usdt={tile.approx} always className="mt-1.5 block text-[10.5px] font-bold" />}
             <div className="mt-2 break-keep text-[11px] font-semibold leading-snug text-secondary">{tile.label}</div>
             {tile.sub && <div className="mt-1 break-keep text-[10px] leading-relaxed text-faint">{tile.sub}</div>}
@@ -105,14 +105,14 @@ export function ImpactStats({ className }: { className?: string }) {
         ))}
       </ul>
       <p className="mt-3 break-keep text-[10px] leading-relaxed text-faint">
-        {t("statOdds")}: {publishedOddsRows()} , {t("statMutable")}: {MUTABLE_RESULTS}
+        {t("statOdds")}: {publishedOddsRows()} · {t("statMutable")}: {MUTABLE_RESULTS}
         {t("unitCount")} ({t("statMutableSub")})
       </p>
     </section>
   );
 }
 
-/** Section 4, 토스 스타일 아코디언 FAQ */
+/** Section 4 — 토스 스타일 아코디언 FAQ */
 export function FaqAccordion({ className }: { className?: string }) {
   const t = useTranslations("about");
   const [open, setOpen] = useState<number | null>(0);
@@ -154,7 +154,7 @@ export function FaqAccordion({ className }: { className?: string }) {
   );
 }
 
-/** Section 5, 풀스크린 피날레 CTA. 없는 체험 머니를 약속하지 않는다(§7-C-2) */
+/** Section 5 — 풀스크린 피날레 CTA. 없는 체험 머니를 약속하지 않는다(§7-C-2) */
 export function FinaleCta({ className }: { className?: string }) {
   const t = useTranslations("about");
   const range = useMemo(() => attemptsRange(), []);
@@ -181,7 +181,7 @@ export function FinaleCta({ className }: { className?: string }) {
           <Rocket className="h-5 w-5" strokeWidth={2.3} />
           {t("ctaButton")}
         </Link>
-        {/* 공식 슬로건, 골드 포인트 */}
+        {/* 공식 슬로건 — 골드 포인트 */}
         <p className="mt-6 text-[11px] font-bold tracking-widest text-gold-champagne sm:text-xs">{t("ctaSlogan")}</p>
         <p className="mt-2 text-[11px] text-faint">{t("ctaFair")}</p>
       </motion.div>

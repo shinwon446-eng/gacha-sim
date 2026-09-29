@@ -24,7 +24,7 @@ export const useAuthStore = create<AuthState>()(persist((set, get) => ({
   closeAuthModal: () => set({ isModalOpen: false }), setModalMode: (modalMode) => set({ modalMode }),
   acceptSession: (user) => {
     if (get().user?.id !== user.id) useSecurityStore.getState().reset(user.id);
-    const nicknameAt = [user.nicknameUpdatedAt, user.nicknameChangedAt].filter((value): value is string => !!value).sort((a, b) => Date.parse(b), Date.parse(a))[0];
+    const nicknameAt = [user.nicknameUpdatedAt, user.nicknameChangedAt].filter((value): value is string => !!value).sort((a, b) => Date.parse(b) - Date.parse(a))[0];
     set({ user: { id: user.id, label: user.nickname || user.email, nickname: user.nickname, nicknameUpdatedAt: nicknameAt, nicknameChangedAt: nicknameAt, nextNicknameChangeAt: user.nextNicknameChangeAt, avatarUrl: user.avatarUrl, email: user.email, provider: user.provider ?? "email", passwordFailures: user.passwordFailures ?? 0, passwordChangedAt: user.passwordChangedAt, sessionVersion: user.sessionVersion ?? 0, twoFactorEnabled: user.twoFactorEnabled, subLabel: user.email, createdAt: user.createdAt, local: browserAccountsEnabled() && user.local === true }, isModalOpen: false });
   },
   updateNickname: async (nickname) => {

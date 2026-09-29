@@ -16,14 +16,14 @@ export const anyProviderConfigured = (): boolean =>
 /* ─────────────────────────── 휴대폰 번호 ─────────────────────────── */
 
 export interface PhoneSpec {
-  /** 국가 번호, "+82" */
+  /** 국가 번호 — "+82" */
   dial: string;
   flag: string;
   /** 하이픈 그룹 자릿수. 합이 전체 자릿수다 */
   groups: number[];
   /** 그룹이 이것보다 짧은 번호도 허용할 때의 대체 그룹(한국 10자리 등) */
   altGroups?: number[];
-  /** 빠른 입력 칩이 채우는 번호, 실제로 존재하지 않는 자리수만 쓴다(남의 번호를 채우지 않는다) */
+  /** 빠른 입력 칩이 채우는 번호 — 실제로 존재하지 않는 자리수만 쓴다(남의 번호를 채우지 않는다) */
   quickFill: string;
 }
 
@@ -76,7 +76,7 @@ export function isPhoneComplete(raw: string, dial: string): boolean {
 }
 
 /**
- * 표시용 마스킹, 앞 그룹과 뒤 4자리만 남긴다. `010-****-5678`
+ * 표시용 마스킹 — 앞 그룹과 뒤 4자리만 남긴다. `010-****-5678`
  * 전체 번호는 어디에도 저장하지 않는다(로컬 세션이 들고 있는 건 이 마스킹 문자열뿐이다).
  */
 export function maskPhone(raw: string, dial: string): string {
@@ -99,12 +99,12 @@ export function newLocalOtp(): string {
 
 /* ─────────────────────────── 계정 식별 ─────────────────────────── */
 
-/** 마스킹 핸들, 공급자 계정의 표시 이름. 실명, 이메일은 만들지 않는다. */
+/** 마스킹 핸들 — 공급자 계정의 표시 이름. 실명·이메일은 만들지 않는다. */
 export function localHandle(seed: string): string {
   let h = 0;
   for (let i = 0; i < seed.length; i += 1) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
   return `voila_${h.toString(36).slice(0, 6)}`;
 }
 
-/** 공급자 표시명, 토스트, 뱃지에서 쓴다 */
+/** 공급자 표시명 — 토스트·뱃지에서 쓴다 */
 export const PROVIDER_LABEL: Record<AuthProvider, string> = { google: "Google", apple: "Apple", microsoft: "Microsoft", phone: "Phone", email: "Email" };

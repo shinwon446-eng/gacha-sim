@@ -10,7 +10,7 @@ import { useDailyStore } from "@/stores/dailyStore";
 import { useCommunityStore } from "@/stores/communityStore";
 import { useTelemetryStore } from "@/stores/telemetryStore";
 
-/** 마운트 후 persist 스토어(통화, 지갑, 설정, 공정성 시드)를 적용한다. layout 에 한 번만 둔다. */
+/** 마운트 후 persist 스토어(통화·지갑·설정·공정성 시드)를 적용한다. layout 에 한 번만 둔다. */
 export function CurrencyHydrator() {
   useEffect(() => {
     rehydrateCurrency();

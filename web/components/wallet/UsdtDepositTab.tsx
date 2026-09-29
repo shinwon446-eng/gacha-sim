@@ -70,7 +70,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch {
-      /* 클립보드 권한 없음, 사용자가 직접 선택해 복사 */
+      /* 클립보드 권한 없음 — 사용자가 직접 선택해 복사 */
     }
   }, [address, depositReady]);
 
@@ -162,9 +162,9 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
             <span className="caption-luxury !text-gold-champagne">{t("guideTitle")}</span>
           </div>
           <ul className="mt-2 space-y-1 text-xs leading-relaxed text-secondary">
-            <li className="font-semibold text-white">, {t("guideMin", { min: fmt(MIN_DEPOSIT_USDT) })}</li>
-            <li>, {t("guideConfirm", { n: meta.confirmations })} ({t("guideTime", { sec: meta.blockSeconds, min: Math.ceil((meta.confirmations * meta.blockSeconds) / 60) })})</li>
-            <li>, {t("guideToken")}</li>
+            <li className="font-semibold text-white">· {t("guideMin", { min: fmt(MIN_DEPOSIT_USDT) })}</li>
+            <li>· {t("guideConfirm", { n: meta.confirmations })} ({t("guideTime", { sec: meta.blockSeconds, min: Math.ceil((meta.confirmations * meta.blockSeconds) / 60) })})</li>
+            <li>· {t("guideToken")}</li>
           </ul>
         </div>
       </div>

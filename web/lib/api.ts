@@ -1,13 +1,13 @@
 /**
  * 백엔드 계약 (live 모드). 전부 JSON, 실패는 throw. 호출측은 isLive() 로 분기한다.
  *
- *   GET  /feed/live            → LiveDrop[]            실시간 당첨, 환전, 출고 스트림
- *   GET  /feed/proof           → { payouts, shipments } 실지급, 실배송 인증 피드
+ *   GET  /feed/live            → LiveDrop[]            실시간 당첨·환전·출고 스트림
+ *   GET  /feed/proof           → { payouts, shipments } 실지급·실배송 인증 피드
  *   GET  /stats/today          → { shipmentsToday, cashoutsTodayUsdt, verificationRate }
  *   GET  /reserve              → { address, network, balanceUsdt }
  *   POST /deposit/address      → { address, network }   유저별 입금 주소 발급
  *   POST /deposit/check        → { status: "pending"|"confirmed", confirmations, amountUsdt?, txHash? }  입금 확인(자동 잔고 반영)
- *   POST /withdraw             → { id, status, txHash? } 출금 신청 (서버가 서명, 브로드캐스트)
+ *   POST /withdraw             → { id, status, txHash? } 출금 신청 (서버가 서명·브로드캐스트)
  *   GET  /withdraw/:id         → { status, txHash? }
  *   GET  /shipping/:ownedId    → { carrier, trackingNumber } | 404 (출고 전)
  */

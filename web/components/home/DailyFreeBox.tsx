@@ -17,7 +17,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { playChime, playWin } from "@/lib/audio";
 import { Money } from "@/components/ui/Money";
 
-/** 남은 시간을 1초 단위로, 마운트 후에만 값이 있다(하이드레이션 안전) */
+/** 남은 시간을 1초 단위로 — 마운트 후에만 값이 있다(하이드레이션 안전) */
 function useCountdown(lastOpenedAt: string | null) {
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
@@ -27,10 +27,10 @@ function useCountdown(lastOpenedAt: string | null) {
   }, []);
   const target = nextAvailableAt(lastOpenedAt);
   const ready = now !== null && now >= target;
-  return { now, ready, left: now === null ? null : Math.max(0, target, now) };
+  return { now, ready, left: now === null ? null : Math.max(0, target - now) };
 }
 
-/** 헤더용 필, 준비되면 골드로 점등, 아니면 카운트다운 */
+/** 헤더용 필 — 준비되면 골드로 점등, 아니면 카운트다운 */
 export function DailyFreeBoxPill({ onOpen, className }: { onOpen: () => void; className?: string }) {
   const t = useTranslations("daily");
   const lastOpenedAt = useDailyStore((s) => s.lastOpenedAt);
@@ -52,7 +52,7 @@ export function DailyFreeBoxPill({ onOpen, className }: { onOpen: () => void; cl
   );
 }
 
-/** 홈 스트립, TOP 10 아래. 무료, 무위험을 한 줄로 */
+/** 홈 스트립 — TOP 10 아래. 무료·무위험을 한 줄로 */
 export function DailyFreeBoxStrip({ onOpen, className }: { onOpen: () => void; className?: string }) {
   const t = useTranslations("daily");
   const { fmt } = useCurrency();
@@ -86,7 +86,7 @@ type Stage = { kind: "pick" } | { kind: "revealing"; picked: number } | { kind: 
 const CARDS = 3;
 
 /**
- * 데일리 프리 박스 모달, 골드 카드 3장 중 1장 선택 → 뒤집기 → 금액 적립.
+ * 데일리 프리 박스 모달 — 골드 카드 3장 중 1장 선택 → 뒤집기 → 금액 적립.
  * 결과는 선택 전에 Provably Fair 롤로 확정된다(카드 선택은 연출). 24h 쿨다운은 브라우저 단위(데모).
  */
 export function DailyFreeBoxModal({ open, onClose, onCredited }: { open: boolean; onClose: () => void; onCredited?: (amountUsdt: number) => void }) {
@@ -104,7 +104,7 @@ export function DailyFreeBoxModal({ open, onClose, onCredited }: { open: boolean
   const { ready, left } = useCountdown(lastOpenedAt);
   const [stage, setStage] = useState<Stage>({ kind: "pick" });
 
-  // 열릴 때만 초기화, onClose 는 부모 렌더마다 새 함수라 의존성에 넣으면 진행 중 상태가 날아간다
+  // 열릴 때만 초기화 — onClose 는 부모 렌더마다 새 함수라 의존성에 넣으면 진행 중 상태가 날아간다
   useEffect(() => {
     if (open) setStage({ kind: "pick" });
   }, [open]);
@@ -114,10 +114,10 @@ export function DailyFreeBoxModal({ open, onClose, onCredited }: { open: boolean
   const pick = useCallback(
     async (i: number) => {
       if (!ready || stage.kind !== "pick") return;
-      // 이중 확인, 스토어 기준(다른 탭에서 이미 열었을 수 있다)
+      // 이중 확인 — 스토어 기준(다른 탭에서 이미 열었을 수 있다)
       if (!canOpenDaily(useDailyStore.getState().lastOpenedAt)) return;
       setStage({ kind: "revealing", picked: i });
-      // 결과 확정, 연출 전에
+      // 결과 확정 — 연출 전에
       const nonce = fair.takeNonce();
       const { serverSeed, serverSeedHash, clientSeed } = useFairStore.getState();
       const r = await calculateRollResult(serverSeed, clientSeed, nonce);
@@ -181,7 +181,7 @@ export function DailyFreeBoxModal({ open, onClose, onCredited }: { open: boolean
                       animate={{ rotateY: !reducedMotion && flipped ? 180 : 0, scale: !reducedMotion && isPicked ? 1.02 : 1, y: !reducedMotion && isPicked && stage.kind === "revealing" ? -4 : 0 }}
                       transition={{ duration: reducedMotion ? 0 : 0.5, ease: [0.16, 1, 0.3, 1] }}
                     >
-                      {/* 앞면, 골드 헤어라인 봉인 */}
+                      {/* 앞면 — 골드 헤어라인 봉인 */}
                       <div style={{ display: reducedMotion && flipped ? "none" : undefined }} className={cn("border border-hairline absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-obsidian [backface-visibility:hidden]", !disabled && "transition-transform group-hover:-translate-y-1")}>
                         <span className="sheen pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity group-hover:opacity-100" />
                         <Gift className="h-8 w-8 text-gold-champagne" strokeWidth={1.6} />
@@ -190,7 +190,7 @@ export function DailyFreeBoxModal({ open, onClose, onCredited }: { open: boolean
                           <motion.span aria-hidden className="absolute inset-0 rounded-xl" style={{ background: "radial-gradient(60% 60% at 50% 50%, rgba(230,202,101,0.35) 0%, transparent 70%)" }} initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0.4, 1] }} transition={{ duration: 0.9 }} />
                         )}
                       </div>
-                      {/* 뒷면, 금액 */}
+                      {/* 뒷면 — 금액 */}
                       <div
                         className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-canvas [backface-visibility:hidden] [transform:rotateY(180deg)]"
                         style={{ border: tone ? `1px solid ${glow(tone.accent, 0.6)}` : undefined, transform: reducedMotion ? "none" : undefined, visibility: reducedMotion && !flipped ? "hidden" : undefined }}
@@ -246,7 +246,7 @@ export function DailyFreeBoxModal({ open, onClose, onCredited }: { open: boolean
               </ul>
               {stage.kind === "done" && (
                 <div className="mt-2 break-all font-mono text-xs text-faint">
-                  roll {stage.roll.toLocaleString("en-US")} , nonce #{history[0]?.fair.nonce ?? ", "}
+                  roll {stage.roll.toLocaleString("en-US")} · nonce #{history[0]?.fair.nonce ?? "—"}
                 </div>
               )}
             </div>

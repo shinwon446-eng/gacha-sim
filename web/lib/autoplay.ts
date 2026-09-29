@@ -1,9 +1,9 @@
 /**
- * 오토플레이 규칙, 순수 함수. 컴포넌트는 스핀만 돌리고 여기서 "계속할지"를 묻는다.
+ * 오토플레이 규칙 — 순수 함수. 컴포넌트는 스핀만 돌리고 여기서 "계속할지"를 묻는다.
  *
- *   , 회전 수: 10 / 25 / 50 / 100 / 무제한(Infinity)
- *   , 자동 환전: 실물, 디지털 당첨을 95% USDT 로 즉시 회수해 잔고를 재충전한다 (캐시백은 원래 100% 즉시 적립)
- *   , 스마트 정지: 잭팟(ROYAL/PRESTIGE) 당첨 , 단일 승리 N배 이상 , 손실 한도(Stop Loss) 도달 , 잔고 부족
+ *   · 회전 수: 10 / 25 / 50 / 100 / 무제한(Infinity)
+ *   · 자동 환전: 실물·디지털 당첨을 95% USDT 로 즉시 회수해 잔고를 재충전한다 (캐시백은 원래 100% 즉시 적립)
+ *   · 스마트 정지: 잭팟(ROYAL/PRESTIGE) 당첨 · 단일 승리 N배 이상 · 손실 한도(Stop Loss) 도달 · 잔고 부족
  */
 import type { TierKey } from "./tiers";
 
@@ -50,17 +50,17 @@ export const JACKPOT_TIERS: readonly TierKey[] = ["royal", "prestige"];
 export function stopReasonAfter(config: AutoplayConfig, state: AutoplayState, last: { tier: TierKey; value: number }, price: number): StopReason {
   if (config.stopOnJackpot && JACKPOT_TIERS.includes(last.tier)) return "jackpot";
   if (config.stopOnMultiple !== null && config.stopOnMultiple > 0 && last.value >= price * config.stopOnMultiple) return "multiple";
-  if (config.stopLoss !== null && config.stopLoss > 0 && state.spent, state.won >= config.stopLoss) return "stopLoss";
+  if (config.stopLoss !== null && config.stopLoss > 0 && state.spent - state.won >= config.stopLoss) return "stopLoss";
   if (state.done >= config.spins) return "spins";
   return null;
 }
 
-/** 다음 스핀 전, 잔고가 가격보다 적으면 멈춘다 */
+/** 다음 스핀 전 — 잔고가 가격보다 적으면 멈춘다 */
 export function canAfford(balance: number, price: number): boolean {
   return balance + 1e-9 >= price;
 }
 
-export const remainingSpins = (config: AutoplayConfig, done: number): number => (Number.isFinite(config.spins) ? Math.max(0, config.spins, done) : Infinity);
+export const remainingSpins = (config: AutoplayConfig, done: number): number => (Number.isFinite(config.spins) ? Math.max(0, config.spins - done) : Infinity);
 
 /** 순손익(USDT, 소수 둘째 자리) */
-export const netOf = (state: AutoplayState): number => +(state.won, state.spent).toFixed(2);
+export const netOf = (state: AutoplayState): number => +(state.won - state.spent).toFixed(2);
