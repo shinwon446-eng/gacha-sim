@@ -26,7 +26,7 @@ export function BillboardHero({ boxes, onInspect, className }: BillboardHeroProp
   if (!box) return null;
   return (
     <section className={cn("editorial-hero page-shell", className)} aria-labelledby="hero-title">
-      <div className="hero-copy">
+      <div className="hero-copy min-w-0">
         <span className="eyebrow"><span className="h-1.5 w-1.5 rounded-full bg-gold-champagne" /> THE ART OF DISCOVERY</span>
         <h1 id="hero-title">{t("heroLine1")}<br /><span>{t("heroLine2")}</span></h1>
         <p className="hero-description">{t("heroBody")}</p>
@@ -37,12 +37,12 @@ export function BillboardHero({ boxes, onInspect, className }: BillboardHeroProp
         <p className="hero-note">{t("purchaseNote")}</p>
         <div className="hero-signature"><span>VOILA / COLLECTION</span><span>You never know what’s next.</span></div>
       </div>
-      <div className="hero-gallery">
+      <div className="hero-gallery min-w-0">
         <div className="hero-gallery-art" key={box.id}>
           <ProductArt image={box.image} alt={boxTitle(box)} accent="#d9c39a" glowStrength={0} bordered={false} priority />
         </div>
         <div className="hero-gallery-top"><span>VOILA SELECTION</span><span>{String(index + 1).padStart(2, "0")} / {String(boxes.length).padStart(2, "0")}</span></div>
-        <button type="button" onClick={() => onInspect?.(box)} className="hero-feature" aria-label={boxTitle(box) + " · " + t("details")}>
+        <button type="button" onClick={() => onInspect?.(box)} className="hero-feature" aria-label={boxTitle(box) + " , " + t("details")}>
           <span className="min-w-0"><span className="eyebrow mb-2 block">{t("featured")}</span><span className="block text-xl font-semibold tracking-tight sm:text-2xl">{boxTitle(box)}</span><span className="mt-2 inline-flex items-baseline gap-2 text-muted"><span className="text-xs">{t("perOpen")}</span><Money value={box.price} size="sm" /></span></span>
           <span className="hero-feature-arrow"><ArrowUpRight size={23} strokeWidth={1.5} aria-hidden /></span>
         </button>

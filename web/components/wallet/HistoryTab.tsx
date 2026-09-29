@@ -19,7 +19,7 @@ type Filter = "all" | "deposit" | "withdraw";
 
 const DEPOSIT_TYPES = ["deposit_usdt", "deposit_card"] as const;
 
-/** 거래 유형 배지 — [입금 · USDT] / [입금 · 카드] / [출금 · 2FA 즉시] / [출금 · 이메일 72H 대기] */
+/** 거래 유형 배지, [입금 , USDT] / [입금 , 카드] / [출금 , 2FA 즉시] / [출금 , 이메일 72H 대기] */
 function TypeBadge({ tx }: { tx: Transaction }) {
   const t = useTranslations("history");
   const deposit = tx.type === "deposit_usdt" || tx.type === "deposit_card";
@@ -32,7 +32,7 @@ function TypeBadge({ tx }: { tx: Transaction }) {
   );
 }
 
-/** 진행 상태 배지 — 72시간 대기는 남은 시간을 함께 보여 준다 */
+/** 진행 상태 배지, 72시간 대기는 남은 시간을 함께 보여 준다 */
 function StatusBadge({ status, unlockAt, now }: { status: TxStatus; unlockAt?: number; now: number }) {
   const t = useTranslations("history");
   const tone =
@@ -67,10 +67,10 @@ function short(address: string): string {
 }
 
 /**
- * 지갑 모달 4번째 탭 — **입출금 내역** 통합 조회.
+ * 지갑 모달 4번째 탭, **입출금 내역** 통합 조회.
  *
- * `walletStore.transactions` 하나만 읽는다(별도 집계·서버 호출 없음). 입금·출금 필터, 유형/상태 배지,
- * 금액·수수료·실수령액, 네트워크·주소(복사), 생성 일시, TxID(익스플로러 링크)를 한 카드에 담는다.
+ * `walletStore.transactions` 하나만 읽는다(별도 집계, 서버 호출 없음). 입금, 출금 필터, 유형/상태 배지,
+ * 금액, 수수료, 실수령액, 네트워크, 주소(복사), 생성 일시, TxID(익스플로러 링크)를 한 카드에 담는다.
  * 72시간 대기 건은 남은 시간이 1초마다 줄고 [출금 취소]로 즉시 환불할 수 있다.
  */
 export function HistoryTab() {
@@ -114,7 +114,7 @@ export function HistoryTab() {
   }, [user?.id]);
   const [filter, setFilter] = useState<Filter>("all");
   const [copied, setCopied] = useState<string | null>(null);
-  // 카운트다운 — 마운트 후에만 흐른다(첫 렌더는 서버와 같은 값)
+  // 카운트다운, 마운트 후에만 흐른다(첫 렌더는 서버와 같은 값)
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
     setNow(Date.now());
@@ -188,7 +188,7 @@ export function HistoryTab() {
                   </span>
                 </div>
 
-                {/* 출금은 수수료·실수령액을 반드시 같이 보여 준다 */}
+                {/* 출금은 수수료, 실수령액을 반드시 같이 보여 준다 */}
                 {!deposit && typeof tx.netUsdt === "number" && (
                   <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-lg bg-canvas px-2.5 py-2 text-[11px]">
                     <span className="text-faint">
@@ -235,7 +235,7 @@ export function HistoryTab() {
                   </div>
                 </dl>
 
-                {/* TxID — 백엔드가 준 실제 해시가 있을 때만 */}
+                {/* TxID, 백엔드가 준 실제 해시가 있을 때만 */}
                 <div className="mt-2 flex items-center gap-1.5 border-t border-hairline pt-2 text-[11px]">
                   <span className="flex-none text-faint">{t("txId")}</span>
                   {tx.txHash ? (
@@ -258,7 +258,7 @@ export function HistoryTab() {
                   )}
                 </div>
 
-                {/* 72시간 대기 — 이상 징후를 발견하면 본인이 즉시 되돌릴 수 있다 */}
+                {/* 72시간 대기, 이상 징후를 발견하면 본인이 즉시 되돌릴 수 있다 */}
                 {held && tx.serverId && (
                   <button
                     type="button"

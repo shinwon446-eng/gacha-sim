@@ -12,31 +12,31 @@ export interface ProductArtProps {
   /** 림 라이트 / 백글로우 색. 보통 등급 액센트. */
   accent?: string;
   /**
-   * cover  — 사진을 프레임에 꽉 채운다 (배경 있는 일반 사진)
-   * contain — 누끼를 다크 매트 위에 띄운다 (투명 PNG). image.cutout 이 true 면 자동으로 이쪽.
+   * cover, 사진을 프레임에 꽉 채운다 (배경 있는 일반 사진)
+   * contain, 누끼를 다크 매트 위에 띄운다 (투명 PNG). image.cutout 이 true 면 자동으로 이쪽.
    */
   fit?: "cover" | "contain";
   /** 백글로우 세기. 썸네일은 낮게, 히어로는 높게. */
   glowStrength?: number;
   /** 폴백 실루엣 크기 */
   fallbackSize?: "sm" | "md" | "lg";
-  /** 이미지가 없을 때 — cash 는 USDT 토큰, digital 은 기프트카드 글리프로 그린다 */
+  /** 이미지가 없을 때, cash 는 USDT 토큰, digital 은 기프트카드 글리프로 그린다 */
   kind?: ItemKind;
-  /** 쇼케이스 1px 헤어라인 — 타일에는 켜고, 히어로처럼 프레임이 따로 있는 곳은 끈다 */
+  /** 쇼케이스 1px 헤어라인, 타일에는 켜고, 히어로처럼 프레임이 따로 있는 곳은 끈다 */
   bordered?: boolean;
   priority?: boolean;
   className?: string;
 }
 
 /**
- * 소더비 다크 쇼케이스 매트 — 중앙 샴페인 골드 방사형 핀조명 위에 상품이 떠 있게 한다.
+ * 소더비 다크 쇼케이스 매트, 중앙 샴페인 골드 방사형 핀조명 위에 상품이 떠 있게 한다.
  * 컨테이너: radial-gradient(circle, rgba(230,202,101,0.12) 0%, rgba(15,15,20,0.95) 75%) + 1px 헤어라인.
  */
 export const SHOWCASE_BG = "radial-gradient(circle, rgba(230, 202, 101, 0.12) 0%, rgba(15, 15, 20, 0.95) 75%)";
 export const SHOWCASE_BORDER = "1px solid rgba(255, 255, 255, 0.08)";
 
 /**
- * 폴백 — 어두운 미니멀 박스 실루엣.
+ * 폴백, 어두운 미니멀 박스 실루엣.
  * 코드 텍스트 대신 "열리지 않은 상자"를 그린다. 얇은 림 라이트 한 줄로 형태만 잡는다.
  */
 function BoxSilhouette({ accent, size }: { accent: string; size: "sm" | "md" | "lg" }) {
@@ -59,7 +59,7 @@ function BoxSilhouette({ accent, size }: { accent: string; size: "sm" | "md" | "
   );
 }
 
-/** USDT 즉시 캐시백 / 인스턴트 드롭 — 샴페인 골드 토큰 */
+/** USDT 즉시 캐시백 / 인스턴트 드롭, 샴페인 골드 토큰 */
 function CashToken({ size }: { size: "sm" | "md" | "lg" }) {
   const id = useId();
   const dim = size === "lg" ? "w-[40%]" : size === "md" ? "w-[46%]" : "w-[54%]";
@@ -83,7 +83,7 @@ function CashToken({ size }: { size: "sm" | "md" | "lg" }) {
   );
 }
 
-/** 글로벌 디지털 자산(기프트카드 · 월렛 코드) — 블랙 카드 */
+/** 글로벌 디지털 자산(기프트카드 , 월렛 코드), 블랙 카드 */
 function GiftCard({ accent, size }: { accent: string; size: "sm" | "md" | "lg" }) {
   const id = useId();
   const dim = size === "lg" ? "w-[54%]" : size === "md" ? "w-[60%]" : "w-[68%]";
@@ -106,7 +106,7 @@ function GiftCard({ accent, size }: { accent: string; size: "sm" | "md" | "lg" }
 }
 
 /**
- * 실물 비주얼 — 소더비 경매장 다크 쇼케이스.
+ * 실물 비주얼, 소더비 경매장 다크 쇼케이스.
  * 이미지 뒤에 샴페인 골드 방사형 핀조명을 깔고, 상품은 drop-shadow 로 공중에 띄운다. 어두운 딤 오버레이는 두지 않는다.
  * 로딩 실패는 조용히 실루엣(또는 kind 별 글리프)으로 떨어진다. 어떤 경우에도 텍스트를 이미지 위에 합성하지 않는다.
  */
@@ -141,7 +141,7 @@ export function ProductArt({
 
   return (
     <div className={cn("group/art relative h-full w-full overflow-hidden", className)} style={{ background: SHOWCASE_BG, border: bordered ? SHOWCASE_BORDER : undefined }}>
-      {/* 등급 액센트 백글로우 — 핀조명 아래에서 살짝 번진다 */}
+      {/* 등급 액센트 백글로우, 핀조명 아래에서 살짝 번진다 */}
       <span
         aria-hidden
         className="absolute inset-0 transition-opacity duration-500"
@@ -173,7 +173,7 @@ export function ProductArt({
       ) : (
         <BoxSilhouette accent={accent} size={fallbackSize} />
       )}
-      {/* 중앙 핀조명 — 사진(cover)은 딤 대신 가운데를 밝히고 가장자리만 살짝 누른다 */}
+      {/* 중앙 핀조명, 사진(cover)은 딤 대신 가운데를 밝히고 가장자리만 살짝 누른다 */}
       {showImage && mode === "cover" && (
         <span
           aria-hidden
@@ -181,7 +181,7 @@ export function ProductArt({
           style={{ background: "radial-gradient(70% 60% at 50% 45%, rgba(230,202,101,0.08) 0%, transparent 55%, rgba(0,0,0,0.35) 100%)" }}
         />
       )}
-      {/* 네온 림 — 프레임 안쪽 1px */}
+      {/* 네온 림, 프레임 안쪽 1px */}
       <span aria-hidden className="pointer-events-none absolute inset-0" style={{ boxShadow: `inset 0 0 0 1px ${glow(accent, 0.18)}, inset 0 0 18px ${glow(accent, 0.12)}` }} />
     </div>
   );

@@ -79,7 +79,7 @@ export default function BoxesPage() {
     setTimeout(() => setToasts((ts) => ts.filter((x) => x.id !== id)), 5200);
   }, []);
 
-  // 탭 전환 — 그리드 즉시 교체 + 스티키 탭 아래로 그리드 스크롤 + 해시 동기화(하단 내비 활성 표시)
+  // 탭 전환, 그리드 즉시 교체 + 스티키 탭 아래로 그리드 스크롤 + 해시 동기화(하단 내비 활성 표시)
   const pickCategory = useCallback((key: CategoryTab, scroll = true) => {
     setCategory(key);
     setShown(PAGE_SIZE);
@@ -92,7 +92,7 @@ export default function BoxesPage() {
     if (scroll) gridRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
   }, []);
 
-  // 하단 내비 · 외부 링크: #category-x → 탭, #deposit → 충전 모달
+  // 하단 내비 , 외부 링크: #category-x → 탭, #deposit → 충전 모달
   useEffect(() => {
     const apply = () => {
       if (internalHashUpdate.current) { internalHashUpdate.current = false; return; }
@@ -116,7 +116,7 @@ export default function BoxesPage() {
     return () => window.removeEventListener("hashchange", apply);
   }, []);
 
-  // 이 페이지가 충전 모달 호스트 — 하단 내비 [💳 충전]이 바로 연다
+  // 이 페이지가 충전 모달 호스트, 하단 내비 [💳 충전]이 바로 연다
   useEffect(() => {
     const ui = useUiStore.getState();
     ui.setDepositHost(true);
@@ -153,7 +153,7 @@ export default function BoxesPage() {
 
   const onSellBack = useCallback(
     (results: UnboxResult[], amount: number, split?: { toCrypto: number; toCard: number }) => {
-      // 환급금은 아이템 족보대로 — 카드 출처는 카드 잔액으로만 (CLAUDE.md §7-B)
+      // 환급금은 아이템 족보대로, 카드 출처는 카드 잔액으로만 (CLAUDE.md §7-B)
       if (split) creditSplit(split.toCrypto, split.toCard);
       else credit(amount);
       addTransaction({ type: "sellback", amountUsdt: amount, ref: results.map((r) => r.item.id).join(",") });

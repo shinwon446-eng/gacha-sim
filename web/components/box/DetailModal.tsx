@@ -43,13 +43,13 @@ export interface DetailModalProps {
   onDeposit?: (box: ProductBox, count: number) => void;
   onClose: () => void;
   onOpen?: (box: ProductBox, count?: number) => void;
-  /** 오토플레이 시작 — 설정 모달에서 확정된 구성으로 */
+  /** 오토플레이 시작, 설정 모달에서 확정된 구성으로 */
   onAutoplay?: (box: ProductBox, config: AutoplayConfig) => void;
 }
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-/** 하나의 당첨 가능 상품. 등급 색 보더 + 실판매가 + 확률. */
+/** 상품 소개 카드에는 시중 정가를 보여 주고, 확률은 아래 상세 확률표에서 제공한다. */
 function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
   const t = useTranslations("modal");
   const { fmt } = useCurrency();
@@ -80,24 +80,16 @@ function PrizeCard({ item, tier }: { item: ProductItem; tier: Tier }) {
         <div className="line-clamp-2 min-h-[40px] text-sm font-semibold leading-snug text-white">
           {itemName(item)}
         </div>
-        <div className="mt-1.5 flex items-end justify-between gap-2 border-t border-white/10 pt-1.5">
-          <div>
+        <div className="mt-1.5 border-t border-white/10 pt-1.5">
+          <div className="min-w-0">
             <div className="text-xs font-semibold uppercase tracking-[0.16em] text-[#757575]">
               {t("marketValue")}
             </div>
             <div
-              className="whitespace-nowrap font-display text-[13px] font-bold leading-none tracking-tight sm:text-[15px]"
+              className="break-words font-display text-[13px] font-bold leading-snug tracking-tight sm:text-[15px]"
               style={{ color: tier.accent }}
             >
               {fmt(item.value)}
-            </div>
-          </div>
-          <div className="text-right">
-            <div className="text-xs font-semibold uppercase tracking-[0.16em] text-[#757575]">
-              {t("odds")}
-            </div>
-            <div className="text-xs font-semibold leading-none tabular-nums" style={{ color: tier.accent }}>
-              {formatRate(item.dropRate)}
             </div>
           </div>
         </div>
@@ -127,31 +119,32 @@ function Stat({ label, value, tone = "#FFFFFF" }: { label: string; value: string
  *   상단  와이드 비주얼 + 하단으로 완전히 녹아드는 그라디언트 페이드 + 비네트
  *         → 제목 / 지금 오픈하기(크림슨) / 핵심 수치
  *   하단  에피소드 목록 자리에 "전체 당첨 가능 상품 그리드"
- *         → 등급 색 보더 + 실판매가 + 확률
+ *         → 등급 색 보더 + 실판매가. 확률은 별도 상세 표에서 확인.
  */
 export function DetailModal({ box, onClose, onOpen, onAutoplay, onDeposit, pending = false }: DetailModalProps) {
   const t = useTranslations();
   const { fmt } = useCurrency();
   const { boxTitle, boxBadge, itemName } = useProductText();
-  // 수량 프리셋 [1x][5x][10x][50x][100x] · 오토플레이 [−][🔄 N회][+]
+  // 수량 프리셋 [1x][5x][10x][50x][100x] , 오토플레이 [−][🔄 N회][+]
   const [qty, setQty] = useState<number>(1);
   const [confirming, setConfirming] = useState(false);
   const balance = useWalletStore((s) => s.balance);
   const autoIdx = 0;
   const [autoOpen, setAutoOpen] = useState(false);
   const [autoCfg, setAutoCfg] = useState<AutoplayConfig>(DEFAULT_AUTOPLAY);
+  const oddsRef = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
     if (!box) return;
     setQty(1);
     setConfirming(false);
     setAutoOpen(false);
+    if (oddsRef.current) oddsRef.current.open = false;
   }, [box]);
   const autoSpins = AUTOPLAY_SPINS[autoIdx];
   const panelRef = useRef<HTMLDivElement>(null);
 
   const close = () => { if (!pending) onClose(); };
   useModal(!!box, close, panelRef);
-  const oddsRef = useRef<HTMLElement>(null);
 
   const meta = useMemo(() => {
     if (!box) return null;
@@ -182,36 +175,36 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay, onDeposit, pendi
   return (
     <AnimatePresence>
       {box && meta && (
-        <motion.div className="fixed inset-0 z-[100] overflow-y-auto overscroll-contain bg-black/75 px-3 py-4 backdrop-blur-md md:p-8"
+        <motion.div className="fixed inset-0 z-[100] overflow-x-hidden overflow-y-auto overscroll-contain bg-black/75 px-2 py-2 backdrop-blur-md sm:px-3 sm:py-4 md:p-8"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
           <motion.div ref={panelRef} tabIndex={-1} role="dialog" aria-modal="true"
             aria-label={t("modal.details", { title: boxTitle(box) })}
-            className="relative mx-auto max-w-5xl overflow-hidden rounded-2xl border border-hairline bg-surface shadow-2xl outline-none"
+            className="relative mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border border-hairline bg-surface shadow-2xl outline-none"
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.25, ease: EASE }}>
             <button type="button" onClick={close} disabled={pending} aria-label={t("modal.close")}
               className="absolute right-3 top-3 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-obsidian/90 text-white hover:bg-elevation">
               <X className="h-5 w-5" strokeWidth={1.8} />
             </button>
             <header className="grid md:grid-cols-[0.95fr_1.05fr]">
-              <div className="relative min-h-[240px] overflow-hidden border-b border-hairline bg-obsidian md:min-h-[480px] md:border-b-0 md:border-r">
+              <div className="relative h-[190px] overflow-hidden border-b border-hairline bg-obsidian min-[400px]:h-[220px] sm:h-[260px] md:h-auto md:min-h-[480px] md:border-b-0 md:border-r">
                 <ProductArt image={box.image} alt={boxTitle(box)} accent={meta.top.accent} glowStrength={0.12} fallbackSize="lg" bordered={false} priority className="absolute inset-0" />
                 <div className="absolute left-5 top-5"><TierBadge tier={meta.top} size="md" /></div>
                 <p className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-obsidian via-obsidian/90 to-transparent px-5 pb-4 pt-10 text-xs leading-relaxed text-secondary">{t("modal.imageNote")}</p>
               </div>
-              <div className="flex flex-col justify-center px-5 py-7 sm:px-8 md:py-10">
+              <div className="flex min-w-0 flex-col justify-center px-4 py-5 sm:px-8 sm:py-7 md:py-10">
                 <p className="eyebrow pr-8">{boxBadge(box)}</p>
-                <h2 className="mt-3 break-keep font-display text-3xl font-semibold leading-tight tracking-[-0.04em] text-white md:text-4xl">{boxTitle(box)}</h2>
+                <h2 className="mt-2 break-keep font-display text-[26px] font-semibold leading-tight tracking-[-0.04em] text-white sm:mt-3 sm:text-3xl md:text-4xl">{boxTitle(box)}</h2>
                 <div className="mt-5 flex items-baseline gap-3">
                   <span className="font-display text-3xl font-semibold tracking-tight text-white">{fmt(box.price)}</span>
                   <span className="text-xs text-muted">{t("modal.perOpen")}</span>
                 </div>
-                <div className="mt-6 border-t border-hairline pt-5">
+                <div className="mt-4 border-t border-hairline pt-4 sm:mt-6 sm:pt-5">
                   <div className="mb-3 text-xs font-medium text-secondary">{t("unbox.qty")}</div>
-                  <div role="group" className="grid grid-cols-5 gap-1.5" aria-label={t("unbox.qty")}>
+                  <div role="group" className="grid grid-cols-5 gap-1 sm:gap-1.5" aria-label={t("unbox.qty")}>
                     {OPEN_PRESETS.map((n) => (
                       <button key={n} type="button" aria-pressed={qty === n} disabled={pending} onClick={() => { setQty(n); setConfirming(false); }}
-                        className={cn("flex min-h-11 items-center justify-center rounded-lg border px-1 text-xs font-semibold transition-colors", qty === n ? "border-[#f1eee7] bg-[#f1eee7] text-obsidian" : "border-hairline bg-obsidian text-secondary hover:border-white/40")}>
+                        className={cn("flex min-h-12 min-w-0 items-center justify-center rounded-lg border px-0.5 text-center text-[11px] font-semibold leading-tight break-keep transition-colors sm:min-h-11 sm:px-1 sm:text-xs", qty === n ? "border-[#f1eee7] bg-[#f1eee7] text-obsidian" : "border-hairline bg-obsidian text-secondary hover:border-white/40")}>
                         {t("modal.quantity", { n })}
                       </button>
                     ))}
@@ -239,7 +232,7 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay, onDeposit, pendi
                   <p className="mt-3 break-keep text-xs leading-relaxed text-muted">{t("modal.quantityNote")}</p>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1">
-                  <button type="button" onClick={() => { oddsRef.current?.focus({ preventScroll: true }); oddsRef.current?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); }} className="inline-flex min-h-11 items-center gap-2 text-xs font-medium text-gold-champagne hover:text-white">
+                  <button type="button" onClick={() => { const details = oddsRef.current; if (!details) return; details.open = true; requestAnimationFrame(() => { details.focus({ preventScroll: true }); details.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); }); }} className="inline-flex min-h-11 items-center gap-2 text-xs font-medium text-gold-champagne hover:text-white">
                     <Percent className="h-4 w-4" />{t("modal.viewOdds")}
                   </button>
                   {onAutoplay && <button type="button" disabled={pending} onClick={() => setAutoOpen(true)} className="inline-flex min-h-11 items-center gap-2 text-xs text-muted hover:text-white">
@@ -254,17 +247,17 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay, onDeposit, pendi
               <Stat label={t("modal.rtpLabel")} value={`${(meta.retail * 100).toFixed(1)}%`} />
               <Stat label={t("modal.topMultiple")} value={t("tiers.multiple", { n: formatMultiple(meta.mult) })} />
             </section>
-            <section ref={oddsRef} tabIndex={-1} aria-label={t("modal.allPrizes")} id="drop-table" className="scroll-mt-5 px-5 py-7 outline-none sm:px-8">
+            <section aria-label={t("modal.allPrizes")} id="drop-table" className="px-4 py-6 sm:px-8 sm:py-7">
               <div className="mb-5 flex flex-wrap items-baseline justify-between gap-2">
                 <h3 className="text-lg font-semibold text-white">{t("modal.allPrizes")} <span className="ml-1 text-sm font-normal text-muted">{t("modal.count", { n: meta.table.length })}</span></h3>
                 <span className="text-xs text-muted">{t("modal.sortedByValue")}</span>
               </div>
-              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
                 {meta.table.map((item) => <PrizeCard key={item.id} item={item} tier={tierOf(item.value, box.price)} />)}
               </ul>
             </section>
-            <section id="provably-fair" className="px-5 pb-8 sm:px-8">
-              <details open className="rounded-xl border border-hairline bg-obsidian">
+            <section id="provably-fair" className="px-4 pb-6 sm:px-8 sm:pb-8">
+              <details ref={oddsRef} tabIndex={-1} className="scroll-mt-4 rounded-xl border border-hairline bg-obsidian outline-none">
                 <summary className="min-h-12 cursor-pointer px-5 py-4 text-sm font-semibold text-white">{t("modal.preciseOdds")}</summary>
                 <div className="border-t border-hairline p-5">
                   <TierStrip slices={meta.slices} height={6} />

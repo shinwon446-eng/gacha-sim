@@ -29,7 +29,7 @@ function doneCount(o: OwnedItem): number {
 }
 
 /**
- * 배송 추적 모달 — 운송장 번호 + 4단계 타임라인 + 수령지 요약.
+ * 배송 추적 모달, 운송장 번호 + 4단계 타임라인 + 수령지 요약.
  * 데모에는 캐리어 연동이 없어 SHIPPING_REQUESTED 에서 멈춘다. 그 사실을 하단에 명시한다.
  */
 export function TrackingModal({ item, onClose }: TrackingModalProps) {

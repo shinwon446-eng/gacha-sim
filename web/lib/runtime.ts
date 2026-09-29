@@ -1,6 +1,6 @@
 /**
  * 서비스 연결 설정. 환경변수는 데이터 전송 경로를 선택하며 화면과 기능을 잠그지 않는다.
- * 입출금·계정·보관함은 공통 데이터 계약과 상태 전이를 사용한다.
+ * 입출금, 계정, 보관함은 공통 데이터 계약과 상태 전이를 사용한다.
  */
 export const API_BASE = (process.env.NEXT_PUBLIC_API_BASE ?? "").trim().replace(/\/+$/, "");
 
@@ -20,7 +20,7 @@ export const DEPOSIT_ADDRESSES: Record<"TRC20" | "BEP20" | "ERC20", string> = {
 };
 export const RESERVE_NETWORK = (process.env.NEXT_PUBLIC_RESERVE_NETWORK ?? "TRC20") as "TRC20" | "BEP20";
 
-/** 고객지원 채널 — 푸터 */
+/** 고객지원 채널, 푸터 */
 export const SUPPORT = {
   telegram: process.env.NEXT_PUBLIC_SUPPORT_TELEGRAM ?? "",
   discord: process.env.NEXT_PUBLIC_SUPPORT_DISCORD ?? "",

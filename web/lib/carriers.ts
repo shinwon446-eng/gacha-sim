@@ -1,7 +1,7 @@
 /**
  * 택배사 실시간 배송조회 링크 (CLAUDE.md §5-B-2, PROMPTS 2-5).
- * 국내(KR)는 CJ대한통운·우체국, 해외는 DHL·FedEx. 링크는 각 택배사 공식 조회 페이지 형식이다.
- * 운송장은 물류 API(live 모드)가 발급한 것만 표시한다 — 번호를 지어내지 않는다.
+ * 국내(KR)는 CJ대한통운, 우체국, 해외는 DHL, FedEx. 링크는 각 택배사 공식 조회 페이지 형식이다.
+ * 운송장은 물류 API(live 모드)가 발급한 것만 표시한다, 번호를 지어내지 않는다.
  */
 import type { CountryCode } from "@/lib/shipping";
 
@@ -9,7 +9,7 @@ export type CarrierKey = "CJ" | "EPOST" | "DHL" | "FEDEX";
 
 export interface CarrierMeta {
   key: CarrierKey;
-  /** 조회 URL — {no} 자리에 운송장 번호 */
+  /** 조회 URL, {no} 자리에 운송장 번호 */
   trackUrl: (trackingNumber: string) => string;
   /** 운송장 번호 형식 검사 */
   pattern: RegExp;

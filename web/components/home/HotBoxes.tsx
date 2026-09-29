@@ -15,7 +15,7 @@ import { Money } from "@/components/ui/Money";
  * 🔥 실시간 핫 잭팟 박스 TOP 3.
  *
  * 열기 지수(HOT °C)와 순위는 **상품 카탈로그의 실제 인기도 값**(`popularity`, `trendingRank`)에서 계산한다.
- * "오늘 N개 오픈" 처럼 우리가 알 수 없는 수치는 쓰지 않는다 — live 모드에서 API 가 실개봉 수를 주면 그 자리에 들어간다.
+ * "오늘 N개 오픈" 처럼 우리가 알 수 없는 수치는 쓰지 않는다, live 모드에서 API 가 실개봉 수를 주면 그 자리에 들어간다.
  */
 export function HotBoxes({ onPick, className }: { onPick: (box: ProductBox) => void; className?: string }) {
   const t = useTranslations("hot");
@@ -74,7 +74,7 @@ export function HotBoxes({ onPick, className }: { onPick: (box: ProductBox) => v
                   </span>
                   <span className="whitespace-nowrap text-[10px] text-faint">{t("floor", { pct: floorPct })}</span>
                 </span>
-                {/* 인기 지수 게이지 — 카탈로그 popularity 상대값 */}
+                {/* 인기 지수 게이지, 카탈로그 popularity 상대값 */}
                 <span className="mt-1.5 block h-1 w-full overflow-hidden rounded-full bg-white/10">
                   <motion.span
                     className="block h-full rounded-full"

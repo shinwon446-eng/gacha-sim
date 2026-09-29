@@ -1,4 +1,4 @@
-// 확률/부스터/등급 엔진 — 순수 로직.
+// 확률/부스터/등급 엔진, 순수 로직.
 // 프로덕션 원칙: 난수와 확률 계산은 서버에서만 실행하고, 클라이언트에는 결과만 내려준다.
 import { itemLine, type Box, type Item, type Line } from "./types";
 
@@ -26,7 +26,7 @@ const BOOSTED_LINE: Line = "jackpot";
 
 export interface RollOpts {
   boost: boolean;
-  /** 유저 등급 배율 — [초대박] 가중치에 곱해진다 */
+  /** 유저 등급 배율, [초대박] 가중치에 곱해진다 */
   tierMult: number;
 }
 
@@ -56,7 +56,7 @@ export function pickWeightedAdjusted(items: Item[], opts: RollOpts, rand: () => 
 export const rollOnce = (box: Box, opts: RollOpts, rand: () => number = Math.random): Item =>
   pickWeightedAdjusted(box.items, opts, rand);
 
-/** 특정 라인의 합산 확률(%) — 부스터 안내의 확률 변환 표기에 사용 */
+/** 특정 라인의 합산 확률(%), 부스터 안내의 확률 변환 표기에 사용 */
 export function lineProbWith(box: Box, line: Line, opts: RollOpts): number {
   const list = effectiveItems(box.items, opts);
   const total = list.reduce((s, e) => s + e.w, 0);

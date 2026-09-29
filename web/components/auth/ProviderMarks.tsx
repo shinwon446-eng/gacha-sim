@@ -1,4 +1,4 @@
-/** 공급자 로고 — 공식 마크를 그대로 쓴다(색·비율을 임의로 바꾸지 않는다). */
+/** 공급자 로고, 공식 마크를 그대로 쓴다(색, 비율을 임의로 바꾸지 않는다). */
 
 export function GoogleMark({ className = "h-[18px] w-[18px]" }: { className?: string }) {
   return (

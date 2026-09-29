@@ -35,9 +35,9 @@ const inputCls =
 
 /**
  * Provably Fair 검증기 (PROMPTS 3-1-2).
- *   입력: 서버 시드 · (선택) 공개 해시 · 클라이언트 시드 · Nonce · 박스
- *   출력: 서버 시드 SHA-256(+공개 해시 일치 여부) · HMAC · 롤 · 당첨 항목과 구간
- * 계산은 lib/fairness.ts 그대로 — 화면은 재현만 한다.
+ *   입력: 서버 시드 , (선택) 공개 해시 , 클라이언트 시드 , Nonce , 박스
+ *   출력: 서버 시드 SHA-256(+공개 해시 일치 여부) , HMAC , 롤 , 당첨 항목과 구간
+ * 계산은 lib/fairness.ts 그대로, 화면은 재현만 한다.
  */
 export interface FairnessInitial {
   serverSeed?: string;
@@ -193,7 +193,7 @@ export function FairnessVerifier({ initialBox, initial, compact = false }: { ini
               <Row label={t("resultHmac")} mono value={result.hmac} />
               <div className="grid gap-3 sm:grid-cols-2">
                 <Row label={t("resultRoll")} mono value={t("outOf", { roll: result.roll.toLocaleString("en-US"), max: ROLL_MAX.toLocaleString("en-US") })} big />
-                <Row label={t("resultRange")} mono value={`${winRange.from.toLocaleString("en-US")} – ${winRange.to.toLocaleString("en-US")}`} />
+                <Row label={t("resultRange")} mono value={`${winRange.from.toLocaleString("en-US")} ~ ${winRange.to.toLocaleString("en-US")}`} />
               </div>
             </dl>
 
@@ -263,7 +263,7 @@ export function FairnessVerifier({ initialBox, initial, compact = false }: { ini
                   <span aria-hidden className="h-2.5 w-0.5 flex-none rounded-full" style={{ background: tier.accent }} />
                   <span className="min-w-0 flex-1 truncate text-secondary">{itemName(r.item)}</span>
                   <span className="font-mono tabular-nums text-faint">
-                    {r.from.toLocaleString("en-US")}–{r.to.toLocaleString("en-US")}
+                    {r.from.toLocaleString("en-US")}~{r.to.toLocaleString("en-US")}
                   </span>
                 </li>
               );

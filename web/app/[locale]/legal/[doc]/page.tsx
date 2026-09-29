@@ -26,10 +26,10 @@ export default async function LegalPage({ params: { locale, doc } }: { params: {
       <Link href="/legal" className="inline-flex min-h-11 items-center text-sm text-gold-champagne">← {c("title")}</Link>
       <h1 className="mt-5 max-w-2xl break-keep font-display text-3xl font-semibold leading-tight tracking-tight text-white md:text-5xl">{t(`${key}.title`)}</h1>
       <p className="mt-5 text-base leading-8 text-secondary">{t(`${key}.summary`)}</p>
-      <p className="mt-4 text-xs leading-6 text-muted">{c("version", { version: LEGAL_VERSION })} · {c("effective", { date: LEGAL_EFFECTIVE_DATE })}</p>
+      <p className="mt-4 text-xs leading-6 text-muted">{c("version", { version: LEGAL_VERSION })} , {c("effective", { date: LEGAL_EFFECTIVE_DATE })}</p>
       <nav aria-label={c("contents")} className="mt-10 rounded-xl border border-hairline p-5"><h2 className="text-sm font-semibold text-white">{c("contents")}</h2><ol className="mt-3 grid gap-x-6 sm:grid-cols-2">{sections.map((s, i) => <li key={i}><a className="flex min-h-11 items-center gap-3 text-sm leading-6 text-muted hover:text-white" href={`#section-${i + 1}`}><span className="text-xs tabular-nums text-gold-champagne">{String(i + 1).padStart(2, "0")}</span>{s.h}</a></li>)}</ol></nav>
       <div className="mt-12 space-y-9">{sections.map((s, i) => <section className="scroll-mt-28 border-b border-hairline pb-9" id={`section-${i + 1}`} key={i}><h2 className="text-lg font-semibold text-white">{i + 1}. {s.h}</h2><p className="mt-3 whitespace-pre-line break-words text-[15px] leading-8 text-secondary">{t(`${key}.sections.${i}.p`, LEGAL_VALUES)}</p></section>)}</div>
-      <aside className="mt-12 text-xs leading-6 text-muted"><h2 className="font-semibold text-white">{c("sourcesTitle")}</h2><p className="mt-2">{c("sourcesNote")}</p><ul className="mt-3 space-y-2">{LEGAL_SOURCES.map(s => <li key={s.key}><a href={s.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-white">{c(`sources.${s.key}`)}<span className="sr-only"> · {c("newTab")}</span></a></li>)}</ul></aside>
+      <aside className="mt-12 text-xs leading-6 text-muted"><h2 className="font-semibold text-white">{c("sourcesTitle")}</h2><p className="mt-2">{c("sourcesNote")}</p><ul className="mt-3 space-y-2">{LEGAL_SOURCES.map(s => <li key={s.key}><a href={s.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-white">{c(`sources.${s.key}`)}<span className="sr-only"> , {c("newTab")}</span></a></li>)}</ul></aside>
     </article>
   </main>;
 }

@@ -45,7 +45,7 @@
 .collection-intro { margin-top: 12px; font-size: 14px; color: #a3a4a2; }
 .collection-count { color: #929591; font-size: 12px; white-space: nowrap; padding-bottom: 2px; }
 .collection-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 20px; border-bottom: 1px solid #ffffff1c; margin-bottom: 28px; }
-.collection-filters { display: flex; gap: 26px; overflow-x: auto; scrollbar-width: none; }
+.collection-filters { display: flex; min-width: 0; gap: 26px; overflow-x: auto; overscroll-behavior-inline: contain; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none; }
 .collection-filters::-webkit-scrollbar { display: none; }
 .collection-filter { display: flex; min-height: 58px; flex-shrink: 0; align-items: center; gap: 8px; padding: 0 1px; color: #a3a4a2; font-size: 13px; border-bottom: 2px solid transparent; transition: color .2s,border-color .2s; }
 .collection-filter.is-active { color: #f1eee7; border-color: #d9c39a; }
@@ -61,7 +61,7 @@
 .collection-rank { position: absolute; right: 16px; top: 16px; font-size: 15px; color: white; }
 .collection-image-action { position: absolute; bottom: 16px; right: 16px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #10111280; color: #f1eee7; border: 1px solid #ffffff38; }
 .collection-card-body { display: block; padding: 20px; }
-.collection-card-title { display: block; font-size: 17px; line-height: 1.5; font-weight: 600; letter-spacing: -.02em; }
+.collection-card-title { display: -webkit-box; min-width: 0; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; font-size: 17px; line-height: 1.5; font-weight: 600; letter-spacing: -.02em; overflow-wrap: anywhere; }
 .collection-card-meta { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .collection-price { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 7px; }
 .collection-multiple { color: #bfb49e; font-size: 12px; }
@@ -88,43 +88,44 @@
 }
 @media (max-width: 767px) {
   .page-shell { padding-inline: 20px; }
-  .editorial-hero { grid-template-columns: 1fr; gap: 30px; padding-top: 0; padding-bottom: 24px; }
-  .hero-copy { padding-block: 35px 0; }
-  .hero-copy h1 { margin-top: 24px; font-size: clamp(38px,8.9vw,62px); }
-  .hero-description { max-width: 440px; margin-top: 20px; font-size: 14px; }
-  .hero-actions { margin-top: 24px; gap: 10px; }
+  .editorial-hero { grid-template-columns: minmax(0,1fr); gap: 20px; padding-top: 0; padding-bottom: 18px; }
+  .hero-copy { padding-block: 24px 0; }
+  .hero-copy h1 { margin-top: 18px; font-size: clamp(35px,8.7vw,62px); }
+  .hero-description { max-width: 440px; margin-top: 16px; font-size: 14px; }
+  .hero-actions { margin-top: 20px; gap: 8px; }
   .hero-actions > * { padding-inline: 16px; font-size: 13px; }
   .hero-note { max-width: 330px; font-size: 11px; }
   .hero-signature { display: none; }
-  .hero-gallery { min-height: 370px; }
+  .hero-gallery { min-height: 330px; }
   .hero-gallery-top { inset: 22px 22px auto; }
-  .hero-feature { left: 22px; right: 22px; bottom: 67px; }
+  .hero-feature { left: 22px; right: 22px; bottom: 67px; min-width: 0; gap: 12px; }
+  .hero-feature > span:first-child { overflow-wrap: anywhere; }
   .hero-picker { left: 22px; right: 22px; }
   .assurance-strip { grid-template-columns: 1fr; padding-bottom: 0; }
   .assurance-item, .assurance-item:first-child, .assurance-item:last-child { padding: 17px 0; gap: 15px; border: 0; border-bottom: 1px solid #ffffff12; }
   .assurance-item > svg:last-child { display: block; }
   .assurance-item strong { font-size: 12px; }
   .assurance-item > span > span { font-size: 12px; }
-  .collection-section { padding-top: 44px; padding-bottom: 44px; scroll-margin-top: 84px; }
+  .collection-section { padding-top: 32px; padding-bottom: 38px; scroll-margin-top: 84px; }
   .collection-heading { margin-bottom: 20px; gap: 12px; }
   .collection-heading h2, .guide-heading h2 { font-size: 27px; }
   .collection-count { display: none; }
   .collection-intro { font-size: 13px; }
-  .collection-toolbar { display: block; margin-bottom: 20px; }
-  .collection-filters { margin-inline: -20px; padding-inline: 20px; gap: 23px; }
+  .collection-toolbar { display: block; min-width: 0; margin-bottom: 16px; }
+  .collection-filters { margin-inline: -20px; padding-inline: 20px; gap: 18px; }
   .collection-filter { min-height: 54px; font-size: 12px; }
   .collection-sort { display: flex; justify-content: flex-end; border-top: 1px solid #ffffff12; }
   .collection-sort select { font-size: 12px; }
-  .collection-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px 12px; }
+  .collection-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px 10px; }
   .collection-category { left: 8px; top: 8px; padding: 4px 6px; font-size: 11px; }
   .collection-image-action { width: 28px; height: 28px; bottom: 8px; right: 8px; }
   .collection-image-action svg { width: 15px; }
   .collection-card-body { padding: 12px; }
   .collection-card-title { font-size: 14px; min-height: 42px; }
-  .collection-card-meta { margin-top: 7px; gap: 7px; }
+  .collection-card-meta { display: block; margin-top: 7px; }
   .collection-price { gap: 4px; }
   .collection-price > span:last-child { font-size: 11px; }
-  .collection-multiple { font-size: 11px; }
+  .collection-multiple { display: block; margin-top: 4px; font-size: 11px; }
   .collection-card-link { margin-top: 12px; padding-top: 10px; font-size: 11px; gap: 4px; }
   .collection-card-link svg { width: 12px; flex-shrink: 0; }
   .guide-heading { align-items: flex-start; flex-direction: column; gap: 8px; }
@@ -274,7 +275,7 @@
   .record-details summary { margin-top:-34px; width:fit-content; margin-left:auto; font-size:11px; }
   .record-detail-body { margin:8px 0 12px; padding:16px; }
   .record-detail-body dl { grid-template-columns:1fr; gap:14px; }
-  .vault-selection-bar { bottom:calc(74px + env(safe-area-inset-bottom)); gap:7px; padding:10px; }
+  .vault-selection-bar { bottom:calc(16px + env(safe-area-inset-bottom)); gap:7px; padding:10px; }
   .vault-selection-bar .workspace-button { padding:8px 11px; font-size:12px; }
   .vault-selection-bar > div { padding-right:4px; font-size:12px; }
   .journal-layout { grid-template-columns:1fr; gap:28px; }

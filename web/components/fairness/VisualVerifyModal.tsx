@@ -14,7 +14,7 @@ export interface VisualVerifyModalProps {
 }
 
 /**
- * 3-Step 비주얼 검증 모달 (CLAUDE.md §5-A "모든 언박싱 결과·보관함 카드").
+ * 3-Step 비주얼 검증 모달 (CLAUDE.md §5-A "모든 언박싱 결과, 보관함 카드").
  * 레코드 하나를 받아 열리자마자 자동 검증한다. hex 검증기는 안의 전문가 모드 토글로.
  */
 export function VisualVerifyModal({ item, onClose }: VisualVerifyModalProps) {

@@ -18,8 +18,8 @@ export interface HotBoxesProps {
 }
 
 /**
- * 빈 보관함용 "지금 가장 핫한 박스 TOP 3" 미니 캐러셀 — 밋밋한 빈 화면 대신 바로 참여로 잇는다.
- * 순위 숫자·상단 등급·최고 배수만 보여주고, 클릭은 상세 모달·오픈으로 넘긴다.
+ * 빈 보관함용 "지금 가장 핫한 박스 TOP 3" 미니 캐러셀, 밋밋한 빈 화면 대신 바로 참여로 잇는다.
+ * 순위 숫자, 상단 등급, 최고 배수만 보여주고, 클릭은 상세 모달, 오픈으로 넘긴다.
  */
 export function HotBoxes({ onOpen, onInspect, className }: HotBoxesProps) {
   const t = useTranslations();

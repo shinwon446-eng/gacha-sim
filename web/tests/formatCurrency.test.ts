@@ -8,10 +8,10 @@ import { DEFAULT_RATES, CURRENCIES } from "../stores/currencyStore";
 test("정수는 소수점 없이: 80 USDT → 80 USDT / $80 / ₩110,400", () => {
   assert.equal(formatCurrency(80, "USDT"), "80 USDT");
   assert.equal(formatCurrency(80, "USD"), "$80");
-  assert.equal(formatCurrency(0.9, "USDT"), "0.9 USDT");
-  assert.equal(formatCurrency(26.6, "USDT"), "26.6 USDT");
-  assert.equal(formatCurrency(2.65, "USDT"), "2.65 USDT");
-  assert.equal(formatCurrency(1000.1, "USDT"), "1,000.1 USDT");
+  assert.equal(formatCurrency(0.9, "USDT"), "1 USDT");
+  assert.equal(formatCurrency(26.6, "USDT"), "27 USDT");
+  assert.equal(formatCurrency(2.65, "USDT"), "3 USDT");
+  assert.equal(formatCurrency(1000.1, "USDT"), "1,000 USDT");
   assert.equal(formatCurrency(80, "KRW"), "₩110,400");
 });
 
@@ -22,9 +22,9 @@ test("환율: 1 USDT = 1.00 USD = 1,380 KRW", () => {
   assert.equal(convertFromUsdt(1, "KRW"), 1380);
 });
 
-test("쉼표·소수점 규칙: USDT/USD 최대 2자리, KRW 0자리", () => {
-  assert.equal(formatCurrency(1234567.891, "USDT"), "1,234,567.89 USDT");
-  assert.equal(formatCurrency(0.5, "USD"), "$0.5");
+test("모든 통화는 소수점 없이 반올림한다", () => {
+  assert.equal(formatCurrency(1234567.891, "USDT"), "1,234,568 USDT");
+  assert.equal(formatCurrency(0.5, "USD"), "$1");
   assert.equal(formatCurrency(0.5, "KRW"), "₩690");
   assert.equal(formatCurrency(95700, "KRW"), "₩132,066,000");
 });
@@ -51,8 +51,8 @@ test("어떤 통화를 골라도 다른 통화의 기호·단위가 섞이지 �
 });
 
 test("compact 표기도 통화 하나로만", () => {
-  assert.equal(formatCurrencyCompact(12900, "USDT"), "12.9K USDT");
-  assert.equal(formatCurrencyCompact(1250000, "USD"), "$1.25M");
+  assert.equal(formatCurrencyCompact(12900, "USDT"), "13K USDT");
+  assert.equal(formatCurrencyCompact(1250000, "USD"), "$1M");
   assert.equal(formatCurrencyCompact(1000, "KRW"), "₩138만");
   assert.equal(formatCurrencyCompact(80, "USD"), "$80");
 });
@@ -75,7 +75,7 @@ test("splitCurrency — 숫자·단위 분리가 formatCurrency 와 같은 문�
   }
   assert.deepEqual(splitCurrency(80, "USDT"), { prefix: "", number: "80", suffix: "USDT" });
   assert.deepEqual(splitCurrency(80, "USD"), { prefix: "$", number: "80", suffix: "" });
-  assert.deepEqual(splitCurrency(0.9, "USDT"), { prefix: "", number: "0.9", suffix: "USDT" });
+  assert.deepEqual(splitCurrency(0.9, "USDT"), { prefix: "", number: "1", suffix: "USDT" });
   assert.deepEqual(splitCurrency(80, "KRW"), { prefix: "₩", number: "110,400", suffix: "" });
   assert.deepEqual(splitNative(70000, "KRW"), { prefix: "₩", number: "70,000", suffix: "" });
 });
