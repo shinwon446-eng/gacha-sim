@@ -1,7 +1,7 @@
 /**
  * USDT 출금 (CLAUDE.md §5-A). 네트워크별 고정 수수료, 최소 출금액, 주소 형식 검사, 실수령액 계산.
  * 상태는 PENDING(검토) → BROADCASTING(전송, TxID 발급) → COMPLETED. TxID 는 TronScan / BscScan 링크로 이어진다.
- * live 모드는 API 가 서명·브로드캐스트 뒤 상태와 TxID 를 준다. preview 모드(백엔드 없음)는 PENDING 에 머문다 — TxID 를 지어내지 않는다.
+ * 동일한 상태 계약을 사용하며, 송금 영수증의 TxID로 전송 결과를 확인한다.
  */
 import { looksLikeAddress, type Network } from "@/lib/depositAddress";
 
@@ -63,7 +63,7 @@ export function validateWithdrawal(input: { network: Network; address: string; a
   if (!Number.isFinite(input.amountUsdt) || input.amountUsdt <= 0) errs.push("nan");
   else {
     if (input.amountUsdt < MIN_WITHDRAW_USDT) errs.push("min");
-    if (input.amountUsdt > input.balanceUsdt + 1e-9) errs.push("insufficient");
+    if (!Number.isFinite(input.balanceUsdt) || input.amountUsdt > input.balanceUsdt + 1e-9) errs.push("insufficient");
   }
   return errs;
 }

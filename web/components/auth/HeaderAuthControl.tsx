@@ -9,10 +9,12 @@ import { cn } from "@/lib/format";
 import { useAuthStore } from "@/stores/authStore";
 import { ProfileAvatar } from "./ProfileAvatar";
 import { GoogleMark, AppleMark } from "@/components/auth/ProviderMarks";
+import type { AccountProvider } from "@/lib/account";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-function ProviderBadge({ provider }: { provider: "google" | "apple" | "phone" | "email" }) {
+function ProviderBadge({ provider }: { provider: AccountProvider }) {
+  if (provider === "microsoft") return <svg aria-hidden="true" viewBox="0 0 20 20" className="h-3.5 w-3.5"><path fill="#f25022" d="M0 0h9v9H0z" /><path fill="#7fba00" d="M11 0h9v9h-9z" /><path fill="#00a4ef" d="M0 11h9v9H0z" /><path fill="#ffb900" d="M11 11h9v9h-9z" /></svg>;
   if (provider === "email") return <Mail className="h-3.5 w-3.5 text-gold-champagne" />;
   if (provider === "google") return <GoogleMark className="h-3.5 w-3.5" />;
   if (provider === "apple") return <AppleMark className="h-3.5 w-3.5 text-white" />;
@@ -136,7 +138,7 @@ export function HeaderAuthControl({ className }: { className?: string }) {
               {user.avatarUrl ? <ProfileAvatar src={user.avatarUrl} name={user.label} className="h-7 w-7" /> : <ProviderBadge provider={user.provider} />}
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[12px] font-bold text-white">{user.label}</span>
-                <span className="block truncate text-xs text-faint">{user.local ? t("accountLocal") : user.subLabel}</span>
+                <span className="block truncate text-xs text-faint">{user.subLabel}</span>
               </span>
               <OnlineDot />
             </div>

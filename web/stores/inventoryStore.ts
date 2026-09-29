@@ -3,7 +3,7 @@
 /**
  * 보관함 (PROMPTS 5-1/5-2). 언박싱 결과는 확정 즉시 IN_STORAGE 로 들어온다 — 팝업을 닫아도 사라지지 않는다.
  *   IN_STORAGE → SOLD (즉시 판매, 잔액 가산은 호출측)
- *   IN_STORAGE → SHIPPING_REQUESTED (배송 신청, 배송비 차감은 호출측) → SHIPPING (운송장 발급, 데모에선 관리자 동작)
+ *   IN_STORAGE → SHIPPING_REQUESTED (배송 신청, 배송비 차감은 호출측) → SHIPPING (운송장 발급)
  * 항목 값은 확정 당시 USDT 로 고정한다 — 나중에 시세가 바뀌어도 당첨 시점 가치를 보존한다.
  */
 import { create } from "zustand";
@@ -18,10 +18,16 @@ import { useWalletStore } from "@/stores/walletStore";
 import { useAuthStore } from "@/stores/authStore";
 
 export const EXPIRE_MS = 30 * 24 * 60 * 60 * 1000;
-export function daysUntilCashback(acquiredAt: string, now: number): number | null {
+/** Fixed 30-day storage deadline, independent of month length and timezone. */
+export function cashbackExpiresAt(acquiredAt: string): string | null {
   const acquired = Date.parse(acquiredAt);
-  return Number.isFinite(acquired) && Number.isFinite(now)
-    ? Math.max(0, Math.ceil((acquired + EXPIRE_MS - now) / 86_400_000)) : null;
+  const expires = new Date(acquired + EXPIRE_MS);
+  return Number.isFinite(expires.getTime()) ? expires.toISOString() : null;
+}
+export function daysUntilCashback(acquiredAt: string, now = Date.now()): number | null {
+  const expires = cashbackExpiresAt(acquiredAt);
+  return expires && Number.isFinite(now)
+    ? Math.max(0, Math.ceil((Date.parse(expires) - now) / 86_400_000)) : null;
 }
 
 export type OwnedStatus = "IN_STORAGE" | "SHIPPING_REQUESTED" | "SHIPPING" | "DELIVERED" | "SOLD";
@@ -56,7 +62,7 @@ interface InventoryState {
   sell: (ids: string[], refundRate: number) => { ids: string[]; totalUsdt: number; toCrypto: number; toCard: number };
   requestShipping: (ids: string[], address: ShippingAddress, feeUsdt: number, feeFundingRatio?: FundingRatio) => void;
   cancelShipping: (id: string) => { ok: boolean; reason?: "notPreparing" | "unknownFee"; refundedUsdt: number; toCrypto: number; toCard: number };
-  /** 데모/관리자: 운송장 발급 */
+  /** 운송장 발급 */
   markShipping: (id: string, carrier: CarrierKey, trackingNumber: string) => void;
 }
 
@@ -83,7 +89,10 @@ export const useInventoryStore = create<InventoryState>()(
         set(s => ({ items: s.items.map(item => refunds.has(item.id) && item.status === "IN_STORAGE"
           ? { ...item, status: "SOLD", soldForUsdt: refunds.get(item.id), soldAt: at, autoCashbackAt: at }
           : item) }));
-        useWalletStore.getState().credit(totalUsdt);
+        const split = attributeRefunds(expired.map(item => ({ amountUsdt: refunds.get(item.id)!, ratio: normalizeRatio(item.fundingRatio) })));
+        // Existing card-origin items retain their funding bucket after automatic cashback.
+        if (split.toCrypto) useWalletStore.getState().credit(split.toCrypto);
+        if (split.toCard) useWalletStore.getState().credit(split.toCard, "card");
         useWalletStore.getState().addTransaction({ type: "sellback", amountUsdt: totalUsdt, ref: "auto_cashback_30d" });
         return { ids: Array.from(refunds.keys()), totalUsdt };
       },

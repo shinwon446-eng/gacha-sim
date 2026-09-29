@@ -1,7 +1,7 @@
 // 보관함 상태 전이 + 배송 규칙
 import test from "node:test";
 import assert from "node:assert/strict";
-import { useInventoryStore, summarize, EXPIRE_MS, daysUntilCashback, sweepReadyInventory, type OwnedItem } from "../stores/inventoryStore";
+import { useInventoryStore, summarize, EXPIRE_MS, cashbackExpiresAt, daysUntilCashback, sweepReadyInventory, type OwnedItem } from "../stores/inventoryStore";
 import { useWalletStore } from "../stores/walletStore";
 import { useAuthStore } from "../stores/authStore";
 import { COUNTRIES, FREE_SHIPPING_EVENT, SHIPPING_FEE_USDT, customsKindFor, isValidPccc, isValidResidentId, shippingFee, validateAddress } from "../lib/shipping";
@@ -16,6 +16,15 @@ const base = (over: Partial<Omit<OwnedItem, "id" | "status" | "acquiredAt">> = {
 });
 
 const addr = { recipient: "홍길동", country: "KR" as const, phone: "+82 10-1234-5678", postalCode: "06236", address: "서울 강남구 테헤란로 123, 4층", customsId: "P123456789012" };
+
+test("expiry uses exactly 30 days across months, leap years and timezone offsets", () => {
+  assert.equal(cashbackExpiresAt("2026-01-31T12:00:00+09:00"), "2026-03-02T03:00:00.000Z");
+  assert.equal(cashbackExpiresAt("2024-02-01T00:00:00Z"), "2024-03-02T00:00:00.000Z");
+  assert.equal(cashbackExpiresAt("invalid"), null);
+  assert.equal(cashbackExpiresAt("+275760-09-13T00:00:00.000Z"), null);
+  assert.equal(daysUntilCashback("2026-01-31T12:00:00+09:00", Date.parse("2026-03-02T02:59:59.999Z")), 1);
+  assert.equal(daysUntilCashback("2026-01-31T12:00:00+09:00", Date.parse("2026-03-02T03:00:00Z")), 0);
+});
 
 test("30-day boundary: sweep credits 95% once, preserves timestamps, records one batch", () => {
   const acquired = Date.parse("2026-08-01T00:00:00Z");
@@ -42,6 +51,16 @@ test("30-day boundary: sweep credits 95% once, preserves timestamps, records one
   assert.equal(useInventoryStore.getState().sweepExpired(acquired + EXPIRE_MS * 2).ids.length, 0);
   assert.equal(useWalletStore.getState().transactions.length, 1);
   assert.equal(useInventoryStore.getState().sell([item.id], 0.95).totalUsdt, 0);
+});
+
+test("automatic cashback preserves the original funding buckets of legacy items", () => {
+  const now = Date.now();
+  useInventoryStore.setState({ items: [{ ...base({ valueUsdt: 100, fundingRatio: { crypto: 0.4, card: 0.6 }, fundingSource: "mixed" }), id: "mixed-expiry", status: "IN_STORAGE", acquiredAt: new Date(now - EXPIRE_MS).toISOString() }] });
+  useWalletStore.setState({ balance: 0, cryptoBalance: 0, cardBalance: 0, transactions: [] });
+  assert.equal(useInventoryStore.getState().sweepExpired(now).totalUsdt, 95);
+  assert.equal(useWalletStore.getState().cryptoBalance, 38);
+  assert.equal(useWalletStore.getState().cardBalance, 57);
+  assert.equal(useWalletStore.getState().balance, 95);
 });
 
 test("sweep skips active shipping, delivered, sold, invalid values and invalid dates", () => {

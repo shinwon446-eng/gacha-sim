@@ -1,17 +1,17 @@
 /** Authentication types and legacy phone formatting helpers. Real email authentication is in lib/account.ts. */
-import { AUTH_API_BASE } from "./account";
-export type AuthProvider = "google" | "apple" | "phone" | "email";
+import type { AccountProvider } from "./account";
+export type AuthProvider = AccountProvider;
 export type AuthMode = "login" | "signup" | "recover";
 
 
-/** Public OAuth IDs alone do not enable authenticated sessions. */
+/** Available entry points are independent of the selected account transport. */
 export function providerConfigured(provider: AuthProvider): boolean {
-  return provider === "email" && Boolean(AUTH_API_BASE);
+  return ["email", "google", "apple", "microsoft"].includes(provider);
 }
 
-/** 셋 중 하나라도 연결돼 있으면 실계정 경로가 존재한다 */
+/** Whether the application provides any sign-in entry point. */
 export const anyProviderConfigured = (): boolean =>
-  (["google", "apple", "phone", "email"] as const).some(providerConfigured);
+  (["google", "apple", "microsoft", "phone", "email"] as const).some(providerConfigured);
 
 /* ─────────────────────────── 휴대폰 번호 ─────────────────────────── */
 
@@ -107,4 +107,4 @@ export function localHandle(seed: string): string {
 }
 
 /** 공급자 표시명 — 토스트·뱃지에서 쓴다 */
-export const PROVIDER_LABEL: Record<AuthProvider, string> = { google: "Google", apple: "Apple", phone: "Phone", email: "Email" };
+export const PROVIDER_LABEL: Record<AuthProvider, string> = { google: "Google", apple: "Apple", microsoft: "Microsoft", phone: "Phone", email: "Email" };

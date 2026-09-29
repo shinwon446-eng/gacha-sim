@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * 데모 지갑 (USDT 기준 정수/소수). 결제·계정 없음. localStorage 에 persist.
+ * 계정 지갑. USDT 잔액·입출금·캐시백을 기록하고 정산 중복을 방지한다.
  * 표시는 항상 useCurrency().fmt 를 거친다 — 여기서는 숫자만 다룬다.
  */
 import { create } from "zustand";

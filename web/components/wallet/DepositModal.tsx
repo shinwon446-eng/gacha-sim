@@ -9,7 +9,6 @@ import { cn } from "@/lib/format";
 import { UsdtDepositTab } from "@/components/wallet/UsdtDepositTab";
 import { WithdrawTab } from "@/components/wallet/WithdrawTab";
 import { HistoryTab } from "@/components/wallet/HistoryTab";
-import { PolicyNotice } from "@/components/legal/PolicyNotice";
 
 type Tab = "usdt" | "withdraw" | "history";
 
@@ -100,8 +99,6 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
                 </button>
               ))}
             </div>
-
-            {tab === "usdt" && <PolicyNotice />}
 
             <div className="mt-5">
               {tab === "usdt" && <UsdtDepositTab onCredited={onCredited} />}

@@ -5,7 +5,7 @@ import { ArrowLeft, CheckCircle2, Eye, EyeOff, Loader2, X } from "lucide-react";
 import { useModal } from "@/lib/useModal";
 import { Link } from "@/i18n/navigation";
 import { useAuthStore } from "@/stores/authStore";
-import { AccountError, accountConfigured, beginSocialLogin, browserAccountsEnabled, completePasswordRecovery, loginAccount, recoverAccount, resendAccountEmail, signupAccount, validAccountEmail, validAccountPassword, verifyAccountEmail, type SocialProvider } from "@/lib/account";
+import { AccountError, beginSocialLogin, completePasswordRecovery, loginAccount, recoverAccount, resendAccountEmail, signupAccount, validAccountEmail, validAccountPassword, verifyAccountEmail, type SocialProvider } from "@/lib/account";
 
 type Step = "email" | "password" | "verify" | "reset" | "done";
 const providers: SocialProvider[] = ["google", "apple", "microsoft"];
@@ -34,8 +34,6 @@ export function AuthModal() {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
-  const configured = accountConfigured();
-  const browserAccount = browserAccountsEnabled();
   const signup = modalMode === "signup";
   const recover = modalMode === "recover";
   useModal(isModalOpen, () => { if (!lock.current) closeAuthModal(); }, panel);
@@ -50,7 +48,7 @@ export function AuthModal() {
   }, [isModalOpen, step, modalMode]);
 
   const perform = async (operation: () => Promise<void>) => {
-    if (lock.current || !configured) return;
+    if (lock.current) return;
     lock.current = true; setBusy(true); setError(""); setNotice("");
     try { await operation(); }
     catch (cause) { setError(t(`errors.${cause instanceof AccountError ? cause.code : "network"}`)); }
@@ -84,10 +82,10 @@ export function AuthModal() {
   const title = step === "done" ? "passwordUpdated" : step === "verify" ? "verifyTitle" : step === "reset" ? "newPasswordTitle" : step === "password" ? (signup ? "createPasswordTitle" : "enterPasswordTitle") : recover ? "recoverTitle" : signup ? "createAccountTitle" : "welcomeTitle";
   const passwordField = <label className="block text-left text-sm font-medium">{t(step === "reset" ? "newPasswordTitle" : "password")}
     <span className="relative mt-2 block">
-      <input ref={step === "password" ? input : undefined} aria-label={t(step === "reset" ? "newPasswordTitle" : "password")} type={visible ? "text" : "password"} autoComplete={signup || recover ? "new-password" : "current-password"} required minLength={signup || recover ? (browserAccount ? 1 : 12) : 1} maxLength={128} value={password} onChange={e => setPassword(e.target.value)} disabled={busy} className={field + " pr-14"} />
+      <input ref={step === "password" ? input : undefined} aria-label={t(step === "reset" ? "newPasswordTitle" : "password")} type={visible ? "text" : "password"} autoComplete={signup || recover ? "new-password" : "current-password"} required minLength={signup || recover ? 12 : 1} maxLength={128} value={password} onChange={e => setPassword(e.target.value)} disabled={busy} className={field + " pr-14"} />
       <button type="button" onClick={() => setVisible(!visible)} disabled={busy} aria-label={t(visible ? "hidePassword" : "showPassword")} className="absolute right-2 top-1 flex h-12 w-12 items-center justify-center rounded-full hover:bg-black/5">{visible ? <EyeOff size={19} /> : <Eye size={19} />}</button>
     </span>
-    {signup && !browserAccount && <span className="mt-2 block text-xs font-normal text-[#666]">{t("passwordHint")}</span>}
+    {signup && <span className="mt-2 block text-xs font-normal text-[#666]">{t("passwordHint")}</span>}
   </label>;
   return <div ref={panel} role="dialog" aria-modal="true" aria-labelledby="account-dialog-title" tabIndex={-1} className="fixed inset-0 z-[100] overflow-y-auto bg-white text-[#171717] outline-none" style={{ colorScheme: "light" }}>
     <div className="flex min-h-full flex-col px-6">
@@ -95,27 +93,25 @@ export function AuthModal() {
       <main className="mx-auto flex w-full max-w-[360px] flex-1 flex-col justify-center py-8 sm:py-12">
         {step !== "email" && step !== "done" && <button type="button" disabled={busy} onClick={back} aria-label={t("backEmail")} className="mb-5 flex h-11 w-11 items-center justify-center rounded-full border border-[#dedede] hover:bg-black/5"><ArrowLeft size={20} /></button>}
         <h2 id="account-dialog-title" className="text-center text-[30px] font-semibold leading-tight tracking-tight">{t(title)}</h2>
-        {(step === "verify" || step === "reset") && <p className="mt-3 text-center text-sm leading-6 text-[#666]">{t(browserAccount ? "arbitraryCodeHint" : "verifyEmailIntro")}</p>}
+        {(step === "verify" || step === "reset") && <p className="mt-3 text-center text-sm leading-6 text-[#666]">{t("verificationCode")}</p>}
         {step !== "email" && step !== "done" && <div className="mt-6 flex min-h-14 items-center justify-between gap-3 rounded-full border border-[#dedede] px-5"><span className="min-w-0 truncate text-sm" title={email}>{email}</span><button type="button" disabled={busy} onClick={back} className="min-h-11 shrink-0 text-sm font-medium underline underline-offset-4">{t("editEmail")}</button></div>}
         {step === "email" && !recover && <>
-          <div className="mt-8 space-y-3">{providers.map(provider => <button key={provider} type="button" disabled={busy || !configured} onClick={() => social(provider)} className="relative flex min-h-14 w-full items-center justify-center gap-3 rounded-full border border-[#c2c2c2] px-5 text-sm font-medium hover:bg-[#f7f7f7] disabled:opacity-40"><span className="absolute left-5"><ProviderIcon provider={provider} /></span>{t("continueProvider", { provider: providerNames[provider] })}</button>)}</div>
+          <div className="mt-8 space-y-3">{providers.map(provider => <button key={provider} type="button" disabled={busy} onClick={() => social(provider)} className="relative flex min-h-14 w-full items-center justify-center gap-3 rounded-full border border-[#c2c2c2] px-5 text-sm font-medium hover:bg-[#f7f7f7] disabled:opacity-40"><span className="absolute left-5"><ProviderIcon provider={provider} /></span>{t("continueProvider", { provider: providerNames[provider] })}</button>)}</div>
           <div className="my-6 flex items-center gap-4 text-xs text-[#666]"><span className="h-px flex-1 bg-[#dedede]" />{t("or")}<span className="h-px flex-1 bg-[#dedede]" /></div>
         </>}
-        {!configured && <p role="status" className="mt-4 text-sm text-[#666]">{t("unavailable")}</p>}
         {step === "done" ? <div role="status" className="mt-7 text-center"><CheckCircle2 className="mx-auto mb-5 h-10 w-10 text-emerald-600" /><button onClick={() => setModalMode("login")} className={primary}>{t("backLogin")}</button></div> :
           <form onSubmit={submit} className={(step === "email" && !recover ? "" : "mt-6 ") + "space-y-5"}>
-            {step === "email" && <label className="block text-left text-sm font-medium">{t("email")}<input ref={input} type={browserAccount ? "text" : "email"} inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false} required maxLength={254} value={email} onChange={e => setEmail(e.target.value)} disabled={busy || !configured} className={"mt-2 " + field} /></label>}
+            {step === "email" && <label className="block text-left text-sm font-medium">{t("email")}<input ref={input} type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false} required maxLength={254} value={email} onChange={e => setEmail(e.target.value)} disabled={busy} className={"mt-2 " + field} /></label>}
             {step === "password" && passwordField}
             {(step === "verify" || step === "reset") && <label className="block text-left text-sm font-medium">{t("verificationCode")}<input ref={input} inputMode="numeric" autoComplete="one-time-code" required pattern="[0-9]{6}" maxLength={6} value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ""))} disabled={busy} className={"mt-2 text-center tracking-[0.4em] " + field} /></label>}
             {step === "reset" && passwordField}
             {step === "password" && !signup && <button type="button" disabled={busy} onClick={() => setModalMode("recover")} className="min-h-8 text-sm underline underline-offset-4">{t("forgot")}</button>}
             {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm leading-6 text-red-700">{error}</p>}
-            <button disabled={busy || !configured} className={primary}>{busy && <Loader2 className="h-4 w-4 animate-spin" />}{t(busy ? "processing" : "continue")}</button>
+            <button disabled={busy} className={primary}>{busy && <Loader2 className="h-4 w-4 animate-spin" />}{t(busy ? "processing" : "continue")}</button>
           </form>}
         {step === "email" && <p className="mt-6 text-center text-sm">{t(recover ? "rememberPassword" : signup ? "haveAccount" : "noAccount")} <button disabled={busy} onClick={() => setModalMode(signup || recover ? "login" : "signup")} className="min-h-11 font-medium underline underline-offset-4">{t(signup || recover ? "loginTitle" : "signupTitle")}</button></p>}
-        {(step === "verify" || step === "reset") && <button type="button" disabled={busy} onClick={() => void perform(async () => { if (step === "verify") await resendAccountEmail(email, locale); else await recoverAccount(email, locale); setCode(""); setNotice(t(browserAccount ? "arbitraryCodeHint" : "codeResent")); })} className="mt-4 min-h-11 text-sm underline underline-offset-4">{t("resendCode")}</button>}
+        {(step === "verify" || step === "reset") && <button type="button" disabled={busy} onClick={() => void perform(async () => { if (step === "verify") await resendAccountEmail(email, locale); else await recoverAccount(email, locale); setCode(""); setNotice(t("verificationCode")); })} className="mt-4 min-h-11 text-sm underline underline-offset-4">{t("resendCode")}</button>}
         {notice && <p role="status" className="mt-3 text-center text-sm text-[#666]">{notice}</p>}
-        {browserAccount && step !== "done" && <p className="mt-5 text-center text-xs leading-5 text-[#777]">{t("arbitraryAccountHint")}</p>}
       </main>
       <footer className="pb-7 pt-5 text-center text-xs leading-6 text-[#666]"><p>{t("continueTerms")}</p><Link href="/legal/terms" className="underline underline-offset-4">{t("terms")}</Link><span className="mx-3">·</span><Link href="/legal/privacy" className="underline underline-offset-4">{t("privacy")}</Link></footer>
     </div>

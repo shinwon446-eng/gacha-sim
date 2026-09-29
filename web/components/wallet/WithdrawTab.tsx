@@ -11,14 +11,12 @@ import type { Network } from "@/lib/depositAddress";
 import { EXPLORERS, MIN_WITHDRAW_USDT, WITHDRAW_NETWORKS, WITHDRAW_NETWORK_BY_KEY, explorerTxUrl, maxWithdrawable, netReceive, validateWithdrawal, type WithdrawError } from "@/lib/withdrawal";
 import { LOW_RISK_WEIGHT, requiredRollover, rolloverProgress } from "@/lib/rollover";
 import { circuitState, CIRCUIT_LIMIT_USDT } from "@/lib/fraudScoring";
-import { isLive } from "@/lib/runtime";
 import { AccountError } from "@/lib/account";
 import type { WithdrawalProof } from "@/lib/security";
 import { useAuthStore } from "@/stores/authStore";
 import { LoginRequired } from "@/components/auth/LoginRequired";
 import { api } from "@/lib/api";
 import { Money } from "@/components/ui/Money";
-import { PolicyNotice } from "@/components/legal/PolicyNotice";
 import { useSecurityStore } from "@/stores/securityStore";
 import { TwoFactorSetup } from "@/components/wallet/TwoFactorSetup";
 import { ConfirmStep, EmailHoldStep, OtpStep } from "@/components/wallet/WithdrawSteps";
@@ -153,7 +151,6 @@ function CircuitBanner({ t, used, limit, remaining, tripped }: { t: TFn; used: n
  */
 export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps) {
   const t = useTranslations("withdraw");
-  const tb = useTranslations("browserWallet");
   const r = useTranslations("refinement");
   const locale = useLocale();
   const { currency, fmt } = useCurrency();
@@ -209,7 +206,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   // 입력은 선택 통화 단위 — 잔액 반영·온체인 금액은 USDT 로 환산
   const amountNative = Number(amountText);
   const amountUsdt = useMemo(() => (Number.isFinite(amountNative) ? +(amountNative / rates[currency]).toFixed(2) : NaN), [amountNative, rates, currency]);
-  const errors = useMemo(() => validateWithdrawal({ network, address, amountUsdt, balanceUsdt: balance }, user?.local === true), [network, address, amountUsdt, balance, user?.local]);
+  const errors = useMemo(() => validateWithdrawal({ network, address, amountUsdt, balanceUsdt: balance }), [network, address, amountUsdt, balance]);
   const has = (k: WithdrawError) => touched && errors.includes(k);
   const amountOk = !errors.includes("nan") && !errors.includes("min") && !errors.includes("insufficient");
   const net = amountOk ? netReceive(amountUsdt, network) : 0;
@@ -219,7 +216,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const circuit = useMemo(() => circuitState(withdrawHistory), [withdrawHistory]);
 
   const amlPct = rolloverProgress(totalWagered, totalDepositedCrypto);
-  const amlOk = user?.local || amlPct >= 100;
+  const amlOk = amlPct >= 100;
 
   /** 잔액의 일정 비율을 입력창에 넣는다 (선택 통화 단위) */
   const setRatio = (ratio: number) => {
@@ -253,7 +250,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const commit = useCallback(async (draft: Draft, proof: WithdrawalProof) => {
     if (submission.current || !user || useAuthStore.getState().user?.id !== user.id) return;
     const current = useWalletStore.getState();
-    if (validateWithdrawal({ ...draft, balanceUsdt: current.cryptoBalance }, user.local).length || (!user.local && rolloverProgress(current.totalWagered, current.totalDepositedCrypto) < 100)) {
+    if (validateWithdrawal({ ...draft, balanceUsdt: current.cryptoBalance }).length || rolloverProgress(current.totalWagered, current.totalDepositedCrypto) < 100) {
       setStage({ kind: "form" }); setSubmitError(t("errors.insufficient")); return;
     }
     submission.current = true; setSubmitError(""); setStage({ kind: "submitting" });
@@ -289,13 +286,10 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
 
   // ── 1단계 관문: 2FA 미등록이면 출금 입력 앞에 Google OTP 설정이 선다 ──
   if (!user) return <LoginRequired />;
-  if (!isLive() && !user.local) return <p role="status" className="mt-4 rounded-xl border border-hairline p-5 text-sm leading-7 text-secondary">{ta("transactionsUnavailable")}</p>;
   if (!securityReady) return <div className="mt-4 text-sm text-secondary"><p role="status">{ts(securityError ? "loadFailed" : "loading")}</p>{securityError && <button type="button" onClick={() => void useSecurityStore.getState().refresh(user.id)} className="mt-2 min-h-11 text-gold-champagne">{ts("retry")}</button>}</div>;
   if (!twoFactorEnabled && !emailOnly && stage.kind !== "done") {
     return (
       <div className="mt-4">
-        {user.local && <p className="mb-3 text-xs leading-6 text-muted">{tb("notice")}</p>}
-        <PolicyNotice />
         <div className="border border-hairline mt-4 rounded-xl bg-obsidian p-4">
           <div className="flex items-center gap-2">
             <ShieldAlert className="h-4 w-4 flex-none text-gold-champagne" strokeWidth={2.3} />
@@ -347,8 +341,6 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   if (stage.kind === "done") {
     return (
       <div className="border-metallic-subtle mt-4 rounded-lg bg-obsidian p-4">
-        {user.local && <p className="mb-3 text-xs leading-6 text-muted">{tb("notice")}</p>}
-        <PolicyNotice />
         <div className="flex items-center justify-between">
           <span className="caption-luxury">{t("requested")}</span>
           <StatusPill status={liveStatus ?? "PENDING"} t={t} />
@@ -415,7 +407,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
             <p className="mt-1 break-keep text-xs leading-relaxed text-secondary">{t("reviewNote")}</p>
           </div>
         ) : (
-          <p className="mt-3 text-xs leading-relaxed text-faint">{isLive() ? t("processingNote") : t("networkNote")}</p>
+          <p className="mt-3 text-xs leading-relaxed text-faint">{t("processingNote")}</p>
         )}
         <div className={cn("mt-4 grid gap-2", onDone ? "grid-cols-2" : "grid-cols-1")}>
           <button type="button" onClick={reset} className="glass-dark h-11 rounded-md text-sm font-semibold text-secondary hover:text-white">
@@ -434,15 +426,12 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
 
   return (
     <>
-      {user.local && <p className="mb-3 text-xs leading-6 text-muted">{tb("notice")}</p>}
-      <PolicyNotice />
       {submitError && <p role="alert" className="mt-3 text-sm text-red-200">{submitError}</p>}
       {/* 2FA 보호 중 — 1단계 관문을 통과한 계정 */}
       <p className="mt-4 flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/[0.07] px-3 py-2 text-xs font-bold text-emerald-300">
         <ShieldCheck className="h-3.5 w-3.5 flex-none" strokeWidth={2.4} />
         {t("gateProtected")}
       </p>
-      {!isLive() && <p className="my-4 rounded-lg border border-hairline bg-obsidian p-4 text-sm leading-7 text-secondary">{t("previewNote")}</p>}
       {/* 출금 가능액은 암호화폐 입금분만 — 카드 충전분은 온체인 출금 불가 (CLAUDE.md §7-B) */}
       <div className="mt-2 grid gap-1.5">
         <div className="flex items-baseline justify-between gap-3">
@@ -464,7 +453,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
       </div>
 
       {/* 🛡️ 자금세탁 방지(AML) 롤오버 */}
-      {!user.local && <RolloverBar t={t} />}
+      <RolloverBar t={t} />
 
       {/* ⛔ 시간당 출금 서킷 브레이커 */}
       <CircuitBanner t={t} used={circuit.usedUsdt} limit={CIRCUIT_LIMIT_USDT} remaining={circuit.remainingUsdt} tripped={circuit.tripped} />

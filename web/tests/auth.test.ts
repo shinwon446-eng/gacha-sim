@@ -2,6 +2,7 @@
 //   npm test
 import test from "node:test";
 import assert from "node:assert/strict";
+import { resolveAccountApiBase } from "../lib/account";
 import {
   DIAL_BY_LOCALE,
   OTP_LENGTH,
@@ -69,12 +70,21 @@ test("로케일마다 기본 국가번호가 정해져 있고 전부 선택지 �
   assert.equal(specFor("+999").dial, PHONE_SPECS[0].dial);
 });
 
-test("공급자 키가 없으면 실계정이 아니다 — 화면이 이 값을 보고 로컬 세션을 고지한다", () => {
-  // 테스트 환경에는 NEXT_PUBLIC_* 키가 없다
-  assert.equal(providerConfigured("google"), false);
-  assert.equal(providerConfigured("apple"), false);
+test("sign-in entry points remain available without environment keys", () => {
+  assert.equal(providerConfigured("google"), true);
+  assert.equal(providerConfigured("apple"), true);
+  assert.equal(providerConfigured("microsoft"), true);
+  assert.equal(providerConfigured("email"), true);
   assert.equal(providerConfigured("phone"), false);
-  assert.equal(anyProviderConfigured(), false);
+  assert.equal(anyProviderConfigured(), true);
+});
+
+test("a shared API origin also supplies authentication unless explicitly overridden", () => {
+  assert.equal(resolveAccountApiBase(undefined, "https://api.example.test/"), "https://api.example.test");
+  assert.equal(resolveAccountApiBase("  ", "https://api.example.test/"), "https://api.example.test");
+  assert.equal(resolveAccountApiBase("https://auth.example.test/", "https://api.example.test"), "https://auth.example.test");
+  assert.equal(resolveAccountApiBase(undefined, undefined), "");
+  assert.equal(resolveAccountApiBase("http://unsafe.example.test", "https://api.example.test"), "");
 });
 
 test("로컬 OTP 는 상수가 아니라 매번 새로 만든다 — 실서버에 박힌 코드가 남지 않는다", () => {

@@ -163,7 +163,6 @@ export function TwoFactorSetup({ onEnabled, compact, autoStart = false }: { onEn
             {error}
           </p>
         )}
-        <p className="mt-2 break-keep text-[11px] leading-relaxed text-faint">{user.local ? ta("browserSecurityNote") : t("serverNote")}</p>
       </form>
     </div>
   );

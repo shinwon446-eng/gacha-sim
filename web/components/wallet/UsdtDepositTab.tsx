@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrcode.react";
-import { Copy, Check, AlertTriangle, ShieldAlert, Radio } from "lucide-react";
+import { Copy, Check, AlertTriangle, Radio } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
-import { MIN_DEPOSIT_USDT, NETWORKS, looksLikeAddress, type DepositNetwork } from "@/lib/depositAddress";
-import { DEPOSIT_ADDRESSES, isLive } from "@/lib/runtime";
+import { MIN_DEPOSIT_USDT, NETWORKS, looksLikeAddress, resolveDepositAddress, validDepositReceipt, type DepositNetwork } from "@/lib/depositAddress";
+import { DEPOSIT_ADDRESSES } from "@/lib/runtime";
 import { api } from "@/lib/api";
 import { recordConfirmedUsdtDeposit } from "@/lib/depositCredit";
 import { useAuthStore } from "@/stores/authStore";
@@ -17,14 +17,13 @@ import { playChime } from "@/lib/audio";
 
 type DepositStatus = { kind: "waiting" } | { kind: "checking" } | { kind: "pending"; confirmations: number; total: number } | { kind: "credited"; amount: number; txHash?: string };
 
-/** 입금 확인 폴링(live) */
+/** 입금 확인 주기 */
 const CHECK_INTERVAL_MS = 5_000;
 
 /**
  * USDT 입금 탭.
  *   네트워크 선택 → 플랫폼 전용 입금 주소 + QR + 주소 복사 → 자동 온체인 확인.
- * 주소는 운영자가 통제하는 지갑(env NEXT_PUBLIC_DEPOSIT_*) 또는 API 발급분만 보여준다. 잔고는 체인에서 확인된 입금만 올린다 —
- * 클라이언트가 스스로 잔액을 만드는 경로는 없다.
+ * 배포 주소와 계정별 발급 주소를 지원하고 같은 입금 영수증을 중복 정산하지 않는다.
  */
 export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number) => void }) {
   const t = useTranslations("deposit");
@@ -40,28 +39,29 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   const meta = useMemo(() => NETWORKS.find((n) => n.key === network)!, [network]);
 
   const envAddress = DEPOSIT_ADDRESSES[network];
-  const [apiAddress, setApiAddress] = useState<string | null>(null);
+  const [issued, setIssued] = useState<{ address: string; network: DepositNetwork; accountId: string } | null>(null);
   const [addrError, setAddrError] = useState(false);
   useEffect(() => {
-    setApiAddress(null);
+    setIssued(null);
+    setCopied(false);
     setAddrError(false);
     setStatus({ kind: "waiting" });
-    if (!isLive() || !userKey) return;
+    if (!userKey || resolveDepositAddress(network, envAddress)) return;
     let alive = true;
     api
       .depositAddress(network, userKey)
       .then((r) => {
         if (!alive) return;
-        if (looksLikeAddress(network, r.address)) setApiAddress(r.address);
+        if (r.network === network && looksLikeAddress(network, r.address)) setIssued({ address: r.address, network, accountId: userKey });
         else setAddrError(true);
       })
       .catch(() => alive && setAddrError(true));
     return () => {
       alive = false;
     };
-  }, [network, userKey]);
-  const address = apiAddress ?? (looksLikeAddress(network, envAddress) ? envAddress : null);
-  const depositReady = !!address && isLive() && !user?.local;
+  }, [network, userKey, envAddress]);
+  const address = resolveDepositAddress(network, envAddress, issued?.network === network && issued.accountId === userKey ? issued.address : null);
+  const depositReady = !!address;
 
   const copy = useCallback(async () => {
     if (!depositReady || !address) return;
@@ -84,7 +84,8 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
       try {
         const result = await api.depositCheck({ network, address, userKey });
         if (!active || useAuthStore.getState().user?.id !== userKey) return;
-        if (result.status === "confirmed" && result.amountUsdt && result.amountUsdt >= MIN_DEPOSIT_USDT && result.txHash) {
+        if (result.status === "confirmed" && result.amountUsdt && result.txHash && result.confirmations >= meta.confirmations
+          && validDepositReceipt({ network, address, amountUsdt: result.amountUsdt, txHash: result.txHash, confirmations: result.confirmations })) {
           const recorded = recordConfirmedUsdtDeposit({ accountId: userKey, address, network, amountUsdt: result.amountUsdt, txHash: result.txHash });
           if (recorded === "credited") {
             if (!useSettingsStore.getState().muted) playChime();
@@ -110,7 +111,6 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
 
   return (
     <div className="grid gap-5 md:grid-cols-5">
-      {!depositReady && <div role="status" className="rounded-xl border border-gold-champagne/30 bg-obsidian p-4 md:col-span-5"><div className="flex items-center gap-2 text-sm font-semibold text-gold-champagne"><ShieldAlert className="h-4 w-4" aria-hidden="true" />{t("unavailableTitle")}</div><p className="mt-2 text-sm leading-6 text-secondary">{t("unavailableBody")}</p></div>}
       {/* ── 좌: 네트워크 + 주소 ── */}
       <div className="grid gap-4 md:col-span-3">
         <fieldset>
@@ -141,18 +141,18 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
         <div>
           <div className="caption-luxury">{t("address")}</div>
           <div className="border-metallic-subtle mt-2 flex items-center gap-2 rounded-lg bg-obsidian p-3">
-              <code className="min-w-0 flex-1 break-all font-mono text-xs leading-relaxed text-secondary">{depositReady ? address : t("addressUnavailable")}</code>
+              <code className="min-w-0 flex-1 break-all font-mono text-xs leading-relaxed text-secondary">{depositReady ? address : t("checking")}</code>
               <button
                 type="button"
                 onClick={copy}
-                disabled={!depositReady}
+                aria-busy={!depositReady}
                 className={cn("flex h-11 flex-none items-center gap-1.5 whitespace-nowrap rounded-md px-3 text-xs font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-40", copied ? "bg-gold-champagne text-obsidian" : "bg-crimson text-white hover:bg-red-600")}
               >
                 {copied ? <Check className="h-3.5 w-3.5" strokeWidth={2.5} /> : <Copy className="h-3.5 w-3.5" strokeWidth={2.2} />}
                 {copied ? t("copied") : t("copy")}
               </button>
           </div>
-          {addrError && isLive() && <p className="mt-2 text-xs text-crimson">{t("addressError")}</p>}
+          {addrError && <p className="mt-2 text-xs text-crimson">{t("addressError")}</p>}
         </div>
 
         {/* 안내 */}
@@ -176,14 +176,14 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
             <QRCodeSVG value={address} size={168} level="M" bgColor="#ffffff" fgColor="#0B0B0B" includeMargin={false} />
             <span className="mt-2 text-center text-xs text-neutral-600">{t("qrHint")}</span>
           </div>
-        ) : <div className="border-metallic-subtle mx-auto flex min-h-[200px] w-full flex-col items-center justify-center gap-2 rounded-lg bg-obsidian p-4 text-center text-xs text-muted"><ShieldAlert className="h-6 w-6 text-gold-champagne" aria-hidden="true" />{t("qrUnavailable")}</div>}
+        ) : <div className="border-metallic-subtle mx-auto flex min-h-[200px] w-full flex-col items-center justify-center gap-2 rounded-lg bg-obsidian p-4 text-center text-xs text-muted"><Radio className="h-6 w-6 animate-pulse" aria-hidden="true" />{t("checking")}</div>}
 
         <div aria-live="polite" className="border-metallic-subtle rounded-lg bg-obsidian p-3">
           <div className="flex items-center justify-between">
             <span className="caption-luxury">{t("status")}</span>
             <span className={cn("flex items-center gap-1.5 text-xs font-semibold", status.kind === "credited" ? "text-gold-champagne" : status.kind === "waiting" ? "text-muted" : "text-white")}>
               <Radio className={cn("h-3 w-3", depositReady && status.kind !== "waiting" && status.kind !== "credited" && "animate-pulse")} strokeWidth={2.2} />
-              {!depositReady ? t("statusUnavailable") : status.kind === "waiting" ? t("waiting") : status.kind === "checking" ? t("checking") : status.kind === "pending" ? t("confirming", { n: status.confirmations, total: status.total }) : t("credited")}
+              {status.kind === "waiting" ? t("waiting") : status.kind === "checking" ? t("checking") : status.kind === "pending" ? t("confirming", { n: status.confirmations, total: status.total }) : t("credited")}
             </span>
           </div>
           {depositReady && <div className="mt-2 flex gap-0.5">

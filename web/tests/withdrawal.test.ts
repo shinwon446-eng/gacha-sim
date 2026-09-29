@@ -38,6 +38,8 @@ test("검증: 최소 미만·잔액 초과·주소 오류·NaN 을 각각 잡는
   assert.deepEqual(validateWithdrawal({ network: "BEP20", address: TRON, amountUsdt: 50, balanceUsdt: 100 }), ["address"]);
   assert.deepEqual(validateWithdrawal({ network: "BEP20", address: BSC, amountUsdt: NaN, balanceUsdt: 100 }), ["nan"]);
   assert.deepEqual(validateWithdrawal({ network: "BEP20", address: "", amountUsdt: 0, balanceUsdt: 100 }), ["address", "nan"]);
+  assert.deepEqual(validateWithdrawal({ network: "BEP20", address: BSC, amountUsdt: 20, balanceUsdt: NaN }), ["insufficient"]);
+  assert.deepEqual(validateWithdrawal({ network: "BEP20", address: BSC, amountUsdt: 20, balanceUsdt: Infinity }), ["insufficient"]);
 });
 
 test("전액(MAX) 은 잔액 그대로 — 수수료는 신청액 안에서 차감된다", () => {

@@ -2,6 +2,8 @@ import { AccountError, AccountActionError, ProfileError, browserAccountsEnabled,
 import { nicknameIssue, nicknameKey, nextNicknameChangeAt, validAvatarData, NICKNAME_CHANGE_INTERVAL_MS } from "./profilePolicy";
 import { newTotpSecret, verifyTotp } from "./totp";
 import { HOLD_MS, maskEmail } from "./withdrawHold";
+import { NETWORKS, resolveDepositAddress, validDepositReceipt, type DepositReceipt, type DepositNetwork } from "./depositAddress";
+import { DEPOSIT_ADDRESSES } from "./runtime";
 
 const KEY = "voila.browser-accounts.v1";
 const SESSION = "voila.browser-session.v1";
@@ -17,6 +19,7 @@ type Account = {
   passwordFailures?: number; passwordVerifiedUntil?: number; strictPassword?: boolean;
   passwordOtpFailures?: number; passwordOtpLockedUntil?: number;
   accountCodes?: Partial<Record<CodePurpose, AccountCode>>;
+  deposits?: DepositReceipt[];
   proofs: Proof[]; withdrawals: Record<string, { id: string; requestId: string; status: string; unlockAt?: number }>;
 };
 const read = (): Account[] => JSON.parse(localStorage.getItem(KEY) || "[]");
@@ -144,6 +147,37 @@ async function request(path: string, input?: unknown): Promise<Record<string, un
     throw new AccountActionError("verification_required");
   }
   if (path === "/auth/session") return { user: publicUser(account) };
+  if (path.startsWith("/deposit/")) {
+    if (body.userKey !== account.user.id) throw new AccountError("credentials");
+    const network = body.network as DepositNetwork;
+    if (!NETWORKS.some(n => n.key === network)) throw new AccountError("invalid");
+    const address = resolveDepositAddress(network, DEPOSIT_ADDRESSES[network]);
+    if (path === "/deposit/address") {
+      if (!address) throw new AccountError("invalid");
+      return { address, network };
+    }
+    if (!address || body.address !== address) throw new AccountError("invalid");
+    // The adapter consumes transfer receipts; it never creates deposits just because
+    // a user opens the wallet or polls an address. Receipt delivery is idempotent.
+    if (path === "/deposit/receipt") {
+      const receipt = body as unknown as DepositReceipt;
+      if (!validDepositReceipt(receipt)) throw new AccountError("invalid");
+      const existing = account.deposits?.find(r => r.network === network && r.txHash === receipt.txHash);
+      if (existing) {
+        if (existing.amountUsdt !== receipt.amountUsdt || existing.address !== receipt.address) throw new AccountError("conflict");
+        existing.confirmations = Math.max(existing.confirmations, receipt.confirmations);
+      } else account.deposits = [...(account.deposits ?? []), { network, address, txHash: receipt.txHash, amountUsdt: receipt.amountUsdt, confirmations: receipt.confirmations }];
+      persist(); return { accepted: true };
+    }
+    if (path === "/deposit/check") {
+      const wallet = JSON.parse(localStorage.getItem(`voila.browser-wallet.${account.user.id}`) || "{}").state ?? {};
+      const receipts = (account.deposits ?? []).filter(r => r.network === network && r.address === address);
+      const uncredited = receipts.filter(r => !(wallet.settledDepositRefs ?? []).includes(`deposit_usdt:${network}:${r.txHash}`));
+      const required = NETWORKS.find(n => n.key === network)!.confirmations;
+      const receipt = uncredited.find(r => r.confirmations >= required) ?? uncredited[0] ?? receipts.at(-1);
+      return receipt ? { ...receipt, status: receipt.confirmations >= required ? "confirmed" : "pending" } : { status: "pending", confirmations: 0 };
+    }
+  }
   const passwordState = (matched = false) => ({ accountId: account.user.id, matched, failures: account.passwordFailures ?? 0,
     locked: (account.passwordFailures ?? 0) >= 5, twoFactorEnabled: Boolean(account.secret) });
   const requirePasswordAccount = () => { if (isSocialAccount(providerOf(account))) throw new AccountActionError("social_account"); };

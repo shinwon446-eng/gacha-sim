@@ -38,8 +38,12 @@ export function validAuthBase(raw: string): string {
     return url.href.replace(/\/+$/, "");
   } catch { return ""; }
 }
-export const AUTH_API_BASE = validAuthBase(process.env.NEXT_PUBLIC_AUTH_API_BASE ?? "");
-export const browserAccountsEnabled = () => !AUTH_API_BASE && !process.env.NEXT_PUBLIC_API_BASE;
+// A single API origin is sufficient; an explicit auth origin can override it.
+export function resolveAccountApiBase(authBase: string | undefined, apiBase: string | undefined): string {
+  return validAuthBase(authBase?.trim() || apiBase?.trim() || "");
+}
+export const AUTH_API_BASE = resolveAccountApiBase(process.env.NEXT_PUBLIC_AUTH_API_BASE, process.env.NEXT_PUBLIC_API_BASE);
+export const browserAccountsEnabled = () => !process.env.NEXT_PUBLIC_AUTH_API_BASE?.trim() && !process.env.NEXT_PUBLIC_API_BASE?.trim();
 export const accountConfigured = () => Boolean(AUTH_API_BASE) || browserAccountsEnabled();
 export const validEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) && value.length <= 254;
 export const validPassword = (value: string) => value.length >= 12 && value.length <= 128;

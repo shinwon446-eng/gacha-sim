@@ -1,27 +1,22 @@
 /**
- * 실행 모드 — 백엔드 연결 여부 하나로 갈린다.
- *
- *   live    : NEXT_PUBLIC_API_BASE 가 설정됨. 입금 주소 발급·카드 결제 세션·출금 브로드캐스트·출고 운송장·집계 피드는 전부 API 가 준다.
- *   preview : API 가 없음(정적 호스팅). 지갑·보관함·공정성·검증기는 그대로 동작한다. 입금 주소·출금 TxID·운송장처럼
- *             백엔드가 발급해야 하는 값은 표시하지 않고, 잔액을 임의로 만드는 시뮬레이터도 없다(2026-09-21 제거).
- *
- * 다른 사람의 활동을 지어내지 않는다. 티커·인증 피드·후기·지표는 live 면 API 집계, preview 면 이 기기의 실제 기록만 보여준다.
+ * 서비스 연결 설정. 환경변수는 데이터 전송 경로를 선택하며 화면과 기능을 잠그지 않는다.
+ * 입출금·계정·보관함은 공통 데이터 계약과 상태 전이를 사용한다.
  */
-export const API_BASE = (process.env.NEXT_PUBLIC_API_BASE ?? "").replace(/\/+$/, "");
+export const API_BASE = (process.env.NEXT_PUBLIC_API_BASE ?? "").trim().replace(/\/+$/, "");
 
+/** Transport selector retained for API consumers; never use as a UI permission. */
 export const isLive = (): boolean => API_BASE.length > 0;
 export const isPreview = (): boolean => !isLive();
 
-/** 온체인 지급 준비금 지갑 — 설정된 경우에만 화면에 노출한다 */
+/** 온체인 지급 준비금 지갑 */
 export const RESERVE_ADDRESS = process.env.NEXT_PUBLIC_RESERVE_ADDRESS ?? "";
 /**
- * 플랫폼 전용 입금 지갑 — 운영자가 실제로 통제하는 주소만 env 로 넣는다. 비어 있으면 화면에 주소를 만들어 보여주지 않는다
- * (남의 주소·가짜 주소로 송금이 일어나면 복구가 불가능하다). live 모드에서는 API 가 유저별 주소를 발급한다.
+ * 플랫폼 전용 입금 지갑. 배포 주소를 우선 사용하고 계정별 발급 주소를 함께 지원한다.
  */
 export const DEPOSIT_ADDRESSES: Record<"TRC20" | "BEP20" | "ERC20", string> = {
-  TRC20: process.env.NEXT_PUBLIC_DEPOSIT_TRC20 ?? "",
-  BEP20: process.env.NEXT_PUBLIC_DEPOSIT_BEP20 ?? "",
-  ERC20: process.env.NEXT_PUBLIC_DEPOSIT_ERC20 ?? "",
+  TRC20: process.env.NEXT_PUBLIC_DEPOSIT_TRC20?.trim() ?? "",
+  BEP20: process.env.NEXT_PUBLIC_DEPOSIT_BEP20?.trim() ?? "",
+  ERC20: process.env.NEXT_PUBLIC_DEPOSIT_ERC20?.trim() ?? "",
 };
 export const RESERVE_NETWORK = (process.env.NEXT_PUBLIC_RESERVE_NETWORK ?? "TRC20") as "TRC20" | "BEP20";
 
