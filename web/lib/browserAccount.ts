@@ -1,30 +1,61 @@
-import { AccountError, ProfileError, browserAccountsEnabled, normalizeNickname, validAccountEmail, validAccountPassword, type ServerAccount } from "./account";
+import { AccountError, AccountActionError, ProfileError, browserAccountsEnabled, normalizeNickname, validAccountEmail, validAccountPassword, validPassword, isSocialAccount, closureReadiness, type AccountProvider, type ServerAccount } from "./account";
 import { nicknameIssue, nicknameKey, nextNicknameChangeAt, validAvatarData, NICKNAME_CHANGE_INTERVAL_MS } from "./profilePolicy";
-import { newTotpSecret } from "./totp";
+import { newTotpSecret, verifyTotp } from "./totp";
 import { HOLD_MS, maskEmail } from "./withdrawHold";
 
 const KEY = "voila.browser-accounts.v1";
 const SESSION = "voila.browser-session.v1";
 type Proof = { authorization: string; method: string; unlockAt?: number; emailMasked?: string; draft: string; expiresAt: number };
+type CodePurpose = "password_unlock" | "password_otp" | "closure";
+type AccountCode = { code: string; expiresAt: number; resendAt: number; attempts: number; sessionVersion: number };
 type Account = {
   user: ServerAccount; salt: string; passwordHash: string; quick?: boolean;
   signupPending?: boolean; reset?: { token: string; expiresAt: number };
   secret?: string; setup?: { id: string; secret: string }; enabledAt?: string;
   challenge?: { id: string; code: string; expiresAt: number; draft: string; attempts: number };
   otpFailures?: number; lockedUntil?: number;
+  passwordFailures?: number; passwordVerifiedUntil?: number; strictPassword?: boolean;
+  passwordOtpFailures?: number; passwordOtpLockedUntil?: number;
+  accountCodes?: Partial<Record<CodePurpose, AccountCode>>;
   proofs: Proof[]; withdrawals: Record<string, { id: string; requestId: string; status: string; unlockAt?: number }>;
 };
 const read = (): Account[] => JSON.parse(localStorage.getItem(KEY) || "[]");
 const save = (accounts: Account[]) => localStorage.setItem(KEY, JSON.stringify(accounts));
-const publicUser = (account: Account) => ({ ...account.user, local: true, emailVerified: false });
+function providerOf(account: Account): AccountProvider {
+  if (account.user.provider) return account.user.provider;
+  // Migrate only the exact identities produced by the former browser OAuth adapter.
+  const legacy = /^(google|apple|microsoft)@device\.invalid$/.exec(account.user.email)?.[1];
+  return legacy && !account.passwordHash && !account.quick ? legacy as AccountProvider : "email";
+}
+const nicknameTimestamp = (user: ServerAccount) => [user.nicknameUpdatedAt, user.nicknameChangedAt].filter((value): value is string => !!value).sort((a, b) => Date.parse(b) - Date.parse(a))[0];
+const publicUser = (account: Account): ServerAccount => ({ ...account.user, provider: providerOf(account),
+  nicknameUpdatedAt: nicknameTimestamp(account.user), nicknameChangedAt: nicknameTimestamp(account.user),
+  passwordFailures: account.passwordFailures ?? 0, twoFactorEnabled: Boolean(account.secret), sessionVersion: account.user.sessionVersion ?? 0,
+  local: true, emailVerified: false });
 const signature = (body: Record<string, unknown>) => JSON.stringify([body.network, body.address, body.amountUsdt]);
 async function passwordHash(password: string, salt: string) {
   const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
   const bytes = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: new TextEncoder().encode(salt), iterations: 210000 }, key, 256);
   return Array.from(new Uint8Array(bytes), b => b.toString(16).padStart(2, "0")).join("");
 }
-function makeUser(email: string): ServerAccount {
-  return { id: `browser_${crypto.randomUUID()}`, email, createdAt: new Date().toISOString(), emailVerified: false, local: true };
+function makeUser(email: string, provider: AccountProvider = "email"): ServerAccount {
+  return { id: `browser_${crypto.randomUUID()}`, email, provider, sessionVersion: 0, createdAt: new Date().toISOString(), emailVerified: false, local: true };
+}
+function invalidateAccess(account: Account) {
+  account.proofs = []; account.reset = undefined; account.challenge = undefined; account.setup = undefined;
+  account.signupPending = false;
+  account.accountCodes = {}; account.passwordVerifiedUntil = undefined;
+  account.passwordFailures = 0; account.otpFailures = 0; account.lockedUntil = undefined;
+  account.passwordOtpFailures = 0; account.passwordOtpLockedUntil = undefined;
+  account.user.sessionVersion = (account.user.sessionVersion ?? 0) + 1;
+}
+function checkClosureAssets(account: Account) {
+  const wallet = JSON.parse(localStorage.getItem(`voila.browser-wallet.${account.user.id}`) || "{}").state ?? {};
+  const inventory = JSON.parse(localStorage.getItem(`voila.browser-inventory.${account.user.id}`) || "{}").state ?? {};
+  if ((inventory.items !== undefined && !Array.isArray(inventory.items)) || (wallet.transactions !== undefined && !Array.isArray(wallet.transactions))) throw new AccountError("invalid");
+  const assets = closureReadiness({ cryptoBalance: wallet.cryptoBalance ?? wallet.balance ?? 0, cardBalance: wallet.cardBalance ?? 0,
+    items: inventory.items ?? [], transactions: [...(wallet.transactions ?? []), ...Object.values(account.withdrawals).map(w => ({ ...w, type: "withdraw" }))] });
+  if (!assets.eligible || (wallet.balance !== undefined && wallet.balance !== 0)) throw new AccountActionError("assets_remaining");
 }
 export async function startBrowserAccount(): Promise<ServerAccount> {
   if (!browserAccountsEnabled()) throw new AccountError("unavailable");
@@ -34,6 +65,7 @@ export async function startBrowserAccount(): Promise<ServerAccount> {
     account = { user: makeUser("member@device.invalid"), salt: "", passwordHash: "", quick: true, proofs: [], withdrawals: {} };
     accounts.push(account); save(accounts);
   }
+  if (account.strictPassword) throw new AccountError("credentials");
   localStorage.setItem(SESSION, account.user.id);
   return publicUser(account);
 }
@@ -55,6 +87,8 @@ async function request(path: string, input?: unknown): Promise<Record<string, un
       account = { user: makeUser(email), salt, passwordHash: await passwordHash(password, salt), proofs: [], withdrawals: {} };
       accounts.push(account);
     }
+    // After a real password change, the former password must no longer log in.
+    if (account.strictPassword && (path === "/auth/signup" || await passwordHash(password, account.salt) !== account.passwordHash)) throw new AccountError("credentials");
     // User-requested arbitrary values are accepted only by this browser transport.
     if (path === "/auth/signup") {
       account.signupPending = true; save(accounts); return { verificationRequired: true };
@@ -75,7 +109,8 @@ async function request(path: string, input?: unknown): Promise<Record<string, un
     if (!["google", "apple", "microsoft"].includes(String(body.provider))) throw new AccountError("invalid");
     const email = `${body.provider}@device.invalid`;
     let account = accounts.find(x => x.user.email === email);
-    if (!account) { account = { user: makeUser(email), salt: "", passwordHash: "", proofs: [], withdrawals: {} }; accounts.push(account); save(accounts); }
+    if (!account) { account = { user: makeUser(email, body.provider as AccountProvider), salt: "", passwordHash: "", proofs: [], withdrawals: {} }; accounts.push(account); }
+    account.user.provider = body.provider as AccountProvider; save(accounts);
     localStorage.setItem(SESSION, account.user.id); return { user: publicUser(account) };
   }
   if (path === "/auth/password/reset-request") {
@@ -89,7 +124,8 @@ async function request(path: string, input?: unknown): Promise<Record<string, un
   if (path === "/auth/password/reset") {
     const account = accounts.find(x => body.token ? x.reset?.token === body.token : x.user.email === String(body.email).trim().toLowerCase());
     if (!account?.reset || account.reset.expiresAt <= Date.now() || (!body.token && !codeAccepted()) || !validAccountPassword(String(body.password ?? ""))) throw new AccountError("invalid");
-    account.salt = crypto.randomUUID(); account.passwordHash = await passwordHash(String(body.password), account.salt); account.reset = undefined; save(accounts);
+    account.salt = crypto.randomUUID(); account.passwordHash = await passwordHash(String(body.password), account.salt); invalidateAccess(account); save(accounts);
+    if (localStorage.getItem(SESSION) === account.user.id) localStorage.removeItem(SESSION);
     return { updated: true };
   }
   if (path === "/auth/logout") { localStorage.removeItem(SESSION); return { loggedOut: true }; }
@@ -102,13 +138,86 @@ async function request(path: string, input?: unknown): Promise<Record<string, un
       throw cause;
     }
   };
-  if (path.startsWith("/account/profile") && body.accountId !== undefined && body.accountId !== account.user.id) throw new AccountError("credentials");
+  if (path.startsWith("/account/") && body.accountId !== undefined && body.accountId !== account.user.id) throw new AccountError("credentials");
   if (path === "/account/closure") {
-    if (!body.password || body.confirm !== true) throw new AccountError("invalid");
-    save(accounts.filter(x => x !== account)); localStorage.removeItem(SESSION);
-    return { deleted: true };
+    // Legacy password-only closure cannot bypass the new identity-code and asset checks.
+    throw new AccountActionError("verification_required");
   }
   if (path === "/auth/session") return { user: publicUser(account) };
+  const passwordState = (matched = false) => ({ accountId: account.user.id, matched, failures: account.passwordFailures ?? 0,
+    locked: (account.passwordFailures ?? 0) >= 5, twoFactorEnabled: Boolean(account.secret) });
+  const requirePasswordAccount = () => { if (isSocialAccount(providerOf(account))) throw new AccountActionError("social_account"); };
+  const issueCode = (purpose: CodePurpose) => {
+    const old = account.accountCodes?.[purpose];
+    if (old && old.resendAt > Date.now()) throw new AccountActionError("resend_wait", undefined, old.resendAt);
+    const code = String(crypto.getRandomValues(new Uint32Array(1))[0] % 1_000_000).padStart(6, "0");
+    const challenge = { code, expiresAt: Date.now() + 5 * 60_000, resendAt: Date.now() + 60_000, attempts: 0, sessionVersion: account.user.sessionVersion ?? 0 };
+    account.accountCodes = { ...account.accountCodes, [purpose]: challenge }; persist();
+    return { accountId: account.user.id, expiresAt: challenge.expiresAt, resendAt: challenge.resendAt, emailMasked: maskEmail(account.user.email), browserCode: code };
+  };
+  const consumeCode = (purpose: CodePurpose, code: unknown) => {
+    const c = account.accountCodes?.[purpose];
+    if (!c || c.sessionVersion !== (account.user.sessionVersion ?? 0)) throw new AccountActionError("verification_required");
+    if (c.expiresAt <= Date.now()) throw new AccountActionError("code_expired");
+    if (c.attempts >= 5) throw new AccountActionError("code_attempts_exceeded");
+    if (typeof code !== "string" || !/^\d{6}$/.test(code) || c.code !== code) { c.attempts++; persist(); throw new AccountActionError(c.attempts >= 5 ? "code_attempts_exceeded" : "code_invalid"); }
+    delete account.accountCodes![purpose];
+  };
+  const verifyPassword = async (value: unknown) => {
+    requirePasswordAccount();
+    if ((account.passwordFailures ?? 0) >= 5) return passwordState();
+    if (typeof value !== "string" || !value || value.length > 128) throw new AccountError("invalid");
+    const matched = !!account.passwordHash && await passwordHash(value, account.salt) === account.passwordHash;
+    account.passwordFailures = matched ? 0 : Math.min(5, (account.passwordFailures ?? 0) + 1);
+    account.passwordVerifiedUntil = matched ? Date.now() + 5 * 60_000 : undefined;
+    if (!matched) delete account.accountCodes?.password_otp;
+    persist(); return passwordState(matched);
+  };
+  if (path === "/account/password/status") return { ...passwordState(), provider: providerOf(account) };
+  if (path === "/account/password/verify-current") return verifyPassword(body.currentPassword);
+  if (path === "/account/password/unlock/send") {
+    requirePasswordAccount();
+    if ((account.passwordFailures ?? 0) < 5) throw new AccountActionError("verification_required");
+    return issueCode("password_unlock");
+  }
+  if (path === "/account/password/unlock") {
+    requirePasswordAccount(); consumeCode("password_unlock", body.code);
+    account.passwordFailures = 0; account.passwordVerifiedUntil = undefined; persist();
+    return { accountId: account.user.id, unlocked: true, failures: 0, locked: false };
+  }
+  if (path === "/account/password/otp/send") {
+    requirePasswordAccount();
+    if ((account.passwordFailures ?? 0) >= 5) throw new AccountActionError("password_locked", 5);
+    if (!account.passwordVerifiedUntil || account.passwordVerifiedUntil <= Date.now() || account.secret) throw new AccountActionError("verification_required");
+    return issueCode("password_otp");
+  }
+  if (path === "/account/password/change") {
+    requirePasswordAccount();
+    if ((account.passwordFailures ?? 0) >= 5) throw new AccountActionError("password_locked", 5);
+    if (!account.passwordVerifiedUntil || account.passwordVerifiedUntil <= Date.now()) throw new AccountActionError("verification_required");
+    if (typeof body.newPassword !== "string" || !validPassword(body.newPassword)) throw new AccountActionError("password_invalid");
+    const verified = await verifyPassword(body.currentPassword);
+    if (!verified.matched) throw new AccountActionError(verified.locked ? "password_locked" : "password_mismatch", verified.failures);
+    if (await passwordHash(body.newPassword, account.salt) === account.passwordHash) throw new AccountActionError("password_reused");
+    if (account.secret) {
+      if ((account.passwordOtpLockedUntil ?? 0) > Date.now()) throw new AccountActionError("resend_wait", undefined, account.passwordOtpLockedUntil);
+      if (typeof body.otpCode !== "string" || !/^\d{6}$/.test(body.otpCode) || !await verifyTotp(account.secret, body.otpCode)) {
+        account.passwordOtpFailures = (account.passwordOtpFailures ?? 0) + 1;
+        if (account.passwordOtpFailures >= 5) { account.passwordOtpLockedUntil = Date.now() + 60_000; account.passwordOtpFailures = 0; }
+        persist(); throw new AccountActionError("code_invalid");
+      }
+    } else consumeCode("password_otp", body.otpCode);
+    account.salt = crypto.randomUUID(); account.passwordHash = await passwordHash(body.newPassword, account.salt);
+    account.strictPassword = true; account.user.passwordChangedAt = new Date().toISOString(); invalidateAccess(account);
+    persist(); localStorage.removeItem(SESSION);
+    return { accountId: account.user.id, changed: true, sessionsRevoked: true, passwordChangedAt: account.user.passwordChangedAt };
+  }
+  if (path === "/account/closure/code/send") { checkClosureAssets(account); return issueCode("closure"); }
+  if (path === "/account/closure/confirm") {
+    checkClosureAssets(account); consumeCode("closure", body.code);
+    save(accounts.filter(x => x.user.id !== account.user.id)); localStorage.removeItem(SESSION);
+    return { accountId: account.user.id, deleted: true, sessionsRevoked: true };
+  }
   if (path === "/account/profile" || path === "/account/profile/nickname/check") {
     const nickname = normalizeNickname(String(body.nickname ?? ""));
     const issue = nicknameIssue(String(body.nickname ?? ""));
@@ -116,11 +225,11 @@ async function request(path: string, input?: unknown): Promise<Record<string, un
     const taken = accounts.some(x => x.user.id !== account.user.id && x.user.nickname && nicknameKey(x.user.nickname) === nicknameKey(nickname));
     if (path.endsWith("/check")) return { nickname, available: !taken };
     if (nickname === account.user.nickname) return { user: publicUser(account) };
-    const next = nextNicknameChangeAt(account.user);
+    const next = nextNicknameChangeAt({ ...account.user, nicknameChangedAt: nicknameTimestamp(account.user) });
     if (next && Date.parse(next) > Date.now()) throw new ProfileError("nickname_cooldown", next);
     if (taken) throw new ProfileError("nickname_taken");
     const now = Date.now();
-    account.user = { ...account.user, nickname, nicknameChangedAt: new Date(now).toISOString(), nextNicknameChangeAt: new Date(now + NICKNAME_CHANGE_INTERVAL_MS).toISOString() };
+    account.user = { ...account.user, nickname, nicknameUpdatedAt: new Date(now).toISOString(), nicknameChangedAt: new Date(now).toISOString(), nextNicknameChangeAt: new Date(now + NICKNAME_CHANGE_INTERVAL_MS).toISOString() };
     persist(); return { user: publicUser(account) };
   }
   if (path === "/account/profile/avatar") {

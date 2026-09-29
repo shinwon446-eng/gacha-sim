@@ -11,6 +11,25 @@ export class ProfileError extends AccountError {
   }
 }
 
+/** Shared account contract for password, nickname and account-closure flows. */
+export type AccountProvider = "email" | "google" | "apple" | "microsoft" | "phone";
+export const isSocialAccount = (provider: AccountProvider = "email") => ["google", "apple", "microsoft"].includes(provider);
+export const PASSWORD_FAILURE_LIMIT = 5;
+export interface PasswordVerificationResult {
+  accountId: string; matched: boolean; failures: number; locked: boolean; twoFactorEnabled: boolean;
+}
+export interface AccountVerificationCode {
+  accountId: string; expiresAt: number; resendAt: number; emailMasked: string;
+  /** Present only in the browser transport; HTTP responses may never supply this field. */
+  browserCode?: string;
+}
+export type AccountActionReason = "social_account" | "password_locked" | "password_mismatch" | "password_reused" | "password_invalid" | "verification_required" | "code_invalid" | "code_expired" | "code_attempts_exceeded" | "resend_wait" | "assets_remaining";
+export class AccountActionError extends AccountError {
+  constructor(public readonly reason: AccountActionReason, public readonly failures?: number, public readonly retryAt?: number) {
+    super(reason === "assets_remaining" || reason === "password_reused" || reason === "social_account" ? "conflict" : reason === "resend_wait" ? "rateLimit" : "credentials");
+  }
+}
+
 export function validAuthBase(raw: string): string {
   try {
     const url = new URL(raw);
@@ -27,7 +46,7 @@ export const validPassword = (value: string) => value.length >= 12 && value.leng
 export const validAccountEmail = (value: string) => browserAccountsEnabled() ? value.trim().length > 0 && value.length <= 254 : validEmail(value);
 export const validAccountPassword = (value: string) => browserAccountsEnabled() ? value.length > 0 && value.length <= 128 : validPassword(value);
 
-export interface ServerAccount { id: string; email: string; createdAt: string; emailVerified: boolean; nickname?: string; nicknameChangedAt?: string; nextNicknameChangeAt?: string; avatarUrl?: string | null; local?: boolean }
+export interface ServerAccount { id: string; email: string; createdAt: string; emailVerified: boolean; provider?: AccountProvider; nickname?: string; nicknameUpdatedAt?: string; nicknameChangedAt?: string; nextNicknameChangeAt?: string; avatarUrl?: string | null; local?: boolean; passwordFailures?: number; passwordChangedAt?: string; sessionVersion?: number; twoFactorEnabled?: boolean }
 function accountFrom(data: unknown): ServerAccount {
   const user = (data as { user?: ServerAccount })?.user;
   if (!user || typeof user.id !== "string" || !user.id || typeof user.email !== "string" || !(browserAccountsEnabled() && user.local === true ? validAccountEmail(user.email) : validEmail(user.email)) || typeof user.createdAt !== "string" || !Number.isFinite(Date.parse(user.createdAt)) || (user.emailVerified !== true && !(browserAccountsEnabled() && user.local === true))) throw new AccountError("invalid");
@@ -35,7 +54,13 @@ function accountFrom(data: unknown): ServerAccount {
   if (user.nickname !== undefined && (typeof user.nickname !== "string" || user.nickname.length > 100)) throw new AccountError("invalid");
   for (const value of [user.nicknameChangedAt, user.nextNicknameChangeAt]) if (value !== undefined && !Number.isFinite(Date.parse(value))) throw new AccountError("invalid");
   if (user.avatarUrl != null && !validAvatarUrl(user.avatarUrl)) throw new AccountError("invalid");
-  return user;
+  if (user.provider !== undefined && !["email", "google", "apple", "microsoft", "phone"].includes(user.provider)) throw new AccountError("invalid");
+  for (const value of [user.nicknameUpdatedAt, user.passwordChangedAt]) if (value !== undefined && (typeof value !== "string" || !Number.isFinite(Date.parse(value)))) throw new AccountError("invalid");
+  if (user.passwordFailures !== undefined && (!Number.isInteger(user.passwordFailures) || user.passwordFailures < 0 || user.passwordFailures > PASSWORD_FAILURE_LIMIT)) throw new AccountError("invalid");
+  if (user.sessionVersion !== undefined && (!Number.isInteger(user.sessionVersion) || user.sessionVersion < 0)) throw new AccountError("invalid");
+  if (user.twoFactorEnabled !== undefined && typeof user.twoFactorEnabled !== "boolean") throw new AccountError("invalid");
+  const nicknameAt = [user.nicknameUpdatedAt, user.nicknameChangedAt].filter((value): value is string => !!value).sort((a, b) => Date.parse(b) - Date.parse(a))[0];
+  return { ...user, provider: user.provider ?? "email", nicknameUpdatedAt: nicknameAt, nicknameChangedAt: nicknameAt };
 }
 
 export async function updateAccountNickname(nickname: string, accountId?: string) {
@@ -68,6 +93,13 @@ export async function accountRequest(path: string, body?: unknown, base = AUTH_A
     try { response = await fetch(`${base}${route}`, { ...init, credentials: "include", cache: "no-store", signal: AbortSignal.timeout(15000) }); }
     catch { throw new AccountError("network"); }
     if (!response.ok) {
+      if (route.startsWith("/account/password/") || route.startsWith("/account/closure/")) {
+        const detail = await response.json().catch(() => ({})) as { code?: AccountActionReason; failures?: number; retryAt?: number };
+        const reasons: AccountActionReason[] = ["social_account", "password_locked", "password_mismatch", "password_reused", "password_invalid", "verification_required", "code_invalid", "code_expired", "code_attempts_exceeded", "resend_wait", "assets_remaining"];
+        if (detail.code && reasons.includes(detail.code)) throw new AccountActionError(detail.code,
+          Number.isInteger(detail.failures) && detail.failures! >= 0 && detail.failures! <= 5 ? detail.failures : undefined,
+          typeof detail.retryAt === "number" && Number.isFinite(detail.retryAt) ? detail.retryAt : undefined);
+      }
       if (route.startsWith("/account/profile") && [400, 409, 422].includes(response.status)) {
         const detail = await response.json().catch(() => ({})) as { code?: ProfileErrorReason; nextNicknameChangeAt?: string };
         if (detail.code && ["nickname_length", "nickname_format", "nickname_prohibited", "nickname_reserved", "nickname_taken", "nickname_cooldown", "avatar_invalid"].includes(detail.code)) {
@@ -136,6 +168,81 @@ export async function logoutAccount() {
 export async function deleteAccount(password: string) {
   if (!password) throw new AccountError("invalid");
   if ((await accountRequest("/account/closure", { password, confirm: true })).deleted !== true) throw new AccountError("invalid");
+}
+
+/**
+ * Password API (all POSTs use the common cookie + CSRF transport):
+ * GET /account/password/status -> { accountId, provider, failures, locked, twoFactorEnabled }
+ * POST verify-current { currentPassword, accountId } -> PasswordVerificationResult
+ * POST unlock/send, otp/send { accountId } -> AccountVerificationCode
+ * POST unlock { code, accountId } -> { accountId, unlocked:true, failures:0, locked:false }
+ * POST change { currentPassword, newPassword, otpCode, accountId }
+ *   -> { accountId, changed:true, sessionsRevoked:true, passwordChangedAt:ISO }
+ * Server must compare hashes, count failures atomically, validate TOTP or the issued code,
+ * reject reuse and expired/replayed challenges, and revoke ALL sessions/reset grants/proofs
+ * in the same transaction. Passwords, codes and hash material must never enter logs.
+ * Browser transport implements this contract on the device. It does not send real email.
+ */
+async function actionAccountId(expected?: string) { return expected ?? (await getAccountSession()).id; }
+function announceSessionRevocation(accountId: string) {
+  // The issuing tab shows the completion dialog; other tabs clear their sessions immediately.
+  if (typeof window === "undefined") return;
+  try { localStorage.setItem("voila.account-revocation.v1", JSON.stringify({ accountId, at: Date.now(), nonce: crypto.randomUUID() })); } catch { /* Server revocation already succeeded. */ }
+}
+function passwordResult(data: Record<string, unknown>, accountId: string): PasswordVerificationResult {
+  if (data.accountId !== accountId || typeof data.matched !== "boolean" || !Number.isInteger(data.failures) || Number(data.failures) < 0 || Number(data.failures) > 5
+    || typeof data.locked !== "boolean" || data.locked !== (Number(data.failures) >= 5) || typeof data.twoFactorEnabled !== "boolean"
+    || (data.matched && (data.failures !== 0 || data.locked))) throw new AccountError("invalid");
+  return data as unknown as PasswordVerificationResult;
+}
+export async function getPasswordChangeStatus(accountId?: string) {
+  const id = await actionAccountId(accountId);
+  const data = await accountRequest("/account/password/status");
+  const result = passwordResult({ ...data, matched: false }, id);
+  if (!["email", "google", "apple", "microsoft", "phone"].includes(String(data.provider))) throw new AccountError("invalid");
+  return { ...result, provider: data.provider as AccountProvider };
+}
+export async function verifyCurrentPassword(currentPassword: string, accountId?: string): Promise<PasswordVerificationResult> {
+  if (!currentPassword || currentPassword.length > 128) throw new AccountError("invalid");
+  const id = await actionAccountId(accountId);
+  return passwordResult(await accountRequest("/account/password/verify-current", { currentPassword, accountId: id }), id);
+}
+async function sendAccountCode(path: string, accountId?: string): Promise<AccountVerificationCode> {
+  const id = await actionAccountId(accountId);
+  const data = await accountRequest(path, { accountId: id });
+  if (data.accountId !== id || typeof data.expiresAt !== "number" || !Number.isFinite(data.expiresAt) || data.expiresAt <= Date.now()
+    || typeof data.resendAt !== "number" || !Number.isFinite(data.resendAt) || typeof data.emailMasked !== "string" || !data.emailMasked
+    || (data.browserCode !== undefined && (!browserAccountsEnabled() || typeof data.browserCode !== "string" || !/^\d{6}$/.test(data.browserCode)))) throw new AccountError("invalid");
+  return data as unknown as AccountVerificationCode;
+}
+export const sendPasswordUnlockCode = (accountId?: string) => sendAccountCode("/account/password/unlock/send", accountId);
+export const sendPasswordChangeOtpCode = (accountId?: string) => sendAccountCode("/account/password/otp/send", accountId);
+export async function unlockPasswordChangeWithCode(code: string, accountId?: string) {
+  if (!/^\d{6}$/.test(code)) throw new AccountError("invalid");
+  const id = await actionAccountId(accountId);
+  const data = await accountRequest("/account/password/unlock", { code, accountId: id });
+  if (data.accountId !== id || data.unlocked !== true || data.failures !== 0 || data.locked !== false) throw new AccountError("invalid");
+  return { accountId: id, unlocked: true as const, failures: 0, locked: false as const };
+}
+export async function changeAccountPasswordWithOtp(currentPassword: string, newPassword: string, otpCode: string, accountId?: string) {
+  if (!validPassword(newPassword)) throw new AccountActionError("password_invalid");
+  if (currentPassword === newPassword) throw new AccountActionError("password_reused");
+  if (!currentPassword || currentPassword.length > 128 || !/^\d{6}$/.test(otpCode)) throw new AccountError("invalid");
+  const id = await actionAccountId(accountId);
+  const data = await accountRequest("/account/password/change", { currentPassword, newPassword, otpCode, accountId: id });
+  if (data.accountId !== id || data.changed !== true || data.sessionsRevoked !== true || typeof data.passwordChangedAt !== "string" || !Number.isFinite(Date.parse(data.passwordChangedAt))) throw new AccountError("invalid");
+  announceSessionRevocation(id);
+  return { accountId: id, changed: true as const, sessionsRevoked: true as const, passwordChangedAt: data.passwordChangedAt };
+}
+/** Closure: challenge is purpose/account-bound; both send and confirm must recheck authoritative assets. */
+export const sendClosureVerificationCode = (accountId?: string) => sendAccountCode("/account/closure/code/send", accountId);
+export async function confirmAccountClosureWithCode(code: string, accountId?: string) {
+  if (!/^\d{6}$/.test(code)) throw new AccountError("invalid");
+  const id = await actionAccountId(accountId);
+  const data = await accountRequest("/account/closure/confirm", { code, accountId: id });
+  if (data.accountId !== id || data.deleted !== true || data.sessionsRevoked !== true) throw new AccountError("invalid");
+  announceSessionRevocation(id);
+  return { accountId: id, deleted: true as const, sessionsRevoked: true as const };
 }
 
 export interface ClosureInput {
