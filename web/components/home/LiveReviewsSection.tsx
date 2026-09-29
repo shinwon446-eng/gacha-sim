@@ -23,9 +23,13 @@ export function LiveReviewsSection() {
   const [focused, setFocused] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [now, setNow] = useState<number | null>(null);
-  const reducedMotion = useReducedMotion();
+  const motionPreference = useReducedMotion();
+  const [motionReady, setMotionReady] = useState(false);
+  // The server cannot know this browser preference. Keep the first render identical.
+  const reducedMotion = motionReady && motionPreference === true;
   const stopped = paused || hovered || focused || hidden || reducedMotion === true;
   const firstId = reviews[0]?.id;
+  useEffect(() => { setMotionReady(true); }, []);
   useEffect(() => subscribeCommunityReviews(), []);
   useEffect(() => { setIndex(0); }, [firstId, showExamples]);
   useEffect(() => {
