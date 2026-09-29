@@ -8,7 +8,7 @@ import { ReviewFormModal } from "@/components/community/ReviewFormModal";
 import { useCommunityStore, type MyReview } from "@/stores/communityStore";
 import { useInventoryStore } from "@/stores/inventoryStore";
 import { BOX_BY_SLUG } from "@/lib/products";
-import { canReview } from "@/lib/community";
+import { canReview, MIN_REVIEW_ITEM_VALUE_USDT } from "@/lib/community";
 import { productOf } from "@/lib/vault";
 import { useProductText } from "@/lib/useProductText";
 import { cn } from "@/lib/format";
@@ -34,6 +34,7 @@ export default function CommunityPage() {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [toast, setToast] = useState("");
   const eligible = useMemo(() => items.filter(item => canReview(item, mine)), [items, mine]);
+  const hasMinValueItem = items.some(item => item.valueUsdt >= MIN_REVIEW_ITEM_VALUE_USDT);
   useEffect(() => { if (new URLSearchParams(window.location.search).get("tab") === "eligible") setTab("eligible"); }, []);
   useEffect(() => { setShown(12); setDeleting(null); }, [tab, query, filter, sort]);
   useEffect(() => { if (!toast) return; const timer = setTimeout(() => setToast(""), 5000); return () => clearTimeout(timer); }, [toast]);
@@ -65,7 +66,7 @@ export default function CommunityPage() {
             <select className="workspace-select" aria-label={r("reviewFilter")} value={filter} onChange={e => setFilter(e.target.value)}><option value="all">{r("allReviews")}</option><option value="photo">{r("photoReviews")}</option>{[5, 4, 3, 2, 1].map(n => <option key={n} value={n}>{r("ratingLabel", { n })}</option>)}</select>
             <select className="workspace-select" aria-label={r("sortLabel")} value={sort} onChange={e => setSort(e.target.value)}><option value="newest">{r("sorts.newest")}</option><option value="oldest">{r("sorts.oldest")}</option></select>
           </div>}
-          {!hydrated ? <div className="workspace-empty" role="status">{r("loading")}</div> : tab === "public" ? <div className="workspace-empty journal-empty"><Globe2 aria-hidden="true" /><p className="workspace-eyebrow">COMMUNITY</p><h2>{r("publicEmptyTitle")}</h2><p>{r("publicEmptyBody")}</p><button className="workspace-button" onClick={() => setTab("mine")}>{r("reviewTabs.mine")}<ArrowUpRight className="h-4 w-4" /></button></div> : tab === "eligible" ? eligible.length === 0 ? <div className="workspace-empty journal-empty"><Package aria-hidden="true" /><h2>{r("eligibleEmptyTitle")}</h2><p>{r("eligibleEmptyBody")}</p><Link href="/inventory?tab=shipping" className="workspace-button">{r("checkShipments")}<ArrowUpRight className="h-4 w-4" /></Link></div> : <ul className="grid gap-4">{eligible.map(item => {
+          {!hydrated ? <div className="workspace-empty" role="status">{r("loading")}</div> : tab === "public" ? <div className="workspace-empty journal-empty"><Globe2 aria-hidden="true" /><p className="workspace-eyebrow">COMMUNITY</p><h2>{r("publicEmptyTitle")}</h2><p>{r("publicEmptyBody")}</p><button className="workspace-button" onClick={() => setTab("mine")}>{r("reviewTabs.mine")}<ArrowUpRight className="h-4 w-4" /></button></div> : tab === "eligible" ? eligible.length === 0 ? <div className="workspace-empty journal-empty"><Package aria-hidden="true" /><h2>{r("eligibleEmptyTitle")}</h2><p>{r(hasMinValueItem ? "eligibleEmptyBody" : "minReviewItemValueNotice")}</p><Link href="/inventory?tab=shipping" className="workspace-button">{r("checkShipments")}<ArrowUpRight className="h-4 w-4" /></Link></div> : <ul className="grid gap-4">{eligible.map(item => {
             const product = productOf(item);
             return <li key={item.id} className="eligible-item"><div className="record-thumbnail">{product && <ProductArt image={product.image} alt="" fallbackSize="sm" />}</div><div className="min-w-0 flex-1"><p className="text-sm font-medium text-white">{product ? itemName(product) : item.itemId}</p><p className="mt-2 text-xs text-muted">{r("deliveredOn", { date: new Date(item.shipping!.deliveredAt!).toLocaleDateString(locale) })}</p></div><button className="workspace-button" onClick={() => write(item.id)}>{t("write")}</button></li>;
           })}</ul> : reviews.length === 0 ? <div className="workspace-empty journal-empty"><MessageSquare aria-hidden="true" /><h2>{r(mine.length ? "noResults" : "myEmptyTitle")}</h2><p>{r(mine.length ? "changeFilters" : "myEmptyBody")}</p><button className="workspace-button" onClick={() => mine.length ? (setQuery(""), setFilter("all")) : setTab("eligible")}>{r(mine.length ? "resetFilters" : "reviewTabs.eligible")}</button></div> : <>

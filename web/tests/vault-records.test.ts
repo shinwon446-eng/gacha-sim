@@ -1,9 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { vaultTab, recordKind, processedAt, resaleEstimate } from "../lib/vault";
-import { canReview } from "../lib/community";
+import { canReview, MIN_REVIEW_ITEM_VALUE_USDT } from "../lib/community";
 import { useCommunityStore } from "../stores/communityStore";
-import type { OwnedItem } from "../stores/inventoryStore";
+import { useInventoryStore, type OwnedItem } from "../stores/inventoryStore";
 const item: OwnedItem = {
  id:"fixture", itemId:"ctd-cable", boxSlug:"jackpot-cybertruck", valueUsdt:0.11, tier:"curated", status:"IN_STORAGE", acquiredAt:"2026-09-01T00:00:00Z",
  fair:{serverSeedHash:"h",serverSeed:"s",clientSeed:"c",nonce:1,roll:1},
@@ -24,16 +24,20 @@ test("resale estimates sum individual rounded refunds, excluding processed recor
  assert.equal(resaleEstimate([item,{...item,id:"two"},{...item,id:"sold",status:"SOLD",valueUsdt:100}]),0.2);
 });
 test("reviews require an actual delivery date, not a tracking number or transit status", () => {
- assert.equal(canReview({...item,status:"SHIPPING"},[]),false);
- assert.equal(canReview({...item,status:"DELIVERED"},[]),false);
- const delivered={...item,status:"DELIVERED" as const,shipping:{...item.shipping!,deliveredAt:"2026-09-29T00:00:00Z"}};
+ const valuableItem={...item,valueUsdt:MIN_REVIEW_ITEM_VALUE_USDT};
+ assert.equal(canReview({...valuableItem,status:"SHIPPING"},[]),false);
+ assert.equal(canReview({...valuableItem,status:"DELIVERED"},[]),false);
+ const delivered={...valuableItem,status:"DELIVERED" as const,shipping:{...item.shipping!,deliveredAt:"2026-09-29T00:00:00Z"}};
  assert.equal(canReview(delivered,[]),true);
+ assert.equal(canReview({...delivered,valueUsdt:99.99},[]),false);
  assert.equal(canReview(delivered,[{ownedId:item.id}]),false);
  assert.equal(canReview({...delivered,shipping:{...delivered.shipping,deliveredAt:"invalid"}},[]),false);
 });
 const review = (n: number) => ({ownedId:"own-"+n,boxSlug:"test",itemId:"test",text:"Test review content",rating:4,bonusUsdt:10});
 test("saving beyond 20 reviews retains history; duplicates do not produce another record or reward", () => {
+ useInventoryStore.setState({items:[...Array.from({length:25},(_,n)=>({...item,id:"own-"+n,valueUsdt:100})),... [100,200].map(n=>({...item,id:"own-"+n,valueUsdt:100})),{...item,id:"own-low",valueUsdt:99.99}]});
  useCommunityStore.setState({mine:[]});
+ assert.throws(()=>useCommunityStore.getState().add({...review(0),ownedId:"own-low"}),/ineligible-review-item/);
  for(let n=0;n<25;n++) useCommunityStore.getState().add(review(n));
  assert.equal(useCommunityStore.getState().mine.length,25);
  assert.ok(useCommunityStore.getState().hasReviewed("own-0"));

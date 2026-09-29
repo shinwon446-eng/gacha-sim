@@ -1,7 +1,8 @@
 "use client";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { REVIEW_MAX_CHARS, REVIEW_MIN_CHARS } from "@/lib/community";
+import { MIN_REVIEW_ITEM_VALUE_USDT, REVIEW_MAX_CHARS, REVIEW_MIN_CHARS } from "@/lib/community";
+import { useInventoryStore } from "@/stores/inventoryStore";
 export interface MyReview {
   id: string; ownedId: string; boxSlug: string; itemId: string; text: string; rating: number;
   photo?: string; at: string; updatedAt?: string; bonusUsdt: number;
@@ -25,6 +26,8 @@ export const useCommunityStore = create<CommunityState>()(
     mine: [], hydrated: false,
     add: r => {
       validateReview(r);
+      const item = useInventoryStore.getState().items.find(item => item.id === r.ownedId);
+      if (!item || !(item.valueUsdt >= MIN_REVIEW_ITEM_VALUE_USDT)) throw new Error("ineligible-review-item");
       if (get().hasReviewed(r.ownedId)) throw new Error("duplicate");
       const rec: MyReview = { ...r, bonusUsdt: 0, id: `my_${crypto.randomUUID()}`, at: new Date().toISOString() };
       const mine = [rec, ...get().mine];

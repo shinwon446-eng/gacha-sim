@@ -1849,6 +1849,7 @@
     "publicEmptyBody": "Discover delivery experiences when public posting opens. For now, you can write and manage your own local reviews.",
     "eligibleEmptyTitle": "Nothing to review yet",
     "eligibleEmptyBody": "Items appear here after confirmed delivery if you have not reviewed them. Items still in transit are not eligible.",
+    "minReviewItemValueNotice": "You can only review won items worth at least 100 USDT ($100).",
     "checkShipments": "Check deliveries",
     "myEmptyTitle": "Your first story belongs here",
     "myEmptyBody": "After delivery, share what you think and add a photo. You can edit or delete your saved reviews.",

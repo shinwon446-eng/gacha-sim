@@ -1849,6 +1849,7 @@
     "publicEmptyBody": "公开发布功能上线后，您可以浏览其他用户的收货体验。目前可撰写并管理本地评价。",
     "eligibleEmptyTitle": "暂无可评价商品",
     "eligibleEmptyBody": "已确认签收且尚未评价的商品将在此显示。配送中的商品需确认签收后才能评价。",
+    "minReviewItemValueNotice": "只有价值至少 100 USDT（$100）的中奖商品才能撰写评价。",
     "checkShipments": "查看配送状态",
     "myEmptyTitle": "记录您的第一次收货体验",
     "myEmptyBody": "签收后可分享使用感受并添加照片。保存的评价可随时编辑或删除。",

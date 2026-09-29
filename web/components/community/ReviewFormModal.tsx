@@ -5,7 +5,7 @@ import { Camera, ImagePlus, Star, X } from "lucide-react";
 import { useModal } from "@/lib/useModal";
 import { useProductText } from "@/lib/useProductText";
 import { productOf } from "@/lib/vault";
-import { canReview, REVIEW_MAX_CHARS, REVIEW_MIN_CHARS } from "@/lib/community";
+import { canReview, MIN_REVIEW_ITEM_VALUE_USDT, REVIEW_MAX_CHARS, REVIEW_MIN_CHARS } from "@/lib/community";
 import { useInventoryStore } from "@/stores/inventoryStore";
 import { useCommunityStore, type MyReview } from "@/stores/communityStore";
 import { cn } from "@/lib/format";
@@ -31,6 +31,7 @@ export function ReviewFormModal({ open, onClose, onSubmitted, initialOwnedId, ed
   const items = useInventoryStore(s => s.items);
   const mine = useCommunityStore(s => s.mine);
   const eligible = items.filter(item => canReview(item, mine));
+  const hasMinValueItem = items.some(item => item.valueUsdt >= MIN_REVIEW_ITEM_VALUE_USDT);
   const [ownedId, setOwnedId] = useState("");
   const [text, setText] = useState("");
   const [rating, setRating] = useState(0);
@@ -42,8 +43,9 @@ export function ReviewFormModal({ open, onClose, onSubmitted, initialOwnedId, ed
   useModal(open, onClose, panel);
   useEffect(() => {
     if (!open) { imageTask.current++; return; }
-    const first = useInventoryStore.getState().items.find(item => canReview(item, useCommunityStore.getState().mine));
-    setOwnedId(editing?.ownedId ?? initialOwnedId ?? first?.id ?? "");
+    const eligibleItems = useInventoryStore.getState().items.filter(item => canReview(item, useCommunityStore.getState().mine));
+    const selected = eligibleItems.find(item => item.id === initialOwnedId) ?? eligibleItems[0];
+    setOwnedId(editing?.ownedId ?? selected?.id ?? "");
     setText(editing?.text ?? ""); setRating(editing?.rating ?? 0); setPhoto(editing?.photo); setError(""); setBusy(false);
   }, [open, initialOwnedId, editing]);
   const onFile = async (file?: File) => {
@@ -74,7 +76,7 @@ export function ReviewFormModal({ open, onClose, onSubmitted, initialOwnedId, ed
       <button onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full hover:bg-elevation"><X className="h-5 w-5" /></button>
       <p className="workspace-eyebrow">VOILA JOURNAL</p><h2 id="review-heading" className="mt-3 pr-8 text-2xl font-medium text-white">{editing ? r("editReview") : t("writeTitle")}</h2>
       <p className="mt-3 text-sm leading-6 text-muted">{r("reviewLocalNote")}</p>
-      {eligible.length === 0 && !editing ? <p className="mt-6 rounded-xl border border-hairline p-5 text-sm leading-7 text-secondary">{r("eligibleEmptyBody")}</p> : <form className="mt-6 grid gap-5" onSubmit={e => { e.preventDefault(); submit(); }}>
+      {eligible.length === 0 && !editing ? <p className="mt-6 rounded-xl border border-hairline p-5 text-sm leading-7 text-secondary">{r(hasMinValueItem ? "eligibleEmptyBody" : "minReviewItemValueNotice")}</p> : <form className="mt-6 grid gap-5" onSubmit={e => { e.preventDefault(); submit(); }}>
         {!editing && <label className="text-sm text-secondary">{t("pickItem")}<select className="workspace-select mt-2 w-full" value={ownedId} onChange={e => setOwnedId(e.target.value)}>{eligible.map(item => <option key={item.id} value={item.id}>{productOf(item) ? itemName(productOf(item)!) : item.itemId}</option>)}</select></label>}
         <fieldset><legend className="mb-2 text-sm text-secondary">{t("rating")}</legend><div className="flex gap-1">{[1, 2, 3, 4, 5].map(n => <label key={n} className="relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg hover:bg-elevation"><input type="radio" className="peer sr-only" name="rating" value={n} checked={rating === n} onChange={() => setRating(n)} aria-label={r("ratingLabel", { n })} /><Star aria-hidden="true" className={cn("h-6 w-6 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-gold-champagne", n <= rating ? "fill-gold-champagne text-gold-champagne" : "text-muted")} /></label>)}</div></fieldset>
         <label className="text-sm text-secondary">{t("text")}<textarea value={text} onChange={e => setText(e.target.value)} rows={5} maxLength={REVIEW_MAX_CHARS} placeholder={t("textHint")} className="mt-2 w-full rounded-xl border border-hairline bg-obsidian p-4 text-sm leading-7 text-white placeholder:text-muted" /><span className="mt-1 block text-right text-xs text-muted">{text.length} / {REVIEW_MAX_CHARS}</span></label>
