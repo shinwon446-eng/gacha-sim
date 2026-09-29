@@ -2,15 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowUpRight, Check, Clock, Loader2, Copy, ExternalLink, CheckCircle2, ShieldCheck, ShieldAlert, CreditCard, Activity, Gavel } from "lucide-react";
+import { ArrowUpRight, Check, Clock, Loader2, Copy, ExternalLink, CheckCircle2, ShieldCheck, ShieldAlert, Gavel } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useCurrencyStore } from "@/stores/currencyStore";
 import { useWalletStore, type Transaction, type TxStatus } from "@/stores/walletStore";
 import type { Network } from "@/lib/depositAddress";
 import { EXPLORERS, MIN_WITHDRAW_USDT, WITHDRAW_NETWORKS, WITHDRAW_NETWORK_BY_KEY, explorerTxUrl, maxWithdrawable, netReceive, validateWithdrawal, type WithdrawError } from "@/lib/withdrawal";
-import { LOW_RISK_WEIGHT, requiredRollover, rolloverProgress } from "@/lib/rollover";
-import { circuitState, CIRCUIT_LIMIT_USDT } from "@/lib/fraudScoring";
 import { AccountError } from "@/lib/account";
 import type { WithdrawalProof } from "@/lib/security";
 import { useAuthStore } from "@/stores/authStore";
@@ -83,69 +81,9 @@ function TxLink({ network, hash, compact, t, copied, onCopy }: { network: Networ
   );
 }
 
-/** 🛡️ 자금세탁 방지(AML) 롤오버 바 — 입금액의 100% 를 개봉에 소진해야 출금이 열린다 */
-function RolloverBar({ t }: { t: TFn }) {
-  const { fmt } = useCurrency();
-  const depositedCrypto = useWalletStore((s) => s.totalDepositedCrypto);
-  const current = useWalletStore((s) => s.totalWagered);
-  const required = requiredRollover(depositedCrypto);
-  const pct = rolloverProgress(current, depositedCrypto);
-  const met = pct >= 100;
-  const remaining = +Math.max(0, required - current).toFixed(2);
-  return (
-    <div className={cn("mt-4 rounded-lg p-3", met ? "border border-emerald-500/40 bg-emerald-500/[0.07]" : "border-metallic-gold bg-gold-champagne/[0.06]")}>
-      <div className="flex items-start gap-2">
-        {met ? <ShieldCheck className="mt-0.5 h-4 w-4 flex-none text-emerald-300" strokeWidth={2.2} /> : <ShieldAlert className="mt-0.5 h-4 w-4 flex-none text-gold-champagne" strokeWidth={2.2} />}
-        <div className="min-w-0 flex-1">
-          <div className={cn("break-keep text-[12px] font-bold leading-snug", met ? "text-emerald-300" : "text-gold-champagne")}>{met ? t("amlMet") : t("amlTitle")}</div>
-          {!met && <div className="mt-0.5 break-keep text-xs leading-relaxed text-secondary">{t("amlRule")}</div>}
-        </div>
-        <span className={cn("flex-none font-display text-lg font-bold tabular-nums", met ? "text-emerald-300" : "text-gold-champagne")}>{pct}%</span>
-      </div>
-      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-        <div className={cn("h-full rounded-full transition-[width] duration-500", met ? "bg-emerald-400" : "bg-gold-champagne")} style={{ width: `${pct}%` }} />
-      </div>
-      <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-xs text-faint">
-        <span className="flex items-baseline gap-1">
-          {t("amlRequired")} <span className="font-mono text-secondary">{fmt(required)}</span>
-        </span>
-        <span className="flex items-baseline gap-1">
-          {t("amlCurrent")} <span className="font-mono text-secondary">{fmt(current)}</span>
-        </span>
-      </div>
-      {!met && remaining > 0 && <div className="mt-1.5 break-keep text-xs font-semibold text-white">{t("amlRemaining", { amount: fmt(remaining) })}</div>}
-      {/* 안티 그라인딩 — 저위험 상자만 반복해 롤오버를 채우는 우회를 막는다 */}
-      <p className="mt-2 break-keep text-xs leading-relaxed text-faint">{t("amlGrinding", { pct: Math.round(LOW_RISK_WEIGHT * 100) })}</p>
-      <p className="mt-1 break-keep text-xs leading-relaxed text-faint">{t("amlWhy")}</p>
-    </div>
-  );
-}
-
-/** ⛔ 서킷 브레이커 — 1시간 누적 출금이 한도를 넘으면 핫월렛 자동 출금을 멈추고 전부 수동 승인으로 돌린다 */
-function CircuitBanner({ t, used, limit, remaining, tripped }: { t: TFn; used: number; limit: number; remaining: number; tripped: boolean }) {
-  const { fmt } = useCurrency();
-  const pct = Math.min(100, Math.round((used / limit) * 100));
-  return (
-    <div className={cn("mt-3 rounded-lg p-3", tripped ? "border border-crimson/50 bg-crimson/[0.08]" : "border-metallic-subtle bg-obsidian")}>
-      <div className="flex items-start gap-2">
-        <Activity className={cn("mt-0.5 h-3.5 w-3.5 flex-none", tripped ? "text-crimson" : "text-muted")} strokeWidth={2.2} />
-        <div className="min-w-0 flex-1">
-          <div className={cn("break-keep text-xs font-bold", tripped ? "text-crimson" : "text-secondary")}>{tripped ? t("circuitTripped") : t("circuitTitle")}</div>
-          <div className="mt-0.5 break-keep text-xs leading-relaxed text-faint">{tripped ? t("circuitTrippedNote") : t("circuitNote", { limit: fmt(limit), remaining: fmt(remaining) })}</div>
-        </div>
-        <span className={cn("flex-none font-mono text-xs tabular-nums", tripped ? "text-crimson" : "text-faint")}>{fmt(used)}</span>
-      </div>
-      <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
-        <div className={cn("h-full rounded-full transition-[width] duration-500", tripped ? "bg-crimson" : "bg-secondary/60")} style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  );
-}
-
 /**
  * USDT 출금 탭 — 지갑 모달 3번째 탭이자 출금 모달의 본문.
  * 네트워크(TRC-20 / BEP-20) → 개인 지갑 주소 → 수량(최소 20 USDT, +25%/+50%/전액) → 실수령액 → 신청.
- * 🛡️ 롤오버 100% 미달이면 버튼이 잠긴다(lib/rollover.ts).
  * 신청 시 잔액을 즉시 차감하고 거래를 PENDING 으로 기록한다. live 모드는 API 가 서명·브로드캐스트 뒤 상태·TxID 를 주고,
  * preview 모드(백엔드 없음)는 PENDING 에 머문다 — TxID 를 지어내지 않는다 (CLAUDE.md 부록 C).
  */
@@ -156,9 +94,6 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const { currency, fmt } = useCurrency();
   const rates = useCurrencyStore((s) => s.rates);
   const balance = useWalletStore((s) => s.cryptoBalance);
-  const cardBalance = useWalletStore((s) => s.cardBalance);
-  const totalDepositedCrypto = useWalletStore((s) => s.totalDepositedCrypto);
-  const totalWagered = useWalletStore((s) => s.totalWagered);
   const debitCrypto = useWalletStore((s) => s.debitCrypto);
   const addTransaction = useWalletStore((s) => s.addTransaction);
   const transactions = useWalletStore((s) => s.transactions);
@@ -211,13 +146,6 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const amountOk = !errors.includes("nan") && !errors.includes("min") && !errors.includes("insufficient");
   const net = amountOk ? netReceive(amountUsdt, network) : 0;
 
-  // 부정거래 탐지 입력 — 첫 입금 시각, 스핀 간격, 1시간 누적 출금
-  const withdrawHistory = useMemo(() => transactions.filter((x) => x.type === "withdraw" && x.accountId === user?.id && !["CANCELLED", "FAILED"].includes(x.status ?? "")).map((x) => ({ amountUsdt: x.amountUsdt, at: x.at })), [transactions, user?.id]);
-  const circuit = useMemo(() => circuitState(withdrawHistory), [withdrawHistory]);
-
-  const amlPct = rolloverProgress(totalWagered, totalDepositedCrypto);
-  const amlOk = amlPct >= 100;
-
   /** 잔액의 일정 비율을 입력창에 넣는다 (선택 통화 단위) */
   const setRatio = (ratio: number) => {
     const usdt = +(maxWithdrawable(balance) * ratio).toFixed(2);
@@ -228,10 +156,6 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const beginConfirm = useCallback(() => {
     setTouched(true);
     if (stage.kind !== "form" || !user || !securityReady || submission.current) return;
-    if (!amlOk) {
-      onBlocked?.(amlPct);
-      return;
-    }
     if (errors.length) return;
     const fingerprint = JSON.stringify([user.id, amountUsdt, network, address.trim()]);
     if (requestDraft.current !== fingerprint) {
@@ -240,7 +164,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
     }
     setSubmitError("");
     setStage({ kind: "confirm", amountUsdt, network, address: address.trim() });
-  }, [user, securityReady, stage.kind, amlOk, amlPct, onBlocked, errors.length, amountUsdt, network, address]);
+  }, [user, securityReady, stage.kind, errors.length, amountUsdt, network, address]);
 
   /**
    * 2차 인증을 통과한 뒤에만 불린다 — 여기서 잔액이 차감되고 출금 내역이 생긴다.
@@ -250,7 +174,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const commit = useCallback(async (draft: Draft, proof: WithdrawalProof) => {
     if (submission.current || !user || useAuthStore.getState().user?.id !== user.id) return;
     const current = useWalletStore.getState();
-    if (validateWithdrawal({ ...draft, balanceUsdt: current.cryptoBalance }).length || rolloverProgress(current.totalWagered, current.totalDepositedCrypto) < 100) {
+    if (validateWithdrawal({ ...draft, balanceUsdt: current.cryptoBalance }).length) {
       setStage({ kind: "form" }); setSubmitError(t("errors.insufficient")); return;
     }
     submission.current = true; setSubmitError(""); setStage({ kind: "submitting" });
@@ -438,25 +362,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
           <span className="text-xs text-muted">{t("availableCrypto")}</span>
           <Money value={balance} size="sm" />
         </div>
-        {cardBalance > 0 && (
-          <div className="border-metallic-subtle flex items-start gap-2 rounded-md bg-obsidian p-2.5">
-            <CreditCard className="mt-0.5 h-3.5 w-3.5 flex-none text-muted" strokeWidth={2.2} />
-            <div className="min-w-0 flex-1">
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="text-xs font-semibold text-secondary">{t("cardLocked")}</span>
-                <Money value={cardBalance} size="xs" numberClassName="text-secondary" />
-              </div>
-              <p className="mt-0.5 break-keep text-xs leading-relaxed text-faint">{t("cardLockedNote")}</p>
-            </div>
-          </div>
-        )}
       </div>
-
-      {/* 🛡️ 자금세탁 방지(AML) 롤오버 */}
-      <RolloverBar t={t} />
-
-      {/* ⛔ 시간당 출금 서킷 브레이커 */}
-      <CircuitBanner t={t} used={circuit.usedUsdt} limit={CIRCUIT_LIMIT_USDT} remaining={circuit.remainingUsdt} tripped={circuit.tripped} />
 
       {/* 네트워크 */}
       <fieldset className="mt-4">
@@ -530,12 +436,10 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
         </div>
       </div>
 
-      {!amlOk && <p className="mt-3 break-keep rounded-md border border-gold-champagne/40 bg-gold-champagne/10 p-2.5 text-xs leading-relaxed text-gold-champagne">{t("amlBlocked", { pct: amlPct })}</p>}
-
       <button
         type="button"
         onClick={beginConfirm}
-        disabled={stage.kind !== "form" || !amlOk || (touched && errors.length > 0)}
+        disabled={stage.kind !== "form" || (touched && errors.length > 0)}
         className="mt-4 flex h-12 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md bg-gold-champagne px-3 text-sm font-bold text-obsidian shadow-[0_0_24px_rgba(230,202,101,0.35)] transition-colors hover:bg-gold-metallic disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
       >
         {stage.kind === "submitting" ? (
