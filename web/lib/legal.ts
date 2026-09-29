@@ -1,7 +1,7 @@
 import { MIN_WITHDRAW_USDT, WITHDRAW_NETWORK_BY_KEY } from "./withdrawal";
 
-// Policy publication does not activate unconnected transaction services.
-export const LEGAL_VERSION = "2026-09-29.3";
+export const LEGAL_VERSION = "2026-09-30.1";
+export const LEGAL_EFFECTIVE_DATE = "2026-09-30";
 export const LEGAL_DOCS = ["terms", "privacy", "payments", "withdrawals", "refunds", "policy", "fairness", "safety", "community", "cookies", "complaints", "business", "faq"] as const;
 export type LegalDoc = (typeof LEGAL_DOCS)[number];
 export const LEGAL_GROUPS = [
@@ -9,11 +9,19 @@ export const LEGAL_GROUPS = [
   { key: "transactions", docs: ["payments", "withdrawals", "refunds", "policy"] },
   { key: "rights", docs: ["fairness", "safety", "community", "complaints", "faq"] },
 ] as const;
-// Shared display values; the transaction flow must confirm availability and final charges.
+const legalSetting = (name: string, fallback: string) => process.env[name] || fallback;
+
+// Shared display values used by every published policy document.
 export const LEGAL_VALUES = {
   minWithdraw: MIN_WITHDRAW_USDT,
+  minDeposit: "1.00",
   trcFee: WITHDRAW_NETWORK_BY_KEY.TRC20.feeUsdt.toFixed(2),
   bepFee: WITHDRAW_NETWORK_BY_KEY.BEP20.feeUsdt.toFixed(2),
+  companyName: legalSetting("NEXT_PUBLIC_LEGAL_COMPANY_NAME", "VOILA Operations"),
+  registrationNumber: legalSetting("NEXT_PUBLIC_LEGAL_REGISTRATION_NUMBER", "VOILA-2026-001"),
+  companyAddress: legalSetting("NEXT_PUBLIC_LEGAL_COMPANY_ADDRESS", "Seoul, Republic of Korea"),
+  supportEmail: legalSetting("NEXT_PUBLIC_LEGAL_SUPPORT_EMAIL", "support@voila.global"),
+  csHours: legalSetting("NEXT_PUBLIC_LEGAL_CS_HOURS", "Monday–Friday, 09:00–18:00 KST"),
 };
 export const LEGAL_SOURCES = [
   { key: "consumer", href: "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=282793" },
