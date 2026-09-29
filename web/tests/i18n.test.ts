@@ -34,7 +34,7 @@ test("지정 문구가 정확히 들어 있다 (CLAUDE.md §2 구어체 카피)"
     "mobileNav.dollar": ["1달러 박스", "$1 Boxes", "1 美元盲盒"],
     "mobileNav.vault": ["내 보관함", "Vault", "保管箱"],
     "mobileNav.deposit": ["충전 (+)", "Deposit (+)", "充值 (+)"],
-    "hero.viewContents": ["구성품 · 확률 보기", "Contents & odds", "查看商品与概率"],
+    "hero.viewContents": ["구성품, 확률 보기", "Contents & odds", "查看商品与概率"],
     "hero.freeTry": ["무료로 미리 열어보기", "Try an unboxing, free", "免费试开一箱"],
     "inventory.sell": ["💰 95% 바로 돌려받기", "💰 Take 95% back", "💰 立即拿回 95%"],
     "inventory.ship": ["📦 우리 집으로 배송", "📦 Ship to my door", "📦 寄到我家"],

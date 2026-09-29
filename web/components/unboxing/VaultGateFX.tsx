@@ -6,14 +6,14 @@ import { useTranslations } from "next-intl";
 import { playGearClick, playHeartbeat } from "@/lib/audio";
 import { useSettingsStore } from "@/stores/settingsStore";
 
-/** 3단계 문지기 컷인 타이밍(ms) — 휠 잠금 해제 → 틈새 아우라 → 암전·심장 박동 */
+/** 3단계 문지기 컷인 타이밍(ms), 휠 잠금 해제 → 틈새 아우라 → 암전, 심장 박동 */
 export const GATE_STAGE_MS = [900, 800, 420] as const;
 export const GATE_TOTAL_MS = GATE_STAGE_MS[0] + GATE_STAGE_MS[1] + GATE_STAGE_MS[2];
 
 /**
  * 박스를 열기 전 3단계 텐션 컷인.
  *   1) 메탈릭 기어 휠이 '찰칵' 돌아가며 잠금 해제
- *   2) 금고 문틈으로 빛이 샘 — 블루 → 바이올렛 → 골드 레이저 빔
+ *   2) 금고 문틈으로 빛이 샘, 블루 → 바이올렛 → 골드 레이저 빔
  *   3) 0.4초 암전 + 심장 박동 → 부모가 릴을 시작한다
  * 결과와 무관한 순수 연출. 부모가 GATE_TOTAL_MS 뒤 언마운트한다.
  */
@@ -40,7 +40,7 @@ export function VaultGateFX() {
     <motion.div aria-hidden className="absolute inset-0 z-[60] flex items-center justify-center overflow-hidden bg-obsidian" initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
       {stage < 2 ? (
         <>
-          {/* 문틈 아우라 — 2단계에서 블루 → 바이올렛 → 골드 */}
+          {/* 문틈 아우라, 2단계에서 블루 → 바이올렛 → 골드 */}
           <motion.span
             className="absolute left-1/2 top-0 h-full w-[3px] -translate-x-1/2"
             initial={{ opacity: 0, scaleY: 0.2 }}

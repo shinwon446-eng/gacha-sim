@@ -18,7 +18,7 @@ export const OTP_MAX_ATTEMPTS = 3;
 const panel = "border border-hairline rounded-xl bg-obsidian p-4";
 
 /**
- * 2단계 — **수수료 제외 후 출금 확인**.
+ * 2단계, **수수료 제외 후 출금 확인**.
  * 실수령액이 화면에서 가장 큰 숫자다. 주소는 줄여 쓰지 않고 전부 보여 준다(오타는 여기서만 잡을 수 있다).
  */
 export function ConfirmStep({
@@ -50,7 +50,7 @@ export function ConfirmStep({
         </div>
         <div className="border-b border-hairline pb-2">
           <dt className="text-faint">{t("address")}</dt>
-          {/* 오타 확인용 — 전체를 그대로 보여 준다 */}
+          {/* 오타 확인용, 전체를 그대로 보여 준다 */}
           <dd className="mt-1 break-all rounded-md border border-gold-champagne/35 bg-gold-champagne/[0.06] px-2.5 py-2 font-mono text-[12px] leading-relaxed text-white">{address}</dd>
         </div>
         <div className="flex items-baseline justify-between gap-4">
@@ -63,7 +63,7 @@ export function ConfirmStep({
         </div>
       </dl>
 
-      {/* 실수령액 — 이 화면의 주인공 */}
+      {/* 실수령액, 이 화면의 주인공 */}
       <div className="mt-3 rounded-xl border border-gold-champagne/50 bg-gold-champagne/[0.08] p-3.5">
         <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gold-champagne">{t("netLabel")}</div>
         <div className="mt-1 flex items-baseline gap-2">
@@ -86,9 +86,9 @@ export function ConfirmStep({
 }
 
 /**
- * 3~4단계 — **2차 인증 확인**. Google OTP 6자리.
- * 검증은 RFC 6238 실제 계산이다(`lib/totp.ts`) — 자릿수만 보는 관문이 아니다.
- * 3회 실패하면 이메일 · 72시간 대기 경로로 보낸다.
+ * 3~4단계, **2차 인증 확인**. Google OTP 6자리.
+ * 검증은 RFC 6238 실제 계산이다(`lib/totp.ts`), 자릿수만 보는 관문이 아니다.
+ * 3회 실패하면 이메일 , 72시간 대기 경로로 보낸다.
  */
 export function OtpStep({ draft, onSuccess, onFallback, onBack }: {
   draft: WithdrawalDraft; onSuccess: (proof: WithdrawalProof) => void; onFallback: () => void; onBack: () => void;

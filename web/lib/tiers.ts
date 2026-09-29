@@ -1,5 +1,5 @@
 /**
- * 프레스티지 등급 체계 (CLAUDE.md §3) — 가치(Value) 축 단일화.
+ * 프레스티지 등급 체계 (CLAUDE.md §3), 가치(Value) 축 단일화.
  *   ROYAL 샴페인 골드 20x+ / PRESTIGE 플래티넘 6~20x / EXECUTIVE 로열 퍼플 2~6x / CURATED 티타늄 기본 보장
  *
  * 설계 규칙
@@ -17,7 +17,7 @@ export type TierKey = "royal" | "prestige" | "executive" | "curated";
 export interface Tier {
   key: TierKey;
   label: string;
-  /** 넷플릭스 게임형 등급 바 라벨 — LEGENDARY / EPIC / RARE / CASHBACK (카드·목록의 확률 숫자를 대체) */
+  /** 넷플릭스 게임형 등급 바 라벨, LEGENDARY / EPIC / RARE / CASHBACK (카드, 목록의 확률 숫자를 대체) */
   gameLabel: string;
   /** 뱃지 텍스트 / 보더 기본색 */
   accent: string;
@@ -41,7 +41,7 @@ export const TIER_BY_KEY: Record<TierKey, Tier> = Object.fromEntries(
   TIERS.map((t) => [t.key, t]),
 ) as Record<TierKey, Tier>;
 
-/** 등급 인덱스. 낮을수록 상위. 정렬·비교에 쓴다. */
+/** 등급 인덱스. 낮을수록 상위. 정렬, 비교에 쓴다. */
 export const tierIndex = (key: TierKey): number => TIERS.findIndex((t) => t.key === key);
 
 /** 실판매가와 지불액의 배수로 등급을 정한다. */
@@ -90,11 +90,11 @@ export function tierBreakdown(box: ProductBox): TierSlice[] {
   });
 }
 
-/** 박스 최고 실판매가 항목의 등급 — 카드 보더/뱃지 색을 정한다. */
+/** 박스 최고 실판매가 항목의 등급, 카드 보더/뱃지 색을 정한다. */
 export const boxTopTier = (box: ProductBox): Tier =>
   tierOf(Math.max(...box.items.map((i) => i.value)), box.price);
 
-/** 박스 최저 실판매가 항목의 등급 — 최소 보장 구성의 등급. */
+/** 박스 최저 실판매가 항목의 등급, 최소 보장 구성의 등급. */
 export const boxFloorTier = (box: ProductBox): Tier => tierOf(box.guaranteedMin, box.price);
 
 /** 최고 실판매가 / 지불액 배수. 카드의 핵심 후크. */

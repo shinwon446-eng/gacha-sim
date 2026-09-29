@@ -13,12 +13,12 @@ import { LoginRequired } from "@/components/auth/LoginRequired";
 import { useAuthStore } from "@/stores/authStore";
 
 /**
- * Google OTP(2FA) 등록 — 출금 모달 인라인 스텝과 마이페이지 보안 설정이 **같은 컴포넌트**를 쓴다.
+ * Google OTP(2FA) 등록, 출금 모달 인라인 스텝과 마이페이지 보안 설정이 **같은 컴포넌트**를 쓴다.
  *
- *   Step 1 앱 연결   — 표준 `otpauth://` QR + 수동 입력용 시크릿(복사)
- *   Step 2 등록 확인 — 6자리 입력 후 확인하면 보안 상태를 저장한다.
+ *   Step 1 앱 연결, 표준 `otpauth://` QR + 수동 입력용 시크릿(복사)
+ *   Step 2 등록 확인, 6자리 입력 후 확인하면 보안 상태를 저장한다.
  *
- * 시크릿은 컴포넌트가 살아 있는 동안 한 번만 만들어진다 — 리렌더마다 새로 만들면 유저가 방금 스캔한 QR 이 무효가 된다.
+ * 시크릿은 컴포넌트가 살아 있는 동안 한 번만 만들어진다, 리렌더마다 새로 만들면 유저가 방금 스캔한 QR 이 무효가 된다.
  */
 export function TwoFactorSetup({ onEnabled, compact, autoStart = false }: { onEnabled?: () => void; compact?: boolean; autoStart?: boolean }) {
   const t = useTranslations("security");
@@ -99,7 +99,7 @@ export function TwoFactorSetup({ onEnabled, compact, autoStart = false }: { onEn
         {t("intro")}
       </p>
 
-      {/* Step 1 — 앱 연결 */}
+      {/* Step 1, 앱 연결 */}
       <div className={stepCls}>
         <div className={label}>
           <Smartphone className="h-4 w-4 flex-none text-gold-champagne" strokeWidth={2.3} />
@@ -132,7 +132,7 @@ export function TwoFactorSetup({ onEnabled, compact, autoStart = false }: { onEn
         <p>{t("step2Body")}</p>
       </div>
 
-      {/* Step 2 — 등록 확인 */}
+      {/* Step 2, 등록 확인 */}
       <form className={stepCls} onSubmit={event => { event.preventDefault(); void submit(code); }}>
         <div className={label}>
           <ShieldCheck className="h-4 w-4 flex-none text-gold-champagne" strokeWidth={2.3} />

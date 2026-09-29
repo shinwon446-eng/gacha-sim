@@ -28,14 +28,14 @@ export interface DeliveryModalProps {
   /** Only entry points that await an authenticated shipment receipt may submit. */
   requestEnabled?: boolean;
   onClose: () => void;
-  /** 신청 확정 — 호출측이 배송비 차감·상태 전환을 한다 */
+  /** 신청 확정, 호출측이 배송비 차감, 상태 전환을 한다 */
   onSubmit: (address: ShippingAddress, feeUsdt: number) => void | Promise<void>;
 }
 
 const inputCls =
   "mt-1.5 w-full rounded-md border border-hairline bg-obsidian px-3 py-2.5 text-sm text-white outline-none transition-colors placeholder:text-faint focus:border-gold-champagne";
 
-/** 3대 안심 배송 보증 — 운영자가 내건 약속(법적 문서 §배송/환전 정책과 같은 내용) */
+/** 3대 안심 배송 보증, 운영자가 내건 약속(법적 문서 §배송/환전 정책과 같은 내용) */
 function GuaranteeCards({ t, fee }: { t: ReturnType<typeof useTranslations<"delivery">>; fee: number }) {
   const cards = [
     { Icon: ShieldCheck, tone: "gold" as const, title: t("guaranteeAuthTitle"), body: t("guaranteeAuthBody") },
@@ -65,11 +65,11 @@ function GuaranteeCards({ t, fee }: { t: ReturnType<typeof useTranslations<"deli
 
 /**
  * 실물 배송 신청 모달 (CLAUDE.md §8).
- * 수령인·휴대폰(자동 하이픈)·우편번호/주소/상세주소·개인통관고유부호(+유니패스 발급 링크) → 3대 보증 →
+ * 수령인, 휴대폰(자동 하이픈), 우편번호/주소/상세주소, 개인통관고유부호(+유니패스 발급 링크) → 3대 보증 →
  * [🚚 무료 배송 신청 완료하기] → 1.5초 정밀 검수 접수 연출 → 접수 완료 화면.
  *
- * 송장 번호는 여기서 만들지 않는다 — 물류에서 실제로 발급된 번호만 보관함에 들어오고(관리자/API),
- * 그전까지는 "출고 준비 · 24시간 내 송장 발급"으로 남는다. 지어낸 번호로 조회 링크를 띄우면 유저가 없는 배송을 추적하게 된다.
+ * 송장 번호는 여기서 만들지 않는다, 물류에서 실제로 발급된 번호만 보관함에 들어오고(관리자/API),
+ * 그전까지는 "출고 준비 , 24시간 내 송장 발급"으로 남는다. 지어낸 번호로 조회 링크를 띄우면 유저가 없는 배송을 추적하게 된다.
  */
 export function DeliveryModal({ open, itemCount, balanceUsdt, requestEnabled = false, onClose, onSubmit }: DeliveryModalProps) {
   const { fmt } = useCurrency();

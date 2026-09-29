@@ -2,7 +2,7 @@
 
 /**
  * 일일 무료 상자 상태 (CLAUDE.md §7-A). 브라우저 단위 24h 쿨다운 + 개봉 기록(공정성 메타 포함).
- * 잔액 적립은 호출측(walletStore.credit)이 한다 — 여기서는 시각과 기록만.
+ * 잔액 적립은 호출측(walletStore.credit)이 한다, 여기서는 시각과 기록만.
  */
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";

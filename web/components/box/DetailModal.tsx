@@ -43,7 +43,7 @@ export interface DetailModalProps {
   onDeposit?: (box: ProductBox, count: number) => void;
   onClose: () => void;
   onOpen?: (box: ProductBox, count?: number) => void;
-  /** 오토플레이 시작 — 설정 모달에서 확정된 구성으로 */
+  /** 오토플레이 시작, 설정 모달에서 확정된 구성으로 */
   onAutoplay?: (box: ProductBox, config: AutoplayConfig) => void;
 }
 
@@ -125,7 +125,7 @@ export function DetailModal({ box, onClose, onOpen, onAutoplay, onDeposit, pendi
   const t = useTranslations();
   const { fmt } = useCurrency();
   const { boxTitle, boxBadge, itemName } = useProductText();
-  // 수량 프리셋 [1x][5x][10x][50x][100x] · 오토플레이 [−][🔄 N회][+]
+  // 수량 프리셋 [1x][5x][10x][50x][100x] , 오토플레이 [−][🔄 N회][+]
   const [qty, setQty] = useState<number>(1);
   const [confirming, setConfirming] = useState(false);
   const balance = useWalletStore((s) => s.balance);

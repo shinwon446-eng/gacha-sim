@@ -1,7 +1,7 @@
 /**
  * 실지급 & 실배송 인증 피드 (CLAUDE.md §6).
- * live 모드는 API 집계(마스킹된 전체 유저), preview 모드는 이 기기의 실제 출금·환전·출고 기록만 보여준다.
- * 다른 사람의 지급·배송을 지어내지 않는다. TxID·운송장은 실제로 발급된 것만 링크한다.
+ * live 모드는 API 집계(마스킹된 전체 유저), preview 모드는 이 기기의 실제 출금, 환전, 출고 기록만 보여준다.
+ * 다른 사람의 지급, 배송을 지어내지 않는다. TxID, 운송장은 실제로 발급된 것만 링크한다.
  */
 import type { Network } from "@/lib/depositAddress";
 import type { CarrierKey } from "@/lib/carriers";
@@ -33,7 +33,7 @@ export interface ShipmentProof {
   id: string;
   /** 마스킹된 수령인 */
   recipient: string;
-  /** 지역 — 국가 코드 (화면이 로케일로 번역) */
+  /** 지역, 국가 코드 (화면이 로케일로 번역) */
   country: CountryCode;
   boxSlug: string;
   itemId: string;
@@ -42,7 +42,7 @@ export interface ShipmentProof {
   at: string;
 }
 
-/** 수령인 마스킹 — "홍길동" → "홍*동", "John Smith" → "J*** S." */
+/** 수령인 마스킹, "홍길동" → "홍*동", "John Smith" → "J*** S." */
 export function maskRecipient(name: string): string {
   const n = name.trim();
   if (!n) return "***";

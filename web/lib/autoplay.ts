@@ -1,9 +1,9 @@
 /**
- * 오토플레이 규칙 — 순수 함수. 컴포넌트는 스핀만 돌리고 여기서 "계속할지"를 묻는다.
+ * 오토플레이 규칙, 순수 함수. 컴포넌트는 스핀만 돌리고 여기서 "계속할지"를 묻는다.
  *
- *   · 회전 수: 10 / 25 / 50 / 100 / 무제한(Infinity)
- *   · 자동 환전: 실물·디지털 당첨을 95% USDT 로 즉시 회수해 잔고를 재충전한다 (캐시백은 원래 100% 즉시 적립)
- *   · 스마트 정지: 잭팟(ROYAL/PRESTIGE) 당첨 · 단일 승리 N배 이상 · 손실 한도(Stop Loss) 도달 · 잔고 부족
+ *   , 회전 수: 10 / 25 / 50 / 100 / 무제한(Infinity)
+ *   , 자동 환전: 실물, 디지털 당첨을 95% USDT 로 즉시 회수해 잔고를 재충전한다 (캐시백은 원래 100% 즉시 적립)
+ *   , 스마트 정지: 잭팟(ROYAL/PRESTIGE) 당첨 , 단일 승리 N배 이상 , 손실 한도(Stop Loss) 도달 , 잔고 부족
  */
 import type { TierKey } from "./tiers";
 
@@ -55,7 +55,7 @@ export function stopReasonAfter(config: AutoplayConfig, state: AutoplayState, la
   return null;
 }
 
-/** 다음 스핀 전 — 잔고가 가격보다 적으면 멈춘다 */
+/** 다음 스핀 전, 잔고가 가격보다 적으면 멈춘다 */
 export function canAfford(balance: number, price: number): boolean {
   return balance + 1e-9 >= price;
 }

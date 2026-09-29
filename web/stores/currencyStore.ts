@@ -17,13 +17,13 @@ export type Currency = "USDT" | "USD" | "KRW";
 
 export const CURRENCIES: Currency[] = ["USDT", "USD", "KRW"];
 
-/** 1 USDT 당 환율. 모의 고정값 — 실시간 연동 시 setRates 로 갱신한다. */
+/** 1 USDT 당 환율. 모의 고정값, 실시간 연동 시 setRates 로 갱신한다. */
 export const DEFAULT_RATES: Record<Currency, number> = { USDT: 1, USD: 1.0, KRW: 1380 };
 
 export interface CurrencyState {
   currency: Currency;
   rates: Record<Currency, number>;
-  /** 저장값이 적용됐는지 — 적용 전엔 서버와 같은 기본값을 렌더한다 */
+  /** 저장값이 적용됐는지, 적용 전엔 서버와 같은 기본값을 렌더한다 */
   hydrated: boolean;
   setCurrency: (c: Currency) => void;
   setRates: (r: Partial<Record<Currency, number>>) => void;

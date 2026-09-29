@@ -27,7 +27,7 @@ import {
 
 const MEDALS = ["👑", "🥈", "🥉", "🏅", "🏅"];
 
-/** 순위별 최고 배수 도전 목표 — 공석 줄에 보여 줄 실제 라인업 수치 */
+/** 순위별 최고 배수 도전 목표, 공석 줄에 보여 줄 실제 라인업 수치 */
 function challengeMultiple(): number {
   return Math.max(...BOXES.map((b) => (dropTable(b)[0]?.value ?? 0) / b.price));
 }
@@ -36,9 +36,9 @@ function challengeMultiple(): number {
  * 🏆 주간 명예의 전당 랭킹전 (2026-09-23 운영자 지시).
  *
  * 매주 UTC 월요일 00:00 에 초기화되는 잭팟 **배수** 랭킹전. 상위 5위에 상금 풀을 순차 지급한다.
- * 상금·마감·진입 조건은 운영자가 실제로 집행하는 규칙이라 그대로 적는다.
+ * 상금, 마감, 진입 조건은 운영자가 실제로 집행하는 규칙이라 그대로 적는다.
  *
- * 랭킹에 오르는 줄은 **실제 기록만** 쓴다 — live 모드는 API 가 준 마스킹 랭킹, 백엔드가 없으면 이 기기의 실제 당첨.
+ * 랭킹에 오르는 줄은 **실제 기록만** 쓴다, live 모드는 API 가 준 마스킹 랭킹, 백엔드가 없으면 이 기기의 실제 당첨.
  * 비어 있는 순위는 지어낸 당첨자로 메우지 않고 **공석**으로 열어 두고, 그 자리에 걸린 상금과 도전 목표 배수를 보여 준다.
  * 바닥 캐시백이 상위권을 도배하지 않도록 10배 하한을 둔다.
  */
@@ -48,7 +48,7 @@ export function HallOfFame({ onPick, className }: { onPick: (box: ProductBox) =>
   const items = useInventoryStore((s) => s.items);
   const clientSeed = useFairStore((s) => s.clientSeed);
 
-  // 카운트다운은 마운트 후에만 흐른다 — 서버 렌더와 값이 달라지지 않게(하이드레이션 안전)
+  // 카운트다운은 마운트 후에만 흐른다, 서버 렌더와 값이 달라지지 않게(하이드레이션 안전)
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
     setNow(Date.now());
@@ -91,7 +91,7 @@ export function HallOfFame({ onPick, className }: { onPick: (box: ProductBox) =>
 
   return (
     <section className={cn("px-4 sm:px-[4%]", className)} aria-label={t("title")}>
-      {/* 헤더 — 타이틀 · 총상금 · 시즌 타이머 */}
+      {/* 헤더, 타이틀 , 총상금 , 시즌 타이머 */}
       <div className="mb-3">
         <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
           <h2 className="break-keep text-[15px] font-extrabold tracking-tight text-white sm:text-[17px]">{t("title")}</h2>
@@ -102,7 +102,7 @@ export function HallOfFame({ onPick, className }: { onPick: (box: ProductBox) =>
         <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 break-keep text-[11px] font-semibold text-faint">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-crimson" />
           {t("deadline")}
-          <span className="whitespace-nowrap font-bold tabular-nums text-crimson">{remaining === null ? "—" : formatCountdown(remaining)}</span>
+          <span className="whitespace-nowrap font-bold tabular-nums text-crimson">{remaining === null ? ", " : formatCountdown(remaining)}</span>
           <span className="text-faint">{t("payout")}</span>
         </p>
       </div>
@@ -133,7 +133,7 @@ export function HallOfFame({ onPick, className }: { onPick: (box: ProductBox) =>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[12px] font-bold text-white">{item ? itemName(item) : r.itemId}</span>
                   <span className="block truncate text-[10px] text-faint">
-                    {r.who} · {box ? boxTitle(box) : r.boxSlug}
+                    {r.who} , {box ? boxTitle(box) : r.boxSlug}
                   </span>
                   <span className="mt-0.5 block truncate text-[10px] font-bold text-gold-champagne">{t("prize", { amount: r.prizeUsdt.toLocaleString("en-US") })}</span>
                 </span>
@@ -148,7 +148,7 @@ export function HallOfFame({ onPick, className }: { onPick: (box: ProductBox) =>
           );
         })}
 
-        {/* 공석 — 가짜 당첨자로 채우지 않는다 */}
+        {/* 공석, 가짜 당첨자로 채우지 않는다 */}
         {slots.map((s) => (
           <li key={`slot-${s.rank}`}>
             <button

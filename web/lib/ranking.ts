@@ -3,17 +3,17 @@
  *
  * 매주 초기화되는 잭팟 배수 랭킹전. 상위 5명에게 상금 풀을 순차 지급한다.
  * 연출이 아니라 **운영자가 실제로 지급하는 프로모션**이므로 상금액은 상수로 명시하고,
- * 랭킹 자체는 지어내지 않는다 — live 모드에서 API 가 준 마스킹 랭킹, 없으면 이 기기의 실제 기록만 오른다.
+ * 랭킹 자체는 지어내지 않는다, live 모드에서 API 가 준 마스킹 랭킹, 없으면 이 기기의 실제 기록만 오른다.
  * 채워지지 않은 자리는 가짜 당첨자로 메우지 않고 "공석"으로 남겨 상금과 진입 조건만 보여 준다.
  */
 
-/** 총 상금 풀(USDT) — 운영자 프로모션. 운영하지 않을 주에는 0 으로 두면 섹션이 상금 표기를 감춘다. */
+/** 총 상금 풀(USDT), 운영자 프로모션. 운영하지 않을 주에는 0 으로 두면 섹션이 상금 표기를 감춘다. */
 export const WEEKLY_PRIZE_POOL_USDT = 5000;
 
 /** 1~5위 순차 지급액(USDT). 합계는 반드시 총 상금 풀과 같다. */
 export const PRIZE_SPLIT_USDT = [2500, 1200, 600, 350, 350] as const;
 
-/** 랭킹 진입 하한 배수 — 바닥 캐시백(≈0.95x)이 상위권을 도배하는 것을 막는다. */
+/** 랭킹 진입 하한 배수, 바닥 캐시백(≈0.95x)이 상위권을 도배하는 것을 막는다. */
 export const MIN_RANK_MULTIPLE = 10;
 
 /** 랭킹에 실리는 한 줄. `mine` 은 이 기기의 실제 당첨인지 여부. */
@@ -24,7 +24,7 @@ export interface RankEntry {
   itemId: string;
   valueUsdt: number;
   price: number;
-  /** 획득 시각(ISO) — 시즌 구간 판정용 */
+  /** 획득 시각(ISO), 시즌 구간 판정용 */
   at: string;
   mine: boolean;
 }
@@ -35,7 +35,7 @@ export interface RankRow extends RankEntry {
   prizeUsdt: number;
 }
 
-/** 아직 아무도 올라오지 못한 자리 — 가짜 당첨자 대신 이걸 보여 준다 */
+/** 아직 아무도 올라오지 못한 자리, 가짜 당첨자 대신 이걸 보여 준다 */
 export interface OpenSlot {
   rank: number;
   prizeUsdt: number;
@@ -51,8 +51,7 @@ export interface SeasonWindow {
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
- * `now` 가 속한 주의 시즌 구간. 기준은 UTC 월요일 00:00 —
- * 서버·클라이언트·타임존이 달라도 같은 값이 나와야 하이드레이션이 깨지지 않는다.
+ * `now` 가 속한 주의 시즌 구간. 기준은 UTC 월요일 00:00, * 서버, 클라이언트, 타임존이 달라도 같은 값이 나와야 하이드레이션이 깨지지 않는다.
  */
 export function seasonWindow(now: number): SeasonWindow {
   const d = new Date(now);
@@ -108,7 +107,7 @@ export function openSlots(filled: number, limit = PRIZE_SPLIT_USDT.length): Open
 
 /**
  * 내 최고 배수가 지금 랭킹에서 몇 위인지. 상위권에 이미 올라 있으면 그 순위,
- * 아니면 마지막 순위 뒤(=limit+1) 로만 답한다 — 집계 범위를 모르면서 "42위" 같은 숫자를 지어내지 않는다.
+ * 아니면 마지막 순위 뒤(=limit+1) 로만 답한다, 집계 범위를 모르면서 "42위" 같은 숫자를 지어내지 않는다.
  */
 export function myRank(rows: RankRow[], myBestMultiple: number): number | null {
   const mine = rows.find((r) => r.mine);
