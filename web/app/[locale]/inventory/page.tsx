@@ -2,6 +2,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowDownLeft, ArrowUpRight, Check, ChevronDown, Coins, Package, Search, ShieldCheck, Truck, Wallet, X } from "lucide-react";
+import { canReview } from "@/lib/community";
+import { useCommunityStore } from "@/stores/communityStore";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { ProductArt } from "@/components/box/ProductArt";
 import { Money } from "@/components/ui/Money";
@@ -34,6 +36,7 @@ export default function InventoryPage() {
   const { fmt } = useCurrency();
   const { itemName, boxTitle } = useProductText();
   const items = useInventoryStore(s => s.items);
+  const reviews = useCommunityStore(s => s.mine);
   const hydrated = useInventoryStore(s => s.hydrated);
   const balance = useWalletStore(s => s.balance);
   const [tab, setTab] = useState<VaultTab>("held");
@@ -171,6 +174,7 @@ export default function InventoryPage() {
             <div className="p-5">{days !== null && <p className="mb-3 inline-flex rounded-full bg-gold-champagne/10 px-3 py-1 text-xs font-semibold text-gold-champagne">{locale === "ko" ? `⏳ 자동 캐시백까지 D-${days}일` : locale === "zh" ? `⏳ 自动返现倒计时 D-${days}天` : `⏳ Automatic cashback in ${days} days`}</p>}<p className="text-xs text-muted">{date(item.acquiredAt)}</p><h2 className="mt-2 text-base font-medium text-white">{product ? itemName(product) : item.itemId}</h2>
               <p className="mt-1 text-xs leading-5 text-muted">{BOX_BY_SLUG[item.boxSlug] ? boxTitle(BOX_BY_SLUG[item.boxSlug]) : item.boxSlug}</p>
               <div className="my-5 flex flex-wrap items-baseline justify-between gap-2"><span className="text-xs text-muted">{r("resaleValue")}</span><Money value={resaleEstimate([item])} size="md" /></div>
+              {canReview(item, reviews) && <Link href={`/community?tab=eligible&item=${encodeURIComponent(item.id)}`} className="workspace-text-link mb-4">{r("writeReview")}<ArrowUpRight className="h-4 w-4" /></Link>}
               <div className="grid grid-cols-[1fr_1fr_44px] gap-2"><button className="workspace-button" onClick={() => setShipTarget([item.id])}>{r("requestDelivery")}</button><button className="workspace-button primary" onClick={() => setSellTarget([item.id])}>{r("sellback")}</button><button className="workspace-button !px-0" onClick={() => setVerify(item)} aria-label={t("verify")}><ShieldCheck className="h-4 w-4" /></button></div>
             </div>
           </li>;
@@ -192,7 +196,7 @@ export default function InventoryPage() {
                 <div><dt>{r("acquiredDate")}</dt><dd>{date(item.acquiredAt)}</dd></div>
                 <div><dt>{r("processedDate")}</dt><dd>{at ? new Date(at).toLocaleString(locale) : r("unknownDate")}</dd></div>
                 {tab === "done" && <><div><dt>{r("originalValue")}</dt><dd><Money value={item.valueUsdt} size="sm" /></dd></div><div><dt>{r("settledAmount")}</dt><dd>{typeof item.soldForUsdt === "number" ? <Money value={item.soldForUsdt} size="sm" /> : r("amountUnknown")}</dd></div>{item.autoCashback && <div><dt>{r("settlementMethod")}</dt><dd>{r("autoCashbackRecord")}</dd></div>}<div><dt>{r("funding")}</dt><dd>{r(`fundingTypes.${item.fundingSource ?? "unknown"}`)}</dd></div></>}
-              </dl><div className="flex flex-wrap gap-3">{tab === "shipping" && <button className="workspace-button" onClick={() => setTrack(item)}><Truck className="h-4 w-4" />{t("track")}</button>}{item.status === "SHIPPING_REQUESTED" && <button className="workspace-button" onClick={() => setCancelTarget(item)}>{tc("confirm")}</button>}{item.status === "DELIVERED" && <Link href="/community?tab=eligible" className="workspace-button">{r("writeReview")}</Link>}<button className="workspace-button" onClick={() => setVerify(item)}><ShieldCheck className="h-4 w-4" />{t("verify")}</button></div>{item.status === "SHIPPING" && <p className="mt-4 text-xs leading-6 text-muted">{tc("inTransit")} <Link href="/legal/refunds" className="text-gold-champagne underline">{tc("refundPolicy")}</Link></p>}</div>
+              </dl><div className="flex flex-wrap gap-3">{tab === "shipping" && <button className="workspace-button" onClick={() => setTrack(item)}><Truck className="h-4 w-4" />{t("track")}</button>}{item.status === "SHIPPING_REQUESTED" && <button className="workspace-button" onClick={() => setCancelTarget(item)}>{tc("confirm")}</button>}{canReview(item, reviews) && <Link href={`/community?tab=eligible&item=${encodeURIComponent(item.id)}`} className="workspace-button">{r("writeReview")}</Link>}<button className="workspace-button" onClick={() => setVerify(item)}><ShieldCheck className="h-4 w-4" />{t("verify")}</button></div>{item.status === "SHIPPING" && <p className="mt-4 text-xs leading-6 text-muted">{tc("inTransit")} <Link href="/legal/refunds" className="text-gold-champagne underline">{tc("refundPolicy")}</Link></p>}</div>
             </details>
           </li>;
         })}</ul>

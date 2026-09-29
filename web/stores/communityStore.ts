@@ -5,7 +5,7 @@ import { canReview, REVIEW_MAX_CHARS, REVIEW_MIN_CHARS } from "@/lib/community";
 import { useInventoryStore } from "@/stores/inventoryStore";
 export interface MyReview {
   id: string; ownedId: string; boxSlug: string; itemId: string; text: string; rating: number;
-  photo?: string; at: string; updatedAt?: string; bonusUsdt: number;
+  photo?: string; at: string; updatedAt?: string; publishedAt?: string; bonusUsdt: number;
 }
 interface CommunityState {
   mine: MyReview[]; hydrated: boolean;
@@ -29,7 +29,8 @@ export const useCommunityStore = create<CommunityState>()(
       const item = useInventoryStore.getState().items.find(item => item.id === r.ownedId);
       if (get().hasReviewed(r.ownedId)) throw new Error("duplicate");
       if (!item || !canReview(item, [])) throw new Error("ineligible-review-item");
-      const rec: MyReview = { ...r, text: r.text.trim(), itemId: item.itemId, boxSlug: item.boxSlug, bonusUsdt: 0, id: `my_${crypto.randomUUID()}`, at: new Date().toISOString() };
+      const now = new Date().toISOString();
+      const rec: MyReview = { ...r, text: r.text.trim(), itemId: item.itemId, boxSlug: item.boxSlug, bonusUsdt: 0, id: `my_${crypto.randomUUID()}`, at: now, publishedAt: now };
       const mine = [rec, ...get().mine];
       persistReviews(mine); set({ mine }); return rec;
     },

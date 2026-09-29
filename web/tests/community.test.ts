@@ -8,7 +8,7 @@ import { reviewValueNotice } from "../components/community/reviewValueNotice";
 
 test("review value boundary is inclusive at 100 USDT, and invalid values are refused by the store", () => {
   assert.equal(MIN_REVIEW_ITEM_VALUE_USDT, 100);
-  assert.equal(reviewValueNotice("ko"), "100 USDT 이상 상품 당첨 시 후기를 작성하고 보너스를 받을 수 있습니다");
+  assert.equal(reviewValueNotice("ko"), "후기 작성은 100 USDT($100) 이상 가치의 당첨 상품만 가능합니다.");
   const owned: OwnedItem = {
     id: "threshold", itemId: "item", boxSlug: "box", valueUsdt: 100, tier: "royal", status: "DELIVERED",
     acquiredAt: "2026-09-01T00:00:00Z", fair: { serverSeedHash: "h", serverSeed: "s", clientSeed: "c", nonce: 1, roll: 1 },
@@ -45,6 +45,7 @@ test("stored 100 USDT win can be reviewed without shipping; metadata cannot impe
   const review = useCommunityStore.getState().add({ ownedId: item.id, itemId: "forged", boxSlug: "forged", text: "  보관 중인 당첨 상품 후기입니다  ", rating: 5, bonusUsdt: 999 });
   assert.equal(review.itemId, item.itemId); assert.equal(review.boxSlug, item.boxSlug); assert.equal(review.bonusUsdt, 0);
   assert.equal(review.text, "보관 중인 당첨 상품 후기입니다");
+  assert.equal(review.publishedAt, review.at);
   assert.equal(canReview(item, [review]), false);
   useInventoryStore.setState({ items: [] });
   assert.throws(() => useCommunityStore.getState().update(review.id, { text: "다른 계정의 수정 시도입니다", rating: 1 }), /forbidden/);
