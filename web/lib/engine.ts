@@ -1,4 +1,4 @@
-// 확률/부스터/등급 엔진 — 순수 로직.
+// 확률/부스터/등급 엔진, 순수 로직.
 // 프로덕션 원칙: 난수와 확률 계산은 서버에서만 실행하고, 클라이언트에는 결과만 내려준다.
 import { itemLine, type Box, type Item, type Line } from "./types";
 
@@ -26,7 +26,7 @@ const BOOSTED_LINE: Line = "jackpot";
 
 export interface RollOpts {
   boost: boolean;
-  /** 유저 등급 배율 — [초대박] 가중치에 곱해진다 */
+  /** 유저 등급 배율, [초대박] 가중치에 곱해진다 */
   tierMult: number;
 }
 
@@ -50,13 +50,13 @@ export function pickWeightedAdjusted(items: Item[], opts: RollOpts, rand: () => 
     r -= e.w;
     if (r <= 0) return e.item;
   }
-  return list[list.length - 1].item;
+  return list[list.length, 1].item;
 }
 
 export const rollOnce = (box: Box, opts: RollOpts, rand: () => number = Math.random): Item =>
   pickWeightedAdjusted(box.items, opts, rand);
 
-/** 특정 라인의 합산 확률(%) — 부스터 안내의 확률 변환 표기에 사용 */
+/** 특정 라인의 합산 확률(%), 부스터 안내의 확률 변환 표기에 사용 */
 export function lineProbWith(box: Box, line: Line, opts: RollOpts): number {
   const list = effectiveItems(box.items, opts);
   const total = list.reduce((s, e) => s + e.w, 0);
@@ -77,9 +77,9 @@ export interface PullResult {
 
 /**
  * count 회 연속 뽑기 상태 머신.
- * - pity >= 10 인 상태에서 뽑으면 부스터 적용([초대박] x5) 후 0으로 리셋
- * - [초대박] 자연 당첨 시에도 리셋
- * - 그 외에는 +1 (상한 10)
+ *, pity >= 10 인 상태에서 뽑으면 부스터 적용([초대박] x5) 후 0으로 리셋
+ *, [초대박] 자연 당첨 시에도 리셋
+ *, 그 외에는 +1 (상한 10)
  */
 export function runPulls(box: Box, count: number, state: PullState, rand: () => number = Math.random): PullResult {
   const { name: tier, mult } = tierFor(state.totalSpent);

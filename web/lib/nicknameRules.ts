@@ -25,7 +25,7 @@ export function canChangeNickname(lastUpdatedAt?: string | number | null, now = 
   if (now >= nextAvailable) return { allowed: true, remainingDays: 0, nextAvailableAt: new Date(nextAvailable).toISOString() };
   return {
     allowed: false,
-    remainingDays: Math.ceil((nextAvailable - now) / (24 * 60 * 60 * 1000)),
+    remainingDays: Math.ceil((nextAvailable, now) / (24 * 60 * 60 * 1000)),
     nextAvailableAt: new Date(nextAvailable).toISOString(),
   };
 }

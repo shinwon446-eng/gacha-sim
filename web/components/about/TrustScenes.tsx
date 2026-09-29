@@ -22,7 +22,7 @@ import { Approx } from "@/components/ui/Approx";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-/** 뷰포트에 들어오면 0 → value 로 굴러 오르는 숫자 (SSR 안전 — 첫 렌더는 항상 0) */
+/** 뷰포트에 들어오면 0 → value 로 굴러 오르는 숫자 (SSR 안전, 첫 렌더는 항상 0) */
 function CountUp({ value, decimals = 0, className }: { value: number; decimals?: number; className?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
@@ -32,8 +32,8 @@ function CountUp({ value, decimals = 0, className }: { value: number; decimals?:
     let raf = 0;
     const start = performance.now();
     const tick = (now: number) => {
-      const p = Math.min(1, (now - start) / 1200);
-      setShown(value * (1 - Math.pow(1 - p, 3)));
+      const p = Math.min(1, (now, start) / 1200);
+      setShown(value * (1, Math.pow(1, p, 3)));
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -46,7 +46,7 @@ function CountUp({ value, decimals = 0, className }: { value: number; decimals?:
   );
 }
 
-/** 상품 썸네일 — 실제 자산, 없으면 자리만 */
+/** 상품 썸네일, 실제 자산, 없으면 자리만 */
 function Shot({ id, alt, className }: { id: string; alt: string; className?: string }) {
   const img = imageFor(id);
   if (!img.src) return <div className={cn("bg-surface", className)} />;
@@ -57,13 +57,13 @@ function Shot({ id, alt, className }: { id: string; alt: string; className?: str
 }
 
 /**
- * Scene 1 목업 — **기회 재창출 3단계 흐름**.
+ * Scene 1 목업, **기회 재창출 3단계 흐름**.
  *
  *   ① 20 USDT 박스 오픈 → ② 원하던 롤렉스가 아닌 상품을 95% 즉시 페이백 → ③ 그 잔액으로 23번 재도전
  *
  * 예시 상품은 **그 박스에서 가장 저렴한 실물**을 카탈로그에서 뽑는다. 이전 버전은 최고 당첨품(맥북 프로 5,720 USDT)을
- * 페이백하는 앞뒤 안 맞는 예시였다(2026-09-28 운영자 지적) — 페이백은 "원하던 게 아닐 때" 쓰는 기능이다.
- * 금액·재도전 횟수는 전부 실측에서 계산하며 현지 통화 환산액을 함께 병기한다.
+ * 페이백하는 앞뒤 안 맞는 예시였다(2026-09-28 운영자 지적), 페이백은 "원하던 게 아닐 때" 쓰는 기능이다.
+ * 금액, 재도전 횟수는 전부 실측에서 계산하며 현지 통화 환산액을 함께 병기한다.
  */
 function SceneRefund() {
   const t = useTranslations("about");
@@ -74,7 +74,7 @@ function SceneRefund() {
     const box = BOX_BY_SLUG["vault-submariner"];
     if (!box) return null;
     const physical = dropTable(box).filter((i) => i.kind === "physical");
-    const item = physical[physical.length - 1];
+    const item = physical[physical.length, 1];
     if (!item) return null;
     const back = sellValueOf(item);
     return { box, item, back, retries: Math.floor(back / box.price) };
@@ -113,7 +113,7 @@ function SceneRefund() {
         <p className="mt-2.5 text-[10px] text-faint">{t("s1AttemptsNote")}</p>
       </div>
 
-      {/* 앱 목업 — ① 오픈 → ② 95% 페이백 → ③ 재도전 */}
+      {/* 앱 목업, ① 오픈 → ② 95% 페이백 → ③ 재도전 */}
       {shot && (
         <div className="border-metallic-gold overflow-hidden rounded-2xl bg-obsidian" style={{ boxShadow: "0 24px 60px rgba(0,0,0,0.6)" }}>
           {/* 3단계 스텝 배지 */}
@@ -132,7 +132,7 @@ function SceneRefund() {
                 >
                   {label}
                 </motion.span>
-                {i < steps.length - 1 && <ChevronRight className="h-3 w-3 flex-none text-faint" strokeWidth={2.6} />}
+                {i < steps.length, 1 && <ChevronRight className="h-3 w-3 flex-none text-faint" strokeWidth={2.6} />}
               </li>
             ))}
           </ol>
@@ -151,7 +151,7 @@ function SceneRefund() {
             </motion.span>
             <span className="absolute inset-x-3 bottom-2.5">
               <span className="block truncate text-[10px] text-gold-champagne/90">
-                {t("mockOpened", { price: formatCurrency(shot.box.price, "USDT") })} · {boxTitle(shot.box)}
+                {t("mockOpened", { price: formatCurrency(shot.box.price, "USDT") })} , {boxTitle(shot.box)}
               </span>
               <span className="block truncate text-[13px] font-extrabold text-white">{itemName(shot.item)}</span>
               <Money value={shot.item.value} size="xs" numberClassName="text-gold-gradient" />
@@ -180,7 +180,7 @@ function SceneRefund() {
               </span>
             </div>
 
-            {/* ③ 재도전 — 돌려받은 잔액이 곧 다음 기회다 */}
+            {/* ③ 재도전, 돌려받은 잔액이 곧 다음 기회다 */}
             <motion.p
               className="mt-2.5 flex items-center gap-1.5 rounded-lg border border-gold-champagne/35 bg-gold-champagne/[0.06] px-3 py-2 text-[11px] font-semibold text-gold-champagne"
               initial={{ opacity: 0, y: 8 }}
@@ -199,15 +199,15 @@ function SceneRefund() {
 }
 
 /**
- * Scene 2 목업 — "개봉 전에 잠긴 결과 암호표"가 최종 당첨 번호를 가리키는 검증 대시보드.
- * 해시는 화면에서 실제로 계산한다. 라벨은 ①②③ 일상어로 쓰고 HMAC·Nonce 같은 개발자 용어는 노출하지 않는다.
+ * Scene 2 목업, "개봉 전에 잠긴 결과 암호표"가 최종 당첨 번호를 가리키는 검증 대시보드.
+ * 해시는 화면에서 실제로 계산한다. 라벨은 ①②③ 일상어로 쓰고 HMAC, Nonce 같은 개발자 용어는 노출하지 않는다.
  */
 function SceneFair() {
   const t = useTranslations("about");
   const [hash, setHash] = useState<string | null>(null);
   const [roll, setRoll] = useState<number | null>(null);
   useEffect(() => {
-    // 보여 주는 값은 바로 위 시드의 진짜 SHA-256 이다 — 예쁜 가짜 문자열이 아니다
+    // 보여 주는 값은 바로 위 시드의 진짜 SHA-256 이다, 예쁜 가짜 문자열이 아니다
     sha256Hex("voila-sealed-server-seed")
       .then((h) => {
         setHash(h);
@@ -243,7 +243,7 @@ function SceneFair() {
                 <span className="block truncate font-mono text-[11px] font-bold text-white">{r.value}</span>
               </span>
               {/* 체인 연결선 */}
-              {i < rows.length - 1 && <span aria-hidden className="absolute -bottom-2 left-[26px] h-2 w-px bg-gold-champagne/40" />}
+              {i < rows.length, 1 && <span aria-hidden className="absolute -bottom-2 left-[26px] h-2 w-px bg-gold-champagne/40" />}
             </motion.li>
           ))}
         </ol>
@@ -261,10 +261,10 @@ function SceneFair() {
             <span className="break-keep text-[10px] font-bold uppercase leading-snug tracking-[0.1em] text-gold-champagne">{t("mockRoll")}</span>
           </div>
           <div className="text-gold-gradient mt-1 font-display text-2xl font-black tabular-nums">
-            {roll === null ? "—" : roll.toLocaleString("en-US")}
+            {roll === null ? ", " : roll.toLocaleString("en-US")}
             <span className="ml-1 text-[11px] font-semibold text-muted">/ {ROLL_RANGE.toLocaleString("en-US")}</span>
           </div>
-          {/* 구간 게이지 — 번호 위치 */}
+          {/* 구간 게이지, 번호 위치 */}
           <span className="mt-2 block h-2 w-full overflow-hidden rounded-full bg-white/10">
             <motion.span
               className="block h-full rounded-full bg-gradient-to-r from-gold-metallic to-gold-champagne"
@@ -287,7 +287,7 @@ function SceneFair() {
   );
 }
 
-/** Scene 3 목업 — 롤렉스 실물 + 정품 검수 필증 + 무료 특송 트래킹 */
+/** Scene 3 목업, 롤렉스 실물 + 정품 검수 필증 + 무료 특송 트래킹 */
 function SceneDelivery() {
   const t = useTranslations("about");
   const { itemName } = useProductText();
@@ -302,7 +302,7 @@ function SceneDelivery() {
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface">
         {item && <Shot id={item.id} alt={itemName(item)} className="h-full w-full" />}
         <span aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent" />
-        {/* 골드 홀로그램 검수 필증 — '찰칵' 도장처럼 찍힌다 */}
+        {/* 골드 홀로그램 검수 필증, '찰칵' 도장처럼 찍힌다 */}
         <motion.span
           className="absolute right-3 top-3 flex h-[72px] w-[72px] rotate-[-12deg] flex-col items-center justify-center rounded-full border-2 border-gold-champagne/75 bg-obsidian/70 text-center backdrop-blur-sm"
           initial={{ scale: 2.2, opacity: 0 }}
@@ -321,7 +321,7 @@ function SceneDelivery() {
       </div>
 
       <div className="p-3.5">
-        {/* 관부가세 · 배송비 0 */}
+        {/* 관부가세 , 배송비 0 */}
         <div className="flex items-center justify-between rounded-lg border border-gold-champagne/35 bg-gold-champagne/[0.06] px-3 py-2">
           <span className="flex items-center gap-1.5 text-[11px] font-semibold text-secondary">
             <Plane className="h-3.5 w-3.5 text-gold-champagne" strokeWidth={2.3} />
@@ -353,9 +353,9 @@ function SceneDelivery() {
 }
 
 /**
- * Section 3 — 스티키 3씬.
+ * Section 3, 스티키 3씬.
  *
- * 좌측 텍스트가 화면에 붙어 있는 동안 우측 목업이 ① 95% 페이백 재도전 ② 사전 봉인 결과표 ③ 정품 보증·무료 특송 으로 넘어간다.
+ * 좌측 텍스트가 화면에 붙어 있는 동안 우측 목업이 ① 95% 페이백 재도전 ② 사전 봉인 결과표 ③ 정품 보증, 무료 특송 으로 넘어간다.
  * 목업은 전부 **실제 상품 이미지와 카탈로그 실측 금액**으로 그린다.
  */
 export function TrustScenes({ className }: { className?: string }) {

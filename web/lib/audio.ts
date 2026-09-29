@@ -37,7 +37,7 @@ function tone(
   osc.stop(start + duration + 0.05);
 }
 
-/** 극장 조명이 꺼질 때 — 시그니처 "타-덤" 풍 저음 두 방 */
+/** 극장 조명이 꺼질 때, 시그니처 "타-덤" 풍 저음 두 방 */
 export function playTaDum() {
   const ac = getCtx();
   if (!ac) return;
@@ -56,7 +56,7 @@ export function playTick() {
   tone(ac, 1600, t, 0.045, { type: "square", gain: 0.05, slideTo: 900 });
 }
 
-/** 당첨 — 라인업별 아르페지오 */
+/** 당첨, 라인업별 아르페지오 */
 export function playWin(line: Line) {
   const ac = getCtx();
   if (!ac) return;
@@ -79,7 +79,7 @@ export function playChime() {
   tone(ac, 1320, t + 0.12, 0.4, { type: "sine", gain: 0.12 });
 }
 
-/** 3단계 문지기 1단계 — 금고 휠 '찰칵' */
+/** 3단계 문지기 1단계, 금고 휠 '찰칵' */
 export function playGearClick() {
   const ac = getCtx();
   if (!ac) return;
@@ -88,7 +88,7 @@ export function playGearClick() {
   tone(ac, 1200, t + 0.02, 0.04, { type: "square", gain: 0.04, slideTo: 600 });
 }
 
-/** 3단계 문지기 3단계 — 암전 속 심장 박동 '쿵... 쿵...' */
+/** 3단계 문지기 3단계, 암전 속 심장 박동 '쿵... 쿵...' */
 export function playHeartbeat() {
   const ac = getCtx();
   if (!ac) return;
@@ -97,7 +97,7 @@ export function playHeartbeat() {
   tone(ac, 58, t + 0.22, 0.14, { type: "sine", gain: 0.35, slideTo: 40 });
 }
 
-/** 승급 반전 — 화면 갈라짐 노이즈 + 번개 */
+/** 승급 반전, 화면 갈라짐 노이즈 + 번개 */
 export function playGlitch() {
   const ac = getCtx();
   if (!ac) return;
@@ -107,7 +107,7 @@ export function playGlitch() {
   tone(ac, 55, t + 0.3, 0.6, { type: "sine", gain: 0.4, slideTo: 38 });
 }
 
-/** 니어미스 — 경계에서 멈칫거릴 때 짧은 이중 틱 */
+/** 니어미스, 경계에서 멈칫거릴 때 짧은 이중 틱 */
 export function playTension() {
   const ac = getCtx();
   if (!ac) return;

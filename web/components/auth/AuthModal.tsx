@@ -113,7 +113,7 @@ export function AuthModal() {
         {(step === "verify" || step === "reset") && <button type="button" disabled={busy} onClick={() => void perform(async () => { if (step === "verify") await resendAccountEmail(email, locale); else await recoverAccount(email, locale); setCode(""); setNotice(t("verificationCode")); })} className="mt-4 min-h-11 text-sm underline underline-offset-4">{t("resendCode")}</button>}
         {notice && <p role="status" className="mt-3 text-center text-sm text-[#666]">{notice}</p>}
       </main>
-      <footer className="pb-7 pt-5 text-center text-xs leading-6 text-[#666]"><p>{t("continueTerms")}</p><Link href="/legal/terms" className="underline underline-offset-4">{t("terms")}</Link><span className="mx-3">·</span><Link href="/legal/privacy" className="underline underline-offset-4">{t("privacy")}</Link></footer>
+      <footer className="pb-7 pt-5 text-center text-xs leading-6 text-[#666]"><p>{t("continueTerms")}</p><Link href="/legal/terms" className="underline underline-offset-4">{t("terms")}</Link><span className="mx-3">, </span><Link href="/legal/privacy" className="underline underline-offset-4">{t("privacy")}</Link></footer>
     </div>
   </div>;
 }

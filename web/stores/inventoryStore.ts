@@ -1,10 +1,10 @@
 "use client";
 
 /**
- * 보관함 (PROMPTS 5-1/5-2). 언박싱 결과는 확정 즉시 IN_STORAGE 로 들어온다 — 팝업을 닫아도 사라지지 않는다.
+ * 보관함 (PROMPTS 5-1/5-2). 언박싱 결과는 확정 즉시 IN_STORAGE 로 들어온다, 팝업을 닫아도 사라지지 않는다.
  *   IN_STORAGE → SOLD (즉시 판매, 잔액 가산은 호출측)
  *   IN_STORAGE → SHIPPING_REQUESTED (배송 신청, 배송비 차감은 호출측) → SHIPPING (운송장 발급)
- * 항목 값은 확정 당시 USDT 로 고정한다 — 나중에 시세가 바뀌어도 당첨 시점 가치를 보존한다.
+ * 항목 값은 확정 당시 USDT 로 고정한다, 나중에 시세가 바뀌어도 당첨 시점 가치를 보존한다.
  */
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
@@ -27,7 +27,7 @@ export function cashbackExpiresAt(acquiredAt: string): string | null {
 export function daysUntilCashback(acquiredAt: string, now = Date.now()): number | null {
   const expires = cashbackExpiresAt(acquiredAt);
   return expires && Number.isFinite(now)
-    ? Math.max(0, Math.ceil((Date.parse(expires) - now) / 86_400_000)) : null;
+    ? Math.max(0, Math.ceil((Date.parse(expires), now) / 86_400_000)) : null;
 }
 
 export type OwnedStatus = "IN_STORAGE" | "SHIPPING_REQUESTED" | "SHIPPING" | "DELIVERED" | "SOLD";
@@ -40,9 +40,9 @@ export interface OwnedItem {
   tier: TierKey;
   status: OwnedStatus;
   acquiredAt: string;
-  /** 공정성 메타 — 검증기 프리필용 */
+  /** 공정성 메타, 검증기 프리필용 */
   fair: { serverSeedHash: string; serverSeed: string; clientSeed: string; nonce: number; roll: number; dropTable?: { id: string; dropRate: number }[]; oddsVersion?: string };
-  /** 결제 원천 족보 — 이 아이템을 뽑은 개봉에 쓰인 잔액의 출처 (CLAUDE.md §7-B). 구버전 기록은 crypto 로 본다. */
+  /** 결제 원천 족보, 이 아이템을 뽑은 개봉에 쓰인 잔액의 출처 (CLAUDE.md §7-B). 구버전 기록은 crypto 로 본다. */
   fundingSource?: FundingSource;
   fundingRatio?: FundingRatio;
   /** SOLD 시 실제 환급액 */
@@ -60,7 +60,7 @@ interface InventoryState {
   hydrated: boolean;
   sweepExpired: (now?: number) => { ids: string[]; totalUsdt: number };
   add: (items: Omit<OwnedItem, "id" | "status" | "acquiredAt">[]) => OwnedItem[];
-  /** 환급 — 합계와 함께 원천별 귀속액(교차 환급 차단)을 돌려준다 */
+  /** 환급, 합계와 함께 원천별 귀속액(교차 환급 차단)을 돌려준다 */
   sell: (ids: string[], refundRate: number) => { ids: string[]; totalUsdt: number; toCrypto: number; toCard: number };
   requestShipping: (ids: string[], address: ShippingAddress, feeUsdt: number, feeFundingRatio?: FundingRatio) => void;
   cancelShipping: (id: string) => { ok: boolean; reason?: "notPreparing" | "unknownFee"; refundedUsdt: number; toCrypto: number; toCard: number };
@@ -81,7 +81,7 @@ export const useInventoryStore = create<InventoryState>()(
         if (!Number.isFinite(now) || !Number.isFinite(new Date(now).getTime())) return none;
         const expired = get().items.filter(item => item.status === "IN_STORAGE"
           && Number.isFinite(item.valueUsdt) && item.valueUsdt >= 0
-          && now - Date.parse(item.acquiredAt) >= EXPIRE_MS);
+          && now, Date.parse(item.acquiredAt) >= EXPIRE_MS);
         if (!expired.length) return none;
         const refunds = new Map(expired.map(item => [item.id, +(item.valueUsdt * REFUND_RATE).toFixed(2)]));
         const totalUsdt = +Array.from(refunds.values()).reduce((sum, amount) => sum + amount, 0).toFixed(2);
@@ -112,7 +112,7 @@ export const useInventoryStore = create<InventoryState>()(
         const set_ = new Set(ids);
         let total = 0;
         const sold: string[] = [];
-        // 아이템별 족보를 모아 환급금을 원천대로 되돌린다 — 카드 출처는 절대 암호화폐 잔액으로 가지 않는다
+        // 아이템별 족보를 모아 환급금을 원천대로 되돌린다, 카드 출처는 절대 암호화폐 잔액으로 가지 않는다
         const refunds: { amountUsdt: number; ratio: FundingRatio }[] = [];
         set((s) => ({
           items: s.items.map((it) => {
@@ -145,7 +145,7 @@ export const useInventoryStore = create<InventoryState>()(
           const itemCents = Math.round(fees.get(it.id)! * 100);
           const fromCrypto = Math.min(itemCents, cryptoCents);
           cryptoCents -= fromCrypto;
-          ratios.set(it.id, { crypto: itemCents ? fromCrypto / itemCents : 0, card: itemCents ? 1 - fromCrypto / itemCents : 1 });
+          ratios.set(it.id, { crypto: itemCents ? fromCrypto / itemCents : 0, card: itemCents ? 1, fromCrypto / itemCents : 1 });
         }
         set((s) => ({
           items: s.items.map((it) =>

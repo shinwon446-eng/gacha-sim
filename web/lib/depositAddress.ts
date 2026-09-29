@@ -13,7 +13,7 @@ export interface NetworkMeta {
   token: string;
   /** 자동 반영에 필요한 블록 컨펌 수 */
   confirmations: number;
-  /** 대략적 평균 블록 시간(초) — 안내 문구의 예상 소요 시간 계산용 */
+  /** 대략적 평균 블록 시간(초), 안내 문구의 예상 소요 시간 계산용 */
   blockSeconds: number;
   /** 권장 표기 여부 */
   recommended: boolean;
@@ -27,7 +27,7 @@ export const NETWORKS: NetworkMeta[] = [
 
 export const MIN_DEPOSIT_USDT = 1;
 
-/** 주소 형식 검사 — 화면 표기 전 자기 검증용 */
+/** 주소 형식 검사, 화면 표기 전 자기 검증용 */
 export function looksLikeAddress(network: DepositNetwork, addr: string): boolean {
   return network === "TRC20" ? /^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(addr) : /^0x[0-9a-fA-F]{40}$/.test(addr);
 }

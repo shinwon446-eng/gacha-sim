@@ -17,11 +17,11 @@ import { Approx } from "@/components/ui/Approx";
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 /**
- * Section 2 — 4대 럭셔리 라인업 쇼케이스.
+ * Section 2, 4대 럭셔리 라인업 쇼케이스.
  *
  * 메인의 작은 카드를 복사하지 않는다. 카테고리마다 **대표 박스 하나를 큼직한 배너 카드**로 세우고,
- * 숫자는 단위가 잘리지 않는 두 가지만 보여 준다 — **1회 오픈 가격**과 **최고 당첨 상품의 시중 정가**.
- * ('최고 780' 처럼 단위 없는 배수가 찍히던 것을 걷어냈다 — 2026-09-28)
+ * 숫자는 단위가 잘리지 않는 두 가지만 보여 준다, **1회 오픈 가격**과 **최고 당첨 상품의 시중 정가**.
+ * ('최고 780' 처럼 단위 없는 배수가 찍히던 것을 걷어냈다, 2026-09-28)
  *
  * 값은 전부 카탈로그 실측이고 이미지는 `lib/productImages.ts` 의 실제 자산이다.
  */
@@ -74,7 +74,7 @@ export function LineupShowcase({ className }: { className?: string }) {
                 className="group block overflow-hidden rounded-2xl border border-hairline bg-surface transition-colors hover:border-gold-champagne/60"
                 style={{ boxShadow: `0 0 40px ${glow(c.accent, 0.1)}` }}
               >
-                {/* 큼직한 비주얼 — 3D 스포트라이트 */}
+                {/* 큼직한 비주얼, 3D 스포트라이트 */}
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-obsidian">
                   {img.src ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -105,12 +105,12 @@ export function LineupShowcase({ className }: { className?: string }) {
                   </span>
                 </div>
 
-                {/* 숫자 두 줄 — 단위가 반드시 붙는다 */}
+                {/* 숫자 두 줄, 단위가 반드시 붙는다 */}
                 <div className="flex items-end justify-between gap-3 px-4 py-3.5">
                   <span className="min-w-0">
                     <span className="caption-luxury block">{t("lineupPrice")}</span>
                     <Money value={c.box.price} size="md" />
-                    {/* 현지 통화 병기 — 선택 통화가 이미 그 통화면 렌더하지 않는다 */}
+                    {/* 현지 통화 병기, 선택 통화가 이미 그 통화면 렌더하지 않는다 */}
                     <Approx usdt={c.box.price} className="mt-0.5 block text-[10px]" />
                     <span className="mt-0.5 block truncate text-[11px] text-faint">{boxTitle(c.box)}</span>
                   </span>

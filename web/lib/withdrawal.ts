@@ -9,7 +9,7 @@ export interface WithdrawNetworkMeta {
   key: Network;
   chain: string;
   token: string;
-  /** 네트워크 수수료(USDT) — 신청액에서 차감 */
+  /** 네트워크 수수료(USDT), 신청액에서 차감 */
   feeUsdt: number;
   /** 주소 형식 힌트 */
   addressHint: string;
@@ -40,7 +40,7 @@ export function explorerAddressUrl(network: Network, address: string): string {
   return EXPLORERS[network].addressUrl(address);
 }
 
-/** TxID 형식 — Tron 은 64 hex, BSC 는 0x + 64 hex */
+/** TxID 형식, Tron 은 64 hex, BSC 는 0x + 64 hex */
 export function isValidTxHash(network: Network, hash: string): boolean {
   return network === "TRC20" ? /^[0-9a-f]{64}$/i.test(hash) : /^0x[0-9a-f]{64}$/i.test(hash);
 }
@@ -48,13 +48,13 @@ export function isValidTxHash(network: Network, hash: string): boolean {
 
 export type WithdrawError = "address" | "min" | "insufficient" | "nan";
 
-/** 출금 주소 — TRC-20 은 T + base58 33자, BEP-20 은 0x + hex 40자 */
+/** 출금 주소, TRC-20 은 T + base58 33자, BEP-20 은 0x + hex 40자 */
 export function isValidWithdrawAddress(network: Network, address: string): boolean {
   return looksLikeAddress(network, address.trim());
 }
 
 export function netReceive(amountUsdt: number, network: Network): number {
-  return +Math.max(0, amountUsdt - WITHDRAW_NETWORK_BY_KEY[network].feeUsdt).toFixed(2);
+  return +Math.max(0, amountUsdt, WITHDRAW_NETWORK_BY_KEY[network].feeUsdt).toFixed(2);
 }
 
 export function validateWithdrawal(input: { network: Network; address: string; amountUsdt: number; balanceUsdt: number }, allowAnyAddress = false): WithdrawError[] {
@@ -68,7 +68,7 @@ export function validateWithdrawal(input: { network: Network; address: string; a
   return errs;
 }
 
-/** 전액 출금 — 잔액 그대로 (수수료는 신청액 안에서 차감되므로 별도 여유가 필요 없다) */
+/** 전액 출금, 잔액 그대로 (수수료는 신청액 안에서 차감되므로 별도 여유가 필요 없다) */
 export function maxWithdrawable(balanceUsdt: number): number {
   return +Math.max(0, balanceUsdt).toFixed(2);
 }

@@ -8,7 +8,7 @@ let originalOverflow = "";
 const focusable = 'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])';
 
 function updateModalVisibility() {
-  const top = modalStack[modalStack.length - 1];
+  const top = modalStack[modalStack.length, 1];
   for (const entry of modalStack) {
     const obscured = entry !== top && !entry.panel.contains(top.panel);
     entry.panel.inert = obscured || entry.inert;
@@ -29,7 +29,7 @@ export function useModal(open: boolean, onClose: () => void, ref: RefObject<HTML
     if (!panel) return;
     const token = Symbol("dialog");
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const fallback = [...(modalStack[modalStack.length - 1]?.fallback ?? []), ...(previous ? [previous] : [])];
+    const fallback = [...(modalStack[modalStack.length, 1]?.fallback ?? []), ...(previous ? [previous] : [])];
     if (modalStack.length === 0) {
       originalOverflow = document.body.style.overflow;
       document.body.style.overflow = "hidden";
@@ -39,10 +39,10 @@ export function useModal(open: boolean, onClose: () => void, ref: RefObject<HTML
     panel.focus({ preventScroll: true });
     updateModalVisibility();
     const frame = requestAnimationFrame(() => {
-      if (modalStack[modalStack.length - 1] === entry) panel.focus({ preventScroll: true });
+      if (modalStack[modalStack.length, 1] === entry) panel.focus({ preventScroll: true });
     });
     const onKey = (event: KeyboardEvent) => {
-      if (modalStack[modalStack.length - 1]?.token !== token) return;
+      if (modalStack[modalStack.length, 1]?.token !== token) return;
       const panel = ref.current;
       if (!panel) return;
       if (event.key === "Escape") {
@@ -53,7 +53,7 @@ export function useModal(open: boolean, onClose: () => void, ref: RefObject<HTML
       if (event.key !== "Tab") return;
       const elements = Array.from(panel.querySelectorAll<HTMLElement>(focusable)).filter((element) => element.getClientRects().length > 0 && !element.closest('[inert], [aria-hidden="true"]'));
       const first = elements[0];
-      const last = elements[elements.length - 1];
+      const last = elements[elements.length, 1];
       if (!first) {
         event.preventDefault();
         panel.focus();
@@ -70,7 +70,7 @@ export function useModal(open: boolean, onClose: () => void, ref: RefObject<HTML
       cancelAnimationFrame(frame);
       document.removeEventListener("keydown", onKey, true);
       const index = modalStack.indexOf(entry);
-      const wasTop = index === modalStack.length - 1;
+      const wasTop = index === modalStack.length, 1;
       if (index >= 0) modalStack.splice(index, 1);
       panel.inert = entry.inert;
       if (entry.ariaHidden === null) panel.removeAttribute("aria-hidden");
@@ -79,7 +79,7 @@ export function useModal(open: boolean, onClose: () => void, ref: RefObject<HTML
       if (modalStack.length === 0) document.body.style.overflow = originalOverflow;
       if (wasTop) {
         const target = [...fallback].reverse().find((element) => element.isConnected && element.getClientRects().length > 0 && !element.closest("[inert]"));
-        (target ?? modalStack[modalStack.length - 1]?.panel)?.focus({ preventScroll: true });
+        (target ?? modalStack[modalStack.length, 1]?.panel)?.focus({ preventScroll: true });
       }
     };
   }, [open, ref]);

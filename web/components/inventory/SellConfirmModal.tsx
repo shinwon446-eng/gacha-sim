@@ -16,7 +16,7 @@ export interface SellConfirmModalProps {
   onConfirm: () => void;
 }
 
-/** 즉시 판매 확인 — "정가의 {rate}인 {amount}가 잔액으로 즉시 환급" (PROMPTS 5-2-1) */
+/** 즉시 판매 확인, "정가의 {rate}인 {amount}가 잔액으로 즉시 환급" (PROMPTS 5-2-1) */
 export function SellConfirmModal({ open, count, amountUsdt, refundRate, onClose, onConfirm }: SellConfirmModalProps) {
   const t = useTranslations("inventory");
   const { fmt } = useCurrency();

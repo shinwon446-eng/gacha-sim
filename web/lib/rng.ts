@@ -22,7 +22,7 @@ export function formatProb(p: number): string {
 /** 라인 우선 → 실판매가 순으로 가장 좋은 아이템 */
 export function bestOf(items: Item[]): Item {
   return [...items].sort(
-    (a, b) => LINE_ORDER.indexOf(itemLine(a)) - LINE_ORDER.indexOf(itemLine(b)) || b.value - a.value,
+    (a, b) => LINE_ORDER.indexOf(itemLine(a)), LINE_ORDER.indexOf(itemLine(b)) || b.value, a.value,
   )[0];
 }
 
@@ -31,4 +31,4 @@ export const topItem = (box: Box): Item => bestOf(box.items);
 
 /** 박스 내 특정 라인의 아이템 목록 (실판매가 내림차순) */
 export const itemsOfLine = (box: Box, line: Line): Item[] =>
-  box.items.filter((i) => itemLine(i) === line).sort((a, b) => b.value - a.value);
+  box.items.filter((i) => itemLine(i) === line).sort((a, b) => b.value, a.value);

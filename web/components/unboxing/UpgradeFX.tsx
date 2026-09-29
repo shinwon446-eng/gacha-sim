@@ -4,11 +4,11 @@ import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { glow } from "@/lib/tiers";
 
-/** 승급 반전 연출 길이(ms) — 노이즈·화면 갈라짐 → 번개 강타 → UPGRADE! 네온 */
+/** 승급 반전 연출 길이(ms), 노이즈, 화면 갈라짐 → 번개 강타 → UPGRADE! 네온 */
 export const UPGRADE_FX_MS = 1100;
 
 /**
- * 번개 각성 승급 — 잭팟인데 0.5초 동안 '꽝' 처럼 보여준 뒤 화면이 갈라지며 골드/보라 번개가 카드를 때린다.
+ * 번개 각성 승급, 잭팟인데 0.5초 동안 '꽝' 처럼 보여준 뒤 화면이 갈라지며 골드/보라 번개가 카드를 때린다.
  * 결과는 이미 Provably Fair 로 확정돼 있고, 이 컴포넌트는 그 공개 순서만 극적으로 바꾼다.
  */
 export function UpgradeFX({ accent }: { accent: string }) {

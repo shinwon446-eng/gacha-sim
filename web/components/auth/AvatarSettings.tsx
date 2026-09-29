@@ -28,7 +28,7 @@ export function AvatarSettings({ user }: { user: AuthUser }) {
     const ctx = canvas.getContext("2d");
     if (!ctx) { setError(t("errors.avatar_invalid")); return; }
     ctx.fillStyle = "#17191b"; ctx.fillRect(0, 0, 384, 384);
-    ctx.drawImage(image, (image.naturalWidth - size) * x / 100, (image.naturalHeight - size) * y / 100, size, size, 0, 0, 384, 384);
+    ctx.drawImage(image, (image.naturalWidth, size) * x / 100, (image.naturalHeight, size) * y / 100, size, size, 0, 0, 384, 384);
     setPending(canvas.toDataURL("image/jpeg", 0.85));
   }, [image, zoom, x, y, t]);
   const select = async (file?: File) => {

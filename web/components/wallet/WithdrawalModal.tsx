@@ -11,14 +11,14 @@ import { WithdrawTab } from "@/components/wallet/WithdrawTab";
 export interface WithdrawalModalProps {
   open: boolean;
   onClose: () => void;
-  /** 출금 신청 확정 후 — 호출측이 토스트를 띄운다 */
+  /** 출금 신청 확정 후, 호출측이 토스트를 띄운다 */
   onRequested?: (amountUsdt: number, network: Network) => void;
-  /** 롤오버 미달로 막혔을 때 — 호출측이 경고 토스트를 띄운다 */
+  /** 롤오버 미달로 막혔을 때, 호출측이 경고 토스트를 띄운다 */
   onBlocked?: (progressPct: number) => void;
 }
 
 /**
- * USDT 출금 모달 — 껍데기(헤더·닫기)만 갖고 본문은 WithdrawTab 이 그린다.
+ * USDT 출금 모달, 껍데기(헤더, 닫기)만 갖고 본문은 WithdrawTab 이 그린다.
  * 같은 본문이 지갑 모달(DepositModal)의 3번째 탭으로도 쓰인다.
  */
 export function WithdrawalModal({ open, onClose, onRequested, onBlocked }: WithdrawalModalProps) {

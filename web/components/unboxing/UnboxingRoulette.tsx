@@ -31,11 +31,11 @@ import { createOpeningPurchase, InsufficientOpeningBalance, type OpeningResult }
 import { Link } from "@/i18n/navigation";
 
 export interface UnboxResult {
-  /** 보관함 레코드 id — 결과 확정 시 부여 */
+  /** 보관함 레코드 id, 결과 확정 시 부여 */
   ownedId?: string;
-  /** USDT 캐시백·인스턴트 드롭 — 개봉 즉시 100% 잔액에 적립돼 회수·배송 대상이 아니다 */
+  /** USDT 캐시백, 인스턴트 드롭, 개봉 즉시 100% 잔액에 적립돼 회수, 배송 대상이 아니다 */
   settled?: boolean;
-  /** 오토플레이 자동 환전액(USDT) — 있으면 이미 잔액에 반영됨 */
+  /** 오토플레이 자동 환전액(USDT), 있으면 이미 잔액에 반영됨 */
   autoSold?: number;
   item: ProductItem;
   tier: Tier;
@@ -54,24 +54,24 @@ export interface UnboxingRouletteProps {
   /** 1 또는 5 */
   count: number;
   onClose: () => void;
-  /** 즉시 판매 — 호출측이 잔액에 반영한다 */
+  /** 즉시 판매, 호출측이 잔액에 반영한다 */
   onSellBack: (results: UnboxResult[], amountUsdt: number, split?: { toCrypto: number; toCard: number }) => void;
-  /** 배송 신청 완료 — 호출측이 토스트를 띄운다 (배송비 차감·상태 전환은 여기서) */
+  /** 배송 신청 완료, 호출측이 토스트를 띄운다 (배송비 차감, 상태 전환은 여기서) */
   onShip: (results: UnboxResult[]) => void;
-  /** 결과가 전부 USDT 캐시백일 때 [다시 돌리기] — 호출측이 같은 박스를 다시 연다 */
+  /** 결과가 전부 USDT 캐시백일 때 [다시 돌리기], 호출측이 같은 박스를 다시 연다 */
   onRespin?: (box: ProductBox) => void;
-  /** 오토플레이 — 스핀마다 가격을 차감하고 규칙(lib/autoplay)에 따라 멈춘다. count 는 무시된다 */
+  /** 오토플레이, 스핀마다 가격을 차감하고 규칙(lib/autoplay)에 따라 멈춘다. count 는 무시된다 */
   auto?: AutoplayConfig;
-  /** 이 개봉에 쓰인 잔액의 원천 비율 — 당첨 아이템 족보로 박힌다 (호출측 debitSplit 결과) */
+  /** 이 개봉에 쓰인 잔액의 원천 비율, 당첨 아이템 족보로 박힌다 (호출측 debitSplit 결과) */
   funding?: FundingRatio;
   /**
-   * 무료 체험 모드 (CLAUDE.md §4-A). 지정 항목으로 결과를 고정하고 잔액·보관함·공정성 nonce 를 건드리지 않는다.
+   * 무료 체험 모드 (CLAUDE.md §4-A). 지정 항목으로 결과를 고정하고 잔액, 보관함, 공정성 nonce 를 건드리지 않는다.
    * 결과 팝업은 전환 CTA(웰컴 보너스) 하나만 보여준다.
    */
   demo?: { itemId: string };
-  /** 데모 팝업의 전환 CTA — 호출측이 보너스 지급·실제 박스 열기를 처리한다 */
+  /** 데모 팝업의 전환 CTA, 호출측이 보너스 지급, 실제 박스 열기를 처리한다 */
   onDemoConvert?: (box: ProductBox) => void;
-  /** 웰컴 보너스 수령 여부 — CTA 문구 분기 */
+  /** 웰컴 보너스 수령 여부, CTA 문구 분기 */
   welcomeClaimed?: boolean;
 }
 
@@ -86,11 +86,11 @@ const GAP = 10;
 /**
  * 시네마틱 룰렛 언박싱 (PROMPTS 3-2-2).
  *
- * 순서 — 이 순서가 공정성의 전부다:
+ * 순서, 이 순서가 공정성의 전부다:
  *   1. 결과 확정: Provably Fair 엔진이 (serverSeed, clientSeed, nonce) 로 롤과 항목을 낸다
  *   2. 스트립: 결과를 target 칸에 심고 나머지는 확률표 가중으로 채운다
  *   3. 연출: 88칸이 초고속으로 흐르다 cubic-bezier(0.12,0.8,0.33,1) 로 감속해 중앙 인디케이터에 정지
- *   4. 정지: 등급색 플래시 + 승리 징글 → 결과 팝업(사진·등급·가치·시드·nonce)
+ *   4. 정지: 등급색 플래시 + 승리 징글 → 결과 팝업(사진, 등급, 가치, 시드, nonce)
  * 연출(3)은 결과(1)를 바꿀 수 없다. 5연속은 1~3 을 짧게 반복하고 마지막에 목록으로 보여준다.
  */
 export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRespin, auto, funding, demo, onDemoConvert, welcomeClaimed, prepared, onDeposit }: UnboxingRouletteProps) {
@@ -106,16 +106,16 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
   const muted = useSettingsStore((s) => s.muted);
   const toggleMuted = useSettingsStore((s) => s.toggleMuted);
 
-  // 릴 x 는 모션 값으로 직접 몬다 — animate() 컨트롤의 speed 를 스핀 중에 바꿔 텐션(0.3배속)을 건다
+  // 릴 x 는 모션 값으로 직접 몬다, animate() 컨트롤의 speed 를 스핀 중에 바꿔 텐션(0.3배속)을 건다
   const x = useMotionValue(0);
   const blurMv = useMotionValue(0);
   const blurFilter = useMotionTemplate`blur(${blurMv}px)`;
   const stripRef = useRef<ProductItem[]>([]);
   const [tension, setTension] = useState(false);
   const [mega, setMega] = useState<string | null>(null);
-  // 오토플레이 진행 상태 — 남은 회전 · 누적 투입/획득 · 정지 사유
+  // 오토플레이 진행 상태, 남은 회전 , 누적 투입/획득 , 정지 사유
   const [autoState, setAutoState] = useState<AutoplayState>({ done: 0, spent: 0, won: 0 });
-  // 도파민 엔진: 니어미스 셰이크 · 승급 반전 · 문지기 컷인
+  // 도파민 엔진: 니어미스 셰이크 , 승급 반전 , 문지기 컷인
   const [shake, setShake] = useState(false);
   const nearMissRef = useRef<NearMissSide | null>(null);
   const [disguise, setDisguise] = useState<ProductItem | null>(null);
@@ -142,7 +142,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
   const debit = useWalletStore((s) => s.debit);
   const credit = useWalletStore((s) => s.credit);
   const creditSplit = useWalletStore((s) => s.creditSplit);
-  /** 이번 개봉(또는 오토플레이 스핀)에 쓰인 잔액 원천 — 아이템 족보로 박힌다 */
+  /** 이번 개봉(또는 오토플레이 스핀)에 쓰인 잔액 원천, 아이템 족보로 박힌다 */
   const addTransaction = useWalletStore((s) => s.addTransaction);
   const tickIndex = useRef(-1);
   const rafRef = useRef<number | null>(null);
@@ -179,7 +179,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
     return () => ro.disconnect();
   }, [box]);
 
-  // 틱 사운드 — 릴 x 를 rAF 로 읽어 칸이 바뀔 때마다 한 번
+  // 틱 사운드, 릴 x 를 rAF 로 읽어 칸이 바뀔 때마다 한 번
   const startTicks = useCallback(
     (el: HTMLElement) => {
       const step = TILE_W + GAP;
@@ -205,12 +205,12 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
   const spinOnce = useCallback(
     async (duration: number, allocated?: UnboxResult): Promise<UnboxResult> => {
       if (!box) throw new Error("box 없음");
-      // 매크로 봇 탐지용 스핀 간격 기록 — 무료 체험은 제외 (lib/fraudScoring.ts)
+      // 매크로 봇 탐지용 스핀 간격 기록, 무료 체험은 제외 (lib/fraudScoring.ts)
       if (!demo) useTelemetryStore.getState().recordSpin();
       let res: UnboxResult;
       let item: ProductItem;
       if (demo) {
-        // 무료 체험: 결과 고정, 시드·nonce·보관함 모두 건드리지 않는다
+        // 무료 체험: 결과 고정, 시드, nonce, 보관함 모두 건드리지 않는다
         item = items.find((i) => i.id === demo.itemId) ?? items[0];
         res = { item, tier: tierOf(item.value, box.price), roll: 0, hmac: "", nonce: 0, serverSeed: "", serverSeedHash: "", clientSeed: "" };
       } else {
@@ -235,7 +235,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       const target = offsetForTarget({ tileWidth: TILE_W, gap: GAP, viewportWidth: viewportW.current }, REEL_TARGET_INDEX, jitter);
       const track = viewportRef.current?.querySelector<HTMLElement>("[data-reel]");
       if (track && !reducedMotion) startTicks(track);
-      // Phase 1 초광속(속도 → 모션 블러) · Phase 2 안티시페이션(고등급 근처 0.3배속 + 스파크)
+      // Phase 1 초광속(속도 → 모션 블러) , Phase 2 안티시페이션(고등급 근처 0.3배속 + 스파크)
       const step = TILE_W + GAP;
       const isHigh = (i: number) => {
         const it = stripRef.current[i];
@@ -252,17 +252,17 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
         onUpdate: (v) => {
           if (reducedMotion) return;
           const now = performance.now();
-          const dt = Math.max(1, now - lastT);
-          const vel = (Math.abs(v - lastV) / dt) * 1000; // px/s (60타일/초 ≈ 9,500px/s)
+          const dt = Math.max(1, now, lastT);
+          const vel = (Math.abs(v, lastV) / dt) * 1000; // px/s (60타일/초 ≈ 9,500px/s)
           lastV = v;
           lastT = now;
-          blurMv.set(Math.min(14, Math.max(0, (vel - 1200) / 550)));
+          blurMv.set(Math.min(14, Math.max(0, (vel, 1200) / 550)));
           const progress = target === 0 ? 1 : v / target;
           const idx = Math.floor((-v + viewportW.current / 2) / step);
           const nm = nearMissRef.current !== null;
-          // 쇼케이스 타일 근처(55~96.5%)는 0.3배속. 니어미스는 경계 직전(92% 이후)만 슬로우 모션 — 전체가 늘어지지 않게
-          const showcaseNear = progress > 0.7 && progress < 0.965 && idx < REEL_TARGET_INDEX - 1 && (isHigh(idx) || isHigh(idx + 1));
-          const nearMissNear = nm && progress > 0.996 && progress < 0.9995 && idx >= REEL_TARGET_INDEX - 1 && idx <= REEL_TARGET_INDEX;
+          // 쇼케이스 타일 근처(55~96.5%)는 0.3배속. 니어미스는 경계 직전(92% 이후)만 슬로우 모션, 전체가 늘어지지 않게
+          const showcaseNear = progress > 0.7 && progress < 0.965 && idx < REEL_TARGET_INDEX, 1 && (isHigh(idx) || isHigh(idx + 1));
+          const nearMissNear = nm && progress > 0.996 && progress < 0.9995 && idx >= REEL_TARGET_INDEX, 1 && idx <= REEL_TARGET_INDEX;
           const near = showcaseNear || nearMissNear;
           if (near !== tense) {
             tense = near;
@@ -284,7 +284,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
         setShake(true);
         if (!useSettingsStore.getState().muted) playTension();
         const dir = nearMissRef.current === "left" ? 1 : -1;
-        await animate(x, [target, target + dir * 1.5, target - dir * 1, target + dir * 1.2, target], { duration: SHAKE_MS / 1000, ease: "easeInOut" });
+        await animate(x, [target, target + dir * 1.5, target, dir * 1, target + dir * 1.2, target], { duration: SHAKE_MS / 1000, ease: "easeInOut" });
         setShake(false);
       }
 
@@ -304,7 +304,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
     [box, items, fair, x, blurMv, startTicks, sellOwned, credit, addTransaction, demo, auto, count, reducedMotion],
   );
 
-  // 오픈 시작 — box 가 들어오면 한 번. 리사이즈는 스핀을 취소하지 않는다.
+  // 오픈 시작, box 가 들어오면 한 번. 리사이즈는 스핀을 취소하지 않는다.
   useEffect(() => {
     if (!box || phase !== "idle") return;
     cancelled.current = false;
@@ -316,7 +316,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
       for (let i = 0; i < 20 && viewportW.current === 0; i++) await new Promise((r) => requestAnimationFrame(() => r(null)));
       if (cancelled.current) return;
       if (!reducedMotion && !demo && !auto) {
-        // 3단계 문지기 컷인 — 휠 잠금 해제 → 틈새 아우라 → 암전·심장 박동
+        // 3단계 문지기 컷인, 휠 잠금 해제 → 틈새 아우라 → 암전, 심장 박동
         setPhase("gate");
         await waitPresentation(GATE_TOTAL_MS);
         if (cancelled.current) return;
@@ -367,7 +367,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
         const r = await spinOnce(n > 1 ? REEL_DURATION_MULTI_S : REEL_DURATION_S, prepared?.[i]);
         out.push(r);
         setResults([...out]);
-        if (i < n - 1) await waitPresentation(700);
+        if (i < n, 1) await waitPresentation(700);
       }
       setPhase("results");
     })().catch(() => {
@@ -411,7 +411,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
   const settledAmount = +results.filter((r) => r.settled).reduce((s, r) => s + r.item.value, 0).toFixed(2);
   const sellAmount = +pending.reduce((s, r) => s + sellValueOf(r.item), 0).toFixed(2);
   const allSettled = results.length > 0 && pending.length === 0;
-  const last = results[results.length - 1] ?? current;
+  const last = results[results.length, 1] ?? current;
   // 승급 반전 중에는 바닥 아이템으로 위장해 보여준다
   const shownItem = disguise ?? last?.item ?? null;
   const shownTier = disguise && box ? tierOf(disguise.value, box.price) : (last?.tier ?? null);
@@ -451,7 +451,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
           </div>
         </header>
 
-        {/* ── Phase 3: 메가 윈 폭발 축제 · 승급 반전 번개 · 문지기 컷인 ── */}
+        {/* ── Phase 3: 메가 윈 폭발 축제 , 승급 반전 번개 , 문지기 컷인 ── */}
         {!demo && phase !== "results" && <div className="mx-4 flex flex-col gap-3 rounded-xl border border-hairline bg-surface px-4 py-3 sm:flex-row sm:items-center sm:justify-between md:mx-8">
           <p className="max-w-2xl text-sm leading-relaxed text-secondary">{t(auto ? "autoCloseNote" : "batchCloseNote", { n: count })}</p>
           <button type="button" onClick={skipPresentation} disabled={skipRequested} className="btn-secondary flex min-h-11 shrink-0 items-center justify-center gap-2 px-4 disabled:opacity-50"><SkipForward size={16} />{t(skipRequested ? "finishingBatch" : "skipToResults")}</button>
@@ -481,7 +481,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
             <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 z-20 w-32 bg-gradient-to-r from-obsidian to-transparent" />
             <span aria-hidden className="pointer-events-none absolute inset-y-0 right-0 z-20 w-32 bg-gradient-to-l from-obsidian to-transparent" />
 
-            {/* 중앙 인디케이터 — 레드/골드 */}
+            {/* 중앙 인디케이터, 레드/골드 */}
             <span aria-hidden className={cn("pointer-events-none absolute inset-y-0 left-1/2 z-30 w-0.5 -translate-x-1/2 bg-gold-champagne", !reducedMotion && shake && "marker-shake")} />
             <span aria-hidden className="pointer-events-none absolute left-1/2 top-0 z-30 -translate-x-1/2 border-x-8 border-t-[10px] border-x-transparent border-t-gold-champagne" />
             <span aria-hidden className="pointer-events-none absolute bottom-0 left-1/2 z-30 -translate-x-1/2 border-x-8 border-b-[10px] border-x-transparent border-b-gold-champagne" />
@@ -512,7 +512,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                     style={{ width: TILE_W, boxShadow: isTarget ? `0 0 0 1px ${glow(tier.accent, 0.7)}, 0 0 36px ${glow(tier.accent, 0.5)}` : undefined }}
                   >
                     <span aria-hidden className="absolute inset-x-0 top-0 z-10 h-0.5" style={{ background: tier.accent, boxShadow: `0 0 8px ${glow(tier.accent, 0.6)}` }} />
-                    <div className="relative" style={{ height: TILE_W - 24 }}>
+                    <div className="relative" style={{ height: TILE_W, 24 }}>
                       <ProductArt image={it.image} alt="" accent={tier.accent} glowStrength={0.22} fallbackSize="sm" kind={it.kind} />
                     </div>
                     <div className="px-2 py-1.5">
@@ -537,7 +537,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                 disabled={skipRequested}
                 className="flex h-12 items-center gap-2 rounded-lg border border-hairline bg-surface px-6 text-sm font-bold text-white  transition-colors hover:bg-elevation disabled:opacity-60"
               >
-                {/* 라벨(autoStop)에 ⏹ 이모지가 이미 있다 — lucide 아이콘을 같이 두면 ■■ 로 겹친다 */}
+                {/* 라벨(autoStop)에 ⏹ 이모지가 이미 있다, lucide 아이콘을 같이 두면 ■■ 로 겹친다 */}
                 {t("autoStop", { n: Number.isFinite(remainingSpins(auto, autoState.done)) ? String(remainingSpins(auto, autoState.done)) : "∞" })}
               </button>
               <div className="flex items-center gap-3 font-mono text-xs tabular-nums text-muted">
@@ -551,7 +551,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
             {phase === "spinning" && !auto && t("spinning")}
             {phase === "landed" && last && (
               <span style={{ color: last.tier.accent }} className="font-semibold">
-                {t("landing")} — {itemName(last.item)}
+                {t("landing")}, {itemName(last.item)}
               </span>
             )}
           </div>
@@ -581,7 +581,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                 {results.length === 1 ? (
                   <div className="relative text-center">
                     <div className="caption-luxury" style={{ color: shownTier.accent }}>
-                      {shownTier.label} · {t("result")}
+                      {shownTier.label} , {t("result")}
                     </div>
                     <motion.div
                       className="relative mx-auto mt-3 overflow-hidden rounded-xl"
@@ -655,7 +655,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                   </div>
                 ) : (
                 <>
-                {/* 액션 — 즉시 회수와 집으로 배송을 같은 비중으로. 승급 반전 위장 중에는 진짜 금액이 새지 않게 숨긴다 */}
+                {/* 액션, 즉시 회수와 집으로 배송을 같은 비중으로. 승급 반전 위장 중에는 진짜 금액이 새지 않게 숨긴다 */}
                 <div className={cn("relative mt-5 grid gap-2", disguise && "invisible")}>
                   {settledAmount > 0 && results.length > 1 && (
                     <p className="break-keep text-center text-xs font-semibold text-gold-champagne">⚡ {t("cashCredited", { amount: fmt(settledAmount) })}</p>
@@ -687,7 +687,7 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                           <Wallet className="h-4 w-4" strokeWidth={2.2} />
                           {t("cashoutCta")}
                         </span>
-                        <span className="mt-1 font-mono text-xs font-bold leading-none tabular-nums">{fmt(sellAmount)} · {t("noFee")}</span>
+                        <span className="mt-1 font-mono text-xs font-bold leading-none tabular-nums">{fmt(sellAmount)} , {t("noFee")}</span>
                       </button>
                       <button
                         type="button"
