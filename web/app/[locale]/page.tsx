@@ -6,6 +6,7 @@ import { BOXES, SORTS, byCategory, heroBox, sortBoxes, type ProductBox, type Sor
 import { createOpeningPurchase, InsufficientOpeningBalance, type OpeningResult } from "@/lib/opening";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { DiscoveryGuide } from "@/components/home/DiscoveryGuide";
+import { LiveReviewsSection } from "@/components/home/LiveReviewsSection";
 import { BillboardHero } from "@/components/home/BillboardHero";
 import { AboutBanner } from "@/components/home/AboutBanner";
 import { DailyFreeBoxModal } from "@/components/home/DailyFreeBox";
@@ -194,6 +195,7 @@ export default function BoxesPage() {
         <BoxGrid boxes={visible} onPick={setDetail} />
         {shown < grid.length && <div className="mt-10 flex justify-center"><button type="button" onClick={() => setShown((n) => n + PAGE_SIZE)} className="btn-secondary">{t("grid.loadMore", { n: grid.length - shown })}</button></div>}
       </section>
+      <LiveReviewsSection />
       <DiscoveryGuide />
       <section className="page-shell pb-20" aria-labelledby="proof-section-title">
         <div className="guide-heading"><div><p className="eyebrow">TRANSPARENCY, BY DESIGN</p><h2 id="proof-section-title">{t("design.proofTitle")}</h2></div><Link href="/fairness" className="text-link">{t("design.verify")}<ArrowUpRight size={16} aria-hidden /></Link></div>

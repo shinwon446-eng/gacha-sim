@@ -1,8 +1,20 @@
 import { accountRequest, browserAccountsEnabled, getAccountSession } from "./account";
-import { applyBoardCommand, BoardError, parseBoardPosts, type BoardCommand, type BoardSnapshot } from "./board";
+import { applyBoardCommand, BoardError, createBoardExamples, parseBoardPosts, type BoardCommand, type BoardSnapshot } from "./board";
 export const BOARD_STORAGE_KEY = "voila.community-board.v1";
+export const BOARD_EXAMPLES_KEY = `${BOARD_STORAGE_KEY}.examples.v1`;
 let queue: Promise<unknown> = Promise.resolve();
-function read() { return parseBoardPosts(JSON.parse(localStorage.getItem(BOARD_STORAGE_KEY) ?? "[]")); }
+function read(includeExamples = false) {
+  const posts = parseBoardPosts(JSON.parse(localStorage.getItem(BOARD_STORAGE_KEY) ?? "[]"));
+  if (!includeExamples || posts.length || localStorage.getItem(BOARD_EXAMPLES_KEY)) return posts;
+  const examples = createBoardExamples();
+  localStorage.setItem(BOARD_STORAGE_KEY, JSON.stringify(examples));
+  localStorage.setItem(BOARD_EXAMPLES_KEY, "1");
+  return examples;
+}
+function serialized(run: () => Promise<BoardSnapshot>): Promise<BoardSnapshot> {
+  const locked = async (): Promise<BoardSnapshot> => typeof navigator !== "undefined" && navigator.locks ? await navigator.locks.request(BOARD_STORAGE_KEY, run) : await run();
+  const pending = queue.then(locked, locked); queue = pending.catch(() => undefined); return pending;
+}
 async function request(command?: BoardCommand): Promise<BoardSnapshot> {
   if (!browserAccountsEnabled()) {
     const result = await accountRequest(command ? "/community/board/commands" : "/community/board", command);
@@ -19,9 +31,9 @@ async function request(command?: BoardCommand): Promise<BoardSnapshot> {
     localStorage.setItem(BOARD_STORAGE_KEY, JSON.stringify(posts));
     return { posts, canPublishNotice: false };
   };
-  const run = async (): Promise<BoardSnapshot> => typeof navigator !== "undefined" && navigator.locks ? await navigator.locks.request(BOARD_STORAGE_KEY, commit) : await commit();
-  const pending = queue.then(run, run); queue = pending.catch(() => undefined);
-  return pending;
+  return serialized(commit);
 }
-export const loadBoard = () => request();
+/** Examples are an explicit presentation choice. HTTP responses remain authoritative. */
+export const loadBoard = (options?: { includeExamples?: boolean }) => options?.includeExamples && browserAccountsEnabled()
+  ? serialized(async () => ({ posts: read(true), canPublishNotice: false })) : request();
 export const submitBoardCommand = (command: BoardCommand) => request(command);
