@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Pause, Play, Star } from "lucide-react";
 import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -46,11 +46,10 @@ export function LiveReviewsSection() {
     <div className="mb-5 flex flex-wrap items-center justify-between gap-3"><p className="flex items-center gap-2 text-xs text-secondary"><span aria-hidden="true" className={`h-2 w-2 rounded-full ${stopped ? "bg-muted" : "bg-gold-champagne motion-safe:animate-pulse"}`} />{stopped ? copy.paused : copy.auto}<span className="text-muted">· {members.length ? copy.newReviews : copy.examplesOnly}</span></p><button className="workspace-text-link text-xs" aria-pressed={showExamples} onClick={() => setShowExamples(value => !value)}>{showExamples ? copy.hideExamples : copy.showExamples}</button></div>
     {showExamples && <p className="mb-5 rounded-xl border border-hairline px-4 py-3 text-xs leading-6 text-muted">{copy.exampleNote}</p>}
     <div aria-live="off" className="grid gap-4 md:grid-cols-3" data-testid="live-review-cards">
-      <AnimatePresence initial={false} mode="popLayout">
         {cards.map(review => {
           const box = BOX_BY_SLUG[review.boxSlug]; const product = box?.items.find(item => item.id === review.itemId);
           const example = isExampleReview(review);
-          return <motion.article layout={!reducedMotion && !focused} key={review.id} data-review-id={review.id} data-source={example ? "example" : "member"} initial={reducedMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: reducedMotion ? 0 : 0.25 }} className="min-w-0 overflow-hidden rounded-2xl border border-hairline bg-surface">
+          return <motion.article layout={!reducedMotion && !focused} key={review.id} data-review-id={review.id} data-source={example ? "example" : "member"} initial={reducedMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reducedMotion ? 0 : 0.25 }} className="min-w-0 overflow-hidden rounded-2xl border border-hairline bg-surface">
             <Link href={`/community?tab=public&review=${encodeURIComponent(review.id)}#review-${encodeURIComponent(review.id)}`} className="block h-full p-5 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold-champagne">
               <div className="flex items-center gap-4"><div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-obsidian">{product && <ProductArt image={product.image} alt={itemName(product)} fallbackSize="sm" kind={product.kind} />}</div><div className="min-w-0"><h3 className="break-words text-sm font-medium text-white">{product ? itemName(product) : review.itemId}</h3><p className="mt-1 text-xs leading-5 text-muted">{box ? boxTitle(box) : review.boxSlug}</p>{product && <p className="mt-2 text-xs text-secondary">{copy.price} <span className="font-medium text-gold-champagne">{product.value.toLocaleString(locale)} USDT</span></p>}</div></div>
               {example && <p className="mt-4 rounded-lg border border-gold-champagne/30 px-3 py-2 text-xs leading-5 text-gold-champagne">{copy.exampleNote}</p>}
@@ -60,7 +59,6 @@ export function LiveReviewsSection() {
             </Link>
           </motion.article>;
         })}
-      </AnimatePresence>
     </div>
     {!reviews.length && <p className="rounded-xl border border-hairline p-8 text-center text-sm text-muted">{copy.empty}</p>}
     {reviews.length > 3 && <div className="mt-6 flex items-center justify-center gap-3"><button type="button" className="workspace-button" aria-label={copy.previous} onClick={() => move(-1)}><ArrowLeft className="h-4 w-4" /></button><button type="button" className="workspace-button" aria-label={paused ? copy.play : copy.pause} aria-pressed={paused} onClick={() => setPaused(value => !value)}>{paused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}{paused ? copy.play : copy.pause}</button><button type="button" className="workspace-button" aria-label={copy.next} onClick={() => move(1)}><ArrowRight className="h-4 w-4" /></button><span className="min-w-12 text-right text-xs tabular-nums text-muted">{(index % reviews.length) + 1} / {reviews.length}</span></div>}
