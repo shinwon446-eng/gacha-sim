@@ -10,6 +10,7 @@ import { useInventoryStore } from "@/stores/inventoryStore";
 import { useCurrency } from "@/lib/useCurrency";
 import { AccountError, accountConfigured, closureReadiness, resetAccountPassword, validPassword } from "@/lib/account";
 import { AccountClosureFlow } from "@/components/auth/AccountClosureFlow";
+import { PasswordChangeFlow } from "@/components/auth/PasswordChangeFlow";
 import { SecuritySettings } from "@/components/auth/SecuritySettings";
 import { NicknameSettings } from "@/components/auth/NicknameSettings";
 import { LoginRequired } from "@/components/auth/LoginRequired";
@@ -27,6 +28,7 @@ export default function ProfilePage() {
   const locale = useLocale();
   const security = useSecurityStore();
   const [panel, setPanel] = useState<Panel>("overview");
+  const [passwordChangeOpen, setPasswordChangeOpen] = useState(false);
   const panelHeading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     const read = () => { const requested = new URLSearchParams(window.location.search).get("section"); setPanel(panels.some(item => item.id === requested) ? requested as Panel : "overview"); };
@@ -36,7 +38,7 @@ export default function ProfilePage() {
     setPanel(next); const url = new URL(window.location.href); url.searchParams.set("section", next); window.history.pushState(null, "", url);
     requestAnimationFrame(() => panelHeading.current?.focus({ preventScroll: true }));
   };
-  const { user, openAuthModal, hydrated: authReady } = useAuthStore();
+  const { user, hydrated: authReady } = useAuthStore();
   const wallet = useWalletStore();
   const items = useInventoryStore(s => s.items);
   const inventoryReady = useInventoryStore(s => s.hydrated);
@@ -100,7 +102,7 @@ export default function ProfilePage() {
           <div className="grid gap-3 sm:grid-cols-2">{actionLink("/inventory", p("inventory"), p("inventoryNote"))}{actionLink("/community", p("reviews"), p("reviewNote"))}</div>
         </div>}
         {panel === "profile" && <div className="grid gap-5"><AvatarSettings user={user} /><NicknameSettings user={user} /></div>}
-        {panel === "security" && <><section className="rounded-2xl border border-hairline bg-surface p-5 sm:p-7"><div className="flex items-center gap-3"><LockKeyhole className="h-5 w-5 text-gold-champagne" /><h3 className="text-lg font-semibold text-white">{t("newPasswordTitle")}</h3></div><p className="mt-3 text-sm leading-7 text-secondary">{t("securityIntro")}</p><button onClick={() => openAuthModal("recover")} className="workspace-button mt-4">{t("updatePassword")}</button></section><SecuritySettings user={user} /><p className="mt-4 rounded-xl bg-gold-champagne/5 p-4 text-xs leading-7 text-secondary">{p("securityNote")}</p></>}
+        {panel === "security" && <><section className="rounded-2xl border border-hairline bg-surface p-5 sm:p-7"><div className="flex items-center gap-3"><LockKeyhole className="h-5 w-5 text-gold-champagne" /><h3 className="text-lg font-semibold text-white">{t("newPasswordTitle")}</h3></div><p className="mt-3 text-sm leading-7 text-secondary">{t("securityIntro")}</p><button onClick={() => setPasswordChangeOpen(true)} className="workspace-button mt-4">{t("updatePassword")}</button><PasswordChangeFlow user={user} open={passwordChangeOpen} onClose={() => setPasswordChangeOpen(false)} /></section><SecuritySettings user={user} /><p className="mt-4 rounded-xl bg-gold-champagne/5 p-4 text-xs leading-7 text-secondary">{p("securityNote")}</p></>}
         {panel === "wallet" && <div className="grid gap-5"><section className="rounded-2xl border border-gold-champagne/25 bg-surface p-5 sm:p-7"><p className="text-sm text-muted">{p("balance")}</p><p className="mt-3 text-3xl font-semibold text-white">{ready ? fmt(wallet.balance) : "—"}</p><div className="mt-6 flex flex-wrap gap-3"><Link href="/#deposit" className="workspace-button primary">{p("deposit")}</Link><Link href="/#withdraw" className="workspace-button">{p("withdraw")}</Link></div></section><section className="rounded-2xl border border-hairline bg-surface p-5 sm:p-7"><h3 className="mb-5 text-lg font-semibold text-white">{t("transactionHistory")}</h3><HistoryTab /></section></div>}
         {panel === "activity" && <div className="grid gap-3 sm:grid-cols-2">{actionLink("/inventory?tab=held", p("inventory"), p("inventoryNote"))}{actionLink("/inventory?tab=shipping", p("shipping"))}{actionLink("/community?tab=mine", p("reviews"))}{actionLink("/community?tab=eligible", p("eligibleReviews"), p("reviewNote"))}</div>}
         {panel === "account" && <><section className="rounded-2xl border border-hairline bg-surface p-5 sm:p-7"><h3 className="text-lg font-semibold text-white">{p("accountInfo")}</h3><dl className="mt-5 grid gap-5 text-sm"><div><dt className="text-muted">{p("email")}</dt><dd className="mt-2 break-all text-white">{user.email}</dd></div><div><dt className="text-muted">{p("created")}</dt><dd className="mt-2 text-white">{new Date(user.createdAt).toLocaleDateString(locale, { dateStyle: "long" })}</dd></div></dl><Link href="/legal/privacy" className="workspace-text-link mt-5">{t("privacy")}<ArrowUpRight className="h-4 w-4" /></Link></section><details className="mt-5 rounded-2xl border border-hairline p-5"><summary className="cursor-pointer py-2 text-sm font-semibold text-red-200">{p("closureOpen")}</summary>
