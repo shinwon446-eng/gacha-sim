@@ -34,6 +34,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+@media (max-width: 380px) {
+  .site-header-logo > span:first-child { font-size: 23px; }
+  .site-header-logo > svg { margin-left: 4px; }
+}
+
 /* 언어별 줄바꿈 규칙 (LocaleHtmlLang 이 <html lang> 을 맞춘다)
    ko: 단어 중간 끊김('아이 / 폰') 금지 · 넘칠 때만 끊음(break-word — anywhere 는 min-content 를 바꿔 로고까지 쪼갠다)
    en: 긴 단어가 카드를 뚫지 않게 + 콤팩트 트래킹

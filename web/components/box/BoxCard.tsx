@@ -28,7 +28,7 @@ export function BoxCard({ box, rank, onInspect, onOpen, className }: BoxCardProp
         <span className="collection-image-action"><ArrowUpRight size={20} aria-hidden /></span>
       </span>
       <span className="collection-card-body">
-        <span className="collection-card-title">{boxTitle(box)}</span>
+        <span className="collection-card-title" title={boxTitle(box)}>{boxTitle(box)}</span>
         <span className="collection-card-meta"><span className="collection-price"><Money value={box.price} size="md" /><span className="text-xs text-muted">/ {t("design.oneOpen")}</span></span><span className="collection-multiple">{t("design.upTo", { n: formatMultiple(topMultiple(box)) })}</span></span>
         <span className="collection-card-link">{t("design.details")}<ArrowUpRight size={14} aria-hidden /></span>
       </span>

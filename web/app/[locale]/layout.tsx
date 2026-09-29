@@ -5,7 +5,6 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { routing, type Locale } from "@/i18n/routing";
 import { LocaleHtmlLang } from "@/components/layout/LocaleHtmlLang";
 import { Footer } from "@/components/layout/Footer";
-import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { AuthHost } from "@/components/auth/AuthHost";
 import { MotionPreferences } from "@/components/layout/MotionPreferences";
 
@@ -66,12 +65,10 @@ export default async function LocaleLayout({
     <NextIntlClientProvider locale={locale} messages={messages}>
       <MotionPreferences>
       <LocaleHtmlLang locale={locale as Locale} />
-      {/* 모바일 하단 고정 내비(h-14) 만큼 여백, 푸터까지 가려지지 않는다 */}
-      <div className="pb-[calc(64px+env(safe-area-inset-bottom))] md:pb-0">
+      <div>
         {children}
         <Footer />
       </div>
-      <MobileBottomNav />
       {/* 로그인, 회원가입 모달과 확인 토스트, 어느 페이지에서든 열린다 */}
       <AuthHost />
       </MotionPreferences>
