@@ -76,7 +76,7 @@ export const useInventoryStore = create<InventoryState>()(
           && now - Date.parse(item.acquiredAt) >= EXPIRE_MS);
         if (!expired.length) return none;
         const refunds = new Map(expired.map(item => [item.id, +(item.valueUsdt * REFUND_RATE).toFixed(2)]));
-        const totalUsdt = +[...refunds.values()].reduce((sum, amount) => sum + amount, 0).toFixed(2);
+        const totalUsdt = +Array.from(refunds.values()).reduce((sum, amount) => sum + amount, 0).toFixed(2);
         if (!Number.isFinite(totalUsdt)) return none;
         const at = new Date(now).toISOString();
         // Claim the items before crediting: subscriptions and subsequent sweeps cannot pay twice.
@@ -85,7 +85,7 @@ export const useInventoryStore = create<InventoryState>()(
           : item) }));
         useWalletStore.getState().credit(totalUsdt);
         useWalletStore.getState().addTransaction({ type: "sellback", amountUsdt: totalUsdt, ref: "auto_cashback_30d" });
-        return { ids: [...refunds.keys()], totalUsdt };
+        return { ids: Array.from(refunds.keys()), totalUsdt };
       },
       add: (items) => {
         const now = new Date().toISOString();

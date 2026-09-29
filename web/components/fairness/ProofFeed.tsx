@@ -16,8 +16,6 @@ import { useWalletStore } from "@/stores/walletStore";
 import { useFairStore } from "@/stores/fairStore";
 import { Money } from "@/components/ui/Money";
 
-
-
 function useRelative(locale: string) {
   const rtf = useMemo(() => new Intl.RelativeTimeFormat(locale === "zh" ? "zh-CN" : locale, { numeric: "auto" }), [locale]);
   return (iso: string, now: number) => {
@@ -33,8 +31,7 @@ export interface ProofFeedProps {
   showReserve?: boolean;
   className?: string;
 }
-
-
+/** Actual store transactions combined with validated server records. */
 export function ProofFeed({ limit, showReserve = true, className }: ProofFeedProps) {
   const t = useTranslations("proof");
   const locale = useLocale();
@@ -106,7 +103,7 @@ export function ProofFeed({ limit, showReserve = true, className }: ProofFeedPro
   const linkCls = "border-gold-gradient flex min-h-10 items-center gap-1 whitespace-nowrap rounded-md px-2 text-xs font-bold text-gold-champagne hover:bg-gold-champagne/10";
 
   return (
-    <section className={cn("grid gap-4", className)} aria-label={t("title")}>
+    <section className={cn("grid gap-4", className)} aria-label={ko ? "실제 거래 기록" : zh ? "真实交易记录" : "Actual transaction records"}>
       {showReserve && reserve && (
         <div className="border-metallic-gold relative overflow-hidden rounded-xl bg-obsidian p-4 md:p-5">
           <span aria-hidden className="pedestal-glow pointer-events-none absolute inset-0" />
