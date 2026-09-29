@@ -1992,7 +1992,7 @@
     "settingsLoginNeeded": "로그인 후 닉네임과 Google OTP를 설정하고 입출금 내역을 확인할 수 있습니다.",
     "nicknameTitle": "닉네임 설정",
     "nickname": "닉네임",
-    "nicknameHint": "2~20자. 한글·영문·숫자·밑줄(_)·하이픈(-)을 사용할 수 있습니다.",
+    "nicknameHint": "2~12자. 한글·영문·숫자·밑줄(_)·하이픈(-)을 사용할 수 있습니다. 운영자 사칭·욕설·음란성 단어는 사용할 수 없습니다.",
     "nicknameInvalid": "닉네임 형식을 확인해주세요. 공백과 특수문자는 사용할 수 없습니다.",
     "nicknameSame": "현재 사용 중인 닉네임과 같습니다.",
     "nicknameForbidden": "사용할 수 없는 단어(금칙어)가 포함되어 있습니다.",

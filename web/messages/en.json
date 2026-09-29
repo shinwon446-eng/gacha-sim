@@ -1992,7 +1992,7 @@
     "settingsLoginNeeded": "Sign in to set your nickname and Google Authenticator and view your transaction history.",
     "nicknameTitle": "Nickname settings",
     "nickname": "Nickname",
-    "nicknameHint": "Use 2–20 letters, numbers, underscores (_) or hyphens (-).",
+    "nicknameHint": "Use 2–12 Korean or English letters, numbers, underscores (_) or hyphens (-). Impersonation, abusive and sexual terms are not allowed.",
     "nicknameInvalid": "Check your nickname. Spaces and other special characters are not allowed.",
     "nicknameSame": "This is already your current nickname.",
     "nicknameForbidden": "This nickname contains a word that cannot be used.",

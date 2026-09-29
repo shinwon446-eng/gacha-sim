@@ -84,7 +84,7 @@ export function NicknameSettings({ user }: { user: AuthUser }) {
     <h2 className="text-xl font-semibold text-white">{t("nicknameTitle")}</h2>
     <form onSubmit={submit} className="mt-4 max-w-md">
       <label className="block text-sm text-secondary">{t("nickname")}
-        <input value={nickname} onChange={e => { setNickname(e.target.value); setCompletion(null); setError(""); }} autoComplete="nickname" maxLength={20} required disabled={busy} aria-describedby="nickname-hint" className="mt-2 h-12 w-full rounded-xl border border-hairline bg-obsidian px-4 text-base text-white focus:border-gold-champagne focus:outline-none" />
+        <input value={nickname} onChange={e => { setNickname(e.target.value); setCompletion(null); setError(""); }} autoComplete="nickname" maxLength={12} required disabled={busy} aria-describedby="nickname-hint" className="mt-2 h-12 w-full rounded-xl border border-hairline bg-obsidian px-4 text-base text-white focus:border-gold-champagne focus:outline-none" />
       </label>
       <p id="nickname-hint" className="mt-2 text-xs leading-6 text-muted">{t("nicknameHint")}</p>
       {error && <p role="alert" className="mt-2 text-sm text-red-200">{error}</p>}

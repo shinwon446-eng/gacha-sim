@@ -1992,7 +1992,7 @@
     "settingsLoginNeeded": "登录后可设置昵称和 Google 身份验证器，并查看交易记录。",
     "nicknameTitle": "昵称设置",
     "nickname": "昵称",
-    "nicknameHint": "请输入 2–20 个字母、汉字、数字、下划线 (_) 或连字符 (-)。",
+    "nicknameHint": "请输入 2–12 个韩文或英文字符、数字、下划线 (_) 或连字符 (-)。不可使用冒充运营方、辱骂或色情词语。",
     "nicknameInvalid": "请检查昵称格式，不可使用空格及其他特殊字符。",
     "nicknameSame": "与当前使用的昵称相同，无法更改。",
     "nicknameForbidden": "昵称中包含无法使用的禁用词。",
