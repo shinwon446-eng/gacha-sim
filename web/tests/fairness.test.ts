@@ -83,8 +83,7 @@ test("roll 을 균등하게 훑으면 항목별 빈도가 표기 확률과 정�
   const b = BOXES.find((x) => x.slug === "jackpot-cybertruck")!;
   const ranges = rollRanges(b.items);
   const top = ranges.find((r) => r.item.id === "ctd-cybertruck")!;
-  // The 49/49 cashback schedule allocates the remaining 2% proportionally.
-  assert.equal(top.units, 147);
+  assert.equal(top.units, 1);
   const count = new Map<string, number>();
   for (let roll = 0; roll < ROLL_RANGE; roll += 1) {
     const it = determineItem(roll, b.items);

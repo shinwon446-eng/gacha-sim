@@ -69,7 +69,7 @@ test("하이브리드 리워드: 바닥은 USDT 캐시백(100% 적립), 조잡�
 test("드롭 확률 합계는 박스마다 정확히 100", () => {
   for (const b of BOXES) {
     const sum = b.items.reduce((s, i) => s + i.dropRate, 0);
-    assert.ok(Math.abs(sum - 100) < 1e-6, `${b.slug}: 합 ${sum}`);
+    assert.equal(sum, 100, `${b.slug}: 합 ${sum}`);
     assert.ok(b.items.every((i) => i.dropRate > 0), `${b.slug}: 0 이하 확률 존재`);
   }
 });
@@ -96,23 +96,32 @@ test("잭팟 배수: 1달러 박스 1,000배 이상, 럭셔리·잭팟 1,300배 
   assert.ok(luxuryRow().some((b) => top(b) >= 2000), "럭셔리 2,000배 없음");
 });
 
-test("requested 49/49 cashback keeps existing prices and exposes the payout deficit", () => {
+test("12개 박스의 슬롯 파동과 현금 하우스 엣지는 백만 슬롯 기준으로 검증된다", () => {
   for (const box of BOXES) {
-    const base = box.items.find(i => i.value === box.guaranteedMin)!;
-    const doubled = box.items.find(i => i.id === base.id + "-double")!;
-    assert.equal(base.dropRate, 49);
-    assert.equal(doubled.dropRate, 49);
-    assert.equal(doubled.value, +(base.value * 2).toFixed(2));
-    assert.ok(Math.abs(box.items.filter(i => i !== base && i !== doubled).reduce((sum,i) => sum+i.dropRate,0)-2) < 1e-9);
-    assert.ok(cashReturn(box) > 1, "operator must review negative margin before paid operation");
+    const at = (multiple: number) => box.items.filter(i => i.value === +(box.price * multiple).toFixed(2));
+    for (const multiple of [0.5, 0.8, 0.99, 2, 5, 15]) {
+      assert.ok(at(multiple).length > 0, `${box.slug}: ${multiple}x 티어 누락`);
+    }
+    assert.equal(at(0.5)[0].dropRate, 46, box.slug);
+    assert.equal(at(0.8)[0].dropRate, 26, box.slug);
+    assert.equal(at(0.99)[0].dropRate, 17, box.slug);
+    const recovery = box.items.filter(i => i.value >= box.price * 2 && i.value <= box.price * 5);
+    assert.ok(recovery.reduce((sum, i) => sum + i.dropRate, 0) >= 10, `${box.slug}: 복구 구간`);
+    const surge = box.items.filter(i => i.value >= box.price * 15);
+    assert.ok(surge.reduce((sum, i) => sum + i.dropRate, 0) >= 0.8, `${box.slug}: 중박 구간`);
+    const hitSlots = box.items.filter(i => i.value >= box.price * 0.99)
+      .reduce((sum, i) => sum + Math.round(i.dropRate * 10_000), 0);
+    assert.ok(hitSlots >= 280_000 && hitSlots <= 320_000, `${box.slug}: 적중 슬롯 ${hitSlots}`);
+    assert.ok(cashReturn(box) >= 0.945 && cashReturn(box) <= 0.955, `${box.slug}: cash RTP ${cashReturn(box)}`);
+    assert.ok(retailReturn(box) >= RETAIL_RTP_MIN && retailReturn(box) < RETAIL_RTP_MAX, `${box.slug}: retail RTP ${retailReturn(box)}`);
   }
 });
 
 test("최저 구성을 즉시 환급해도 원금을 넘지 못한다", () => {
   for (const b of BOXES) {
     assert.ok(
-      b.guaranteedMin * REFUND_RATE < b.price,
-      `${b.slug}: 최저 보장 회수액 ${b.guaranteedMin * REFUND_RATE} >= 가격 ${b.price}`,
+      floorCash(b) < b.price,
+      `${b.slug}: 최저 보장 회수액 ${floorCash(b)} >= 가격 ${b.price}`,
     );
   }
 });
@@ -126,16 +135,15 @@ test("probabilities remain representable as one-million exact outcome slots", ()
   }
 });
 
-test("바닥 보장: 최저 구성 즉시 환전액이 가격의 80~96%", () => {
+test("바닥 보장: 최저 구성 즉시 캐시백은 가격의 50%", () => {
   for (const b of BOXES) {
     const r = floorRatio(b);
     assert.ok(r >= FLOOR_CASH_MIN && r <= FLOOR_CASH_MAX, `${b.slug}: 바닥 ${(r * 100).toFixed(1)}%`);
     assert.equal(floorCash(b), +b.guaranteedMin.toFixed(2)); // 바닥은 USDT 캐시백 — 100% 적립
     assert.ok(isValueGuaranteed(b), b.slug);
   }
-  // 스펙 예시: 1달러 박스 0.85 USDT, 100달러 잭팟 95 USDT
-  for (const b of BOXES.filter((x) => x.price === 1)) assert.ok(floorCash(b) >= 0.85, `${b.slug}: ${floorCash(b)}`);
-  for (const b of BOXES.filter((x) => x.price === 100)) assert.ok(floorCash(b) >= 95, `${b.slug}: ${floorCash(b)}`);
+  for (const b of BOXES.filter((x) => x.price === 1)) assert.equal(floorCash(b), 0.5, b.slug);
+  for (const b of BOXES.filter((x) => x.price === 100)) assert.equal(floorCash(b), 50, b.slug);
 });
 
 test("guaranteedMin 은 항목 최저가에서 파생된다", () => {

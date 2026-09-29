@@ -67,7 +67,7 @@ test("configured clients complete account and withdrawal contracts over real HTT
     assert.equal((await account.getAccountSession()).id, user.id);
     assert.equal((await account.updateAccountNickname("SavedName")).nickname, "SavedName");
     assert.equal(await account.checkAccountNickname("SavedName"), true);
-    assert.equal(await account.checkAccountNickname("TakenName"), false);
+    await assert.rejects(account.checkAccountNickname("TakenName"), (cause: unknown) => cause instanceof account.ProfileError && cause.reason === "nickname_taken");
     assert.equal((await account.updateAccountAvatar("data:image/jpeg;base64,/9j/AA==")).avatarUrl, "https://cdn.example.test/avatar.jpg");
     assert.equal((await account.updateAccountAvatar(null)).avatarUrl, null);
     await account.recoverAccount(user.email, "ko");

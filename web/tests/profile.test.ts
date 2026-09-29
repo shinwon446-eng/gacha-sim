@@ -42,7 +42,7 @@ test("profile service enforces duplicate and cooldown checks independently of UI
     await browserAccountRequest("/auth/oauth/start", { provider: "google" });
     assert.equal((await browserAccountRequest("/account/profile/nickname/check", { nickname: "ＡＬＩＣＥ" })).available, false);
     await assert.rejects(browserAccountRequest("/account/profile", { nickname: "alice" }), failsWith("nickname_taken"));
-    await assert.rejects(browserAccountRequest("/account/profile", { nickname: "시_발" }), failsWith("nickname_prohibited"));
+    await assert.rejects(browserAccountRequest("/account/profile", { nickname: "시발" }), failsWith("nickname_prohibited"));
     await assert.rejects(browserAccountRequest("/account/profile/avatar", { avatar: null, accountId: first.id }), (cause: unknown) => cause instanceof AccountError && cause.code === "credentials");
     await startBrowserAccount();
     const avatar = "data:image/jpeg;base64,/9j/AA==";

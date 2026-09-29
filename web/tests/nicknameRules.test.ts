@@ -17,11 +17,12 @@ test("nickname cooldown gives a rounded-up remaining-day count", () => {
 });
 
 test("nickname validation normalizes, constrains and blocks reserved words", () => {
-  assert.deepEqual(validateNewNickname("  사용자_01  "), { valid: true });
+  assert.deepEqual(validateNewNickname("  사용자01  "), { valid: true });
+  assert.deepEqual(validateNewNickname("사용자_01"), { valid: false, reason: "format" });
   assert.deepEqual(validateNewNickname("한"), { valid: false, reason: "format" });
   assert.deepEqual(validateNewNickname("same", "same"), { valid: false, reason: "same" });
-  assert.deepEqual(validateNewNickname("VOILA_member"), { valid: false, reason: "forbidden" });
-  assert.deepEqual(validateNewNickname("porn_user"), { valid: false, reason: "forbidden" });
+  assert.deepEqual(validateNewNickname("VOILAmember"), { valid: false, reason: "forbidden" });
+  assert.deepEqual(validateNewNickname("pornuser"), { valid: false, reason: "forbidden" });
   assert.deepEqual(validateNewNickname("열두글자닉네임12"), { valid: true });
   assert.deepEqual(validateNewNickname("열세글자인닉네임12345"), { valid: false, reason: "format" });
   assert.equal(containsForbiddenNicknameWord("관리자님"), true);

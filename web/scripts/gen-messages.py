@@ -2,13 +2,14 @@
 """
 messages/{ko,en,zh}.json 생성기.
 
-  npx tsx 로 lib/products.ts 를 덤프한 .dump.txt(BOX/item 줄) 를 읽어 ko/en 상품 문자열을 만들고,
+  lib/products.ts 의 BOXES를 직접 읽어 ko/en 상품 문자열을 만들고,
   zh 는 아래 ZH_BOX / ZH_ITEM 사전에서 가져온다. UI 문자열은 messages JSON이 원본이며 그대로 보존한다.
 
-  실행: python scripts/gen-messages.py   (사전에 .dump.txt 필요)
+  실행: python scripts/gen-messages.py
 규칙: 세 파일의 키 집합은 완전히 같아야 한다 (tests/i18n.test.ts 가 검증).
 """
-import io, json, re, sys
+import io, json, os, re, subprocess, sys
+from decimal import Decimal
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
@@ -23,18 +24,18 @@ UI = {locale: json.loads((ROOT / "messages" / f"{locale}.json").read_text(encodi
 BADGE_KEY = {"드림 박스": "dream", "모빌리티": "mobility", "테크": "tech", "오디오": "audio", "워치": "watch", "럭셔리": "luxury", "라이프스타일": "lifestyle", "가치 보장": "guaranteed", "1달러": "dollar", "골드": "gold"}
 
 ZH_BOX = {
-  "dollar-apple": ("1 美元苹果盒", "1 美元挑战 iPhone 16 Pro。未中奖立即返还 0.85 USDT。"),
-  "dollar-galaxy": ("1 美元 Galaxy 盒", "1 美元挑战 Galaxy Z Fold8。未中奖立即返还 0.85 USDT。"),
-  "dollar-gaming": ("1 美元游戏盒", "1 美元挑战 RTX 5090、Switch 2。未中奖立即返还 0.85 USDT。"),
-  "starter-ps5": ("PS5 Pro 入门盒", "3 美元挑战 PS5 Pro。未中奖立即返还 2.65 USDT。"),
-  "starter-macbook": ("MacBook Pro M4 盒", "5 美元挑战 MacBook Pro M4 Max。未中奖立即返还 4.4 USDT。"),
-  "starter-phone": ("iPhone 17 Pro 盒", "5 美元挑战 iPhone 17 Pro Max。未中奖立即返还 4.4 USDT。"),
-  "vault-submariner": ("劳力士潜航者系列", "20 美元挑战劳力士潜航者。未中奖立即返还 18.5 USDT。"),
-  "vault-omega": ("瑞士奢华腕表系列", "25 美元挑战欧米茄、帝舵、天梭。未中奖立即返还 23 USDT。"),
-  "vault-handbag": ("爱马仕与香奈儿精品店", "30 美元挑战爱马仕 Birkin。未中奖立即返还 27.5 USDT。"),
-  "vault-gold": ("足金金条系列", "50 美元挑战 1kg 金条。未中奖立即返还 46 USDT。"),
-  "jackpot-cybertruck": ("特斯拉 Cybertruck 版", "100 美元挑战 Cybertruck。未中奖立即返还 95 USDT。"),
-  "jackpot-supercar": ("保时捷 911 超跑版", "100 美元挑战保时捷 911。未中奖立即返还 95 USDT。"),
+  "dollar-apple": ("1 美元苹果盒", "1 美元挑战 iPhone 16 Pro。0.5 倍即时返现到 15 倍以上大奖。"),
+  "dollar-galaxy": ("1 美元 Galaxy 盒", "1 美元挑战 Galaxy Z Fold8。0.5 倍即时返现到 15 倍以上大奖。"),
+  "dollar-gaming": ("1 美元游戏盒", "1 美元挑战 RTX 5090、Switch 2。0.5 倍即时返现到 15 倍以上大奖。"),
+  "starter-ps5": ("PS5 Pro 入门盒", "3 美元挑战 PS5 Pro。0.5 倍即时返现到 15 倍以上大奖。"),
+  "starter-macbook": ("MacBook Pro M4 盒", "5 美元挑战 MacBook Pro M4 Max。0.5 倍即时返现到 15 倍以上大奖。"),
+  "starter-phone": ("iPhone 17 Pro 盒", "5 美元挑战 iPhone 17 Pro Max。0.5 倍即时返现到 15 倍以上大奖。"),
+  "vault-submariner": ("劳力士潜航者系列", "20 美元挑战劳力士潜航者。0.5 倍即时返现到 15 倍以上大奖。"),
+  "vault-omega": ("瑞士奢华腕表系列", "25 美元挑战欧米茄、帝舵、天梭。0.5 倍即时返现到 15 倍以上大奖。"),
+  "vault-handbag": ("爱马仕与香奈儿精品店", "30 美元挑战爱马仕 Birkin。0.5 倍即时返现到 15 倍以上大奖。"),
+  "vault-gold": ("足金金条系列", "50 美元挑战 1kg 金条。0.5 倍即时返现到 15 倍以上大奖。"),
+  "jackpot-cybertruck": ("特斯拉 Cybertruck 版", "100 美元挑战 Cybertruck。0.5 倍即时返现到 15 倍以上大奖。"),
+  "jackpot-supercar": ("保时捷 911 超跑版", "100 美元挑战保时捷 911。0.5 倍即时返现到 15 倍以上大奖。"),
   "cybertruck-dream": ("赛博皮卡梦想", "以一辆特斯拉 Cybertruck 为顶配的出行组合。最低档商品同样实物发货。"),
   "urban-mobility": ("都市出行", "以城市通勤工具为核心。电动滑板车与折叠自行车位于上层。"),
   "apex-workstation": ("巅峰工作站", "以 MacBook Pro M4 Max 为顶配的生产力装备组合，外设亦实物发货。"),
@@ -104,11 +105,15 @@ ZH_ITEM = {
 
 
 def load_dump(path=None):
-    path = Path(path) if path is not None else ROOT / ".dump.txt"
+    if path is None:
+        tsx = ROOT / "node_modules" / ".bin" / ("tsx.cmd" if os.name == "nt" else "tsx")
+        script = 'import { BOXES } from "./lib/products"; for (const box of BOXES) { console.log(`BOX ${box.slug}|${box.title}|${box.titleEn}|${box.badge}|${box.tagline}`); for (const item of box.items) console.log(`  ${item.id}|${item.name}|${item.nameEn}`); }'
+        lines = subprocess.check_output([str(tsx), "-e", script], cwd=ROOT, text=True, encoding="utf-8").splitlines()
+    else:
+        lines = Path(path).read_text(encoding="utf-8").splitlines()
     boxes, items = {}, {}
     cur = None
-    for line in io.open(path, encoding="utf-8"):
-        line = line.rstrip("\n")
+    for line in lines:
         if line.startswith("BOX "):
             slug, ko, en, badge, tagline = [x.strip() for x in line[4:].split("|")]
             cur = slug
@@ -117,6 +122,17 @@ def load_dump(path=None):
             iid, ko, en = [x.strip() for x in line.split("|")]
             items[iid] = {"ko": ko, "en": en}
     return boxes, items
+
+
+def zh_item_name(iid):
+    if iid in ZH_ITEM:
+        return ZH_ITEM[iid]
+    match = re.fullmatch(r"wave-(cashback|drop|gift)-(\d+)", iid)
+    if not match:
+        raise KeyError(f"ZH_ITEM 누락: {iid}")
+    amount = format((Decimal(match.group(2)) / 100).normalize(), "f")
+    suffix = {"cashback": "即时返现", "drop": "即时到账", "gift": "数字礼品卡"}[match.group(1)]
+    return f"{amount} USDT {suffix}"
 
 
 def build(locale, boxes, items):
@@ -133,23 +149,23 @@ def build(locale, boxes, items):
             zt, ztag = ZH_BOX[slug]
             prod["boxes"][slug] = {"title": zt, "tagline": ztag, "badge": ui["badges"][badge_key]}
     for iid, it in items.items():
-        prod["items"][iid] = it["ko"] if locale == "ko" else it["en"] if locale == "en" else ZH_ITEM[iid]
+        prod["items"][iid] = it["ko"] if locale == "ko" else it["en"] if locale == "en" else zh_item_name(iid)
     return {**ui, "products": prod}
 
 
 EN_TAGLINE = {
-  "dollar-apple": "$1 for an iPhone 16 Pro. Miss, 0.85 USDT instant payback.",
-  "dollar-galaxy": "$1 for a Galaxy Z Fold8. Miss, 0.85 USDT instant payback.",
-  "dollar-gaming": "$1 for RTX 5090 or Switch 2. Miss, 0.85 USDT instant payback.",
-  "starter-ps5": "$3 for a PS5 Pro. Miss, 2.65 USDT instant payback.",
-  "starter-macbook": "$5 for a MacBook Pro M4 Max. Miss, 4.4 USDT instant payback.",
-  "starter-phone": "$5 for an iPhone 17 Pro Max. Miss, 4.4 USDT instant payback.",
-  "vault-submariner": "$20 for a Rolex Submariner. Miss, 18.5 USDT instant payback.",
-  "vault-omega": "$25 for Omega, Tudor, Tissot. Miss, 23 USDT instant payback.",
-  "vault-handbag": "$30 for a Hermès Birkin. Miss, 27.5 USDT instant payback.",
-  "vault-gold": "$50 for a 1kg gold bar. Miss, 46 USDT instant payback.",
-  "jackpot-cybertruck": "$100 for a Cybertruck. Miss, 95 USDT instant payback.",
-  "jackpot-supercar": "$100 for a Porsche 911. Miss, 95 USDT instant payback.",
+  "dollar-apple": "$1 for an iPhone 16 Pro. From 0.5x cashback to 15x+ prizes.",
+  "dollar-galaxy": "$1 for a Galaxy Z Fold8. From 0.5x cashback to 15x+ prizes.",
+  "dollar-gaming": "$1 for RTX 5090 or Switch 2. From 0.5x cashback to 15x+ prizes.",
+  "starter-ps5": "$3 for a PS5 Pro. From 0.5x cashback to 15x+ prizes.",
+  "starter-macbook": "$5 for a MacBook Pro M4 Max. From 0.5x cashback to 15x+ prizes.",
+  "starter-phone": "$5 for an iPhone 17 Pro Max. From 0.5x cashback to 15x+ prizes.",
+  "vault-submariner": "$20 for a Rolex Submariner. From 0.5x cashback to 15x+ prizes.",
+  "vault-omega": "$25 for Omega, Tudor, Tissot. From 0.5x cashback to 15x+ prizes.",
+  "vault-handbag": "$30 for a Hermès Birkin. From 0.5x cashback to 15x+ prizes.",
+  "vault-gold": "$50 for a 1kg gold bar. From 0.5x cashback to 15x+ prizes.",
+  "jackpot-cybertruck": "$100 for a Cybertruck. From 0.5x cashback to 15x+ prizes.",
+  "jackpot-supercar": "$100 for a Porsche 911. From 0.5x cashback to 15x+ prizes.",
   "cybertruck-dream": "A mobility lineup topped by one Tesla Cybertruck. Even the lowest tier ships as a physical item.",
   "urban-mobility": "Built around city commuting. E-scooters and folding bikes sit at the top.",
   "apex-workstation": "A workstation lineup topped by the MacBook Pro M4 Max. Peripherals ship as physical items too.",
@@ -181,7 +197,7 @@ def keyset(d, prefix=""):
 
 if __name__ == "__main__":
     boxes, items = load_dump()
-    missing = [i for i in items if i not in ZH_ITEM]
+    missing = [i for i in items if i not in ZH_ITEM and not re.fullmatch(r"wave-(cashback|drop|gift)-\d+", i)]
     if missing:
         raise SystemExit(f"ZH_ITEM 누락: {missing}")
     built = {loc: build(loc, boxes, items) for loc in ("ko", "en", "zh")}
