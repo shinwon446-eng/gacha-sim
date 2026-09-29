@@ -12,17 +12,18 @@ export function validAuthBase(raw: string): string {
   } catch { return ""; }
 }
 export const AUTH_API_BASE = validAuthBase(process.env.NEXT_PUBLIC_AUTH_API_BASE ?? "");
-export const accountConfigured = () => Boolean(AUTH_API_BASE);
+export const browserAccountsEnabled = () => !AUTH_API_BASE && !process.env.NEXT_PUBLIC_API_BASE;
+export const accountConfigured = () => Boolean(AUTH_API_BASE) || browserAccountsEnabled();
 export const validEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) && value.length <= 254;
 export const validPassword = (value: string) => value.length >= 12 && value.length <= 128;
 
 export const normalizeNickname = (value: string) => value.normalize("NFC").trim();
 const nicknamePattern = new RegExp("^[\\p{L}\\p{N}_-]{2,20}$", "u");
 export const validNickname = (value: string) => nicknamePattern.test(normalizeNickname(value));
-export interface ServerAccount { id: string; email: string; createdAt: string; emailVerified: boolean; nickname?: string }
+export interface ServerAccount { id: string; email: string; createdAt: string; emailVerified: boolean; nickname?: string; local?: boolean }
 function accountFrom(data: unknown): ServerAccount {
   const user = (data as { user?: ServerAccount })?.user;
-  if (!user || typeof user.id !== "string" || !user.id || typeof user.email !== "string" || !validEmail(user.email) || typeof user.createdAt !== "string" || !Number.isFinite(Date.parse(user.createdAt)) || user.emailVerified !== true) throw new AccountError("invalid");
+  if (!user || typeof user.id !== "string" || !user.id || typeof user.email !== "string" || !validEmail(user.email) || typeof user.createdAt !== "string" || !Number.isFinite(Date.parse(user.createdAt)) || (user.emailVerified !== true && !(browserAccountsEnabled() && user.local === true))) throw new AccountError("invalid");
   if (user.nickname !== undefined && (typeof user.nickname !== "string" || !validNickname(user.nickname))) throw new AccountError("invalid");
   return user;
 }
@@ -34,6 +35,7 @@ export async function updateAccountNickname(nickname: string) {
 
 /** Cookie session + server-issued CSRF token. Backend must enforce Origin, rate limits and current asset balances. */
 export async function accountRequest(path: string, body?: unknown, base = AUTH_API_BASE): Promise<Record<string, unknown>> {
+  if (!base && browserAccountsEnabled() && typeof window !== "undefined") return (await import("./browserAccount")).browserAccountRequest(path, body);
   if (!validAuthBase(base)) throw new AccountError("unavailable");
   const request = async (route: string, init: RequestInit = {}) => {
     let response: Response;
@@ -58,7 +60,9 @@ export async function loginAccount(email: string, password: string) {
 export async function signupAccount(email: string, password: string, locale: string) {
   if (!validEmail(email) || !validPassword(password)) throw new AccountError("invalid");
   const result = await accountRequest("/auth/signup", { email: email.trim(), password, locale, acceptedTerms: true });
+  if (browserAccountsEnabled() && result.user) return accountFrom(result);
   if (result.verificationRequired !== true) throw new AccountError("invalid");
+  return null;
 }
 export async function recoverAccount(email: string, locale: string) {
   if (!validEmail(email)) throw new AccountError("invalid");

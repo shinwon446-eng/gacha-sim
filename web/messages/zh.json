@@ -1996,7 +1996,13 @@
     "transactionHistory": "充提记录",
     "verifyCode": "验证",
     "transactionsUnavailable": "充值与提现服务正在接入中，服务开通后即可使用。",
-    "nicknameTaken": "此昵称已被使用，请选择其他昵称。"
+    "nicknameTaken": "此昵称已被使用，请选择其他昵称。",
+    "browserAccountLabel": "保存在此浏览器中的账户",
+    "browserAccountNote": "立即开始即可在此浏览器中创建账户，也可在下方使用邮箱和密码注册。",
+    "startBrowserAccount": "立即开始",
+    "browserSecurityNote": "身份验证器设置保存在此浏览器中，不会同步到其他设备。",
+    "browserEmailNote": "邮件发送尚未接入，确认码将显示在此处。验证后将记录需等待 72 小时的提现申请。",
+    "browserCode": "确认码：{code}（未发送邮件）"
   },
   "fairnessGuide": {
     "eyebrow": "公平性 · 结果核验",
@@ -2154,5 +2160,15 @@
     "requestId": "申请编号",
     "unlockAt": "可处理时间",
     "copyFailed": "复制失败，请选择文本手动复制。"
+  },
+  "browserWallet": {
+    "notice": "此账户使用保存在浏览器中的虚拟余额和交易记录，不会发生真实支付、充值或转账。",
+    "network": "网络",
+    "amount": "记录金额（USDT）",
+    "invalid": "请输入 10–5,000 USDT，最多两位小数。",
+    "processing": "正在记录",
+    "addUsdt": "记录 USDT 余额与充值",
+    "addCard": "记录银行卡余额与充值",
+    "added": "已在浏览器余额中记录 {amount} USDT。"
   }
 }

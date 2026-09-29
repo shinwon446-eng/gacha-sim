@@ -7,6 +7,8 @@ import { cn } from "@/lib/format";
 import { useAuthStore, rehydrateAuth } from "@/stores/authStore";
 import { useSecurityStore } from "@/stores/securityStore";
 import { AuthModal } from "@/components/auth/AuthModal";
+import { browserAccountsEnabled } from "@/lib/account";
+import { restoreBrowserAssets } from "@/lib/browserWallet";
 
 /**
  * 전역 인증 호스트 — `app/[locale]/layout.tsx` 한 곳에 마운트한다.
@@ -23,7 +25,10 @@ export function AuthHost() {
     try { localStorage.removeItem("voila-security-v1"); } catch { /* Storage may be disabled. */ }
     void rehydrateAuth();
   }, []);
-  useEffect(() => { if (userId) void useSecurityStore.getState().refresh(userId); }, [userId]);
+  useEffect(() => {
+    if (browserAccountsEnabled()) restoreBrowserAssets(userId ?? null);
+    if (userId) void useSecurityStore.getState().refresh(userId);
+  }, [userId]);
 
   return (
     <>

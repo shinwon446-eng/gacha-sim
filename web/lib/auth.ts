@@ -1,12 +1,12 @@
 /** Authentication types and legacy phone formatting helpers. Real email authentication is in lib/account.ts. */
-import { accountConfigured } from "./account";
+import { AUTH_API_BASE } from "./account";
 export type AuthProvider = "google" | "apple" | "phone" | "email";
 export type AuthMode = "login" | "signup" | "recover";
 
 
 /** Public OAuth IDs alone do not enable authenticated sessions. */
 export function providerConfigured(provider: AuthProvider): boolean {
-  return provider === "email" && accountConfigured();
+  return provider === "email" && Boolean(AUTH_API_BASE);
 }
 
 /** 셋 중 하나라도 연결돼 있으면 실계정 경로가 존재한다 */

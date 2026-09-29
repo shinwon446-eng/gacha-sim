@@ -5,7 +5,8 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Loader2, Mail, X } from "lucide-re
 import { useModal } from "@/lib/useModal";
 import { Link } from "@/i18n/navigation";
 import { useAuthStore } from "@/stores/authStore";
-import { AccountError, accountConfigured, loginAccount, recoverAccount, signupAccount, validPassword } from "@/lib/account";
+import { AccountError, accountConfigured, browserAccountsEnabled, loginAccount, recoverAccount, signupAccount, validPassword } from "@/lib/account";
+import { startBrowserAccount } from "@/lib/browserAccount";
 
 export function AuthModal() {
   const t = useTranslations("account");
@@ -21,6 +22,7 @@ export function AuthModal() {
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const configured = accountConfigured();
+  const browserAccount = browserAccountsEnabled();
   const signup = modalMode === "signup" && !recover;
   useModal(isModalOpen, () => { if (!busy) closeAuthModal(); }, panel);
   useEffect(() => {
@@ -35,7 +37,7 @@ export function AuthModal() {
     setBusy(true);
     try {
       if (recover) { await recoverAccount(email, locale); setNotice(t("resetSent")); }
-      else if (signup) { await signupAccount(email, password, locale); setNotice(t("verificationSent")); setPassword(""); setConfirm(""); }
+      else if (signup) { const user = await signupAccount(email, password, locale); if (user) acceptSession(user); else setNotice(t("verificationSent")); setPassword(""); setConfirm(""); }
       else acceptSession(await loginAccount(email, password));
     } catch (cause) { setError(t(`errors.${cause instanceof AccountError ? cause.code : "network"}`)); }
     finally { setBusy(false); }
@@ -47,6 +49,7 @@ export function AuthModal() {
       <Mail className="mb-5 h-7 w-7 text-gold-champagne" aria-hidden="true" />
       <h2 id="account-dialog-title" className="pr-6 text-2xl font-semibold text-white">{t(recover ? "recoverTitle" : signup ? "signupTitle" : "loginTitle")}</h2>
       <p className="mt-2 text-sm leading-6 text-secondary">{t(recover ? "recoverIntro" : "emailIntro")}</p>
+      {browserAccount && <div className="mt-4 rounded-xl border border-gold-champagne/30 bg-surface p-4"><p className="text-sm leading-6 text-secondary">{t("browserAccountNote")}</p><button type="button" disabled={busy} onClick={async () => { setBusy(true); setError(""); try { acceptSession(await startBrowserAccount()); } catch { setError(t("errors.network")); } finally { setBusy(false); } }} className="mt-3 min-h-12 w-full rounded-xl bg-gold-champagne px-4 text-sm font-semibold text-obsidian disabled:opacity-40">{t("startBrowserAccount")}</button></div>}
       {!configured && <p role="status" className="mt-5 rounded-xl border border-hairline bg-surface p-4 text-sm leading-6 text-secondary">{t("unavailable")}</p>}
       {notice ? <div role="status" className="mt-6 rounded-xl border border-emerald-400/30 bg-emerald-400/5 p-5"><CheckCircle2 className="mb-3 h-6 w-6 text-emerald-300" /><p className="text-sm leading-6 text-white">{notice}</p><button onClick={() => { setNotice(""); setRecover(false); setModalMode("login"); }} className="mt-4 min-h-11 text-sm font-semibold text-gold-champagne">{t("backLogin")}</button></div> : <form onSubmit={submit} className="mt-6 space-y-4">
         <label className="block text-sm text-secondary">{t("email")}<input type="email" autoComplete="email" required maxLength={254} value={email} onChange={e => setEmail(e.target.value)} disabled={busy || !configured} className={field} /></label>

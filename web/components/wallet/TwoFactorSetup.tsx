@@ -164,7 +164,7 @@ export function TwoFactorSetup({ onEnabled, compact }: { onEnabled?: () => void;
             {error}
           </p>
         )}
-        <p className="mt-2 break-keep text-[11px] leading-relaxed text-faint">{t("serverNote")}</p>
+        <p className="mt-2 break-keep text-[11px] leading-relaxed text-faint">{user.local ? ta("browserSecurityNote") : t("serverNote")}</p>
       </div>
     </div>
   );

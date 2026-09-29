@@ -2,7 +2,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { AuthMode, AuthProvider } from "@/lib/auth";
-import { accountConfigured, getAccountSession, logoutAccount, updateAccountNickname, type ServerAccount } from "@/lib/account";
+import { accountConfigured, browserAccountsEnabled, getAccountSession, logoutAccount, updateAccountNickname, type ServerAccount } from "@/lib/account";
 import { useSecurityStore } from "@/stores/securityStore";
 export interface AuthUser { id: string; provider: AuthProvider; label: string; subLabel: string; createdAt: string; local: boolean; email?: string; nickname?: string }
 export interface AuthToast { id: number; text: string; tone: "gold" | "neutral" }
@@ -20,11 +20,11 @@ export const useAuthStore = create<AuthState>()(persist((set, get) => ({
   closeAuthModal: () => set({ isModalOpen: false }), setModalMode: (modalMode) => set({ modalMode }),
   acceptSession: (user) => {
     if (get().user?.id !== user.id) useSecurityStore.getState().reset(user.id);
-    set({ user: { id: user.id, label: user.nickname || user.email, nickname: user.nickname, email: user.email, provider: "email", subLabel: user.email, createdAt: user.createdAt, local: false }, isModalOpen: false });
+    set({ user: { id: user.id, label: user.nickname || user.email, nickname: user.nickname, email: user.email, provider: "email", subLabel: user.email, createdAt: user.createdAt, local: browserAccountsEnabled() && user.local === true }, isModalOpen: false });
   },
   updateNickname: async (nickname) => {
     const id = get().user?.id;
-    if (!id || get().user?.local) return false;
+    if (!id) return false;
     const updated = await updateAccountNickname(nickname);
     if (get().user?.id !== id || updated.id !== id) return false;
     get().acceptSession(updated);
@@ -32,7 +32,7 @@ export const useAuthStore = create<AuthState>()(persist((set, get) => ({
   },
   clearSession: () => { useSecurityStore.getState().reset(null); set({ user: null, isModalOpen: false }); },
   logout: async (text) => {
-    if (get().user && !get().user?.local) await logoutAccount();
+    if (get().user) await logoutAccount();
     get().clearSession(); get().pushToast(text, "neutral");
   },
   pushToast: (text, tone = "gold") => {
@@ -50,7 +50,10 @@ export async function rehydrateAuth() {
   await useAuthStore.persist.rehydrate();
   if (accountConfigured()) {
     try { useAuthStore.getState().acceptSession(await getAccountSession()); }
-    catch { useAuthStore.getState().clearSession(); }
+    catch {
+      // A slow initial session lookup must not close a login dialog the user just opened.
+      if (!useAuthStore.getState().user) useSecurityStore.getState().reset(null);
+    }
   }
   useAuthStore.setState({ hydrated: true });
 }

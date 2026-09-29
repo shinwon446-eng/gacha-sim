@@ -8,6 +8,7 @@ import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useAuthStore } from "@/stores/authStore";
 import { LoginRequired } from "@/components/auth/LoginRequired";
+import { BrowserFunding } from "./BrowserFunding";
 import { useWalletStore } from "@/stores/walletStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { playChime } from "@/lib/audio";
@@ -116,6 +117,7 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   const field = "h-11 w-full rounded-md border bg-obsidian px-3 font-mono text-sm text-white outline-none transition-colors focus:border-gold-champagne";
 
   if (!user) return <LoginRequired />;
+  if (user.local) return <BrowserFunding source="card" onCredited={onCredited} />;
 
   if (stage.kind === "receipt") {
     const r = stage.result;

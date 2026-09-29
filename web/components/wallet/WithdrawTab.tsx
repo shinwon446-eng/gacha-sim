@@ -153,6 +153,7 @@ function CircuitBanner({ t, used, limit, remaining, tripped }: { t: TFn; used: n
  */
 export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps) {
   const t = useTranslations("withdraw");
+  const tb = useTranslations("browserWallet");
   const r = useTranslations("refinement");
   const locale = useLocale();
   const { currency, fmt } = useCurrency();
@@ -219,7 +220,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const circuit = useMemo(() => circuitState(withdrawHistory), [withdrawHistory]);
 
   const amlPct = rolloverProgress(totalWagered, totalDepositedCrypto);
-  const amlOk = amlPct >= 100;
+  const amlOk = user?.local || amlPct >= 100;
 
   /** 잔액의 일정 비율을 입력창에 넣는다 (선택 통화 단위) */
   const setRatio = (ratio: number) => {
@@ -253,7 +254,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const commit = useCallback(async (draft: Draft, proof: WithdrawalProof) => {
     if (submission.current || !user || useAuthStore.getState().user?.id !== user.id) return;
     const current = useWalletStore.getState();
-    if (validateWithdrawal({ ...draft, balanceUsdt: current.cryptoBalance }).length || rolloverProgress(current.totalWagered, current.totalDepositedCrypto) < 100) {
+    if (validateWithdrawal({ ...draft, balanceUsdt: current.cryptoBalance }).length || (!user.local && rolloverProgress(current.totalWagered, current.totalDepositedCrypto) < 100)) {
       setStage({ kind: "form" }); setSubmitError(t("errors.insufficient")); return;
     }
     submission.current = true; setSubmitError(""); setStage({ kind: "submitting" });
@@ -289,11 +290,12 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
 
   // ── 1단계 관문: 2FA 미등록이면 출금 입력 앞에 Google OTP 설정이 선다 ──
   if (!user) return <LoginRequired />;
-  if (!isLive()) return <p role="status" className="mt-4 rounded-xl border border-hairline p-5 text-sm leading-7 text-secondary">{ta("transactionsUnavailable")}</p>;
+  if (!isLive() && !user.local) return <p role="status" className="mt-4 rounded-xl border border-hairline p-5 text-sm leading-7 text-secondary">{ta("transactionsUnavailable")}</p>;
   if (!securityReady) return <div className="mt-4 text-sm text-secondary"><p role="status">{ts(securityError ? "loadFailed" : "loading")}</p>{securityError && <button type="button" onClick={() => void useSecurityStore.getState().refresh(user.id)} className="mt-2 min-h-11 text-gold-champagne">{ts("retry")}</button>}</div>;
   if (!twoFactorEnabled && !emailOnly && stage.kind !== "done") {
     return (
       <div className="mt-4">
+        {user.local && <p className="mb-3 text-xs leading-6 text-muted">{tb("notice")}</p>}
         <PolicyNotice />
         <div className="border border-hairline mt-4 rounded-xl bg-obsidian p-4">
           <div className="flex items-center gap-2">
@@ -356,6 +358,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   if (stage.kind === "done") {
     return (
       <div className="border-metallic-subtle mt-4 rounded-lg bg-obsidian p-4">
+        {user.local && <p className="mb-3 text-xs leading-6 text-muted">{tb("notice")}</p>}
         <PolicyNotice />
         <div className="flex items-center justify-between">
           <span className="caption-luxury">{t("requested")}</span>
@@ -442,6 +445,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
 
   return (
     <>
+      {user.local && <p className="mb-3 text-xs leading-6 text-muted">{tb("notice")}</p>}
       <PolicyNotice />
       {submitError && <p role="alert" className="mt-3 text-sm text-red-200">{submitError}</p>}
       {/* 2FA 보호 중 — 1단계 관문을 통과한 계정 */}
@@ -471,7 +475,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
       </div>
 
       {/* 🛡️ 자금세탁 방지(AML) 롤오버 */}
-      <RolloverBar t={t} />
+      {!user.local && <RolloverBar t={t} />}
 
       {/* ⛔ 시간당 출금 서킷 브레이커 */}
       <CircuitBanner t={t} used={circuit.usedUsdt} limit={CIRCUIT_LIMIT_USDT} remaining={circuit.remainingUsdt} tripped={circuit.tripped} />

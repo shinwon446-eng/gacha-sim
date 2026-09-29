@@ -1996,7 +1996,13 @@
     "transactionHistory": "Transaction history",
     "verifyCode": "Verify code",
     "transactionsUnavailable": "Deposits and withdrawals are being connected. Please check back when the service is available.",
-    "nicknameTaken": "This nickname is already in use. Choose another nickname."
+    "nicknameTaken": "This nickname is already in use. Choose another nickname.",
+    "browserAccountLabel": "Account saved in this browser",
+    "browserAccountNote": "Start now to create an account in this browser, or sign up with an email and password below.",
+    "startBrowserAccount": "Start now",
+    "browserSecurityNote": "Your authenticator settings are saved in this browser and do not sync to other devices.",
+    "browserEmailNote": "Email delivery is not connected, so the confirmation code is displayed here. Verifying it records a withdrawal request with a 72-hour hold.",
+    "browserCode": "Confirmation code: {code} (no email sent)"
   },
   "fairnessGuide": {
     "eyebrow": "Fairness · Result verification",
@@ -2154,5 +2160,15 @@
     "requestId": "Request ID",
     "unlockAt": "Eligible processing time",
     "copyFailed": "Could not copy. Select the text and copy it manually."
+  },
+  "browserWallet": {
+    "notice": "This account uses virtual balances and transaction records stored in this browser. No real payment, deposit or transfer takes place.",
+    "network": "Network",
+    "amount": "Amount to record (USDT)",
+    "invalid": "Enter 10–5,000 USDT with up to two decimal places.",
+    "processing": "Recording transaction",
+    "addUsdt": "Record USDT balance and deposit",
+    "addCard": "Record card balance and deposit",
+    "added": "Recorded {amount} USDT in your browser balance."
   }
 }

@@ -1,13 +1,24 @@
 # Account and wallet integration
 
-The GitHub Pages build contains the screens and API clients, **not an authentication,
-email, payment, or transfer server**. Unconfigured services remain unavailable;
-the UI does not create fake sessions, email deliveries, or payment approvals.
+The default GitHub Pages flow now includes browser accounts, password signup/login,
+nickname settings, Google Authenticator enrollment, and an account-scoped virtual
+wallet. There is no separate mode switch. “Start now” creates or reopens the browser
+account. Email/password accounts store a salted PBKDF2-SHA256 hash (210,000 rounds),
+not the raw password. Records and OTP secrets remain on this device and are not a
+server security boundary. No email, real payment, or on-chain transfer occurs.
+
+Without API configuration, USDT/card inputs explicitly record virtual funds in the
+ordinary wallet screens. Source balances remain separate. The email recovery screen
+displays a local confirmation code and explicitly states that no email was sent.
+Successful confirmation starts a real 72-hour local hold; expiry changes the request
+to pending processing, never a fabricated transfer or transaction hash. Reconnecting
+a production backend bypasses these browser services; local accounts and wallet
+namespaces are not promoted to verified server identities or real balances.
 
 Set `NEXT_PUBLIC_AUTH_API_BASE` and `NEXT_PUBLIC_API_BASE` at build time. The former
 serves the account/security endpoints below; the latter serves the wallet endpoints.
 The Pages workflow reads repository Actions variables with these exact names;
-set them once the backend is ready and rebuild. Empty variables keep services disabled.
+set them once the backend is ready and rebuild. Empty variables use browser accounts.
 Both services must share authenticated sessions (or securely exchange identity on
 the server). Never use a browser-supplied user ID as authentication.
 
@@ -32,7 +43,7 @@ or numbers, `_` or `-`. Enforce the same validation and uniqueness rules server-
 | POST `/account/security/totp/enable` | `{ setupId, code }` | `{ twoFactorEnabled: true, enabledAt }` |
 | POST `/account/security/totp/disable` | `{ code }` | `{ twoFactorEnabled: false, enabledAt: null }` |
 
-The setup secret is held only in the mounted enrollment screen; the active secret
+With a remote backend, the setup secret is held only in the mounted enrollment screen; the active secret
 and OTP codes are never persisted to browser storage or displayed as an autofill.
 QR codes use `otpauth://totp/`, SHA-1, six digits, and a 30-second period.
 Implement [RFC 6238](https://www.rfc-editor.org/rfc/rfc6238), encrypt secrets at rest,

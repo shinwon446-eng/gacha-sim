@@ -39,7 +39,7 @@ export async function sendWithdrawalEmail(draft: WithdrawalDraft) {
   // Backend sends only to the account's previously verified email, never an arbitrary address.
   const data = await accountRequest("/account/security/withdrawal/email", draft);
   if (typeof data.challengeId !== "string" || !data.challengeId || typeof data.emailMasked !== "string" || typeof data.expiresAt !== "number" || !Number.isFinite(data.expiresAt)) throw new AccountError("invalid");
-  return { challengeId: data.challengeId, emailMasked: data.emailMasked, expiresAt: data.expiresAt };
+  return { challengeId: data.challengeId, emailMasked: data.emailMasked, expiresAt: data.expiresAt, browserCode: typeof data.browserCode === "string" ? data.browserCode : undefined };
 }
 export async function verifyWithdrawalEmail(draft: WithdrawalDraft, challengeId: string, code: string) {
   if (!/^\d{6}$/.test(code)) throw new AccountError("invalid");

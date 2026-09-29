@@ -11,6 +11,7 @@ import { DEPOSIT_ADDRESSES, isLive } from "@/lib/runtime";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
 import { LoginRequired } from "@/components/auth/LoginRequired";
+import { BrowserFunding } from "./BrowserFunding";
 import { useWalletStore } from "@/stores/walletStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { playChime } from "@/lib/audio";
@@ -137,6 +138,7 @@ export function UsdtDepositTab({ onCredited }: { onCredited: (amountUsdt: number
   const busy = polling;
 
   if (!user) return <LoginRequired />;
+  if (user.local) return <BrowserFunding source="usdt" onCredited={onCredited} />;
 
   if (!isLive()) return <div className="rounded-xl border border-hairline bg-obsidian p-6"><ShieldAlert className="h-6 w-6 text-gold-champagne" aria-hidden="true" /><h3 className="mt-4 text-lg font-semibold text-white">{t("unavailableTitle")}</h3><p className="mt-3 max-w-2xl text-sm leading-7 text-secondary">{t("unavailableBody")}</p></div>;
 

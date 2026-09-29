@@ -6,7 +6,7 @@ import { AlertTriangle, ArrowLeft, ArrowRight, Loader2, Mail, ShieldCheck, Timer
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { Money } from "@/components/ui/Money";
-import { AccountError } from "@/lib/account";
+import { AccountError, browserAccountsEnabled } from "@/lib/account";
 import { sendWithdrawalEmail, verifyWithdrawalEmail, verifyWithdrawalOtp, type WithdrawalDraft, type WithdrawalProof } from "@/lib/security";
 import { WITHDRAW_NETWORK_BY_KEY, netReceive } from "@/lib/withdrawal";
 import { HOLD_HOURS, validEmail } from "@/lib/withdrawHold";
@@ -159,11 +159,11 @@ export function EmailHoldStep({ draft, email, onVerified, onBack }: {
   };
   return <div className={cn(panel, "mt-4")}>
     <p className="rounded-lg border border-gold-champagne/40 p-3 text-sm leading-7 text-gold-champagne">{t("holdBanner", { hours: HOLD_HOURS })}</p>
-    <p className="mt-3 text-sm leading-7 text-secondary">{t("registeredEmailOnly")}</p>
+    <p className="mt-3 text-sm leading-7 text-secondary">{browserAccountsEnabled() ? ta("browserEmailNote") : t("registeredEmailOnly")}</p>
     <p className="mt-2 break-all text-sm text-white">{email}</p>
     <button type="button" disabled={busy} onClick={() => void send()} className="mt-3 min-h-12 w-full rounded-lg bg-[#f1eee7] px-4 text-sm font-semibold text-obsidian disabled:opacity-40">{busy ? ta("processing") : t(challenge ? "emailResend" : "emailSend")}</button>
     {challenge && <form onSubmit={e => { e.preventDefault(); void verify(); }} className="mt-4">
-      <p role="status" className="text-sm text-secondary">{t("emailSentTo", { email: challenge.emailMasked })}</p>
+      <p role="status" className="text-sm text-secondary">{challenge.browserCode ? ta("browserCode", { code: challenge.browserCode }) : t("emailSentTo", { email: challenge.emailMasked })}</p>
       <label className="mt-3 block text-sm text-secondary">{t("emailCodeLabel")}<input autoFocus inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ""))} disabled={busy} className="mt-2 h-12 w-full rounded-lg border border-hairline bg-canvas px-3 font-mono tracking-widest text-white" /></label>
       <button disabled={busy || code.length !== 6} className="mt-3 min-h-12 w-full rounded-lg bg-[#f1eee7] px-4 text-sm font-semibold text-obsidian disabled:opacity-40">{ta(busy ? "processing" : "verifyCode")}</button>
     </form>}
