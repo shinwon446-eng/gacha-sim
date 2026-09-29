@@ -110,7 +110,7 @@ async function request(path: string, input?: unknown): Promise<Record<string, un
   const security = () => ({ twoFactorEnabled: Boolean(account.secret), enabledAt: account.enabledAt ?? null });
   if (path === "/account/security") return security();
   if (path === "/account/security/totp/setup") {
-    account.setup = { id: crypto.randomUUID(), secret: newTotpSecret(32) }; persist();
+    account.setup = { id: crypto.randomUUID(), secret: newTotpSecret(16) }; persist();
     return { setupId: account.setup.id, secret: account.setup.secret };
   }
   if (path === "/account/security/totp/enable") {

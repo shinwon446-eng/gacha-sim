@@ -4,8 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { AlertTriangle, ArrowLeft, ArrowRight, Loader2, Mail, ShieldCheck, Timer } from "lucide-react";
 import { cn } from "@/lib/format";
-import { useCurrency } from "@/lib/useCurrency";
-import { Money } from "@/components/ui/Money";
 import { AccountError, browserAccountsEnabled } from "@/lib/account";
 import { sendWithdrawalEmail, verifyWithdrawalEmail, verifyWithdrawalOtp, type WithdrawalDraft, type WithdrawalProof } from "@/lib/security";
 import { WITHDRAW_NETWORK_BY_KEY, netReceive } from "@/lib/withdrawal";
@@ -37,12 +35,11 @@ export function ConfirmStep({
   onNext: () => void;
 }) {
   const t = useTranslations("withdraw");
-  const { fmt } = useCurrency();
   const meta = WITHDRAW_NETWORK_BY_KEY[network];
   const net = netReceive(amountUsdt, network);
 
   return (
-    <div className={cn(panel, "mt-4")}>
+    <section aria-label={t("confirmTitle")} className={cn(panel, "mt-4")}>
       <div className="caption-luxury">{t("confirmEyebrow")}</div>
       <h3 className="mt-1 break-keep text-[15px] font-bold text-white">{t("confirmTitle")}</h3>
 
@@ -58,11 +55,11 @@ export function ConfirmStep({
         </div>
         <div className="flex items-baseline justify-between gap-4">
           <dt className="flex-none text-faint">{t("amount")}</dt>
-          <dd className="text-right font-mono text-secondary">{fmt(amountUsdt)}</dd>
+          <dd className="text-right font-mono text-secondary">{amountUsdt.toFixed(2)} USDT</dd>
         </div>
         <div className="flex items-baseline justify-between gap-4 border-b border-hairline pb-2">
           <dt className="flex-none text-faint">{t("feeLine")}</dt>
-          <dd className="text-right font-mono text-crimson">− {fmt(meta.feeUsdt)}</dd>
+          <dd className="text-right font-mono text-crimson">- {meta.feeUsdt.toFixed(2)} USDT</dd>
         </div>
       </dl>
 
@@ -70,8 +67,7 @@ export function ConfirmStep({
       <div className="mt-3 rounded-xl border border-gold-champagne/50 bg-gold-champagne/[0.08] p-3.5">
         <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gold-champagne">{t("netLabel")}</div>
         <div className="mt-1 flex items-baseline gap-2">
-          <span className="text-gold-gradient font-display text-[15px] font-black leading-none">=</span>
-          <Money value={net} size="lg" numberClassName="text-gold-gradient" />
+          <strong className="text-gold-gradient break-all font-display text-3xl font-black leading-tight tabular-nums">= {net.toFixed(2)} USDT</strong>
         </div>
       </div>
 
@@ -85,7 +81,7 @@ export function ConfirmStep({
           <ArrowRight className="h-4 w-4" strokeWidth={2.4} />
         </button>
       </div>
-    </div>
+    </section>
   );
 }
 

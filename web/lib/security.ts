@@ -11,7 +11,7 @@ function statusFrom(data: Record<string, unknown>): SecurityStatus {
 export async function getSecurityStatus() { return statusFrom(await accountRequest("/account/security")); }
 export async function beginTotpSetup() {
   const data = await accountRequest("/account/security/totp/setup", {});
-  if (typeof data.setupId !== "string" || !data.setupId || typeof data.secret !== "string" || !/^[A-Z2-7]{32,128}$/.test(data.secret)) throw new AccountError("invalid");
+  if (typeof data.setupId !== "string" || !data.setupId || typeof data.secret !== "string" || !/^[A-Z2-7]{16,128}$/.test(data.secret)) throw new AccountError("invalid");
   return { setupId: data.setupId, secret: data.secret };
 }
 export async function confirmTotpSetup(setupId: string, code: string) {

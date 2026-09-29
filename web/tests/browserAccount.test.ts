@@ -16,6 +16,7 @@ test("default browser account supports signup, password login, nickname, OTP, he
     const profile = await browserAccountRequest("/account/profile", { nickname: "MyAccount" });
     assert.equal((profile.user as { nickname: string }).nickname, "MyAccount");
     const setup = await browserAccountRequest("/account/security/totp/setup", {});
+    assert.match(String(setup.secret), /^[A-Z2-7]{16}$/);
     const code = "123456";
     const enabled = await browserAccountRequest("/account/security/totp/enable", { setupId: setup.setupId, code });
     assert.equal(enabled.twoFactorEnabled, true);

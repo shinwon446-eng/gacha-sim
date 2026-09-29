@@ -169,7 +169,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   // 1단계 관문 — Google OTP(2FA) 등록 여부
   const twoFactorEnabled = useSecurityStore((s) => s.twoFactorEnabled);
   const user = useAuthStore(s => s.user);
-  const securityReady = useSecurityStore(s => s.hydrated);
+  const securityReady = useSecurityStore(s => s.hydrated && s.userId === user?.id);
   const securityError = useSecurityStore(s => s.error);
   const ta = useTranslations("account");
   const ts = useTranslations("security");
@@ -178,8 +178,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   const requestId = useRef<string>("");
   const requestDraft = useRef<string>("");
   const [emailOnly, setEmailOnly] = useState(false);
-  useEffect(() => { setStage({ kind: "form" }); setSetupOpen(false); setEmailOnly(false); }, [user?.id]);
-  const [setupOpen, setSetupOpen] = useState(false);
+  useEffect(() => { setStage({ kind: "form" }); setEmailOnly(false); }, [user?.id]);
   const [copied, setCopied] = useState<string | null>(null);
 
   const [network, setNetwork] = useState<Network>("TRC20");
@@ -303,18 +302,8 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
             <h3 className="break-keep text-[15px] font-bold text-white">{t("gateTitle")}</h3>
           </div>
           <p className="mt-1.5 break-keep text-xs leading-relaxed text-secondary">{t("gateBody")}</p>
-          {!setupOpen && (
-            <button
-              type="button"
-              onClick={() => setSetupOpen(true)}
-              className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#f1eee7] px-4 text-sm font-bold text-obsidian transition-colors hover:bg-gold-metallic"
-            >
-              <ShieldCheck className="h-4 w-4" strokeWidth={2.4} />
-              {t("gateCta")}
-            </button>
-          )}
         </div>
-        {setupOpen && <TwoFactorSetup key={user.id} onEnabled={() => setSetupOpen(false)} compact />}
+        <TwoFactorSetup key={user.id} autoStart onEnabled={() => setStage({ kind: "form" })} compact />
         <button type="button" onClick={() => setEmailOnly(true)} className="mt-3 min-h-12 w-full rounded-lg border border-hairline px-3 text-sm text-gold-champagne">{t("otpFallback", { hours: HOLD_HOURS })}</button>
       </div>
     );

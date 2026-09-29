@@ -22,9 +22,9 @@ test("security and nickname clients require validated server responses and bind 
     assert.equal((await account.updateAccountNickname(" Alice ")).nickname, "Alice");
     assert.deepEqual(posted, { nickname: "Alice" });
     await assert.rejects(account.updateAccountNickname("!"));
-    response = { setupId: "setup-1", secret: "A".repeat(16) };
+    response = { setupId: "setup-1", secret: "A".repeat(15) };
     await assert.rejects(security.beginTotpSetup());
-    response = { setupId: "setup-1", secret: "A".repeat(32) };
+    response = { setupId: "setup-1", secret: "A".repeat(16) };
     assert.equal((await security.beginTotpSetup()).setupId, "setup-1");
     response = { twoFactorEnabled: true, enabledAt: user.createdAt };
     assert.equal((await security.confirmTotpSetup("setup-1", "123456")).twoFactorEnabled, true);

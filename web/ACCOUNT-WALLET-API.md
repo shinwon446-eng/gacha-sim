@@ -58,7 +58,7 @@ or numbers, `_` or `-`. Enforce the same validation and uniqueness rules server-
 | POST `/auth/oauth/start` | `{ provider: "google"\|"apple"\|"microsoft", returnTo }` | `{ redirectUrl }` |
 | POST `/account/profile` | `{ nickname }` | `{ user }` with the saved nickname |
 | GET `/account/security` | — | `{ twoFactorEnabled, enabledAt: ISO-string-or-null }` |
-| POST `/account/security/totp/setup` | `{}` | `{ setupId, secret }` (Base32, at least 160 bits) |
+| POST `/account/security/totp/setup` | `{}` | `{ setupId, secret }` (16-character Base32 key for new setups; existing longer keys remain supported) |
 | POST `/account/security/totp/enable` | `{ setupId, code }` | `{ twoFactorEnabled: true, enabledAt }` |
 | POST `/account/security/totp/disable` | `{ code }` | `{ twoFactorEnabled: false, enabledAt: null }` |
 
