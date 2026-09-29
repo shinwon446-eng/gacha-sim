@@ -18,6 +18,7 @@ import { isLive } from "@/lib/runtime";
 import { api } from "@/lib/api";
 import { useFairStore } from "@/stores/fairStore";
 import { Money } from "@/components/ui/Money";
+import { PolicyNotice } from "@/components/legal/PolicyNotice";
 
 /** 온체인 전송 준비 연출 길이(ms) — 이 동안 신청서를 만들고, 실제 브로드캐스트는 백엔드가 한다 */
 const SUBMIT_MS = 1500;
@@ -269,6 +270,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
   if (stage.kind === "done") {
     return (
       <div className="border-metallic-subtle mt-4 rounded-lg bg-obsidian p-4">
+        <PolicyNotice />
         <div className="flex items-center justify-between">
           <span className="caption-luxury">{t("requested")}</span>
           <StatusPill status={liveStatus ?? "PENDING"} t={t} />
@@ -345,6 +347,7 @@ export function WithdrawTab({ onRequested, onBlocked, onDone }: WithdrawTabProps
 
   return (
     <>
+      <PolicyNotice />
       {/* 출금 가능액은 암호화폐 입금분만 — 카드 충전분은 온체인 출금 불가 (CLAUDE.md §7-B) */}
       <div className="mt-2 grid gap-1.5">
         <div className="flex items-baseline justify-between gap-3">

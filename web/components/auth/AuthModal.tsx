@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useModal } from "@/lib/useModal";
+import { PolicyNotice } from "@/components/legal/PolicyNotice";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import { Loader2, Smartphone, X, Zap } from "lucide-react";
@@ -338,6 +339,7 @@ export function AuthModal() {
             </button>
 
             {/* 공급자 미연결 — 잔액이 이 브라우저에만 있다는 사실을 숨기지 않는다 */}
+            <PolicyNotice kind="account" />
             {showLocalNote && <p className="mt-3 break-keep text-center text-xs leading-relaxed text-faint">{t("localNote")}</p>}
           </motion.div>
         </motion.div>

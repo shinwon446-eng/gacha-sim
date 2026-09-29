@@ -261,25 +261,25 @@
     "detailHint": "Apt 1004",
     "unipass": "Get one on UNI-PASS",
     "pcccHint": "13 characters starting with P (required for high-value customs clearance in Korea)",
-    "guaranteeAuthTitle": "🛡️ 100% authentic — expert appraisal",
-    "guaranteeAuthBody": "Every item is inspected by a professional authentication house before dispatch. If an item is found counterfeit we pay 300% of its value (operator policy).",
-    "guaranteeCarrierTitle": "📦 Korea Post · CJ Logistics express",
-    "guaranteeCarrierBody": "Domestic shipments go out with Korea Post / CJ Logistics, international with DHL / FedEx. Live tracking opens as soon as the waybill is issued.",
-    "guaranteeCarrierBodyFree": "Korea Post / CJ Logistics domestically, DHL / FedEx worldwide. Free-shipping event applied — 0.00 USDT.",
-    "guaranteeInsuranceTitle": "🔒 Insured automatically",
-    "guaranteeInsuranceBody": "If an item is damaged or lost in transit we reship it or compensate 100% in USDT (operator policy).",
+    "guaranteeAuthTitle": "Product details & authenticity",
+    "guaranteeAuthBody": "Inspection providers and enhanced compensation terms will be settled before launch. Statutory counterfeit/defect remedies remain separate.",
+    "guaranteeCarrierTitle": "Shipping & customs charges",
+    "guaranteeCarrierBody": "Actual carrier, freight and customs terms must be finalized before launch and disclosed before ordering.",
+    "guaranteeCarrierBodyFree": "This screen models free shipping. Actual destinations and tax responsibility must be disclosed before ordering.",
+    "guaranteeInsuranceTitle": "Loss, damage & refunds",
+    "guaranteeInsuranceBody": "Applicable redelivery/refund remedies depend on responsibility and evidence. This does not claim an insurance contract exists.",
     "fee": "Shipping fee",
     "freeEvent": "Free shipping event",
     "submit": "🚚 Ship it — {fee}",
     "inspecting": "Submitting for appraisal…",
     "doneTitle": "Shipping request received!",
-    "doneBody": "After the appraisal, an insured express waybill is issued within 24 hours. Tracking opens in your vault the moment it exists.",
+    "doneBody": "Delivery request flow reviewed. No actual dispatch or tracking label is issued at this stage.",
     "waybill": "Waybill",
-    "waybillPending": "Preparing dispatch · issued within 24h",
+    "waybillPending": "Delivery design review · not dispatched",
     "waybillNote": "Only waybill numbers actually issued by the carrier are shown — no tracking link appears before then.",
     "tickerTitle": "📦 Shipment status",
     "tickerFree": "Free-shipping event — 0.00 USDT domestically",
-    "tickerAuth": "Expert authentication before dispatch · 300% if a counterfeit is found",
+    "tickerAuth": "Inspection, delivery and compensation terms are pending",
     "tickerInsured": "Shipping insurance included — reship or USDT compensation",
     "doneCta": "Done"
   },
@@ -542,7 +542,7 @@
     "sessionLeft": "{time} left",
     "sessionExpired": "Session expired",
     "sessionRenew": "🔄 Start a new session",
-    "graceNote": "Note: even after the 30-minute timer expires, a normal deposit that reaches the blockchain within 72 hours is still credited to your account automatically.",
+    "graceNote": "Timer expiry does not erase funds. Real deposit credit requires verification; automatic handling within 72 hours is not guaranteed.",
     "dustWarn": "Minimum deposit: {min} (transfers below {min} need manual review because of gas-fee policy)",
     "guideMin": "Minimum deposit {min}",
     "guideConfirm": "Credited automatically after {n} block confirmations",
@@ -912,12 +912,12 @@
     "done": "Done",
     "history": "Recent withdrawals",
     "reviewTitle": "PENDING_ADMIN_REVIEW · security review",
-    "reviewNote": "Under our security policy an administrator approves the transfer within 24 hours, after which it is broadcast on-chain.",
+    "reviewNote": "Review timing is not yet established. Live operations must provide delay reasons and status updates.",
     "riskScore": "Risk score {score} (auto-approval below {threshold})",
     "circuitTitle": "Hourly automatic withdrawal limit",
     "circuitNote": "{remaining} left of the {limit} hourly limit — beyond it, hot-wallet automation stops and every withdrawal switches to manual approval.",
     "circuitTripped": "⛔ Circuit breaker engaged — automatic withdrawals paused",
-    "circuitTrippedNote": "Hourly withdrawals exceeded the limit, so hot-wallet automation is paused. Requests accepted now are settled by manual approval (funds stay safe).",
+    "circuitTrippedNote": "Automatic withdrawal restriction design. Actual review and custody controls require implementation and verification.",
     "status": {
       "PENDING": "Pending",
       "PENDING_ADMIN_REVIEW": "Security review",
@@ -936,20 +936,20 @@
       "nan": "Enter an amount"
     },
     "processingNote": "Withdrawals are signed and broadcast after a security review. The TxID and explorer link appear here once complete.",
-    "networkNote": "Withdrawals are sent to the blockchain network as soon as they are requested, and the on-chain transaction can be viewed live on TronScan / BscScan.",
+    "networkNote": "A request is not a transfer. A TxID is provided only after an actual broadcast. Currently at design review stage.",
     "requestedToast": "Withdrawal submitted — {amount} deducted",
     "quick25": "+25%",
     "quick50": "+50%",
     "quickMax": "Withdraw all",
-    "submitAmount": "🚀 Withdraw {amount} to my wallet",
+    "submitAmount": "Review {amount} withdrawal request",
     "submitting": "Preparing the on-chain transfer…",
     "amlTitle": "🛡️ Safe withdrawal usage rule",
-    "amlRule": "Withdraw as soon as you have used 100% of what you topped up",
+    "amlRule": "Purchase-usage design · applicability under review",
     "amlProgress": "Currently {pct}%",
-    "amlRemaining": "Open {amount} more in boxes and you can withdraw right away",
-    "amlMet": "✓ Usage rule met (withdraw now)",
-    "amlBlocked": "Under our safe-trading rule, withdrawals unlock once you have used 100% of your top-up. (Currently: {pct}%)",
-    "amlWhy": "This blocks scam and phishing funds from being deposited and pulled straight back out. Balances with no deposit history are not affected.",
+    "amlRemaining": "Design shortfall: {amount} · not a request to buy more",
+    "amlMet": "Design usage threshold met · not withdrawal approval",
+    "amlBlocked": "Design usage threshold not met ({pct}%). Unused-fund returns and statutory refunds require separate handling.",
+    "amlWhy": "This is an internal design, not a statutory requirement. Unused funds and statutory refunds need a route without forced additional purchases.",
     "amlDeposited": "Total topped up",
     "amlWagered": "Total spent on boxes",
     "amlRequired": "Usage required",
@@ -970,106 +970,426 @@
       "verifier": "Fairness verifier",
       "terms": "Terms of Service",
       "privacy": "Privacy Policy",
-      "policy": "Shipping & 95% payback policy",
+      "policy": "Delivery, products & resale",
       "faq": "FAQ",
-      "telegram": "Telegram 24/7 live support",
+      "telegram": "Telegram",
       "discord": "Official Discord",
       "notice": "Announcements"
     },
     "disclaimer": "VOILA is a global e-commerce mystery box platform. Every opening result is published transparently through a tamper-proof SHA-256 algorithm, and every winning item is guaranteed to ship free as a genuine physical product or to pay back 95% instantly."
   },
   "legalDocs": {
-    "eyebrow": "Help & Policies",
-    "updated": "Last updated September 18, 2026",
     "terms": {
-      "title": "Terms of Service",
+      "title": "Terms of service",
+      "summary": "Contract formation, accounts, changes, service closure and user rights.",
       "sections": [
         {
-          "h": "1. The service",
-          "p": "VOILA sells mystery boxes with fully published odds and either ships the winning item or cashes it out instantly at 95% of market value in USDT."
+          "h": "Scope and current status",
+          "p": "These are draft transaction terms for a planned service. The public interface is for design review and does not announce live sales, custody, withdrawals or delivery. Final terms and their effective date will be published after the operator, territories, required reviews and implementation are settled. Separate privacy and storage notices explain current visitor data handling."
         },
         {
-          "h": "2. Account and balance",
-          "p": "Balances are held in USDT. Top-ups, withdrawals, openings and paybacks are recorded as transactions and used for nothing other than purchases and withdrawals."
+          "h": "Contracting party and territories",
+          "p": "VOILA is a service name, not proof of legal incorporation or licensing. The contracting entity, representative, address, contacts and relevant registrations must be disclosed. Languages, currencies and destination lists do not establish permission to serve a country. Launch is limited to territories where the proposed model has been cleared."
         },
         {
-          "h": "3. Odds and fairness",
-          "p": "Every box publishes its per-item odds before opening. Results are fixed by a server seed hash published in advance and the user's client seed, and anyone can reproduce and verify them."
+          "h": "Eligibility and account protection",
+          "p": "Transaction age, identity and residency requirements must be set for each territory and disclosed before registration. No real trading is offered before then. Identity misuse, unauthorized payment methods, account transfers and account theft are prohibited. Compromise reports require proportionate restrictions and recovery support without automatically transferring all losses to the user."
         },
         {
-          "h": "4. Cancellation and refunds",
-          "p": "A box cannot be cancelled once opening starts. Any winning item can be sold back at 95% or shipped at any time."
+          "h": "Orders, confirmation and assent",
+          "p": "Before ordering, users must be able to review and correct price, quantity, total, odds, product description, delivery and refund conditions. Contract acceptance and payment confirmation must be distinguished, with order records and the applicable terms version available. Terms assent is separate from optional marketing and any required privacy consents. Browsing or preselected boxes do not establish required consent."
         },
         {
-          "h": "5. Responsibility",
-          "p": "Users are responsible for complying with local law. In case of a service failure balances are restored from the transaction record."
+          "h": "Balances, values and distinct rights",
+          "p": "USDT units, indicative fiat conversions and product valuations are distinct. The legal nature, custodian and protection of balances remain launch decisions; no deposit guarantee, principal guarantee or return is promised. Item resale, unused-funds return, statutory withdrawal from a purchase, defect remedies and wallet withdrawals are separate processes. A resale percentage must not be applied indiscriminately to statutory refunds."
+        },
+        {
+          "h": "Outages and transaction errors",
+          "p": "Duplicate charges, missing results after debits, incorrect prices or odds and inconsistent records require reconciliation and an explanation of correction. Results or payouts must not be changed merely to favor the operator. Exploited duplicate credits may be corrected lawfully with evidence and an appeal opportunity. Closing a page or reconnecting must not extinguish a valid transaction."
+        },
+        {
+          "h": "Restrictions and termination",
+          "p": "Restrictions for abuse, sanctions or security incidents must be necessary and proportionate, with reasons, scope and review options where disclosure is permitted. Account closure, inactivity or a breach must not automatically forfeit legitimate balances, goods or refund claims. Pending payments, delivery and disputes require separate handling; data is deleted except for justified legal retention."
+        },
+        {
+          "h": "Changes and service closure",
+          "p": "Final operating terms must specify change reasons, notice periods, changes requiring assent and options on refusal. Adverse changes cannot be retroactively imposed on completed transactions or replace required consent with a notice. Suspension or closure requires stopping new transactions as appropriate and publishing a plan for orders, remaining funds, goods, refunds and claims."
+        },
+        {
+          "h": "Liability, governing law and disputes",
+          "p": "Intentional misconduct, gross negligence and non-excludable statutory liability cannot be disclaimed. Users must not face unfair evidential burdens, excessive damages or one-sided exclusive jurisdiction. Governing law and venue require territorial review without displacing mandatory consumer rights or lawful access to courts. Translation discrepancies should be explained and corrected, not used to override statutory rights."
+        }
+      ]
+    },
+    "payments": {
+      "title": "Deposits & payments",
+      "summary": "Supported assets, mistaken transfers, card payments and balance credits.",
+      "sections": [
+        {
+          "h": "Real deposits are not open",
+          "p": "This design stage has no confirmed operating wallets, processors or real-transaction territories. Screen illustrations are not deposit requests. Do not send funds until an official deposit flow verifies the address, network, asset and conditions for your own account. Do not use addresses sent by messages or accounts claiming to be support."
+        },
+        {
+          "h": "Networks and minimum amount",
+          "p": "The design lists USDT deposits over TRC-20, BEP-20 and ERC-20 with a displayed minimum of {minDeposit} USDT. Launch conditions remain to be confirmed. Similar address formats do not imply the same network or token contract. Check sender support, the amount arriving after sender fees and any required memo."
+        },
+        {
+          "h": "Confirmation, crediting and timers",
+          "p": "A sent button or screenshot does not confirm a deposit. Chain transaction, recipient, asset, amount and finality must be reconciled before a single ledger credit. A session timer expiring does not erase funds, and automatic credit within 72 hours is not guaranteed. Delays, reorganizations and address changes need defined handling and status tracking before launch."
+        },
+        {
+          "h": "Mistaken, small, duplicate or excess transfers",
+          "p": "Wrong networks, tokens, addresses, missing memos, below-minimum, duplicate and excess transfers require individual investigation using transaction IDs and ownership evidence. Recovery may be technically impossible, but responsibility is not automatically assigned entirely to the user. Explain feasibility, timing and actual costs first; no arbitrary recovery fee or additional deposit may be imposed as a recovery condition."
+        },
+        {
+          "h": "Card authorization and refunds",
+          "p": "Card payments require a processor agreement and verified server-side authorization. Before payment disclose billing currency, amount, tax, fees and conversion basis, then provide an authorization result and receipt. 3D Secure does not eliminate all dispute liability. Full card numbers and security codes must not be kept in ordinary support channels or service storage. Refunds should normally return to the original payment method."
+        },
+        {
+          "h": "Funding sources and mixed balances",
+          "p": "The design separates card-funded and crypto-funded balances and allocates resale proceeds from mixed purchases by funding ratio. Card-origin funds are not paid out to an external crypto wallet. This must not justify refusing statutory cancellation or refunds, or requiring another purchase. Actual ledger records, refund routes and displayed balances require implementation and verification."
+        },
+        {
+          "h": "Failures, duplicate charges and unauthorized payments",
+          "p": "For failed, pending or duplicate charges, check the original transaction instead of encouraging repeated payment. Preserve card dispute and chargeback rights and provide relevant records. Stolen or unauthorized payments require fact-finding and applicable processor/legal procedures without automatically forfeiting unrelated legitimate assets."
+        },
+        {
+          "h": "Conversion and asset risk",
+          "p": "USDT is not fiat money or a bank deposit and carries depegging, issuer-freeze and network risks. Indicative conversions do not guarantee execution or refund rates. Quote validity, rounding and fees must be disclosed before ordering; newly introduced charges must not be retroactively applied to authorized transactions."
+        }
+      ]
+    },
+    "withdrawals": {
+      "title": "Withdrawals & unused funds",
+      "summary": "Limits, fees, reviews, wrong transfers and remedies for blocked withdrawals.",
+      "sections": [
+        {
+          "h": "Withdrawals versus refunds",
+          "p": "External payout of a product-related balance differs from returning unused deposits or statutory refunds. Card funds follow the original-payment cancellation/refund route. Requiring additional box purchases to recover unused funds or statutory refunds is not an approved operating condition; the existing purchase-usage screen remains a design under review."
+        },
+        {
+          "h": "Networks, minimums and costs",
+          "p": "The current design minimum for ordinary withdrawals is {minWithdraw} USDT, with fees of {trcFee} USDT on TRC-20 and {bepFee} USDT on BEP-20. Fees are deducted from the requested amount and the net amount must be displayed. ERC-20 is not a withdrawal option. These are not launch terms; minimums alone must not defeat statutory refunds or remaining-funds claims on closure."
+        },
+        {
+          "h": "Address checks and broadcast",
+          "p": "Users must be able to verify recipient network, asset, address and any memo. Format validation does not prove ownership or receivability. Provide final confirmation and explain when cancellation ceases to be possible. A broadcast may be irreversible; an explorer link must only be shown for an actual transaction ID."
+        },
+        {
+          "h": "Identity checks and further review",
+          "p": "The design may restrict affected transactions while checking account compromise, reversals, sanctions, funding sources or lawful requests. Provide the applicable reason, necessary evidence, estimated review time, status and appeal route except where disclosure is legally prohibited. A risk score is a signal, not proof of wrongdoing. Explanations and human review of automated decisions must be available as required."
+        },
+        {
+          "h": "Delays, failures and balance restoration",
+          "p": "Distinguish received, under review, broadcast and completed states; approval within 24 hours or instant transfer is not guaranteed. Operations must explain delays and the next update time. On failure or cancellation, reconcile the chain before releasing or returning reserved funds without duplicate payment, and define fees so non-incurred network costs are not charged."
+        },
+        {
+          "h": "Unused funds, small balances and closure",
+          "p": "A return-request route is needed even below normal withdrawal minimums, during restrictions or at service closure. After identity and funding checks, explain an allowed original-payment or alternative return method, actual costs and deadline. Do not require another deposit, a separate advance tax transfer or another product purchase to release funds."
+        },
+        {
+          "h": "Appealing a restriction",
+          "p": "The dispute route should accept transaction ID, time, amount, network and relevant notices. Never request private keys, recovery phrases or full card details. Lawful preservation or freezing orders require legally appropriate scope and duration; restricted funds are not operator revenue. The formal intake channel has not yet opened."
         }
       ]
     },
     "privacy": {
-      "title": "Privacy Policy",
+      "title": "Privacy notice & draft policy",
+      "summary": "Current browser/hosting data handling and privacy decisions required before launch.",
       "sections": [
         {
-          "h": "1. What we collect",
-          "p": "Recipient name, phone, address and customs identifier for shipping; wallet address for withdrawals; transaction identifiers for payments. Card details are handled by the payment processor and never stored by us."
+          "h": "Current notice versus future policy",
+          "p": "This notice distinguishes observed processing from launch plans. Public pages use GitHub Pages hosting and browser storage for settings and some activity. The operating data controller, privacy lead and rights contact are unconfirmed, so this is not a completed statutory policy. Do not enter real identity, payment or delivery data."
         },
         {
-          "h": "2. Why",
-          "p": "Only for shipping, withdrawals, fraud prevention and support."
+          "h": "Information currently stored on your device",
+          "p": "Depending on features used, browser storage may retain language/currency/audio settings, local login label/provider/time, balances and activity, inventory and delivery details, fairness seeds/counters, free-box history, review text/photos and recent opening times. The login label masks a phone number; delivery input is separate. Logging out does not clear other records, and deleting browser data may be irreversible."
         },
         {
-          "h": "3. Retention",
-          "p": "Kept for the period required by law after shipping or withdrawal completes, then deleted without delay."
+          "h": "Hosting and external services",
+          "p": "GitHub states that Pages visits generate security IP logs. It would be inaccurate to claim that no visitor data is processed. External explorer, customs or support links may disclose connection data to their destinations. Product photos and fonts are currently served with the site. Actual processors/recipients, countries, retention and international-transfer grounds must be mapped and individually disclosed before launch."
         },
         {
-          "h": "4. Third parties",
-          "p": "Only the minimum needed is shared with carriers (shipping) and payment processors (payments)."
+          "h": "Planned categories, purposes and grounds",
+          "p": "Planned categories are account identifiers/contact/verification for account operation; payment IDs, amounts, funding and status for orders and required records; wallet/network/transaction IDs for transfers; recipient/contact/address/minimum customs data for delivery; and claim content/evidence for disputes. Each needs a confirmed legal ground, required/optional status, refusal consequence and retention period before collection. Identity documents must not be collected indiscriminately or repurposed for marketing."
         },
         {
-          "h": "5. Your rights",
-          "p": "You can request access, correction or deletion at any time through support."
+          "h": "Sensitive, identity and card data",
+          "p": "Sensitive data and legally regulated identifiers require an appropriate separate basis and stronger safeguards. Consent alone is not assumed sufficient for a Korean resident registration number. Customs identifiers, passports and foreign IDs must not be collected before necessity and lawful handling are confirmed. Future card entry should use processor-controlled fields without raw card or security-code storage in ordinary logs or browser persistence."
+        },
+        {
+          "h": "Retention and deletion",
+          "p": "Current local storage has no universal automatic expiry and may remain until removed by the user or browser. Launch needs purpose-completion/account-closure deletion distinguished from legal retention. Where Korean e-commerce rules apply, review six-month advertising records, five-year contract/cancellation and payment/supply records, and three-year consumer complaint/dispute records. Retain only justified records separately, restrict use, securely delete electronic data and destroy paper. These periods do not apply to all personal data indiscriminately."
+        },
+        {
+          "h": "Processors, disclosures and international transfers",
+          "p": "Distinguish processors from independent recipient disclosures. Identify actual entities, tasks/purposes, data, retention, subprocessors and oversight. International transfers need recipient/contact, country, timing/method, categories, purpose, duration, refusal options/effects and a lawful basis. Reading this notice is not blanket consent. Before public-chain transfers, disclose that third parties can inspect chain records and on-chain deletion is limited."
+        },
+        {
+          "h": "Rights requests and children",
+          "p": "Implement applicable access, correction/deletion, restriction, consent withdrawal, applicable transmission rights and authorized-agent procedures. Use minimal identity evidence and explain refusals and appeals. The formal privacy-request channel is unconfirmed; the interface must not simulate successful submission. A children-directed service is not established; any Korean processing of under-14 data requires applicable guardian and other protections first."
+        },
+        {
+          "h": "Automated decisions, device signals and optional data",
+          "p": "Withdrawal risk design uses timing, amounts and behavior; country mismatch should only use actual server evidence. A fingerprint utility existing in code does not prove current invocation or transfer. Before introduction disclose purpose, signals, retention and effects; hashes may still be personal data. Implement applicable rights concerning automated decisions, including refusal, explanation and review, and keep optional analytics/advertising off unless appropriately chosen."
+        },
+        {
+          "h": "Safeguards, incidents and changes",
+          "p": "Least-privilege access, transit/storage protection, access logs, backup/recovery and deletion controls require real implementation and verification. Do not claim unverified PCI-DSS or security certification. Establish incident containment, investigation, mitigation and required notification/reporting with named contacts. Disclose changed purposes, categories or providers before implementation and obtain consent where required. Applicable privacy regulators and dispute-resolution bodies remain available."
+        }
+      ]
+    },
+    "refunds": {
+      "title": "Cancellation & refunds",
+      "summary": "Separate remedies for unopened orders, delivered results, defects and unused funds.",
+      "sections": [
+        {
+          "h": "Statutory refunds differ from resale",
+          "p": "Choosing to resell an inventory item at a stated percentage does not replace statutory cancellation or defect remedies. Do not automatically deduct 5% for valid cancellation/non-performance or force repayment only in points or USDT. Applicable law determines refund scope, method and timing, while more favorable contractual rights remain."
+        },
+        {
+          "h": "Withdrawal rights in Korean consumer transactions",
+          "p": "Where Article 17 of the Korean E-Commerce Act applies, the ordinary period is seven days after receipt of written contract information, with statutory rules moving the start to later supply or commencement where applicable. Nonconformity with advertising or contract engages the separate three-month-from-supply and thirty-day-from-awareness rules. Apply the statutory starting points and exceptions rather than treating one period as universal across countries and products."
+        },
+        {
+          "h": "Before/after opening and digital delivery",
+          "p": "Paid orders without commenced results, duplicate charges and erroneous debits need cancellation/correction after verification. Clicking a button does not remove all statutory rights. Any restriction following digital supply requires the correct legal classification and all applicable conditions, such as advance notice, separate consent or trial access. The treatment of chance-based products needs specific pre-launch review."
+        },
+        {
+          "h": "Defects, wrong delivery and non-supply",
+          "p": "Defects, counterfeits, misdescription, transit damage/loss, missing delivery and stock failure are distinct from a change of mind. Verify with order/product information, photos or reasonable alternatives and provide applicable replacement, redelivery, reduction, cancellation or refund. Lack of an unboxing video or use of a different contact route must not automatically defeat statutory rights."
+        },
+        {
+          "h": "Return costs and refund timing",
+          "p": "Distinguish change-of-mind return costs from seller-fault costs; do not add arbitrary cancellation penalties. Where Article 18 of the Korean E-Commerce Act applies, follow the three-business-day refund rule from the applicable trigger, including goods returned or withdrawal for services/digital content or unsupplied goods, and applicable delay compensation. Distinguish initiating a card refund from the issuer posting it."
+        },
+        {
+          "h": "Request details and original-payment return",
+          "p": "The request channel will be published when official support opens. Basic details are order/transaction ID, an identity-verification method, the requested remedy/reason and necessary evidence, never full card numbers or private keys. Cash, card, crypto and mixed payments require source-aware return routes and explanations of any relevant conversion or fees. Problems with the original sale must not be diverted into resale."
+        },
+        {
+          "h": "Refusals and appeals",
+          "p": "A refusal based on an exception, use or consumer fault needs legal and factual grounds and a review route. Internal review cannot arbitrarily shorten legal claim periods or become the only allowed remedy. Reconcile duplicate goods/refund issues from records without arbitrarily deducting unrelated legitimate balances."
         }
       ]
     },
     "policy": {
-      "title": "Shipping & 95% Cash-Out Policy",
+      "title": "Delivery, products & resale",
+      "summary": "Physical/digital items, shipping, customs, valuations and remedies.",
       "sections": [
         {
-          "h": "1. Instant payback",
-          "p": "Any item in your vault pays back 95% of market value in USDT right away, credited to your balance immediately."
+          "h": "Product types and fulfillment",
+          "p": "Physical goods, digital codes and balance results have different fulfillment methods. Disclose exact model/specification/condition/contents, regional restrictions, delivery eligibility and digital expiry before ordering. Collection photography does not establish the delivered SKU. Vehicles and high-value regulated items require registration, insurance, age/import rules and responsible parties to be settled before sale."
         },
         {
-          "h": "2. Physical shipping",
-          "p": "International shipping is deducted from your balance on request; destination duties and VAT are paid on delivery. Korea ships via CJ Logistics, international via DHL/FedEx, and the tracking number appears in your vault once issued."
+          "h": "Shipping, taxes and regional restrictions",
+          "p": "Current screens model free shipping; real destinations and contracted carriers are unconfirmed. Free shipping does not mean customs or VAT exemption. Before ordering disclose dispatch origin, eligible destinations, freight/remote-area charges, tax responsibility and import conditions. Do not introduce later fees without agreement or unilaterally replace an unavailable product."
         },
         {
-          "h": "3. Withdrawals",
-          "p": "USDT withdrawals run on TRC-20 (1.00 USDT fee) or BEP-20 (0.80 USDT fee) with a 20 USDT minimum. The TxID and explorer link are provided after broadcast."
+          "h": "Requests, dispatch and tracking",
+          "p": "Provide a chance to correct recipient and item details before requesting delivery. Post-dispatch address changes depend on actual carrier conditions and costs, with assistance where possible. No 24-hour dispatch or specific carrier label is guaranteed before contracts and stock are confirmed. Show only genuine tracking numbers and explain delays, estimated timing and cancellation/refund options."
         },
         {
-          "h": "4. Floor value guarantee",
-          "p": "The lowest item in every box pays back at least 80% of the box price."
+          "h": "Returns, loss, damage and authenticity",
+          "p": "Seller-fault, loss, damage and suspected counterfeits require investigation and applicable remedies under the refund policy. An inspection body and enhanced compensation terms are unconfirmed, so 300% compensation is not presented as an established operating promise. This draft does not retroactively diminish any valid existing commitment or statutory right. Publish the return address, method and cost allocation before launch."
+        },
+        {
+          "h": "Resale values and confirming a choice",
+          "p": "The design applies 95% to the displayed valuation of physical/digital items and the full displayed amount to balance results. This is not a 95% refund of purchase price or principal protection. Disclose valuation source/time, condition, currency and actual resale amount before confirmation. Avoid simultaneous delivery and resale while retaining separate error, non-performance and statutory remedies."
+        },
+        {
+          "h": "Digital codes, non-receipt and storage",
+          "p": "Digital codes need territory/device/expiry details and investigation procedures for invalid or previously used codes, with withdrawal conditions disclosed before release. Long-unclaimed or undeliverable goods require reasonable contact and alternatives, not automatic forfeiture after an arbitrary short deadline. Any storage duration or fee must be disclosed before purchase and respect statutory rights."
+        }
+      ]
+    },
+    "fairness": {
+      "title": "Odds, product information & fairness",
+      "summary": "Published odds, result verification and the limits of visual effects and rewards.",
+      "sections": [
+        {
+          "h": "Pre-purchase disclosures",
+          "p": "Before purchase disclose price, contents, tiers, exact per-item odds, minimum result and displayed valuation. Rare-item imagery must not misrepresent likelihood. Distinguish purchase price, valuation, resale amount and externally withdrawable funds, with actual item, stock and delivery eligibility available."
+        },
+        {
+          "h": "Results and expected values",
+          "p": "An expected value or minimum result does not guarantee individual profit or principal. Do not imply past outcomes improve the next outcome or guarantee a particular item. Any conditional odds feature or promotion needs separate disclosure of eligibility, odds, duration, end conditions and cost."
+        },
+        {
+          "h": "What verification proves",
+          "p": "Current verification checks consistency between disclosed inputs and calculations. Recomputing browser-generated/stored data is not an independent audit, proof of server secrecy, solvency or certification of the entire process. Live operations require commitments before outcomes, secure server randomness/seed handling, per-order records and independently verifiable procedures."
+        },
+        {
+          "h": "Visual effects and free use",
+          "p": "Reel movement, neighboring items, near stops and reveal effects are presentation, not evidence of odds or other users winning. Free preview results do not entitle users to products or cash. Daily boxes and review bonuses are also design-stage features, not established reward claims. Real promotions require separately published terms."
+        },
+        {
+          "h": "Odds changes and errors",
+          "p": "Preserve odds, price, contents and policy version for each order; do not change them after a result. Differences between disclosed and applied conditions, duplicate charges and missing results need investigation and remedies. Published odds and cryptography do not authorize operations in a jurisdiction. Chance products, prizes, resale and crypto payout require separate classification and any necessary permissions before launch."
+        }
+      ]
+    },
+    "safety": {
+      "title": "Restrictions, security & user protection",
+      "summary": "Eligibility, ownership checks, abuse review and excessive-use protection.",
+      "sections": [
+        {
+          "h": "Country, age and eligibility",
+          "p": "Eligible countries, minimum age, residency and identity rules are pending. Both operator and user jurisdictions require review. The launch criterion is to complete necessary licensing/registration and age/location verification before real transactions. Language choices or user responsibility statements do not replace these obligations."
+        },
+        {
+          "h": "Prohibited acts and proportionate restrictions",
+          "p": "Rules should prohibit identity/payment theft, concealed funding, sanctions evasion, multi-account reward abuse, manipulation, exploit abuse, malicious automation and exposing others data. Accessibility tools or a network change alone are not proof of abuse. Restrictions need evidence, scope, duration and review while preserving unrelated legitimate transaction rights."
+        },
+        {
+          "h": "Funding checks and legal obligations",
+          "p": "AML, sanctions and travel-rule scope depends on actual legal status, transaction type and applicable law. Internal risk scores or purchase-usage requirements are not represented as legal mandates. Requiring purchases is not a substitute for identity/source checks or original-funds return. Collect only necessary information securely and review any applicable financial-intelligence registration obligations before launch."
+        },
+        {
+          "h": "Risk assessment, holds and review",
+          "p": "Further review needs defined evidence, submission channels, discloseable reasons, review intervals and an accountable team. A payment hold is not forfeiture. Provide human review and appeals for false positives, including mistaken identity on sanctions checks; indefinite restrictions beyond lawful grounds must not be the default."
+        },
+        {
+          "h": "Spending, time limits and taking a break",
+          "p": "Do not encourage repeated purchases to recover losses. Development must address user spending/time limits, automatic stops, breaks/self-restriction requests and marketing opt-outs. Lowering limits or stopping should not be obstructed, and must not eliminate unused-fund return or statutory rights. These are pre-launch requirements, not claims of already implemented controls."
+        },
+        {
+          "h": "Incidents and impersonation",
+          "p": "If compromise, phishing or a mistaken transfer is suspected, stop further transactions and preserve IDs and records. Do not send IDs or card details to unconfirmed channels. Support must not require private keys, recovery phrases, remote control or a separate payment to unlock withdrawals. Incident operations need restriction/recovery, user notification and required regulatory reporting."
+        }
+      ]
+    },
+    "community": {
+      "title": "Reviews, community & promotions",
+      "summary": "Review sources, presentation, removal criteria and incentive disclosure.",
+      "sections": [
+        {
+          "h": "Current review scope",
+          "p": "The current community uses inventory and reviews stored in this browser. It does not prove other users deliveries/wins or overall service reputation. Public publishing, external accounts, reward payments and report intake are not operating. Unverified content must not be fabricated into real purchase reviews or live activity."
+        },
+        {
+          "h": "Collection, ordering, ratings and duration",
+          "p": "Live reviews need author eligibility, purchase/receipt verification, collection route, default sorting/recommendation rules, rating calculation and publication duration accessible on the first review screen. Currently the local list order and individual stars are displayed, not an aggregate of all customers. Local content remains until removed; live publication duration is undecided. Distinguish ads, recommendations and compensated exposure."
+        },
+        {
+          "h": "Content rights and personal information",
+          "p": "Authors should submit only content they may use and mask faces, addresses, shipping labels and phone numbers of others. Seek only permissions necessary for display, storage and technical processing, not automatic unlimited assignment or unrelated advertising use. Explain visibility and deletion limits before submission and prevent sensitive or illegal postings."
+        },
+        {
+          "h": "Removal, restrictions and appeals",
+          "p": "Rules may restrict exposed personal data, unlawful/infringing material, spam, forged evidence or irrelevant content. A low rating or criticism alone is not grounds for removal. Where possible, explain reasons, restoration and appeals and keep review records. Public report intake has not opened; a real channel, handling period and review owner must be disclosed before launch."
+        },
+        {
+          "h": "Separate incentive and event terms",
+          "p": "Each real free-box, review, referral or ranking event needs organizer, eligibility, region/age, dates/timezone, selection, payout timing/method, budget/quantity, use/withdrawal/expiry conditions and tax allocation. Review rewards must not require positive opinions and incentives must be disclosed. Do not retrospectively revoke earned rewards unfairly or imply that design-stage amounts are live promotions."
+        }
+      ]
+    },
+    "cookies": {
+      "title": "Cookies & browser storage",
+      "summary": "Device records, hosting logs and the effects of deletion.",
+      "sections": [
+        {
+          "h": "Storage methods and scope",
+          "p": "Current screens use browser localStorage. Service marketing/ad tracking and analytics cookies were not identified in this review and are not described as active. Hosting access logs and external-site visits are separate. Absence of cookies does not mean absence of personal data processing."
+        },
+        {
+          "h": "Preferences and account labels",
+          "p": "gachaflix.locale stores language; gachaflix.currency stores currency; gachaflix.settings stores preferences such as sound; voila-auth-v1 stores the local login identifier, label and time. Legacy-name keys remain in use. These records do not prove server authentication or verified identity."
+        },
+        {
+          "h": "Feature activity records",
+          "p": "gachaflix.wallet stores balance/funding/activity; gachaflix.inventory stores items/delivery requests; gachaflix.fair stores verification seeds/counters; gachaflix.daily stores daily activity; gachaflix.community stores review text/photos; gachaflix.telemetry stores recent opening times. Other users of a shared device may access entries, so do not enter sensitive data. These records are not guaranteed secure ledgers or cross-device synchronized accounts."
+        },
+        {
+          "h": "Deletion, blocking and consequences",
+          "p": "Use browser site-data settings to delete or block this site storage. Language, session, inventory and activity may reset together; no server restoration is currently provided. Logging out does not erase wallet, inventory or reviews. Local deletion does not remove public-chain or hosting records. Current storage has no universal automatic expiry."
+        },
+        {
+          "h": "Future analytics, advertising and device identification",
+          "p": "Before new tracking, analytics, ads or fingerprinting, disclose provider, purpose, data, retention, international transfers and refusal options, and obtain legally required consent. Separate optional processing from essential use; refusal/withdrawal must not be harder than consent. Do not present nonfunctional settings or unsaved consent states as effective rights controls."
+        }
+      ]
+    },
+    "complaints": {
+      "title": "Complaints, disputes & remedies",
+      "summary": "Handling missing deposits, refunds, privacy requests and other disputes.",
+      "sections": [
+        {
+          "h": "Current contact availability",
+          "p": "The operator, official postal/email/phone contacts, hours and privacy lead are unconfirmed. Unverified Telegram or Discord accounts are not treated as official channels. This page does not accept real requests or generate ticket numbers or success messages. Publish a working, persistently accessible contact route before launch."
+        },
+        {
+          "h": "Request details and evidence",
+          "p": "Deposit issues need network, transaction ID, amount and time; withdrawal issues need request ID/status; order/delivery/refund issues need order ID, item and requested outcome. Privacy claims should use only the requested right and minimal identity verification. Never send private keys, recovery phrases, full card numbers or security codes. Redact unnecessary third-party information."
+        },
+        {
+          "h": "Intake, investigation, decision and review",
+          "p": "The live process should provide acknowledgement/ID, evidence requests, accountable investigator and expected timing, delay reasons/next update, reasoned outcome and review. With staffing undecided, no 24-hour response or resolution is promised. Statutory deadlines take priority and cannot be unilaterally extended by internal review."
+        },
+        {
+          "h": "External remedies and jurisdiction",
+          "p": "Where Korean law applies, relevant consumer, privacy, mediation and court routes may be available. Jurisdiction and procedures depend on country and issue. Do not impose a blanket requirement to exhaust company support before external remedies, mandatory secrecy or a ban on legitimate criticism/reporting."
+        },
+        {
+          "h": "Records and mitigating harm",
+          "p": "Keep receipts, times, screenshots and notices, and stop trading if further harm is likely. The operator must preserve necessary records on a lawful basis while minimizing disclosure. Raising a dispute must not itself trigger retaliation or block legitimate fund returns. Necessary investigations or legal preservation must retain proportionate scope and review rights."
+        }
+      ]
+    },
+    "business": {
+      "title": "Operating information & policy history",
+      "summary": "Business disclosures and policy versions to be finalized before launch.",
+      "sections": [
+        {
+          "h": "Service and operator",
+          "p": "Service name: VOILA. Legal entity, representative, incorporation country, business address, registration and relevant distance-sales filings: pending. This is not a claim of incorporation, authorization, accepted filing or government endorsement. Confirmed details and required verification routes must be published before launch."
+        },
+        {
+          "h": "Support, privacy and returns contacts",
+          "p": "Support email/phone/address/hours, controller/privacy lead/rights contact and return address/team are pending. This page does not accept real transaction or privacy claims. Marking these fields pending does not itself satisfy statutory disclosure obligations."
+        },
+        {
+          "h": "Countries, payments, delivery and fund protection",
+          "p": "Actual countries, age, governing law, processors/custodians/carriers, currencies, final fees and refund routes are pending. Customer-fund custody, segregation, return, virtual-asset permissions and any required purchase-protection scheme depend on the actual model. Deposit insurance, reserves, escrow, insurance or authentication partnerships are not claimed as established."
+        },
+        {
+          "h": "Pre-launch review and effect",
+          "p": "Final documents must be reconciled with actual operations, applicable territorial law, consumer rights, data flows and implemented functionality, with qualified local professional review. These drafts are not legal certification or a guarantee of global compliance. Pending operator/territory decisions are not launch approval."
+        },
+        {
+          "h": "Version, effective date and notices",
+          "p": "2026-09-29-draft.1 replaces brief text with separate deposit, withdrawal, unused-fund, statutory refund, delivery, privacy, review and dispute drafts. Prepared 2026-09-29; transaction terms have no effective date yet. Live changes must retain old versions, reasons/content, publication/effective dates, required notice/assent and treatment of pending orders. Existing valid rights must not be retroactively reduced."
         }
       ]
     },
     "faq": {
-      "title": "FAQ",
+      "title": "Policy FAQ",
+      "summary": "Key questions about deposits, withdrawals, refunds and personal data.",
       "sections": [
         {
-          "h": "Can I really start with 1 USDT?",
-          "p": "Yes. The $1 category opens for 1.00 USDT, and even a miss returns 0.85 USDT instantly."
+          "h": "Can I deposit real funds now?",
+          "p": "No. This is the design review stage; real transactions, payments and delivery have not launched. Do not enter or send real funds or sensitive personal information."
         },
         {
-          "h": "How do I know a result wasn't rigged?",
-          "p": "Press the 1-second fairness check on any result or vault card. It replays the pre-committed hash, the roll number and the bracket match in three steps."
+          "h": "Is 95% resale the same as a refund?",
+          "p": "No. Optional resale based on item valuation is distinct from cancellation, defects and unused-fund return. Statutory refunds must not automatically incur a 5% deduction."
         },
         {
-          "h": "Can I take cash instead of the item?",
-          "p": "Any time — take 95% of market value back as USDT from your vault."
+          "h": "Must I buy more to recover funds?",
+          "p": "Additional purchasing is not an approved condition for returning unused deposits or statutory refunds. The existing purchase-usage screen is under review and is not described as a legal AML requirement."
         },
         {
-          "h": "How long do withdrawals take?",
-          "p": "They are broadcast after a security review; the TxID and TronScan/BscScan link appear once complete."
+          "h": "Does a deposit timer erase my funds?",
+          "p": "A timer is not a funds-forfeiture rule. Real transfers require chain-record investigation; automatic credit within 72 hours is not guaranteed. Do not send real funds to the current interface."
+        },
+        {
+          "h": "What are the fees and processing times?",
+          "p": "Design values are a {minWithdraw} USDT minimum, {trcFee} USDT TRC-20 fee and {bepFee} USDT BEP-20 fee. Operating conditions are pending; neither instant transfer nor completion within 24 hours is guaranteed."
+        },
+        {
+          "h": "How do I delete data or make a request?",
+          "p": "Current local records can be deleted through browser site-data settings but may not be recoverable. Logging out is not complete deletion. Official support and privacy-rights intake are not open; contacts will be published in operating information once confirmed."
         }
       ]
     }
@@ -1299,5 +1619,40 @@
     "step3Body": "Request delivery or exchange the item for its displayed refund value.",
     "proofTitle": "Confidence comes from clarity.",
     "verify": "Verify fairness"
+  },
+  "legalCenter": {
+    "title": "Policies & your rights",
+    "intro": "Understand the proposed conditions for payments, products, refunds and personal data, and how problems should be resolved.",
+    "draftBadge": "Pre-launch review draft",
+    "statusTitle": "Currently at the design review stage",
+    "statusBody": "The operating entity, service countries, payment and delivery providers, and official support are not yet confirmed. Transaction policies are proposals for review, not effective sales terms. Amounts and features illustrate the design: do not send funds, make payments or delivery requests, or enter identity documents or card details. Privacy and storage notices explain current page behavior.",
+    "version": "Document version {version}",
+    "effective": "Prepared/reviewed: 2026-09-29 / Transaction terms effective date: not set",
+    "contents": "On this page",
+    "newTab": "opens in a new tab",
+    "businessLink": "Operating information & pending decisions",
+    "groups": {
+      "basics": "Terms & personal data",
+      "transactions": "Payments, withdrawals & products",
+      "rights": "Fair use & resolving problems"
+    },
+    "sourcesTitle": "Official review references",
+    "sourcesNote": "Korean legislation is a review reference for transactions to which those provisions apply. Selecting a language does not determine eligibility or governing law. Other jurisdictions and the law at launch require separate review.",
+    "sources": {
+      "consumer": "Korean E-Commerce Consumer Protection Act",
+      "privacy": "Korean Personal Information Protection Act, Article 30",
+      "clauses": "Korean terms regulation: unfair clauses and liability",
+      "gaming": "Korean Game Industry Act, Article 32",
+      "fiu": "KoFIU: virtual asset business framework",
+      "hosting": "GitHub Pages visitor data handling"
+    },
+    "notice": {
+      "money": "Design review only. Do not transfer real funds or enter card details. Review the draft payment, withdrawal and refund conditions below.",
+      "delivery": "Delivery design review only. Do not enter a real address, phone number or customs identifier. Review the delivery, returns and privacy drafts below.",
+      "community": "Current reviews are records stored in this browser. Public posting and reward payouts are not operating. Read the proposed collection, ordering, removal and appeal rules.",
+      "account": "Account design review: the current login is local to this device, not verified identity or live registration. Do not enter real contact details. Reading the documents below is not recorded as agreement."
+    },
+    "footerStatus": "Pre-launch design review · Operator and regions pending · Real transactions not launched",
+    "footerBusiness": "Legal entity, representative, registration, address and contacts will be published once confirmed. This is not a completed business disclosure."
   }
 }

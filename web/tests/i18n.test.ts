@@ -58,7 +58,8 @@ test("도박장 용어가 사전에 남아 있지 않다 (CLAUDE.md §2 — 2026
   };
   for (const [loc, dict] of [["ko", ko], ["en", en], ["zh", zh]] as const) {
     for (const k of keys(dict)) {
-      if (k.startsWith("products.")) continue;
+      // Marketing terminology rules must not censor precise legal disclosures.
+      if (k.startsWith("products.") || k.startsWith("legalDocs.") || k.startsWith("legalCenter.")) continue;
       const v = get(dict, k);
       for (const w of banned[loc]) assert.ok(!v.includes(w), `${loc}.${k} 에 금지어 "${w}": ${v}`);
     }

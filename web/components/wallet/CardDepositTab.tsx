@@ -178,7 +178,7 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
         </div>
 
         {/* 카드 정보 */}
-        <div className="grid gap-3">
+        <fieldset disabled={!configured} className="grid gap-3">
           <label className="block">
             <span className="caption-luxury">{t("cardNumber")}</span>
             <span className="relative mt-2 block">
@@ -213,21 +213,15 @@ export function CardDepositTab({ onCredited }: { onCredited: (amountUsdt: number
             <input value={holder} onChange={(e) => { setHolder(e.target.value.toUpperCase()); mark("holder"); }} autoComplete="cc-name" placeholder="HONG GILDONG" className={cn(field, "mt-2 font-sans uppercase", (touched || dirty.holder) && errors.holder ? "border-crimson" : "border-hairline")} />
             {(touched || dirty.holder) && errors.holder && <span className="mt-1 block text-xs text-crimson">{t("errHolder")}</span>}
           </label>
-        </div>
+        </fieldset>
 
-        {/* 결제 수단 · 보안 뱃지 */}
+        {/* Payment provider information; no unverified security certification. */}
         <div className="border-metallic-subtle rounded-lg bg-obsidian p-3">
           <div className="flex items-center justify-between">
             <span className="caption-luxury">{t("provider")}</span>
             <span className={cn("text-xs font-semibold", configured ? "text-gold-champagne" : "text-muted")}>{providerLabel}</span>
           </div>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            <span className="flex items-center gap-1 rounded-sm border border-white/10 bg-elevation px-2 py-1 text-xs font-semibold text-secondary">
-              <Lock className="h-3 w-3 text-gold-champagne" strokeWidth={2.4} /> 🔒 256-Bit SSL Encrypted
-            </span>
-            <span className="flex items-center gap-1 rounded-sm border border-white/10 bg-elevation px-2 py-1 text-xs font-semibold text-secondary">
-              <ShieldCheck className="h-3 w-3 text-gold-champagne" strokeWidth={2.4} /> PCI-DSS Level 1
-            </span>
             <span className="flex items-center gap-1 rounded-sm border border-white/10 bg-elevation px-2 py-1 text-xs font-semibold text-secondary">
               <BrandMark brand="visa" /> <BrandMark brand="mastercard" />
             </span>

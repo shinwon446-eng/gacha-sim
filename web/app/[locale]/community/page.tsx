@@ -1,6 +1,7 @@
 "use client";
 
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { PolicyNotice } from "@/components/legal/PolicyNotice";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -87,6 +88,7 @@ export default function CommunityPage() {
           </div>
         </div>
 
+        <PolicyNotice kind="community" />
         {mounted && reviews.length === 0 ? (
           <div className="my-12 grid items-center gap-8 rounded-lg border border-hairline bg-surface px-7 py-12 md:grid-cols-[1fr_1.8fr] md:px-14 md:py-16">
             <div aria-hidden className="mx-auto flex aspect-square w-full max-w-48 items-center justify-center rounded-full border border-hairline bg-obsidian"><Package className="h-20 w-20 text-gold-champagne" strokeWidth={0.7} /></div>

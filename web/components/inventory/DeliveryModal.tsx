@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useModal } from "@/lib/useModal";
+import { PolicyNotice } from "@/components/legal/PolicyNotice";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { X, Truck, ShieldCheck, PackageCheck, Lock, ExternalLink, Loader2, Check } from "lucide-react";
@@ -149,6 +150,7 @@ export function DeliveryModal({ open, itemCount, balanceUsdt, onClose, onSubmit 
               <h2 className="break-keep font-display text-xl font-bold uppercase tracking-tight text-white">{t("title")}</h2>
             </div>
 
+            <PolicyNotice kind="delivery" />
             {stage === "done" ? (
               <div className="mt-4">
                 <div className="border-metallic-gold rounded-lg bg-obsidian p-4">

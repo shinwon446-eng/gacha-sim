@@ -11,6 +11,7 @@ import { WithdrawTab } from "@/components/wallet/WithdrawTab";
 import { useWalletStore } from "@/stores/walletStore";
 import { Money } from "@/components/ui/Money";
 import { CardDepositTab } from "@/components/wallet/CardDepositTab";
+import { PolicyNotice } from "@/components/legal/PolicyNotice";
 
 type Tab = "usdt" | "card" | "withdraw";
 
@@ -124,6 +125,7 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
               ))}
             </div>
 
+            {tab !== "withdraw" && <PolicyNotice />}
             {/* 원천 분리 요약 — 입금 탭에서만(출금 탭은 자체 표시) */}
             {tab !== "withdraw" && <BalanceSplit />}
 
