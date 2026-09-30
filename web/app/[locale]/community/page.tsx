@@ -11,7 +11,7 @@ import { reviewValueNotice } from "@/components/community/reviewValueNotice";
 import { useCommunityStore, subscribeCommunityReviews, type MyReview } from "@/stores/communityStore";
 import { useInventoryStore } from "@/stores/inventoryStore";
 import { BOX_BY_SLUG } from "@/lib/products";
-import { canReview, meetsReviewValue, publicReviewFeed, isExampleReview, communityFeedCopy } from "@/lib/community";
+import { canReview, meetsReviewValue, publicReviewFeed, communityFeedCopy } from "@/lib/community";
 import { productOf } from "@/lib/vault";
 import { useProductText } from "@/lib/useProductText";
 import { cn } from "@/lib/format";
@@ -25,8 +25,7 @@ export default function CommunityPage() {
   const { itemName, boxTitle } = useProductText();
   const allReviews = useCommunityStore(s => s.mine);
   const copy = communityFeedCopy(locale);
-  const [showExamples, setShowExamples] = useState(true);
-  const publicReviews = useMemo(() => publicReviewFeed(allReviews, showExamples), [allReviews, showExamples]);
+  const publicReviews = useMemo(() => publicReviewFeed(allReviews), [allReviews]);
   useEffect(() => subscribeCommunityReviews(), []);
   const hydrated = useCommunityStore(s => s.hydrated);
   const items = useInventoryStore(s => s.items);
@@ -56,7 +55,7 @@ export default function CommunityPage() {
     const product = BOX_BY_SLUG[review.boxSlug]?.items.find(i => i.id === review.itemId);
     const text = [review.text, review.authorName ?? "", product ? itemName(product) : review.itemId].join(" ").toLocaleLowerCase(locale);
     return text.includes(query.trim().toLocaleLowerCase(locale)) && (filter === "all" || (filter === "photo" ? !!review.photo : review.rating === Number(filter)));
-  }).sort((a, b) => Number(isExampleReview(a)) - Number(isExampleReview(b)) || (sort === "newest" ? 1 : -1) * (Date.parse(b.at) - Date.parse(a.at))), [tab, publicReviews, mine, query, filter, sort, locale, itemName]);
+  }).sort((a, b) => (sort === "newest" ? 1 : -1) * (Date.parse(b.at) - Date.parse(a.at))), [tab, publicReviews, mine, query, filter, sort, locale, itemName]);
   const focusedLinkedReview = useRef(false);
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("review");
@@ -87,7 +86,6 @@ export default function CommunityPage() {
       <nav className="workspace-tabs" aria-label={r("journalTitle")}>
         {(["public", "mine", "eligible"] as const).map(key => <button key={key} aria-current={key === tab ? "page" : undefined} onClick={() => setTab(key)}>{r(`reviewTabs.${key}`)}{key !== "public" && <span>{key === "mine" ? mine.length : eligible.length}</span>}</button>)}
       </nav>
-      {tab === "public" && <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-hairline p-4 text-sm leading-6 text-secondary"><p>{copy.exampleNote}</p><button className="workspace-text-link" aria-pressed={showExamples} onClick={() => setShowExamples(value => !value)}>{showExamples ? copy.hideExamples : copy.showExamples}</button></div>}
       <div className="journal-layout">
         <div className="min-w-0">
           {tab !== "eligible" && (tab === "public" ? publicReviews : mine).length > 0 && <div className="workspace-toolbar">
@@ -103,11 +101,9 @@ export default function CommunityPage() {
             <div className="mb-4 text-xs text-muted" aria-live="polite">{r("results", { n: reviews.length })}</div>
             <ul className="grid gap-5">{reviews.slice(0, shown).map(review => {
               const box = BOX_BY_SLUG[review.boxSlug]; const product = box?.items.find(i => i.id === review.itemId);
-              const isMine = !isExampleReview(review) && mine.some(own => own.id === review.id);
-              const example = isExampleReview(review);
+              const isMine = mine.some(own => own.id === review.id);
               return <li key={review.id} id={`review-${review.id}`} tabIndex={-1} className="journal-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-champagne">
-                <div className="journal-card-heading"><div className="journal-avatar" aria-hidden="true">V</div><div><p className="text-sm font-medium text-white">{example ? `${copy.exampleAuthor} · ${review.authorName}` : isMine ? r("yourReview") : review.authorName || copy.member}</p><time dateTime={review.at} className="text-xs text-muted">{example ? copy.example : new Date(review.at).toLocaleDateString(locale)}{review.updatedAt && <span> &middot; {r("edited")}</span>}</time></div><span className="ml-auto flex items-center gap-1 text-sm text-gold-champagne" aria-label={`${example ? copy.exampleRating : copy.rating} ${review.rating} / 5`}><Star className="h-4 w-4 fill-current" aria-hidden="true" />{review.rating}<span className="ml-1 text-xs text-muted">/ 5</span></span></div>
-                {example && <p className="mt-4 rounded-lg border border-gold-champagne/30 bg-gold-champagne/5 px-3 py-2 text-xs leading-6 text-gold-champagne">{copy.exampleNote} · {copy.exampleRating} {review.rating}/5</p>}
+                <div className="journal-card-heading"><div className="journal-avatar" aria-hidden="true">V</div><div><p className="text-sm font-medium text-white">{isMine ? r("yourReview") : review.authorName || copy.member}</p><time dateTime={review.at} className="text-xs text-muted">{new Date(review.at).toLocaleDateString(locale)}{review.updatedAt && <span> &middot; {r("edited")}</span>}</time></div><span className="ml-auto flex items-center gap-1 text-sm text-gold-champagne" aria-label={`${copy.rating} ${review.rating} / 5`}><Star className="h-4 w-4 fill-current" aria-hidden="true" />{review.rating}<span className="ml-1 text-xs text-muted">/ 5</span></span></div>
                 <div className="journal-copy">{review.text.length > 240 ? <details><summary><span>{review.text.slice(0, 240)}&hellip;</span><span className="read-more">{r("readFullReview")}<ChevronDown className="h-4 w-4" /></span></summary><p>{review.text}</p></details> : <p>{review.text}</p>}</div>
                 {review.photo && <figure className="mt-4"><img src={review.photo} alt={r("reviewPhoto", { name: product ? itemName(product) : review.itemId })} className="max-h-80 w-full rounded-lg bg-obsidian object-contain" loading="lazy" /><figcaption className="mt-2 text-xs text-muted">{r("userPhoto")}</figcaption></figure>}
                 <div className="journal-product"><div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-obsidian">{product && <ProductArt image={product.image} alt="" fallbackSize="sm" />}</div><div className="min-w-0"><p className="text-sm font-medium text-secondary">{product ? itemName(product) : review.itemId}</p><p className="mt-1 text-xs leading-5 text-muted">{box ? boxTitle(box) : review.boxSlug} &middot; {r("catalogueImage")}</p></div></div>

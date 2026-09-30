@@ -5,10 +5,9 @@ import { REVIEW_BONUS_USDT, REVIEW_MIN_CHARS, MIN_REVIEW_ITEM_VALUE_USDT, canRev
 import { useInventoryStore, type OwnedItem } from "../stores/inventoryStore";
 import { useCommunityStore, subscribeCommunityReviews } from "../stores/communityStore";
 import { reviewValueNotice } from "../components/community/reviewValueNotice";
-import { createReviewExamples, publicReviewFeed, isExampleReview, relativeReviewTime, reviewWindow, communityFeedCopy } from "../lib/community";
+import { publicReviewFeed, isExampleReview, relativeReviewTime, reviewWindow, communityFeedCopy } from "../lib/community";
 import { applyBoardCommand, createBoardExamples, isExampleBoardContent, parseBoardPosts, selectBoardPosts } from "../lib/board";
 import { BOARD_STORAGE_KEY, BOARD_EXAMPLES_KEY, loadBoard } from "../lib/boardApi";
-import { BOX_BY_SLUG } from "../lib/products";
 
 test("review value boundary is inclusive at 100 USDT, and invalid values are refused by the store", () => {
   assert.equal(MIN_REVIEW_ITEM_VALUE_USDT, 100);
@@ -118,35 +117,22 @@ test("example initialization is serialized, non-destructive, and does not resurr
   } finally { if (original) Object.defineProperty(globalThis, "localStorage", original); else Reflect.deleteProperty(globalThis, "localStorage"); }
 });
 
-test("twenty review examples match real catalogue products worth at least 100 USDT without implying a real win", () => {
-  const reviews = createReviewExamples(); assert.equal(reviews.length, 20);
-  assert.equal(new Set(reviews.map(review => review.id)).size, 20);
-  assert.deepEqual(createReviewExamples(), reviews);
-  assert.deepEqual(Array.from(new Set(reviews.map(review => review.rating))).sort(), [4, 5]);
-  for (const review of reviews) {
-    const product = BOX_BY_SLUG[review.boxSlug]?.items.find(item => item.id === review.itemId);
-    assert.ok(product && product.value >= 100 && product.kind !== "cash");
-    assert.ok(isExampleReview(review)); assert.equal(review.publishedAt, undefined); assert.equal(review.bonusUsdt, 0);
-    assert.equal(review.photo, undefined, "catalogue art must not masquerade as a customer photo");
-  }
-});
-
-test("public feed keeps members ahead of examples, excludes private records, and never modifies mine", () => {
+test("public feed contains only published member reviews and excludes legacy editorial records", () => {
   const record = { id: "member-review", ownedId: "own", itemId: "da-iphone16", boxSlug: "dollar-apple", text: "직접 남긴 상품 후기입니다.", rating: 4, bonusUsdt: 0, at: "2026-09-01T00:00:00Z", publishedAt: "2026-09-01T00:00:00Z" };
-  const mine = [record, { ...record, id: "private", publishedAt: undefined }, record];
+  const legacyExample = { ...record, id: "review_example_v1_01", source: "example", publishedAt: "2026-09-01T00:00:00Z" };
+  const mine = [record, { ...record, id: "private", publishedAt: undefined }, legacyExample, record];
   const before = JSON.stringify(mine);
   const feed = publicReviewFeed(mine);
-  assert.equal(feed.length, 21); assert.equal(feed[0].id, record.id);
-  assert.equal(feed.filter(isExampleReview).length, 20);
-  assert.deepEqual(publicReviewFeed(mine, false), [record]);
+  assert.deepEqual(feed, [record]);
+  assert.deepEqual(publicReviewFeed(mine), [record]);
   assert.equal(JSON.stringify(mine), before);
   assert.ok(!useCommunityStore.getState().mine.some(isExampleReview), "examples never become owned reviews");
 });
 
 test("rotation wraps without duplication or timestamp rewriting; relative time reflects elapsed time", () => {
-  const reviews = createReviewExamples();
-  assert.deepEqual(reviewWindow(reviews, 19).map(review => review.id), [reviews[19].id, reviews[0].id, reviews[1].id]);
-  assert.deepEqual(reviewWindow(reviews, -1), reviewWindow(reviews, 19));
+  const reviews = Array.from({ length: 5 }, (_, n) => ({ id: `member-${n}`, ownedId: `own-${n}`, itemId: "x", boxSlug: "x", text: "review", rating: 5, bonusUsdt: 0, at: new Date(Date.parse("2026-09-30T00:00:00Z") - n * 1000).toISOString(), publishedAt: "2026-09-30T00:00:00Z" }));
+  assert.deepEqual(reviewWindow(reviews, 4).map(review => review.id), ["member-4", "member-0", "member-1"]);
+  assert.deepEqual(reviewWindow(reviews, -1), reviewWindow(reviews, 4));
   assert.equal(reviewWindow(reviews.slice(0, 1), 8).length, 1);
   assert.deepEqual(reviewWindow([], 2), []); assert.deepEqual(reviewWindow(reviews, NaN), []);
   const at = "2026-09-30T00:00:00Z"; const now = Date.parse(at);
@@ -155,7 +141,7 @@ test("rotation wraps without duplication or timestamp rewriting; relative time r
   assert.match(relativeReviewTime(at, now + 3600000, "en"), /1 hour ago/);
   assert.equal(relativeReviewTime("bad", now, "ko"), communityFeedCopy("ko").unknownTime);
   assert.equal(relativeReviewTime(at, now - 120000, "ko"), communityFeedCopy("ko").unknownTime);
-  for (const locale of ["ko", "en", "zh"]) assert.ok(communityFeedCopy(locale).exampleNote.length > 10);
+  for (const locale of ["ko", "en", "zh"]) assert.ok(communityFeedCopy(locale).empty.length > 0);
 });
 
 test("cross-tab clearing removes stale member reviews and unsubscribes cleanly", () => {
