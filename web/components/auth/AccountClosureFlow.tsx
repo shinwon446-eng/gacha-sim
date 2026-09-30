@@ -165,7 +165,7 @@ export function AccountClosureFlow() {
         {stage === "inventory" && <>
           <h2 id="closure-dialog-title" className="text-xl font-semibold text-white">탈퇴 불가 , 상품 정리 필요</h2>
           <p className="mt-4 text-sm text-secondary">정리할 상품: <strong className="text-white">{gate.stage === "inventory" ? gate.count : 0}개</strong></p>
-          <p className="mt-4 text-sm leading-7 text-secondary">보관함에 정리되지 않은 상품이 있어 탈퇴할 수 없습니다. 실물 배송 수령 또는 90% 즉시 페이백으로 상품을 모두 정리한 뒤 다시 시도해 주세요.</p>
+          <p className="mt-4 text-sm leading-7 text-secondary">보관함에 정리되지 않은 상품이 있어 탈퇴할 수 없습니다. 실물 배송 수령 또는 95% 즉시 페이백으로 상품을 모두 정리한 뒤 다시 시도해 주세요.</p>
           <div className="mt-6 flex flex-wrap gap-3"><Link href="/inventory?tab=held" onClick={close} className="inline-flex min-h-11 items-center rounded-xl bg-[#f1eee7] px-4 text-sm font-semibold text-obsidian">보관함에서 정리하기</Link><button type="button" onClick={close} className="min-h-11 rounded-xl border border-hairline px-4 text-sm text-white">닫기</button></div>
         </>}
         {stage === "verify" && <>

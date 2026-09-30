@@ -1,6 +1,6 @@
 /**
  * VOILA catalogue. Every published box uses an exact million-slot wave schedule.
- * The schedule is calibrated against cash-equivalent payouts at 90% expected RTP.
+ * The schedule is calibrated against cash-equivalent payouts at 95% expected RTP.
  * Prices are in USDT. Product images resolve through productImages.ts.
  */
 
@@ -33,8 +33,8 @@ export const SORTS: { key: SortKey; label: string }[] = [
 ];
 
 /**
- * physical, 실물(배송 또는 90% 즉시 회수)
- * digital, 글로벌 디지털 자산(기프트카드 코드 발송 또는 90% 즉시 회수, 배송, 관세 없음)
+ * physical, 실물(배송 또는 95% 즉시 회수)
+ * digital, 글로벌 디지털 자산(기프트카드 코드 발송 또는 95% 즉시 회수, 배송, 관세 없음)
  * cash, USDT 즉시 캐시백. 개봉 즉시 100% 잔액에 적립된다(보관함을 거치지 않음)
  */
 export type ItemKind = "physical" | "digital" | "cash";
@@ -110,7 +110,7 @@ export const RETAIL_RTP_MAX = 1 / REFUND_RATE;
 export const FLOOR_CASH_MIN = 0.5;
 export const FLOOR_CASH_MAX = 0.96;
 
-/** 즉시 회수액(USDT), 실물, 디지털은 실판매가의 90%, USDT 캐시백은 100% */
+/** 즉시 회수액(USDT), 실물, 디지털은 실판매가의 95%, USDT 캐시백은 100% */
 export const sellValueOf = (item: Pick<ProductItem, "kind" | "value">): number => +(item.kind === "cash" ? item.value : item.value * REFUND_RATE).toFixed(2);
 export const isCashItem = (item: Pick<ProductItem, "kind">): boolean => item.kind === "cash";
 

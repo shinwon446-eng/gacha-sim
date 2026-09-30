@@ -70,6 +70,7 @@ export const useInventoryStore = create<InventoryState>()(
         return recs;
       },
       sell: (ids, refundRate) => {
+        if (!Number.isFinite(refundRate) || refundRate <= 0) return { ids: [], totalUsdt: 0, toCrypto: 0, toCard: 0 };
         const now = new Date().toISOString();
         const set_ = new Set(ids);
         let total = 0;
@@ -80,6 +81,7 @@ export const useInventoryStore = create<InventoryState>()(
           items: s.items.map((it) => {
             if (!set_.has(it.id) || it.status !== "IN_STORAGE") return it;
             const refund = +(it.valueUsdt * refundRate).toFixed(2);
+            if (!Number.isFinite(refund) || refund <= 0) return it;
             total += refund;
             sold.push(it.id);
             refunds.push({ amountUsdt: refund, ratio: normalizeRatio(it.fundingRatio) });

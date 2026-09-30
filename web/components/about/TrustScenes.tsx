@@ -59,7 +59,7 @@ function Shot({ id, alt, className }: { id: string; alt: string; className?: str
 /**
  * Scene 1 목업, **기회 재창출 3단계 흐름**.
  *
- *   ① 20 USDT 박스 오픈 → ② 원하던 롤렉스가 아닌 상품을 90% 즉시 페이백 → ③ 그 잔액으로 23번 재도전
+ *   ① 20 USDT 박스 오픈 → ② 원하던 롤렉스가 아닌 상품을 95% 즉시 페이백 → ③ 그 잔액으로 23번 재도전
  *
  * 예시 상품은 **그 박스에서 가장 저렴한 실물**을 카탈로그에서 뽑는다. 이전 버전은 최고 당첨품(맥북 프로 5,720 USDT)을
  * 페이백하는 앞뒤 안 맞는 예시였다(2026-09-28 운영자 지적), 페이백은 "원하던 게 아닐 때" 쓰는 기능이다.
@@ -113,7 +113,7 @@ function SceneRefund() {
         <p className="mt-2.5 text-[10px] text-faint">{t("s1AttemptsNote")}</p>
       </div>
 
-      {/* 앱 목업, ① 오픈 → ② 90% 페이백 → ③ 재도전 */}
+      {/* 앱 목업, ① 오픈 → ② 95% 페이백 → ③ 재도전 */}
       {shot && (
         <div className="border-metallic-gold overflow-hidden rounded-2xl bg-obsidian" style={{ boxShadow: "0 24px 60px rgba(0,0,0,0.6)" }}>
           {/* 3단계 스텝 배지 */}
@@ -355,7 +355,7 @@ function SceneDelivery() {
 /**
  * Section 3, 스티키 3씬.
  *
- * 좌측 텍스트가 화면에 붙어 있는 동안 우측 목업이 ① 90% 페이백 재도전 ② 사전 봉인 결과표 ③ 정품 보증, 무료 특송 으로 넘어간다.
+ * 좌측 텍스트가 화면에 붙어 있는 동안 우측 목업이 ① 95% 페이백 재도전 ② 사전 봉인 결과표 ③ 정품 보증, 무료 특송 으로 넘어간다.
  * 목업은 전부 **실제 상품 이미지와 카탈로그 실측 금액**으로 그린다.
  */
 export function TrustScenes({ className }: { className?: string }) {

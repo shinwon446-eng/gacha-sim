@@ -57,7 +57,7 @@ test("RTP range reflects the current catalogue's retail expected values", () => 
 });
 
 test("정책 상수 — 95% 즉시 회수 · 3배 보상 · 24시간 출고 기준 · 사후 변조 가능 결과 0", () => {
-  assert.equal(INSTANT_SELLBACK_RATE, 0.9);
+  assert.equal(INSTANT_SELLBACK_RATE, 0.95);
   assert.equal(AUTHENTICITY_COMPENSATION_MULTIPLE, 3);
   assert.equal(SHIPPING_SLA_HOURS, 24);
   assert.equal(MUTABLE_RESULTS, 0);

@@ -14,7 +14,7 @@ import { Money } from "@/components/ui/Money";
 /**
  * 실시간 신뢰 지표 (CLAUDE.md §4-5).
  *   live   : API 집계, 오늘 출고 건수 , 오늘 즉시 환전 합계 , 검증 완료율
- *   preview: 지어낸 집계 대신 이 플랫폼의 사실, 공개 확률 항목 수 , 즉시 환전율 90% , 내 개봉 기록의 검증 완료율(실제로 재검증)
+ *   preview: 지어낸 집계 대신 이 플랫폼의 사실, 공개 확률 항목 수 , 즉시 환전율 95% , 내 개봉 기록의 검증 완료율(실제로 재검증)
  */
 export function LiveCounters({ className }: { className?: string }) {
   const t = useTranslations("counters");
