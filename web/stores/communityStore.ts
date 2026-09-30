@@ -6,7 +6,7 @@ import { useInventoryStore } from "@/stores/inventoryStore";
 import { useAuthStore } from "@/stores/authStore";
 export interface MyReview {
   id: string; ownedId: string; boxSlug: string; itemId: string; text: string; rating: number;
-  photo?: string; at: string; updatedAt?: string; publishedAt?: string; bonusUsdt: number;
+  photo?: string; authorAvatarUrl?: string | null; at: string; updatedAt?: string; publishedAt?: string; bonusUsdt: number;
   source?: "member" | "example"; authorName?: string;
 }
 interface CommunityState {
@@ -32,7 +32,8 @@ export const useCommunityStore = create<CommunityState>()(
       if (get().hasReviewed(r.ownedId)) throw new Error("duplicate");
       if (!item || !canReview(item, [])) throw new Error("ineligible-review-item");
       const now = new Date().toISOString();
-      const rec: MyReview = { ownedId: item.id, rating: r.rating, photo: r.photo, text: r.text.trim(), itemId: item.itemId, boxSlug: item.boxSlug, bonusUsdt: 0, id: `my_${crypto.randomUUID()}`, at: now, publishedAt: now, source: "member", authorName: useAuthStore.getState().user?.nickname || undefined };
+      const user = useAuthStore.getState().user;
+      const rec: MyReview = { ownedId: item.id, rating: r.rating, photo: r.photo, authorAvatarUrl: user?.avatarUrl ?? null, text: r.text.trim(), itemId: item.itemId, boxSlug: item.boxSlug, bonusUsdt: 0, id: `my_${crypto.randomUUID()}`, at: now, publishedAt: now, source: "member", authorName: user?.nickname || undefined };
       const mine = [rec, ...get().mine];
       persistReviews(mine); set({ mine }); return rec;
     },

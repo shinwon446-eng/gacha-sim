@@ -11,6 +11,9 @@ import { useCommunityStore, type MyReview } from "@/stores/communityStore";
 import { cn } from "@/lib/format";
 import { Link } from "@/i18n/navigation";
 import { reviewValueNotice } from "./reviewValueNotice";
+import { browserAccountsEnabled } from "@/lib/account";
+import { submitCommunityReview } from "@/lib/communityReviewApi";
+import { announcePublishedReviews } from "@/stores/usePublishedReviews";
 
 async function shrinkImage(file: File): Promise<string> {
   if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 8 * 1024 * 1024) throw new Error("photo");
@@ -58,19 +61,27 @@ export function ReviewFormModal({ open, onClose, onSubmitted, initialOwnedId, ed
     catch { if (task === imageTask.current) setError("photoError"); }
     finally { if (task === imageTask.current) setBusy(false); }
   };
-  const submit = () => {
+  const submit = async () => {
     if (busy) return;
     if (text.trim().length < REVIEW_MIN_CHARS || text.trim().length > REVIEW_MAX_CHARS) return setError("textError");
     if (rating < 1 || rating > 5) return setError("ratingError");
+    setBusy(true);
+    let createdId: string | undefined;
     try {
-      if (editing) useCommunityStore.getState().update(editing.id, { text: text.trim(), rating, photo });
+      if (editing) {
+        if (!browserAccountsEnabled()) announcePublishedReviews(await submitCommunityReview({ type: "update", id: editing.id, text: text.trim(), rating, photo }));
+        useCommunityStore.getState().update(editing.id, { text: text.trim(), rating, photo });
+      }
       else {
         const item = useInventoryStore.getState().items.find(i => i.id === ownedId);
         if (!item || !canReview(item, useCommunityStore.getState().mine)) return setError("eligibilityError");
-        useCommunityStore.getState().add({ ownedId, boxSlug: item.boxSlug, itemId: item.itemId, text: text.trim(), rating, photo, bonusUsdt: 0 });
+        const review = useCommunityStore.getState().add({ ownedId, boxSlug: item.boxSlug, itemId: item.itemId, text: text.trim(), rating, photo, bonusUsdt: 0 });
+        createdId = review.id;
+        if (!browserAccountsEnabled()) announcePublishedReviews(await submitCommunityReview({ type: "create", clientReviewId: review.id, ownedId, text: text.trim(), rating, photo }));
       }
       onSubmitted();
-    } catch { setError("storageError"); }
+    } catch { if (createdId) { try { useCommunityStore.getState().remove(createdId); } catch {} } setError("storageError"); }
+    finally { setBusy(false); }
   };
   if (!open) return null;
   return <div className="fixed inset-0 z-[120] overflow-y-auto bg-obsidian/85 px-3 py-6 backdrop-blur-sm md:py-12" onMouseDown={e => e.target === e.currentTarget && onClose()}>
@@ -86,7 +97,7 @@ export function ReviewFormModal({ open, onClose, onSubmitted, initialOwnedId, ed
           <label className="workspace-button relative cursor-pointer"><ImagePlus className="h-4 w-4" aria-hidden="true" />{r(busy ? "processingPhoto" : "attachPhoto")}<input aria-label={r("attachPhoto")} type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={e => { void onFile(e.target.files?.[0]); e.target.value = ""; }} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" /></label><p className="mt-2 text-xs text-muted">{r("photoHint")}</p>
         </div>
         {error && <p role="alert" className="text-sm text-[#f3ad9e]">{r(error)}</p>}
-        <button type="submit" disabled={busy} className="workspace-button primary w-full"><Camera className="h-4 w-4" />{r(editing ? "saveChanges" : "saveReview")}</button>
+        <button type="submit" disabled={busy} className="workspace-button primary w-full"><Camera className="h-4 w-4" />{r(busy ? "processingPhoto" : editing ? "saveChanges" : "saveReview")}</button>
       </form>}
       <Link href="/legal/community" target="_blank" rel="noopener noreferrer" className="workspace-text-link mt-4">{r("reviewPolicy")}</Link>
     </div>
