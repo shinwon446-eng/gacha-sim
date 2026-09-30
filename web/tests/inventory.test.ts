@@ -192,14 +192,15 @@ test("지갑: 출금 거래는 status 를 갖고 PENDING → BROADCASTING(TxID) 
   assert.ok(!w.debit(50.01), "잔액 초과 출금은 거부");
 });
 
-test("지갑: 웰컴 보너스는 브라우저당 1회만 지급된다", async () => {
+test("지갑: 웰컴 보너스는 로컬 데모 계정별 첫 로그인에 1회 지급된다", async () => {
   const { useWalletStore, WELCOME_BONUS_USDT } = await import("../stores/walletStore");
   useWalletStore.setState({ balance: 0, cryptoBalance: 0, cardBalance: 0, transactions: [], welcomeClaimed: false });
   const w = useWalletStore.getState();
-  assert.equal(WELCOME_BONUS_USDT, 5);
-  assert.ok(w.claimWelcome());
-  assert.equal(useWalletStore.getState().balance, 5);
+  assert.equal(WELCOME_BONUS_USDT, 10_000);
+  assert.ok(w.claimWelcome("demo-account-1"));
+  assert.equal(useWalletStore.getState().balance, 10_000);
   assert.equal(useWalletStore.getState().transactions[0].type, "bonus");
-  assert.ok(!w.claimWelcome(), "두 번째 수령 거부");
-  assert.equal(useWalletStore.getState().balance, 5);
+  assert.ok(!w.claimWelcome("demo-account-1"), "같은 계정은 중복 지급되지 않는다");
+  assert.ok(w.claimWelcome("demo-account-2"), "새 로컬 데모 계정은 보너스를 받는다");
+  assert.equal(useWalletStore.getState().balance, 20_000);
 });

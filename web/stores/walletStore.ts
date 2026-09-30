@@ -10,8 +10,8 @@ import { CRYPTO_ONLY, planDebit, type FundingRatio, type FundingSplit } from "@/
 
 /** 시작 잔액, 신규 유저는 0 에서 시작한다(체험용 가상 잔고 없음). 충전해야 개봉할 수 있다. */
 export const START_BALANCE_USDT = 0;
-/** 무료 체험 후 1회 지급되는 웰컴 보너스 (CLAUDE.md §4-A) */
-export const WELCOME_BONUS_USDT = 5;
+/** 브라우저 로컬 데모 계정의 테스트용 첫 로그인 보너스. 실서비스 원장 지급이 아니다. */
+export const WELCOME_BONUS_USDT = 10_000;
 
 export type TxType = "deposit_usdt" | "deposit_card" | "open" | "sellback" | "withdraw" | "bonus" | "shipping_refund" | "order_refund";
 
@@ -80,7 +80,7 @@ interface WalletState {
   totalDepositedCard: number;
   /** 가중치가 반영된 누적 롤오버 달성액 */
   totalWagered: number;
-  /** 웰컴 보너스 수령 여부, 브라우저당 1회 */
+  /** 현재 데모 계정의 웰컴 보너스 수령 여부 */
   welcomeClaimed: boolean;
   hydrated: boolean;
   addTransaction: (tx: Omit<Transaction, "id" | "at">) => Transaction;
@@ -101,8 +101,10 @@ interface WalletState {
   /** 환급 귀속, 암호화폐/카드 잔액에 각각 더한다 */
   creditSplit: (toCrypto: number, toCard: number) => void;
   topUp: () => void;
-  /** 웰컴 보너스 지급. 이미 받았으면 false. */
-  claimWelcome: () => boolean;
+  /** 현재 로그인한 로컬 계정을 지정해 웰컴 보너스 상태를 갱신한다. */
+  setWelcomeAccount: (accountId: string | null) => void;
+  /** 로컬 데모 계정에만 보너스를 지급한다. 계정별 중복 지급은 false. */
+  claimWelcome: (accountId: string) => boolean;
 }
 
 /** 두 버킷 → 표시용 총 잔액. balance 는 항상 여기서만 계산된다(어긋날 수 없다). */
@@ -213,10 +215,14 @@ export const useWalletStore = create<WalletState>()(
       credit: (usdt, to = "crypto") => set((s) => sync(to === "crypto" ? +(s.cryptoBalance + usdt).toFixed(2) : s.cryptoBalance, to === "card" ? +(s.cardBalance + usdt).toFixed(2) : s.cardBalance)),
       creditSplit: (toCrypto, toCard) => set((s) => sync(+(s.cryptoBalance + toCrypto).toFixed(2), +(s.cardBalance + toCard).toFixed(2))),
       topUp: () => set((s) => sync(+(s.cryptoBalance + START_BALANCE_USDT).toFixed(2), s.cardBalance)),
-      claimWelcome: () => {
-        if (get().welcomeClaimed) return false;
-        set((s) => ({ ...sync(+(s.cryptoBalance + WELCOME_BONUS_USDT).toFixed(2), s.cardBalance), welcomeClaimed: true }));
-        get().addTransaction({ type: "bonus", amountUsdt: WELCOME_BONUS_USDT, ref: "welcome" });
+      setWelcomeAccount: (accountId) => set((s) => ({
+        welcomeClaimed: !!accountId && s.transactions.some((tx) => tx.type === "bonus" && tx.ref === "welcome" && tx.accountId === accountId),
+      })),
+      claimWelcome: (accountId) => {
+        const s = get();
+        if (!accountId || s.transactions.some((tx) => tx.type === "bonus" && tx.ref === "welcome" && tx.accountId === accountId)) return false;
+        set((state) => ({ ...sync(+(state.cryptoBalance + WELCOME_BONUS_USDT).toFixed(2), state.cardBalance), welcomeClaimed: true }));
+        get().addTransaction({ type: "bonus", amountUsdt: WELCOME_BONUS_USDT, ref: "welcome", accountId });
         return true;
       },
     }),
