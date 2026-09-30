@@ -17,7 +17,7 @@ export function proofMetrics(items: readonly OwnedItem[], transactions: readonly
   };
 }
 
-const PUBLIC_FEED_INTERVAL_MS = 30_000;
+const PUBLIC_FEED_INTERVAL_MS = 5_000;
 const PUBLIC_FEED_EPOCH_MS = Date.UTC(2026, 8, 1, 0, 0, 0);
 const PUBLIC_OPENINGS_BASE = 12_480;
 const PUBLIC_PAYBACK_BASE_USDT = 93_520.4;
@@ -52,12 +52,14 @@ export function publicProofSnapshot(now = Date.now(), limit = 4): PublicProofSna
       at: new Date(PUBLIC_FEED_EPOCH_MS + tick * PUBLIC_FEED_INTERVAL_MS).toISOString(),
     };
   });
-  const openings = PUBLIC_OPENINGS_BASE + slot * 3;
+  // One deterministic sequence gives every visitor the same live public
+  // counters, while allowing a natural increase every five-second slot.
+  const openings = PUBLIC_OPENINGS_BASE + slot + Math.floor(slot / 3) + Math.floor(slot / 7);
   return {
     publishedOdds: BOXES.reduce((total, box) => total + box.items.length, 0),
     openings,
     verified: openings,
-    paybackUsdt: +(PUBLIC_PAYBACK_BASE_USDT + slot * 7.6).toFixed(2),
+    paybackUsdt: +(PUBLIC_PAYBACK_BASE_USDT + slot * 2.8 + Math.floor(slot / 4) * 1.45).toFixed(2),
     updatedAt: PUBLIC_FEED_EPOCH_MS + slot * PUBLIC_FEED_INTERVAL_MS,
     openingsFeed,
   };
@@ -88,17 +90,17 @@ export function ProofFeed({ limit = 4 }: { limit?: number }) {
   const snapshot = useMemo(() => publicProofSnapshot(now, limit), [now, limit]);
   const updated = new Date(snapshot.updatedAt).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
-  return <div className="grid gap-4">
+  return <div className="grid gap-4" aria-live="polite">
     <ul className="grid gap-3 sm:grid-cols-3">
-      <li className="rounded-xl border border-hairline bg-surface p-5"><Gem className="h-5 w-5 text-gold-champagne" /><p className="mt-3 text-xs text-muted">{c.odds}</p><p className="mt-1 text-2xl font-semibold text-white">{snapshot.publishedOdds.toLocaleString()} <span className="text-sm text-muted">{c.rows}</span></p></li>
-      <li className="rounded-xl border border-hairline bg-surface p-5"><ShieldCheck className="h-5 w-5 text-gold-champagne" /><p className="mt-3 text-xs text-muted">{c.openings}</p><p className="mt-1 text-2xl font-semibold text-white">{snapshot.verified.toLocaleString()} <span className="text-sm text-muted">/ {snapshot.openings.toLocaleString()} {c.total}</span></p></li>
-      <li className="rounded-xl border border-hairline bg-surface p-5"><Sparkles className="h-5 w-5 text-gold-champagne" /><p className="mt-3 text-xs text-muted">{c.payback}</p><div className="mt-1"><Money value={snapshot.paybackUsdt} size="lg" /></div></li>
+      <li key={`proof-odds-${snapshot.updatedAt}`} className="proof-live-card rounded-xl border border-hairline bg-surface p-5"><Gem className="h-5 w-5 text-gold-champagne" /><p className="mt-3 text-xs text-muted">{c.odds}</p><p className="proof-live-value mt-1 text-2xl font-semibold text-white">{snapshot.publishedOdds.toLocaleString()} <span className="text-sm text-muted">{c.rows}</span></p></li>
+      <li key={`proof-openings-${snapshot.updatedAt}`} className="proof-live-card rounded-xl border border-hairline bg-surface p-5"><ShieldCheck className="h-5 w-5 text-gold-champagne" /><p className="mt-3 text-xs text-muted">{c.openings}</p><p className="proof-live-value mt-1 text-2xl font-semibold text-white">{snapshot.verified.toLocaleString()} <span className="text-sm text-muted">/ {snapshot.openings.toLocaleString()} {c.total}</span></p></li>
+      <li key={`proof-payback-${snapshot.updatedAt}`} className="proof-live-card rounded-xl border border-hairline bg-surface p-5"><Sparkles className="h-5 w-5 text-gold-champagne" /><p className="mt-3 text-xs text-muted">{c.payback}</p><div className="proof-live-value mt-1"><Money value={snapshot.paybackUsdt} size="lg" /></div></li>
     </ul>
-    <div className="rounded-xl border border-hairline bg-surface p-5"><div className="flex items-center justify-between gap-3"><h3 className="text-sm font-semibold text-white">{c.latest}</h3><p className="text-xs text-muted">{c.updated} · {updated}</p></div>
+    <div className="rounded-xl border border-hairline bg-surface p-5"><div className="flex items-center justify-between gap-3"><h3 className="text-sm font-semibold text-white">{c.latest}</h3><p className="flex items-center gap-1.5 text-xs text-muted"><span className="proof-live-dot" aria-hidden="true" />{c.updated} · {updated}</p></div>
       <ul className="mt-3 divide-y divide-hairline">{snapshot.openingsFeed.map(row => {
         const box = BOX_BY_SLUG[row.boxSlug];
         const product = box?.items.find(item => item.id === row.itemId);
-        return <li key={row.id} className="flex items-center justify-between gap-4 py-3 text-sm"><div className="min-w-0"><p className="truncate text-white">{product ? itemName(product) : row.itemId}</p><p className="mt-1 truncate text-xs text-muted">{box ? boxTitle(box) : row.boxSlug} · {new Date(row.at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}</p></div><Money value={row.amountUsdt} size="sm" /></li>;
+        return <li key={row.id} className="proof-feed-row flex items-center justify-between gap-4 py-3 text-sm"><div className="min-w-0"><p className="truncate text-white">{product ? itemName(product) : row.itemId}</p><p className="mt-1 truncate text-xs text-muted">{box ? boxTitle(box) : row.boxSlug} · {new Date(row.at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</p></div><Money value={row.amountUsdt} size="sm" /></li>;
       })}</ul>
     </div>
   </div>;

@@ -18,13 +18,13 @@ test("home proof metrics use catalogue odds and recorded openings and payback", 
   assert.equal("shipments" in metrics, false);
 });
 
-test("public proof snapshot is shared per UTC bucket, grows on the next bucket and includes a premium opening", () => {
+test("public proof snapshot is shared per five-second UTC bucket, updates continuously and includes a premium opening", () => {
   const at = Date.UTC(2026, 9, 1, 12, 0, 5);
   const sameA = publicProofSnapshot(at, 4);
-  const sameB = publicProofSnapshot(at + 20_000, 4);
-  const next = publicProofSnapshot(at + 30_000, 4);
+  const sameB = publicProofSnapshot(at + 2_000, 4);
+  const next = publicProofSnapshot(at + 5_000, 4);
   assert.deepEqual(sameA, sameB);
-  assert.equal(next.openings, sameA.openings + 3);
+  assert.ok(next.openings > sameA.openings);
   assert.ok(next.paybackUsdt > sameA.paybackUsdt);
   assert.ok(sameA.openingsFeed.some(row => row.amountUsdt >= 1_000));
   assert.equal(sameA.openingsFeed.length, 4);
