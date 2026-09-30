@@ -25,7 +25,7 @@ export function HashExplainer() {
     <div>
       <Fingerprint aria-hidden className="h-5 w-5 text-gold-champagne" />
       <h2 id={`${id}-title`} className="mt-4 text-xl font-medium text-white">{t("hashTitle")}</h2>
-      <p className="mt-3 text-sm leading-7 text-muted">{t("hashBody")}</p>
+      <p className="mt-3 whitespace-pre-line text-sm leading-7 text-muted">{t("hashBody")}</p>
       <p className="mt-3 text-sm leading-7 text-secondary">{t("hashTry")}</p>
     </div>
     <div className="min-w-0">

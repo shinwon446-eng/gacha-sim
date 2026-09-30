@@ -16,18 +16,18 @@ export default function FairnessPage() {
       <div className="mx-auto max-w-6xl px-5 lg:px-10">
         <header className="border-b border-hairline py-9 md:py-14">
           <p className="flex items-center gap-2 text-xs font-medium tracking-widest text-gold-champagne"><Fingerprint aria-hidden className="h-4 w-4" />{t("eyebrow")}</p>
-          <h1 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-white md:text-5xl">{t("title")}</h1>
-          <p className="mt-4 max-w-3xl text-base leading-8 text-secondary">{t("intro")}</p>
+          <h1 className="mt-4 max-w-3xl whitespace-pre-line text-3xl font-semibold leading-tight tracking-tight text-white md:text-5xl">{t("title")}</h1>
+          <p className="mt-4 max-w-3xl whitespace-pre-line text-base leading-8 text-secondary">{t("intro")}</p>
           <a href="#verify-result" className="mt-6 inline-flex min-h-12 items-center gap-3 rounded-md bg-[#f1eee7] px-5 text-sm font-semibold text-obsidian hover:bg-white">{t("start")}<ArrowDown aria-hidden className="h-4 w-4" /></a>
         </header>
         <section aria-labelledby="fairness-steps" className="py-8 md:py-10">
           <h2 id="fairness-steps" className="text-xl font-medium text-white">{t("stepsTitle")}</h2>
-          <p className="mt-3 max-w-3xl text-sm leading-7 text-muted">{t("hashIntro")}</p>
+          <p className="mt-3 max-w-3xl whitespace-pre-line text-sm leading-7 text-muted">{t("hashIntro")}</p>
           <ol className="mt-6 grid gap-3 md:grid-cols-3">
             {icons.map((Icon, i) => <li key={i} className="rounded-lg border border-hairline bg-surface p-5 md:p-6">
               <div className="flex items-center justify-between text-gold-champagne"><Icon aria-hidden className="h-5 w-5" /><span className="text-xs tabular-nums">0{i + 1}</span></div>
               <h3 className="mt-5 text-base font-medium text-white">{t(`step${i + 1}Title`)}</h3>
-              <p className="mt-2 text-sm leading-7 text-muted">{t(`step${i + 1}Body`)}</p>
+              <p className="mt-2 whitespace-pre-line text-sm leading-7 text-muted">{t(`step${i + 1}Body`)}</p>
             </li>)}
           </ol>
         </section>
@@ -35,8 +35,8 @@ export default function FairnessPage() {
         <section aria-labelledby="fairness-scope" className="my-8 rounded-lg border border-hairline p-5 md:p-7">
           <h2 id="fairness-scope" className="text-lg font-medium text-white">{t("scopeTitle")}</h2>
           <div className="mt-4 grid gap-5 md:grid-cols-2">
-            <div><p className="flex items-center gap-2 text-sm font-medium text-gold-champagne"><Check aria-hidden className="h-4 w-4" />{t("scopeCanTitle")}</p><p className="mt-2 text-sm leading-7 text-muted">{t("scopeCan")}</p></div>
-            <div><p className="text-sm font-medium text-white">{t("scopeCannotTitle")}</p><p className="mt-2 text-sm leading-7 text-muted">{t("scopeCannot")}</p></div>
+            <div><p className="flex items-center gap-2 text-sm font-medium text-gold-champagne"><Check aria-hidden className="h-4 w-4" />{t("scopeCanTitle")}</p><p className="mt-2 whitespace-pre-line text-sm leading-7 text-muted">{t("scopeCan")}</p></div>
+            <div><p className="text-sm font-medium text-white">{t("scopeCannotTitle")}</p><p className="mt-2 whitespace-pre-line text-sm leading-7 text-muted">{t("scopeCannot")}</p></div>
           </div>
           <p className="mt-5 border-t border-hairline pt-5 text-sm leading-7 text-secondary">{t("recordSource")}</p>
         </section>
