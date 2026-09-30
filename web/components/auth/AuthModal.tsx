@@ -24,12 +24,21 @@ export function AuthModal() {
   const t = useTranslations("account");
   const locale = useLocale();
   const { isModalOpen, modalMode, closeAuthModal, setModalMode, acceptSession: setAuthSession } = useAuthStore();
-  const acceptSession = (user: ServerAccount) => {
+  const user = useAuthStore((state) => state.user);
+  const grantDemoWelcome = (account: ServerAccount | NonNullable<typeof user>) => {
+    if (!account.local || !browserAccountsEnabled()) {
+      useWalletStore.getState().setWelcomeAccount(null);
+      return;
+    }
     const wallet = useWalletStore.getState();
-    if (browserAccountsEnabled() && user.local === true) {
-      wallet.setWelcomeAccount(user.id);
-      wallet.claimWelcome(user.id);
-    } else wallet.setWelcomeAccount(null);
+    wallet.setWelcomeAccount(account.id);
+    wallet.claimWelcome(account.id);
+  };
+  useEffect(() => {
+    if (user?.local) grantDemoWelcome(user);
+  }, [user?.id, user?.local]);
+  const acceptSession = (user: ServerAccount) => {
+    grantDemoWelcome(user);
     setAuthSession(user);
   };
   const panel = useRef<HTMLDivElement>(null);
