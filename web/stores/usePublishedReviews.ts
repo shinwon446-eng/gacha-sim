@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { browserAccountsEnabled } from "@/lib/account";
 import { loadCommunityReviews } from "@/lib/communityReviewApi";
 import { publicReviewFeed } from "@/lib/community";
+import { PUBLISHED_REVIEW_EXAMPLES } from "@/lib/publishedReviewExamples";
 import { useCommunityStore, type MyReview } from "@/stores/communityStore";
 
 const UPDATE_EVENT = "gachaflix:community-reviews-updated";
@@ -24,5 +25,5 @@ export function usePublishedReviews() {
     window.addEventListener(UPDATE_EVENT, updated);
     return () => { active = false; window.clearInterval(timer); window.removeEventListener("focus", refresh); window.removeEventListener(UPDATE_EVENT, updated); };
   }, []);
-  return useMemo(() => publicReviewFeed(browserAccountsEnabled() ? mine : [...remote, ...mine]), [mine, remote]);
+  return useMemo(() => publicReviewFeed([...(browserAccountsEnabled() ? mine : [...remote, ...mine]), ...PUBLISHED_REVIEW_EXAMPLES]), [mine, remote]);
 }

@@ -25,11 +25,11 @@ export function communityFeedCopy(locale: string) {
 
 export function publicReviewFeed(reviews: MyReview[]): MyReview[] {
   const seen = new Set<string>();
-  const members = reviews.filter(review => {
-    if (isExampleReview(review) || !review.publishedAt || !Number.isFinite(Date.parse(review.at)) || seen.has(review.id)) return false;
+  const published = reviews.filter(review => {
+    if (!review.publishedAt || !Number.isFinite(Date.parse(review.at)) || seen.has(review.id)) return false;
     seen.add(review.id); return true;
   }).sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
-  return members;
+  return published;
 }
 
 export function relativeReviewTime(at: string, now: number, locale: string): string {

@@ -7,6 +7,7 @@ import { useCommunityStore, subscribeCommunityReviews } from "../stores/communit
 import { useAuthStore } from "../stores/authStore";
 import { reviewValueNotice } from "../components/community/reviewValueNotice";
 import { publicReviewFeed, isExampleReview, relativeReviewTime, reviewWindow, communityFeedCopy } from "../lib/community";
+import { PUBLISHED_REVIEW_EXAMPLES } from "../lib/publishedReviewExamples";
 import { applyBoardCommand, createBoardExamples, isExampleBoardContent, parseBoardPosts, selectBoardPosts } from "../lib/board";
 import { BOARD_STORAGE_KEY, BOARD_EXAMPLES_KEY, loadBoard } from "../lib/boardApi";
 
@@ -121,16 +122,17 @@ test("example initialization is serialized, non-destructive, and does not resurr
   } finally { if (original) Object.defineProperty(globalThis, "localStorage", original); else Reflect.deleteProperty(globalThis, "localStorage"); }
 });
 
-test("public feed contains only published member reviews and excludes legacy editorial records", () => {
+test("public feed contains every published review record used by the home carousel", () => {
   const record = { id: "member-review", ownedId: "own", itemId: "da-iphone16", boxSlug: "dollar-apple", text: "직접 남긴 상품 후기입니다.", rating: 4, bonusUsdt: 0, at: "2026-09-01T00:00:00Z", publishedAt: "2026-09-01T00:00:00Z" };
   const legacyExample = { ...record, id: "review_example_v1_01", source: "example", publishedAt: "2026-09-01T00:00:00Z" };
   const mine = [record, { ...record, id: "private", publishedAt: undefined }, legacyExample, record];
   const before = JSON.stringify(mine);
   const feed = publicReviewFeed(mine);
-  assert.deepEqual(feed, [record]);
-  assert.deepEqual(publicReviewFeed(mine), [record]);
+  assert.deepEqual(feed, [record, legacyExample]);
+  assert.deepEqual(publicReviewFeed(mine), [record, legacyExample]);
   assert.equal(JSON.stringify(mine), before);
-  assert.ok(!useCommunityStore.getState().mine.some(isExampleReview), "examples never become owned reviews");
+  assert.ok(!useCommunityStore.getState().mine.some(isExampleReview), "published examples never become owned reviews");
+  assert.equal(publicReviewFeed([...PUBLISHED_REVIEW_EXAMPLES]).length, PUBLISHED_REVIEW_EXAMPLES.length);
 });
 
 test("rotation wraps without duplication or timestamp rewriting; relative time reflects elapsed time", () => {
