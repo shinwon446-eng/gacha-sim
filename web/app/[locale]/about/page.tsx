@@ -5,6 +5,7 @@ import { ArrowRight, ArrowUpRight, ChevronDown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { DiscoveryMatrix, ScenarioShowcase, TrustGuardrails } from "@/components/about/AboutSections";
+import { IsometricStage } from "@/components/about/IsometricStage";
 import { TIERS } from "@/lib/tiers";
 
 /**
@@ -69,7 +70,7 @@ export default function AboutPage() {
       <SiteHeader />
 
       {/* ① 시네마틱 중앙 히어로 */}
-      <section className="overflow-hidden py-14 md:py-20">
+      <section className="overflow-hidden pt-14 md:pt-20">
         <div className="mx-auto max-w-[1440px] px-6 text-center lg:px-14">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold-champagne">THE WORLD OF VOILA</p>
           <h1 className="mx-auto mt-6 max-w-3xl whitespace-pre-line break-keep text-center text-4xl font-semibold leading-[1.14] tracking-[-0.04em] text-white md:text-[64px]">
@@ -86,6 +87,8 @@ export default function AboutPage() {
             </Link>
           </div>
         </div>
+        {/* 아이소메트릭 스테이지 (2541ce5 원본) */}
+        <IsometricStage />
       </section>
 
       <div className="mx-auto max-w-[1440px] px-6 lg:px-14">
