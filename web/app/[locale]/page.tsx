@@ -206,7 +206,7 @@ export default function BoxesPage() {
       <LiveReviewsSection />
       <DiscoveryGuide />
       <section className="page-shell pb-20" aria-labelledby="proof-section-title">
-        <div className="guide-heading"><div><p className="eyebrow">{copy.proofEyebrow}</p><h2 id="proof-section-title">{copy.proofTitle}</h2><p className="guide-intro max-w-2xl">{copy.proofBody}</p></div><Link href="/fairness" className="text-link">{copy.verify}<ArrowUpRight size={16} aria-hidden /></Link></div>
+        <div className="guide-heading"><div><p className="eyebrow">{copy.proofEyebrow}</p><h2 id="proof-section-title">{copy.proofTitle}</h2><p className="guide-intro max-w-2xl whitespace-pre-line">{copy.proofBody}</p></div><Link href="/fairness" className="text-link">{copy.verify}<ArrowUpRight size={16} aria-hidden /></Link></div>
         <ProofFeed limit={4} />
       </section>
 
