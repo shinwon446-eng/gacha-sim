@@ -40,6 +40,7 @@
 .assurance-item > svg { flex-shrink: 0; }
 .assurance-item:hover strong { color: #d9c39a; }
 .collection-section { padding-top: 54px; padding-bottom: 72px; scroll-margin-top: 90px; }
+.home-reviews { padding-top:20px; padding-bottom:64px; }
 .collection-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 28px; }
 .collection-heading h2, .guide-heading h2 { margin-top: 12px; font-size: clamp(27px,2.5vw,36px); line-height: 1.3; letter-spacing: -.035em; font-weight: 500; text-wrap: balance; }
 .collection-intro { margin-top: 12px; font-size: 14px; color: #a3a4a2; }
@@ -106,7 +107,8 @@
   .assurance-item > svg:last-child { display: block; }
   .assurance-item strong { font-size: 12px; }
   .assurance-item > span > span { font-size: 12px; }
-  .collection-section { padding-top: 32px; padding-bottom: 38px; scroll-margin-top: 84px; }
+  .collection-section { padding-top: 32px; padding-bottom: 28px; scroll-margin-top: 84px; }
+  .home-reviews { padding-top:20px; padding-bottom:48px; }
   .collection-heading { margin-bottom: 20px; gap: 12px; }
   .collection-heading h2, .guide-heading h2 { font-size: 27px; }
   .collection-count { display: none; }
