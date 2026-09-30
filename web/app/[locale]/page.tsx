@@ -15,7 +15,7 @@ import { QuickTabs, type CategoryTab } from "@/components/home/QuickTabs";
 import { ProofFeed } from "@/components/home/ProofFeed";
 import { BoxCard } from "@/components/box/BoxCard";
 import { DetailModal } from "@/components/box/DetailModal";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useCurrency } from "@/lib/useCurrency";
 import { Link } from "@/i18n/navigation";
 import { ArrowUpRight } from "lucide-react";
@@ -28,6 +28,7 @@ import { glow as glowOf } from "@/lib/tiers";
 import { useUiStore } from "@/stores/uiStore";
 import type { FundingRatio } from "@/lib/funding";
 import { DEPOSIT_HASH } from "@/components/layout/MobileBottomNav";
+import { copyFor } from "@/lib/homeCopy";
 
 const PAGE_SIZE = 12;
 /** 해시 → 카테고리 탭 (하단 내비 [👑 1달러 잭팟] = #category-dollar) */
@@ -53,6 +54,7 @@ function BoxGrid({ boxes, onPick }: { boxes: ProductBox[]; onPick: (b: ProductBo
 
 export default function BoxesPage() {
   const t = useTranslations();
+  const copy = copyFor(useLocale());
   const { fmt } = useCurrency();
   const [detail, setDetail] = useState<ProductBox | null>(null);
   useEffect(() => { if (detail) preloadUnboxingAudio(); }, [detail]);
@@ -190,7 +192,7 @@ export default function BoxesPage() {
 
       <section ref={gridRef} id="boxes" className="collection-section page-shell" aria-labelledby="collection-title">
         <div className="collection-heading">
-          <div><p className="eyebrow">CURATED COLLECTIONS</p><h2 id="collection-title">{t("design.collectionTitle")}</h2><p className="collection-intro">{t("design.collectionBody")}</p></div>
+          <div><p className="eyebrow">{copy.collectionEyebrow}</p><h2 id="collection-title">{copy.collectionTitle}</h2><p className="collection-intro">{copy.collectionBody}</p></div>
           <span className="collection-count">{t("design.collectionCount", { count: BOXES.length })}</span>
         </div>
         <div className="collection-toolbar">
@@ -204,7 +206,7 @@ export default function BoxesPage() {
       <LiveReviewsSection />
       <DiscoveryGuide />
       <section className="page-shell pb-20" aria-labelledby="proof-section-title">
-        <div className="guide-heading"><div><p className="eyebrow">TRANSPARENCY, BY DESIGN</p><h2 id="proof-section-title">{t("design.proofTitle")}</h2></div><Link href="/fairness" className="text-link">{t("design.verify")}<ArrowUpRight size={16} aria-hidden /></Link></div>
+        <div className="guide-heading"><div><p className="eyebrow">{copy.proofEyebrow}</p><h2 id="proof-section-title">{copy.proofTitle}</h2><p className="guide-intro max-w-2xl">{copy.proofBody}</p></div><Link href="/fairness" className="text-link">{copy.verify}<ArrowUpRight size={16} aria-hidden /></Link></div>
         <ProofFeed limit={4} />
       </section>
 

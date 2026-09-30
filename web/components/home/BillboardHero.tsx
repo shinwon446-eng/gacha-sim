@@ -1,13 +1,14 @@
 "use client";
 import { useState } from "react";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useProductText } from "@/lib/useProductText";
 import { cn } from "@/lib/format";
 import type { ProductBox } from "@/lib/products";
 import { ProductArt } from "@/components/box/ProductArt";
 import { Money } from "@/components/ui/Money";
 import { Link } from "@/i18n/navigation";
+import { copyFor } from "@/lib/homeCopy";
 
 export interface BillboardHeroProps {
   boxes: ProductBox[];
@@ -20,6 +21,7 @@ export interface BillboardHeroProps {
 /** Manual selections keep reading and keyboard focus stable. */
 export function BillboardHero({ boxes, onInspect, className }: BillboardHeroProps) {
   const t = useTranslations("design");
+  const copy = copyFor(useLocale());
   const { boxTitle } = useProductText();
   const [index, setIndex] = useState(0);
   const box = boxes[Math.min(index, boxes.length - 1)];
@@ -27,11 +29,11 @@ export function BillboardHero({ boxes, onInspect, className }: BillboardHeroProp
   return (
     <section className={cn("editorial-hero page-shell", className)} aria-labelledby="hero-title">
       <div className="hero-copy min-w-0">
-        <span className="eyebrow"><span className="h-1.5 w-1.5 rounded-full bg-gold-champagne" /> THE ART OF DISCOVERY</span>
-        <h1 id="hero-title">{t("heroLine1")}<br /><span>{t("heroLine2")}</span></h1>
-        <p className="hero-description">{t("heroBody")}</p>
+        <span className="eyebrow"><span className="h-1.5 w-1.5 rounded-full bg-gold-champagne" /> {copy.heroEyebrow}</span>
+        <h1 id="hero-title">{copy.heroLine1}<br /><span>{copy.heroLine2}</span></h1>
+        <p className="hero-description">{copy.heroBody}</p>
         <div className="hero-actions">
-          <a href="#boxes" className="btn-primary">{t("explore")}<ArrowDown size={17} aria-hidden /></a>
+          <a href="#boxes" className="btn-primary">{copy.explore}<ArrowDown size={17} aria-hidden /></a>
           <Link href="/fairness" className="btn-secondary"><ArrowUpRight size={15} aria-hidden />{t("fairnessCta")}</Link>
         </div>
         <p className="hero-note">{t("purchaseNote")}</p>
