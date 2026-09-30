@@ -207,11 +207,13 @@ export function ScenarioShowcase() {
         });
       }
     }
-    // ② 즉시 캐시백 — 1달러 컬렉션에서 실물/디지털 중 가운데 값을 고른다(최고 상품을 캐시백하는 예시는 앞뒤가 안 맞는다)
+    // ② 즉시 캐시백 — 최고 상품을 캐시백하는 예시는 앞뒤가 안 맞으므로, "원하던 게 아니었을 때" 쓰는 기능답게
+    //    기프트카드 중 가장 값이 큰 것을 고른다(1 USDT 박스 → 100 USDT 기프트카드 → 95 USDT 캐시백).
     const starter = BOX_BY_SLUG["dollar-apple"];
     if (starter) {
       const sellable = dropTable(starter).filter((x) => x.kind !== "cash");
-      const pick = sellable[Math.floor(sellable.length / 2)] ?? sellable[sellable.length - 1];
+      const digital = sellable.filter((x) => x.kind === "digital");
+      const pick = digital[0] ?? sellable[Math.floor(sellable.length / 2)] ?? sellable[sellable.length - 1];
       if (pick) {
         out.push({
           key: "case2",

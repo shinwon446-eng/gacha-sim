@@ -1777,7 +1777,13 @@
     "proofTitle": "확인할 수 있어야, 믿을 수 있으니까.",
     "verify": "공정성 확인",
     "fairnessCta": "추첨 검증 알아보기",
-    "purchaseNote": "구매 전 가격과 확률을 확인하고, 결과를 직접 검증하세요."
+    "purchaseNote": "구매 전 가격과 확률을 확인하고, 결과를 직접 검증하세요.",
+    "heroEyebrow": "당신의 다음 발견",
+    "collectionEyebrow": "박스 컬렉션",
+    "guideEyebrow": "VOILA 이용 방법",
+    "guideBody": "고르고, 열고, 결정하세요. 세 단계면 충분합니다.",
+    "proofEyebrow": "검증된 공정성",
+    "proofBody": "개봉 전 시드 해시와 개봉 기록을 비교하세요. 공정성 검증기에서 같은 입력이 같은 결과를 만드는지 직접 확인할 수 있습니다."
   },
   "legalCenter": {
     "title": "정책 및 이용 안내",

@@ -4,7 +4,7 @@ import { ArrowUpRight, Globe2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { BrandLogo } from "./BrandLogo";
 import { LanguageSelector } from "./LanguageSelector";
-import { LEGAL_GROUPS, LEGAL_VALUES } from "@/lib/legal";
+import { COPYRIGHT_YEAR, LEGAL_GROUPS, LEGAL_VALUES } from "@/lib/legal";
 
 /** One footer, one link per policy. The platform signature remains intact. */
 export function Footer() {
@@ -31,7 +31,11 @@ export function Footer() {
         <div className="max-w-3xl text-xs leading-6 text-muted"><p className="font-medium text-secondary">{c("footerStatus")}</p><p className="mt-1">{c("footerBusiness", LEGAL_VALUES)}</p><p className="mt-2">{r("languageScope")}</p></div>
         <div className="flex items-center gap-3"><Globe2 className="h-4 w-4 text-muted" aria-hidden="true" /><LanguageSelector /></div>
       </div>
-      <div className="mt-6 flex flex-wrap justify-between gap-3 text-xs text-muted"><span>&copy; 2026 VOILA. All rights reserved.</span><span>OPEN IT, OWN IT.</span></div>
+      {/* 저작권자는 브랜드가 아니라 권리를 보유한 사업자다(legal.business 문서와 같은 값). 슬로건은 세 로케일 모두 원문 유지(§1) */}
+      <div className="mt-6 flex flex-wrap justify-between gap-3 text-xs text-muted">
+        <small className="not-italic">{c("copyright", { year: COPYRIGHT_YEAR, company: LEGAL_VALUES.companyName })}</small>
+        <span>OPEN IT, OWN IT.</span>
+      </div>
     </div>
   </footer>;
 }

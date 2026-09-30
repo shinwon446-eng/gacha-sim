@@ -2,6 +2,12 @@ import { MIN_WITHDRAW_USDT, WITHDRAW_NETWORK_BY_KEY } from "./withdrawal";
 
 export const LEGAL_VERSION = "2026-09-30.1";
 export const LEGAL_EFFECTIVE_DATE = "2026-09-30";
+/**
+ * 저작권 표기 연도. `new Date().getFullYear()` 를 쓰면 정적 export 의 빌드 시각과 방문자의 시계가 갈려
+ * 연말·연초에 하이드레이션이 깨지므로, 약관 시행일에서 결정론적으로 끌어온다.
+ * 약관을 개정하면 연도도 함께 올라간다 — 고쳐야 할 곳이 한 군데다.
+ */
+export const COPYRIGHT_YEAR = Number(LEGAL_EFFECTIVE_DATE.slice(0, 4));
 export const LEGAL_DOCS = ["terms", "privacy", "payments", "withdrawals", "refunds", "policy", "fairness", "safety", "community", "cookies", "complaints", "business", "faq"] as const;
 export type LegalDoc = (typeof LEGAL_DOCS)[number];
 export const LEGAL_GROUPS = [

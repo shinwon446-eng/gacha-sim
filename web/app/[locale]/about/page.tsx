@@ -85,8 +85,12 @@ export default function AboutPage() {
               {t("explore")}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
-            {/* 핵심 신뢰 요약 — 점선 밑줄 마이크로 노트 */}
-            <p className="mt-4 border-b border-dashed border-white/30 pb-0.5 text-[13px] text-muted">{t("heroNote")}</p>
+            {/* 핵심 신뢰 요약 — 점선 밑줄 마이크로 노트.
+                border-b 로 그리면 블록 폭 전체에 선이 깔려 모바일에서 줄바꿈될 때 구분선처럼 보인다(375px 실측).
+                text-decoration 으로 그리면 줄마다 글자 아래에만 붙는다. */}
+            <p className="mt-4 max-w-[30rem] break-keep text-center text-[13px] leading-6 text-muted underline decoration-white/30 decoration-dashed underline-offset-[6px]">
+              {t("heroNote")}
+            </p>
           </div>
         </div>
         {/* 아이소메트릭 볼트 스테이지 */}
