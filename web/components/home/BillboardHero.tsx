@@ -27,7 +27,7 @@ export function BillboardHero({ boxes, onInspect, className }: BillboardHeroProp
   return (
     <section className={cn("editorial-hero page-shell", className)} aria-labelledby="hero-title">
       <div className="hero-copy min-w-0">
-        <span className="eyebrow"><span className="h-1.5 w-1.5 rounded-full bg-gold-champagne" /> {t("heroEyebrow")}</span>
+        <span className="eyebrow"><span className="h-1.5 w-1.5 rounded-full bg-gold-champagne" /> THE ART OF DISCOVERY</span>
         <h1 id="hero-title">{t("heroLine1")}<br /><span>{t("heroLine2")}</span></h1>
         <p className="hero-description">{t("heroBody")}</p>
         <div className="hero-actions">

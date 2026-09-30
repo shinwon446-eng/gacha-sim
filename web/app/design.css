@@ -1,4 +1,6 @@
 .page-shell { width: min(100%, 1440px); margin-inline: auto; padding-inline: 48px; }
+.page-shell :where(p, li, dd) { overflow-wrap:anywhere; text-wrap:pretty; }
+.page-shell :where(p.text-secondary, p.text-muted, .workspace-description, .collection-intro, .guide-intro) { line-height:1.8; }
 .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: #bfb49e; font-size: 12px; font-weight: 500; letter-spacing: .18em; line-height: 1.5; }
 .btn-primary, .btn-secondary { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 12px; border-radius: 6px; padding: 12px 22px; font-size: 14px; font-weight: 600; line-height: 1.5; transition: background .2s, border-color .2s, color .2s; }
 .btn-primary { background: #f1eee7; color: #171819; border: 1px solid #f1eee7; }
