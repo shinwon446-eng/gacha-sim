@@ -9,6 +9,7 @@ import { useSecurityStore } from "@/stores/securityStore";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { browserAccountsEnabled } from "@/lib/account";
 import { restoreBrowserAssets } from "@/lib/browserWallet";
+import { useWalletStore } from "@/stores/walletStore";
 
 /**
  * 전역 인증 호스트, `app/[locale]/layout.tsx` 한 곳에 마운트한다.
@@ -27,7 +28,25 @@ export function AuthHost() {
   }, []);
   useEffect(() => {
     if (browserAccountsEnabled()) restoreBrowserAssets(userId ?? null);
-    if (userId) void useSecurityStore.getState().refresh(userId);
+    if (userId) {
+      // Credit only after switching/restoring the account's wallet namespace.
+      const grant = () => {
+        const wallet = useWalletStore.getState();
+        wallet.setWelcomeAccount(userId);
+        wallet.claimWelcome(userId);
+      };
+      const wallet = useWalletStore.getState();
+      if (wallet.hydrated) grant();
+      else {
+        let unsubscribe = () => {};
+        unsubscribe = useWalletStore.subscribe((state) => {
+          if (!state.hydrated) return;
+          unsubscribe();
+          grant();
+        });
+      }
+      void useSecurityStore.getState().refresh(userId);
+    }
   }, [userId]);
 
   return (

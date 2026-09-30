@@ -5,8 +5,7 @@ import { ArrowLeft, CheckCircle2, Eye, EyeOff, Loader2, X } from "lucide-react";
 import { useModal } from "@/lib/useModal";
 import { Link } from "@/i18n/navigation";
 import { useAuthStore } from "@/stores/authStore";
-import { AccountError, beginSocialLogin, browserAccountsEnabled, completePasswordRecovery, loginAccount, recoverAccount, resendAccountEmail, signupAccount, validAccountEmail, validAccountPassword, verifyAccountEmail, type ServerAccount, type SocialProvider } from "@/lib/account";
-import { useWalletStore } from "@/stores/walletStore";
+import { AccountError, beginSocialLogin, completePasswordRecovery, loginAccount, recoverAccount, resendAccountEmail, signupAccount, validAccountEmail, validAccountPassword, verifyAccountEmail, type ServerAccount, type SocialProvider } from "@/lib/account";
 
 type Step = "email" | "password" | "verify" | "reset" | "done";
 const providers: SocialProvider[] = ["google", "apple", "microsoft"];
@@ -24,21 +23,7 @@ export function AuthModal() {
   const t = useTranslations("account");
   const locale = useLocale();
   const { isModalOpen, modalMode, closeAuthModal, setModalMode, acceptSession: setAuthSession } = useAuthStore();
-  const user = useAuthStore((state) => state.user);
-  const grantDemoWelcome = (account: ServerAccount | NonNullable<typeof user>) => {
-    if (!account.local || !browserAccountsEnabled()) {
-      useWalletStore.getState().setWelcomeAccount(null);
-      return;
-    }
-    const wallet = useWalletStore.getState();
-    wallet.setWelcomeAccount(account.id);
-    wallet.claimWelcome(account.id);
-  };
-  useEffect(() => {
-    if (user?.local) grantDemoWelcome(user);
-  }, [user?.id, user?.local]);
   const acceptSession = (user: ServerAccount) => {
-    grantDemoWelcome(user);
     setAuthSession(user);
   };
   const panel = useRef<HTMLDivElement>(null);
