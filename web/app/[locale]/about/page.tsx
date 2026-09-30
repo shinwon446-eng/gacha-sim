@@ -106,12 +106,10 @@ export default function AboutPage() {
 
         {/* ④-1 HOW IT WORKS 3단계 + 미니 UI */}
         <section className="border-t border-hairline py-14 md:py-20">
-          <div className="grid gap-5 md:grid-cols-[1fr_1.4fr] md:gap-16">
+          <div className="max-w-2xl">
             <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">HOW IT WORKS</p>
-            <div>
-              <h2 className="text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("stepsTitle")}</h2>
-              <p className="mt-4 max-w-xl text-base leading-7 text-muted">{t("stepsBody")}</p>
-            </div>
+            <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("stepsTitle")}</h2>
+            <p className="mt-4 break-keep text-base leading-7 text-muted">{t("stepsBody")}</p>
           </div>
           <ol className="mt-10 grid gap-8 md:mt-14 md:grid-cols-3 md:gap-10">
             {STEP_PREVIEWS.map((Preview, i) => (
@@ -138,12 +136,12 @@ export default function AboutPage() {
         />
 
         {/* ⑤ FAQ */}
-        <section className="grid gap-8 border-t border-hairline py-16 md:grid-cols-[1fr_1.4fr] md:gap-16 md:py-24">
-          <div>
+        <section className="border-t border-hairline py-16 md:py-24">
+          <div className="max-w-2xl">
             <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">GOOD TO KNOW</p>
-            <h2 className="mt-5 text-3xl font-semibold tracking-tight text-white">{t("faqTitle")}</h2>
+            <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("faqTitle")}</h2>
           </div>
-          <div className="border-t border-hairline">
+          <div className="mt-8 max-w-3xl border-t border-hairline">
             {[1, 2, 3].map((n) => (
               <details key={n} className="group border-b border-hairline">
                 <summary className="flex min-h-20 cursor-pointer list-none items-center justify-between gap-5 py-5 text-base font-medium text-white [&::-webkit-details-marker]:hidden">

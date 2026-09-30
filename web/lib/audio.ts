@@ -254,13 +254,11 @@ function pad(ac: AudioContext, freqs: number[], start: number, duration: number,
 
 /** 실제 상자를 열 때 — 잠금 해제 뒤 뚜껑 마찰, 공기감, 둔탁한 착지 */
 export function playTaDum() {
-  duckBgm(0.4, 1800);
   playUnboxingSample("lid-open", 1.25);
 }
 
 /** 50/100개 개봉 전용 — 빠른 다중 뚜껑/래치 연타와 마지막 착지 */
 export function playBulkOpen() {
-  duckBgm(0.3, 2400);
   playUnboxingSample("bulk-open", 1.15);
 }
 
@@ -277,7 +275,6 @@ export function playTick() {
 /** 결과 공개 — 실제 음원으로 만든 질감 있는 리빌 스팅어 */
 export function playWin(line: Line) {
   if (rateLimited("win", 120)) return;
-  duckBgm(line === "jackpot" ? 0.3 : 0.55, line === "jackpot" ? 2600 : 1000);
   playUnboxingSample(line === "jackpot" ? "rare-jackpot" : "reveal", line === "jackpot" ? 1.2 : line === "value" ? 1.1 : 0.9);
 }
 
@@ -303,7 +300,6 @@ export function playHeartbeat() {
   const ac = sfxCtx();
   if (!ac) return;
   const t = ac.currentTime;
-  duckBgm(0.45, 700);
   tone(ac, 55, t, 0.2, { gain: 0.3, attack: 0.006, lowpass: 180, slideTo: 41 });
   tone(ac, 55, t + 0.24, 0.16, { gain: 0.2, attack: 0.006, lowpass: 180, slideTo: 41 });
 }
@@ -314,7 +310,6 @@ export function playGlitch() {
   const ac = sfxCtx();
   if (!ac) return;
   const t = ac.currentTime;
-  duckBgm(0.35, 1400);
   for (let i = 0; i < 5; i++) {
     noise(ac, t + i * 0.05, 0.035, { freq: 900 + Math.random() * 3100, q: 3, gain: 0.05, pan: i % 2 ? 0.3 : -0.3 });
   }
@@ -334,218 +329,19 @@ export function playTension() {
   tone(ac, 82, t, 0.45, { gain: 0.16, attack: 0.02, lowpass: 250, slideTo: 62 });
 }
 
-// ───────────────────────── 배경 음악 (싱글턴) ─────────────────────────
-// 자동 재생하지 않는다 — startBgm() 은 반드시 클릭 등 사용자 제스처 핸들러에서 부른다.
-// HTMLAudioElement 하나만 존재하므로 트랙이 겹칠 수 없다.
-
-const BGM_URL = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/audio/velvet-vault.wav`;
-const BGM_CEILING = 0.4; // 사용자 볼륨 1.0 일 때의 실제 최대 볼륨
-const FADE_STEP_MS = 25;
-
-let bgmEl: HTMLAudioElement | null = null;
-let bgmSource: MediaElementAudioSourceNode | null = null;
-let bgmGain: GainNode | null = null;
-let bgmWanted = false;
-let bgmStarting: Promise<boolean> | null = null;
-let bgmUserVolume = 0.45;
-let duckFactor = 1;
-let fadeTimer: number | null = null;
-let duckTimer: number | null = null;
-let resumeOnVisible = false;
-
-const clamp01 = (v: number) => (Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0);
-const bgmTarget = () => clamp01(BGM_CEILING * bgmUserVolume * duckFactor);
-
-function clearFade() {
-  if (fadeTimer !== null) {
-    window.clearInterval(fadeTimer);
-    fadeTimer = null;
-  }
-}
-
-function bgmLevel(): number {
-  return bgmGain ? bgmGain.gain.value : (bgmEl?.volume ?? 0);
-}
-
-function setBgmLevel(level: number) {
-  const next = clamp01(level);
-  if (bgmGain) bgmGain.gain.value = next;
-  else if (bgmEl) bgmEl.volume = next;
-}
-
-function fadeBgmTo(target: number, ms: number, done?: () => void) {
-  const el = bgmEl;
-  if (!el) return;
-  clearFade();
-  const from = bgmLevel();
-  const steps = Math.max(1, Math.round(ms / FADE_STEP_MS));
-  let i = 0;
-  fadeTimer = window.setInterval(() => {
-    i++;
-    setBgmLevel(from + (target - from) * (i / steps));
-    if (i >= steps) {
-      clearFade();
-      done?.();
-    }
-  }, FADE_STEP_MS);
-}
-
-function releaseBgm() {
-  clearFade();
-  if (duckTimer !== null) {
-    window.clearTimeout(duckTimer);
-    duckTimer = null;
-  }
-  duckFactor = 1;
-  resumeOnVisible = false;
-  const el = bgmEl;
-  bgmEl = null;
-  bgmSource?.disconnect();
-  bgmGain?.disconnect();
-  bgmSource = null;
-  bgmGain = null;
-  if (!el) return;
-  try {
-    el.pause();
-    el.removeAttribute("src");
-    el.load(); // 네트워크·디코더 자원 반납
-  } catch {
-    /* 무시 */
-  }
-}
-
-/** 배경 음악 재생 — 사용자 제스처 안에서 호출. 이미 재생 중이면 그대로 둔다 */
-export function startBgm(): Promise<boolean> {
-  if (typeof window === "undefined" || typeof Audio === "undefined") return Promise.resolve(false);
-  installLifecycle();
-  bgmWanted = true;
-  if (bgmEl && !bgmEl.paused) {
-    fadeBgmTo(bgmTarget(), 300);
-    return Promise.resolve(true);
-  }
-  if (bgmStarting) return bgmStarting;
-
-  if (!bgmEl) {
-    const el = new Audio();
-    el.src = BGM_URL;
-    el.loop = true;
-    el.preload = "auto";
-    el.volume = 0;
-    // Safari ignores media-element volume. Web Audio gain keeps fades and
-    // ducking consistent across desktop and mobile browsers.
-    const audioCtx = getCtx();
-    if (audioCtx) {
-      try {
-        bgmSource = audioCtx.createMediaElementSource(el);
-        bgmGain = audioCtx.createGain();
-        bgmGain.gain.value = 0;
-        bgmSource.connect(bgmGain).connect(audioCtx.destination);
-        el.volume = 1;
-      } catch {
-        bgmSource?.disconnect();
-        bgmSource = null;
-        bgmGain = null;
-      }
-    }
-    bgmEl = el;
-  }
-  const el = bgmEl;
-  bgmStarting = el
-    .play()
-    .then(() => {
-      if (!bgmWanted || bgmEl !== el) {
-        el.pause();
-        return false;
-      }
-      if (typeof document !== "undefined" && document.hidden) {
-        el.pause();
-        resumeOnVisible = true;
-        return true;
-      }
-      fadeBgmTo(bgmTarget(), 1200);
-      return true;
-    })
-    .catch(() => {
-      // 제스처 밖 호출·자동 재생 정책·파일 없음 — 조용히 실패
-      if (bgmEl === el) releaseBgm();
-      bgmWanted = false;
-      return false;
-    })
-    .finally(() => {
-      bgmStarting = null;
-    });
-  return bgmStarting;
-}
-
-/** 배경 음악 정지 — 짧게 페이드아웃한 뒤 자원까지 반납 */
-export function stopBgm(fadeMs = 400) {
-  if (typeof window === "undefined") return;
-  bgmWanted = false;
-  const el = bgmEl;
-  if (!el) return;
-  if (el.paused || fadeMs <= 0) {
-    releaseBgm();
-    return;
-  }
-  fadeBgmTo(0, fadeMs, () => {
-    if (bgmEl === el && !bgmWanted) releaseBgm();
-  });
-}
-
-/** 배경 음악 볼륨(0~1). 실제 출력은 BGM_CEILING 으로 한 번 더 눌러 낮게 유지된다 */
-export function setBgmVolume(volume: number) {
-  bgmUserVolume = clamp01(volume);
-  if (typeof window === "undefined" || !bgmEl || bgmEl.paused) return;
-  fadeBgmTo(bgmTarget(), 150);
-}
-
-/** 효과음이 나는 동안 배경 음악을 잠시 낮춘다. 연속 호출 시 가장 깊은 값과 마지막 유지 시간을 따른다 */
-export function duckBgm(depth = 0.4, holdMs = 1000) {
-  if (typeof window === "undefined" || !bgmEl || bgmEl.paused) return;
-  duckFactor = Math.min(duckTimer !== null ? duckFactor : 1, clamp01(depth));
-  fadeBgmTo(bgmTarget(), 120);
-  if (duckTimer !== null) window.clearTimeout(duckTimer);
-  duckTimer = window.setTimeout(() => {
-    duckTimer = null;
-    duckFactor = 1;
-    if (bgmEl && !bgmEl.paused) fadeBgmTo(bgmTarget(), 700);
-  }, Math.max(0, holdMs));
-}
-
 // ───────────────────────── 탭 가시성 · 페이지 이탈 ─────────────────────────
 
 let lifecycleInstalled = false;
 
+/** 탭이 숨겨지면 효과음 컨텍스트를 멈추고, 돌아오면 다시 켠다 */
 function installLifecycle() {
   if (lifecycleInstalled || typeof document === "undefined" || typeof window === "undefined") return;
   lifecycleInstalled = true;
-
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
-      if (bgmEl && !bgmEl.paused) {
-        resumeOnVisible = true;
-        clearFade();
-        bgmEl.pause();
-      }
       if (ctx && ctx.state === "running") void ctx.suspend().catch(() => {});
       return;
     }
     if (ctx && ctx.state === "suspended") void ctx.resume().catch(() => {});
-    if (resumeOnVisible && bgmWanted && bgmEl) {
-      resumeOnVisible = false;
-      const el = bgmEl;
-      setBgmLevel(0);
-      el
-        .play()
-        .then(() => fadeBgmTo(bgmTarget(), 800))
-        .catch(() => {
-          /* 브라우저가 제스처를 다시 요구하면 다음 startBgm() 에서 재개 */
-        });
-    }
-  });
-
-  window.addEventListener("pagehide", () => {
-    bgmWanted = false;
-    releaseBgm();
   });
 }

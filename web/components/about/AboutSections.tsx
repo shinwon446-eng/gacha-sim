@@ -42,12 +42,11 @@ export function DiscoveryMatrix() {
 
   return (
     <section className="border-t border-hairline py-14 md:py-20">
-      <div className="grid gap-5 md:grid-cols-[1fr_1.4fr] md:gap-16">
+      {/* 섹션 머리 — 아이브로·제목·본문을 한 축에 세운다(2열 그리드는 아이브로만 떠 보여 정렬이 어긋났다) */}
+      <div className="max-w-2xl">
         <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">BUILT FOR DISCOVERY</p>
-        <div>
-          <h2 className="text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("matrixTitle")}</h2>
-          <p className="mt-4 max-w-xl text-base leading-7 text-muted">{t("matrixBody")}</p>
-        </div>
+        <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("matrixTitle")}</h2>
+        <p className="mt-4 break-keep text-base leading-7 text-muted">{t("matrixBody")}</p>
       </div>
 
       <div className="mt-10 grid grid-cols-1 gap-8 md:mt-14 lg:grid-cols-3">
@@ -79,34 +78,37 @@ export function DiscoveryMatrix() {
 
 type TermKey = "seed" | "slot" | "cashback" | "ship";
 
-/** 점선 밑줄 용어. 누르면 카드 안에서 뜻이 열린다 — 초보자가 페이지를 떠나지 않아도 된다. */
+/**
+ * 점선 밑줄 용어. 누르면 뜻이 **카드 본문 아래 콜아웃**으로 열린다.
+ * 단어 기준 절대 위치 팝오버는 문장 끝 단어에서 카드 밖으로 뚫고 나갔다(375px 실측) — 콜아웃은 카드 폭 안에만 그려진다.
+ */
 function Term({ id, open, onToggle, children }: { id: TermKey; open: TermKey | null; onToggle: (k: TermKey) => void; children: ReactNode }) {
-  const t = useTranslations("editorialPages");
   const isOpen = open === id;
   return (
-    <span className="relative inline-block">
-      <button
-        type="button"
-        onClick={() => onToggle(id)}
-        aria-expanded={isOpen}
-        className={cn(
-          "underline decoration-dotted underline-offset-4 transition-colors",
-          isOpen ? "text-white decoration-white" : "text-secondary decoration-white/40 hover:text-white hover:decoration-white",
-        )}
-      >
-        {children}
-      </button>
-      {isOpen && (
-        <span
-          role="note"
-          className="absolute bottom-[calc(100%+8px)] left-0 z-20 block w-[min(19rem,72vw)] rounded-lg border border-white/15 bg-elevation p-3 text-xs leading-relaxed text-secondary shadow-2xl"
-        >
-          {t(`term${id[0].toUpperCase()}${id.slice(1)}Body` as "termSeedBody")}
-        </span>
+    <button
+      type="button"
+      onClick={() => onToggle(id)}
+      aria-expanded={isOpen}
+      aria-controls={`term-${id}`}
+      className={cn(
+        "underline decoration-dotted underline-offset-4 transition-colors",
+        isOpen ? "text-white decoration-white" : "text-secondary decoration-white/40 hover:text-white hover:decoration-white",
       )}
-    </span>
+    >
+      {children}
+    </button>
   );
 }
+
+/** 콜아웃 머리말 — 눌린 용어가 무엇인지 한 줄로 */
+const TERM_LABEL: Record<TermKey, string> = { seed: "SEED HASH", slot: "WINNING NUMBER", cashback: "95% CASHBACK", ship: "DELIVERY" };
+
+const TERM_BODY: Record<TermKey, "termSeedBody" | "termSlotBody" | "termCashbackBody" | "termShipBody"> = {
+  seed: "termSeedBody",
+  slot: "termSlotBody",
+  cashback: "termCashbackBody",
+  ship: "termShipBody",
+};
 
 interface Scenario {
   key: "case1" | "case2";
@@ -145,9 +147,9 @@ function ScenarioCard({ scenario }: { scenario: Scenario }) {
   };
 
   return (
-    <article className="relative rounded-[18px] border border-hairline bg-surface p-6 md:p-8">
+    <article className="relative min-w-0 rounded-[18px] border border-hairline bg-surface p-5 sm:p-6 md:p-8">
       {/* 헤더 — 썸네일 + 도킹 배지 */}
-      <header className="flex items-center gap-4">
+      <header className="flex min-w-0 items-center gap-4">
         <span className="relative h-14 w-14 flex-none">
           <span className="block h-full w-full overflow-hidden rounded-full ring-1 ring-white/10">
             <ProductArt image={scenario.item.image} alt={itemName(scenario.item)} accent="#d9c39a" glowStrength={0.03} bordered={false} fallbackSize="sm" kind={scenario.item.kind} />
@@ -163,13 +165,14 @@ function ScenarioCard({ scenario }: { scenario: Scenario }) {
       </header>
 
       {/* 3단 숫자 띠 */}
-      <dl className="my-5 grid grid-cols-3 gap-6 border-y border-hairline py-4">
+      {/* 3단 숫자 띠 — 원화 환산(₩21,528,000)처럼 긴 금액도 칸을 넘지 않게 min-w-0 + 반응형 간격 */}
+      <dl className="my-5 grid grid-cols-3 gap-2.5 border-y border-hairline py-4 sm:gap-4">
         {scenario.stats.map((stat, i) => (
-          <div key={stat.label} className={cn(i > 0 && "border-l border-hairline pl-6")}>
-            <dt className="text-xs text-muted">{stat.label}</dt>
+          <div key={stat.label} className={cn("min-w-0", i > 0 && "border-l border-hairline pl-2.5 sm:pl-4")}>
+            <dt className="break-keep text-[11px] leading-snug text-muted sm:text-xs">{stat.label}</dt>
             <dd
               className={cn(
-                "mt-1.5 text-lg font-semibold tabular-nums tracking-tight md:text-[22px]",
+                "mt-1.5 break-words text-[15px] font-semibold leading-tight tabular-nums tracking-tight sm:text-lg xl:text-[20px]",
                 stat.tone === "gold" ? "text-gold-champagne" : stat.tone === "emerald" ? "text-emerald-300" : "text-white",
               )}
             >
@@ -180,7 +183,15 @@ function ScenarioCard({ scenario }: { scenario: Scenario }) {
       </dl>
 
       {/* 시나리오 설명 — 핵심 용어는 점선 밑줄 버튼 */}
-      <p className="break-keep text-sm leading-7 text-secondary">{t.rich(`${scenario.key}Body` as "case1Body", terms)}</p>
+      <p className="min-w-0 break-keep text-sm leading-7 text-secondary">{t.rich(`${scenario.key}Body` as "case1Body", terms)}</p>
+
+      {/* 용어 콜아웃 — 카드 폭(w-full) 안에서만 열린다. 어느 단어를 눌러도 좌우로 잘리지 않는다 */}
+      {open && (
+        <div id={`term-${open}`} role="note" className="mt-3 w-full min-w-0 rounded-lg border border-white/15 bg-elevation p-3 text-xs leading-relaxed text-secondary shadow-2xl">
+          <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.12em] text-gold-champagne">{TERM_LABEL[open]}</span>
+          <span className="break-keep">{t(TERM_BODY[open])}</span>
+        </div>
+      )}
     </article>
   );
 }
@@ -232,12 +243,10 @@ export function ScenarioShowcase() {
 
   return (
     <section className="border-t border-hairline py-14 md:py-20">
-      <div className="grid gap-5 md:grid-cols-[1fr_1.4fr] md:gap-16">
+      <div className="max-w-2xl">
         <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">IN PRACTICE</p>
-        <div>
-          <h2 className="text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("nowTitle")}</h2>
-          <p className="mt-4 max-w-xl text-base leading-7 text-muted">{t("nowBody")}</p>
-        </div>
+        <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("nowTitle")}</h2>
+        <p className="mt-4 break-keep text-base leading-7 text-muted">{t("nowBody")}</p>
       </div>
       <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
         {scenarios.map((s) => (
@@ -257,8 +266,9 @@ export function TrustGuardrails({ action }: { action: ReactNode }) {
   return (
     <section className="grid gap-9 border-t border-hairline py-14 md:py-20 lg:grid-cols-12 lg:gap-16">
       <div className="lg:col-span-5">
-        <h2 className="text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("trustTitle")}</h2>
-        <p className="mt-4 whitespace-pre-line text-base leading-7 text-muted">{t("trustBody")}</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">TRUST</p>
+        <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("trustTitle")}</h2>
+        <p className="mt-4 whitespace-pre-line break-keep text-base leading-7 text-muted">{t("trustBody")}</p>
         <div className="mt-6">{action}</div>
       </div>
       <ul className="border-t border-hairline lg:col-span-7">

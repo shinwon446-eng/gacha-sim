@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
-import { ArrowUpRight, Gift, Menu, Music, Wallet, X } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { ArrowUpRight, Gift, Menu, Wallet, X } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { BrandLogo } from "./BrandLogo";
 import { CurrencySelector } from "./CurrencySelector";
@@ -10,42 +10,12 @@ import { LanguageSelector } from "./LanguageSelector";
 import { HeaderAuthControl } from "@/components/auth/HeaderAuthControl";
 import { useAuthStore } from "@/stores/authStore";
 import { useWalletStore } from "@/stores/walletStore";
-import { useSettingsStore } from "@/stores/settingsStore";
-import { setBgmVolume, startBgm, stopBgm } from "@/lib/audio";
 import { useCurrency } from "@/lib/useCurrency";
 import { useModal } from "@/lib/useModal";
 import { cn } from "@/lib/format";
 
 type WalletTab = "usdt" | "withdraw";
 const links = [{ href: "/", key: "boxes" }, { href: "/inventory", key: "inventory" }, { href: "/community", key: "community" }, { href: "/fairness", key: "fairness" }, { href: "/about", key: "about" }] as const;
-const bgmLabels = {
-  ko: { name: "음악", on: "배경 음악 켜기", off: "배경 음악 끄기" },
-  en: { name: "Music", on: "Turn background music on", off: "Turn background music off" },
-  zh: { name: "音乐", on: "开启背景音乐", off: "关闭背景音乐" },
-} as const;
-
-// 헤더가 라우트마다 다시 마운트돼도 재생 중인 싱글턴은 그대로 둔다(언마운트에서 stopBgm 을 부르지 않는다).
-// 마지막 요청만 결과를 반영한다 — 켜는 중에 끄면 늦게 도착한 성공이 상태를 되돌리지 않는다.
-let bgmRequest = 0;
-function requestBgm() {
-  const id = ++bgmRequest;
-  const s = useSettingsStore.getState();
-  setBgmVolume(s.bgmVolume);
-  return startBgm().then((ok) => {
-    if (id !== bgmRequest) return;
-    const now = useSettingsStore.getState();
-    now.setBgmPlaying(ok);
-    if (ok) now.setBgmEnabled(true);
-  });
-}
-function haltBgm() {
-  bgmRequest++;
-  stopBgm();
-  const s = useSettingsStore.getState();
-  s.setBgmPlaying(false);
-  s.setBgmEnabled(false);
-}
-
 export function SiteHeader({ onWallet, onDaily }: { onWallet?: (tab: WalletTab) => void; onDaily?: () => void }) {
   const t = useTranslations();
   const pathname = usePathname();
@@ -53,26 +23,7 @@ export function SiteHeader({ onWallet, onDaily }: { onWallet?: (tab: WalletTab) 
   const authOpen = useAuthStore((s) => s.isModalOpen);
   const balance = useWalletStore((s) => s.balance);
   const { fmt } = useCurrency();
-  const locale = useLocale();
-  const bgmText = bgmLabels[locale as keyof typeof bgmLabels] ?? bgmLabels.en;
-  const bgmPlaying = useSettingsStore((s) => s.bgmPlaying);
   const [open, setOpen] = useState(false);
-  // 저장된 선택이 켜짐이면 자동 재생하지 않고, 다음 사용자 제스처(클릭·키 입력)에서 이어 튼다
-  useEffect(() => {
-    let armed = false;
-    const events = ["click", "keydown"] as const;
-    const resume = () => { disarm(); const s = useSettingsStore.getState(); if (s.bgmEnabled && !s.bgmPlaying) void requestBgm(); };
-    const disarm = () => { if (!armed) return; armed = false; events.forEach((e) => window.removeEventListener(e, resume, true)); };
-    const arm = () => { const s = useSettingsStore.getState(); if (armed || !s.bgmEnabled || s.bgmPlaying) return; armed = true; events.forEach((e) => window.addEventListener(e, resume, true)); };
-    const begin = () => {
-      const s = useSettingsStore.getState();
-      if (s.bgmEnabled && !s.bgmPlaying) void requestBgm();
-      arm();
-    };
-    if (useSettingsStore.persist.hasHydrated()) begin();
-    const unsub = useSettingsStore.persist.onFinishHydration(begin);
-    return () => { unsub(); disarm(); };
-  }, []);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const authFromMenu = useRef(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -109,6 +60,5 @@ export function SiteHeader({ onWallet, onDaily }: { onWallet?: (tab: WalletTab) 
       {onDaily && <button type="button" onClick={() => { setOpen(false); onDaily(); }} className="mt-3 flex min-h-11 items-center gap-2 text-sm text-gold-champagne"><Gift className="h-4 w-4" aria-hidden="true" />{t("daily.title")}</button>}
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-hairline pt-5"><div className="flex gap-2"><LanguageSelector /><CurrencySelector /></div><HeaderAuthControl /></div>
     </div>}
-    <button type="button" onClick={() => { if (bgmPlaying) haltBgm(); else void requestBgm(); }} aria-pressed={bgmPlaying} aria-label={bgmPlaying ? bgmText.off : bgmText.on} title={bgmPlaying ? bgmText.off : bgmText.on} className={cn("fixed right-2 top-1/2 z-[75] flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border bg-obsidian/95 shadow-lg backdrop-blur-xl transition-colors hover:bg-surface sm:right-4 sm:h-11 sm:w-11", bgmPlaying ? "border-gold-champagne/60 text-gold-champagne" : "border-hairline text-secondary")}><Music className="h-4 w-4" aria-hidden="true" /><span className="sr-only">{bgmText.name}</span></button>
   </header>;
 }

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, animate, motion, useReducedMotion } from "framer-motion";
 import { useModal } from "@/lib/useModal";
 import { useTranslations } from "next-intl";
-import { X, Zap, Package, SkipForward } from "lucide-react";
+import { X, Zap, RotateCcw, Check, SkipForward } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
@@ -35,6 +35,8 @@ interface Props {
   onClose: () => void;
   /** 미정산(실물, 디지털) 당첨의 일괄 회수, 호출측이 잔액에 반영한다 */
   onSellBack: (ids: string[], amountUsdt: number, split?: { toCrypto: number; toCard: number }) => void;
+  /** [한 번 더 도전하기] — 같은 박스, 같은 수량으로 즉시 다시 연다 */
+  onRetry?: (box: ProductBox, count: number) => void;
   /** 이 개봉에 쓰인 잔액의 원천 비율, 당첨 아이템 족보로 박힌다 */
   funding?: FundingRatio;
 }
@@ -63,7 +65,7 @@ function CountUp({ value, className, style }: { value: number; className?: strin
  * 릴은 생략하고 1.5초 고속 개봉 연출 뒤 요약 그리드: 상단 [총 투입 vs 총 획득 가치 , 순손익] 카운트업,
  * 최고 등급 카드는 골드 스파크 + 3D 플로팅 하이라이트. 캐시백은 확정 즉시 100% 잔액에 적립된다.
  */
-export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPTO_ONLY, prepared }: Props) {
+export function BulkOpenModal({ box, count, onClose, onSellBack, onRetry, funding = CRYPTO_ONLY, prepared }: Props) {
   const reducedMotion = useReducedMotion();
   const panelRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("bulk");
@@ -229,31 +231,46 @@ export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPT
 
             {/* 액션 */}
             <div className="border-t border-hairline px-[4%] py-3">
-              {/* 전부 캐시백(자동 정산)이면 회수할 게 없다, 비활성 "0개 회수" 대신 확인 버튼만 전폭으로 */}
-              <div className={cn("mx-auto grid max-w-3xl gap-2", pending.length > 0 ? "grid-cols-2" : "grid-cols-1")}>
-                {pending.length > 0 && (
+              {/* 닫기는 우측 상단 X 하나뿐이다. 메인 액션은 [한 번 더 도전하기] + [95% 캐시백] 두 개로 고정 —
+                  전부 자동 캐시백이거나 이미 돌려받았으면 캐시백 칸은 완료 상태로 남겨 2열이 흔들리지 않게 한다 */}
+              <div className="mx-auto grid max-w-3xl grid-cols-2 gap-2">
                 <button
                   type="button"
-                  disabled={sold}
-                  onClick={() => {
-                    setSold(true);
-                    const ids = pending.map((r) => r.ownedId);
-                    const { totalUsdt, toCrypto, toCard } = sellOwned(ids, REFUND_RATE);
-                    onSellBack(ids, totalUsdt, { toCrypto, toCard });
-                  }}
-                  className="flex h-12 flex-col items-center justify-center rounded-lg bg-[#f1eee7] text-obsidian transition-colors hover:bg-gold-champagne disabled:opacity-40"
+                  onClick={() => onRetry?.(box, count)}
+                  disabled={!onRetry}
+                  className="flex h-14 min-w-0 flex-col items-center justify-center rounded-lg bg-[#f1eee7] px-2 text-obsidian transition-colors hover:bg-gold-champagne disabled:opacity-40"
                 >
                   <span className="flex items-center gap-1.5 text-sm font-bold leading-none">
-                    <Zap className="h-4 w-4" strokeWidth={2.4} />
-                    {t("sellAll", { n: pending.length })}
+                    <RotateCcw className="h-4 w-4 flex-none" strokeWidth={2.4} />
+                    <span className="truncate">{t("retry")}</span>
                   </span>
-                  <span className="mt-1 font-mono text-xs font-bold leading-none tabular-nums">{fmt(sellAmount)}</span>
+                  <span className="mt-1 truncate font-mono text-xs font-bold leading-none tabular-nums">{t("retrySub", { n: count, amount: fmt(box.price * count) })}</span>
                 </button>
+                {pending.length > 0 && !sold ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSold(true);
+                      const ids = pending.map((r) => r.ownedId);
+                      const { totalUsdt, toCrypto, toCard } = sellOwned(ids, REFUND_RATE);
+                      onSellBack(ids, totalUsdt, { toCrypto, toCard });
+                    }}
+                    className="glass flex h-14 min-w-0 flex-col items-center justify-center rounded-lg px-2 text-white transition-colors hover:bg-white/15"
+                  >
+                    <span className="flex items-center gap-1.5 text-sm font-bold leading-none">
+                      <Zap className="h-4 w-4 flex-none text-gold-champagne" strokeWidth={2.4} />
+                      <span className="truncate">{t("cashback")}</span>
+                    </span>
+                    <span className="mt-1 truncate font-mono text-xs font-bold leading-none tabular-nums text-gold-champagne">{fmt(sellAmount)}</span>
+                  </button>
+                ) : (
+                  <div aria-live="polite" className="flex h-14 min-w-0 flex-col items-center justify-center rounded-lg border border-hairline px-2 text-secondary">
+                    <span className="flex items-center gap-1.5 text-sm font-bold leading-none">
+                      <Check className="h-4 w-4 flex-none text-gold-champagne" strokeWidth={2.4} />
+                      <span className="truncate">{t("cashbackDone")}</span>
+                    </span>
+                  </div>
                 )}
-                <button type="button" onClick={onClose} className="glass flex h-12 items-center justify-center gap-2 rounded-lg text-sm font-bold text-white hover:bg-white/15">
-                  <Package className="h-4 w-4" strokeWidth={2} />
-                  {t("keep")}
-                </button>
               </div>
             </div>
           </div>

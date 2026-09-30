@@ -5,7 +5,7 @@ import { AnimatePresence, animate, motion, useReducedMotion, useMotionTemplate, 
 import { useModal } from "@/lib/useModal";
 import { MegaWinFX } from "@/components/unboxing/MegaWinFX";
 import { useLocale, useTranslations } from "next-intl";
-import { Wallet, Truck, ShieldCheck, X, Volume2, VolumeX, Play, SkipForward } from "lucide-react";
+import { Wallet, Truck, ShieldCheck, X, Volume2, VolumeX, Play, SkipForward, RotateCcw, Check } from "lucide-react";
 import { cn } from "@/lib/format";
 import { useCurrency } from "@/lib/useCurrency";
 import { useProductText } from "@/lib/useProductText";
@@ -59,7 +59,8 @@ export interface UnboxingRouletteProps {
   /** 배송 신청 완료, 호출측이 토스트를 띄운다 (배송비 차감, 상태 전환은 여기서) */
   onShip: (results: UnboxResult[]) => void;
   /** 결과가 전부 USDT 캐시백일 때 [다시 돌리기], 호출측이 같은 박스를 다시 연다 */
-  onRespin?: (box: ProductBox) => void;
+  /** [한 번 더 도전하기] — 같은 박스, 같은 수량으로 즉시 다시 연다 */
+  onRespin?: (box: ProductBox, count: number) => void;
   /** 오토플레이, 스핀마다 가격을 차감하고 규칙(lib/autoplay)에 따라 멈춘다. count 는 무시된다 */
   auto?: AutoplayConfig;
   /** 이 개봉에 쓰인 잔액의 원천 비율, 당첨 아이템 족보로 박힌다 (호출측 debitSplit 결과) */
@@ -576,6 +577,10 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
               >
+                {/* 닫기는 여기 우측 상단 X (헤더 X 와 같은 동작) — 카드 하단의 [닫기] 버튼은 뺐다 */}
+                <button type="button" onClick={onClose} aria-label={t("close")} className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full text-muted transition-colors hover:bg-white/10 hover:text-white">
+                  <X className="h-4 w-4" strokeWidth={2.2} />
+                </button>
 
                 {!demo && <p className="mb-4 rounded-lg border border-hairline bg-obsidian px-4 py-3 text-sm leading-relaxed text-secondary">{t("batchComplete", { n: results.length })}</p>}
                 {autoStop === "balance" && <button type="button" onClick={onDeposit} className="btn-primary mb-4 min-h-12 w-full">{t("topUpAction")}</button>}
@@ -661,53 +666,57 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                   {settledAmount > 0 && results.length > 1 && (
                     <p className="break-keep text-center text-xs font-semibold text-gold-champagne">⚡ {t("cashCredited", { amount: fmt(settledAmount) })}</p>
                   )}
-                  {allSettled ? (
+                  {/* 메인 2열: [한 번 더 도전하기] + [95% 캐시백]. 캐시백이 끝났거나 전부 자동 적립이면 완료 상태로 칸을 유지한다 */}
+                  <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
-                      onClick={() => onRespin?.(box)}
+                      onClick={() => onRespin?.(box, count)}
                       disabled={!onRespin}
-                      className="flex h-12 items-center justify-center gap-2 rounded-lg bg-[#f1eee7] text-sm font-semibold text-obsidian transition-colors hover:bg-gold-champagne disabled:opacity-50"
+                      className="flex h-14 min-w-0 flex-col items-center justify-center rounded-lg bg-[#f1eee7] px-2 text-obsidian transition-colors hover:bg-gold-champagne disabled:opacity-50"
                     >
-                      <Play className="h-4 w-4 fill-current" strokeWidth={0} />
-                      {t("respin", { price: fmt(box.price) })}
+                      <span className="flex items-center gap-1.5 text-sm font-bold leading-none">
+                        <RotateCcw className="h-4 w-4 flex-none" strokeWidth={2.4} />
+                        <span className="truncate">{t("retry")}</span>
+                      </span>
+                      <span className="mt-1 truncate font-mono text-xs font-bold leading-none tabular-nums">{t("retrySub", { n: count, amount: fmt(box.price * count) })}</span>
                     </button>
-                  ) : (
-                    <div className="grid grid-cols-2 gap-2">
+                    {pending.length > 0 && !sold && !shipped ? (
                       <button
                         type="button"
-                        disabled={sold || shipped}
                         onClick={() => {
                           setSold(true);
                           const ids = pending.map((r) => r.ownedId).filter((x): x is string => !!x);
                           const { totalUsdt, toCrypto, toCard } = sellOwned(ids, REFUND_RATE);
                           onSellBack(pending, totalUsdt, { toCrypto, toCard });
                         }}
-                        className="flex h-14 flex-col items-center justify-center rounded-lg bg-[#f1eee7] px-3 text-obsidian transition-colors hover:bg-gold-champagne disabled:opacity-50"
+                        className="glass flex h-14 min-w-0 flex-col items-center justify-center rounded-lg px-2 text-white transition-colors hover:bg-white/15"
                       >
                         <span className="flex items-center gap-1.5 text-sm font-bold leading-none">
-                          <Wallet className="h-4 w-4" strokeWidth={2.2} />
-                          {t("cashoutCta")}
+                          <Wallet className="h-4 w-4 flex-none text-gold-champagne" strokeWidth={2.2} />
+                          <span className="truncate">{t("cashoutCta")}</span>
                         </span>
-                        <span className="mt-1 font-mono text-xs font-bold leading-none tabular-nums">{fmt(sellAmount)} , {t("noFee")}</span>
+                        <span className="mt-1 truncate font-mono text-xs font-bold leading-none tabular-nums text-gold-champagne">{fmt(sellAmount)}</span>
                       </button>
-                      <button
-                        type="button"
-                        disabled={sold || shipped}
-                        onClick={() => setShipOpen(true)}
-                        className="glass flex h-14 flex-col items-center justify-center rounded-lg px-2 text-white hover:bg-white/15 disabled:opacity-50"
-                      >
+                    ) : (
+                      <div aria-live="polite" className="flex h-14 min-w-0 flex-col items-center justify-center rounded-lg border border-hairline px-2 text-secondary">
                         <span className="flex items-center gap-1.5 text-sm font-bold leading-none">
-                          <Truck className="h-4 w-4" strokeWidth={2} />
-                          {t("claimShipping")}
+                          <Check className="h-4 w-4 flex-none text-gold-champagne" strokeWidth={2.4} />
+                          <span className="truncate">{shipped ? t("claimShipping") : t("cashbackDone")}</span>
                         </span>
-                        <span className="mt-1 text-xs leading-none text-secondary">{t("shipSub")}</span>
-                      </button>
-                    </div>
-                  )}
-                  <button type="button" disabled={!last?.ownedId} onClick={() => last?.ownedId && setVerifyId(last.ownedId)} className="glass-dark flex h-11 items-center justify-center gap-2 rounded-lg text-xs font-semibold text-gold-champagne hover:border-gold-champagne disabled:opacity-50">
-                    <ShieldCheck className="h-4 w-4" strokeWidth={2.2} />
-                    {t("verify")}
-                  </button>
+                      </div>
+                    )}
+                  </div>
+                  {/* 보조: 실물 배송 신청 · 공정성 검증 — 메인 2열을 해치지 않는 소형 버튼 */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <button type="button" disabled={sold || shipped || pending.length === 0} onClick={() => setShipOpen(true)} className="glass-dark flex h-11 min-w-0 items-center justify-center gap-2 rounded-lg px-2 text-xs font-semibold text-white hover:border-gold-champagne disabled:opacity-40">
+                      <Truck className="h-4 w-4 flex-none" strokeWidth={2} />
+                      <span className="truncate">{t("claimShipping")}</span>
+                    </button>
+                    <button type="button" disabled={!last?.ownedId} onClick={() => last?.ownedId && setVerifyId(last.ownedId)} className="glass-dark flex h-11 min-w-0 items-center justify-center gap-2 rounded-lg px-2 text-xs font-semibold text-gold-champagne hover:border-gold-champagne disabled:opacity-50">
+                      <ShieldCheck className="h-4 w-4 flex-none" strokeWidth={2.2} />
+                      <span className="truncate">{t("verify")}</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* 공정성 메타 */}
@@ -727,9 +736,6 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
                     {t("keep")}
                   </Link>
                 </p>
-                <button type="button" onClick={onClose} className="relative mt-2 h-11 w-full rounded-lg text-sm font-semibold text-muted transition-colors hover:text-white">
-                  {t("close")}
-                </button>
                 </>
                 )}
               </motion.div>

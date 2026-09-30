@@ -387,3 +387,37 @@
 @media(prefers-reduced-motion:reduce) {
   .iso-sweep, .iso-plate { animation: none; }
 }
+
+/* /about 시크릿 볼트 스테이지 */
+.vault-stage {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 100%),
+                      linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 100%),
+              linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  mask-composite: intersect;
+}
+/* 상자 틈에서 위로 퍼지는 볼류메트릭 광선 */
+.vault-rays {
+  background: conic-gradient(from 180deg at 50% 100%, transparent 0deg, rgba(217,195,154,.16) 20deg, transparent 38deg, rgba(217,195,154,.1) 58deg, transparent 80deg, rgba(217,195,154,.16) 100deg, transparent 122deg, rgba(217,195,154,.1) 142deg, transparent 160deg, rgba(217,195,154,.16) 180deg);
+  filter: blur(14px);
+  mix-blend-mode: screen;
+  transform-origin: 50% 100%;
+  animation: vault-rays 14s ease-in-out infinite alternate;
+}
+@keyframes vault-rays {
+  from { transform: rotate(-4deg) scaleY(.96); opacity: .8; }
+  to { transform: rotate(4deg) scaleY(1.04); opacity: 1; }
+}
+.vault-dust { animation: vault-dust 6s ease-in-out infinite; box-shadow: 0 0 6px rgba(217,195,154,.9); }
+@keyframes vault-dust {
+  0% { transform: translateY(8px); opacity: 0; }
+  30% { opacity: .85; }
+  70% { opacity: .5; }
+  100% { transform: translateY(-26px); opacity: 0; }
+}
+.vault-vignette { background: radial-gradient(60% 62% at 50% 55%, transparent 0%, rgba(11,11,11,.55) 70%, #0b0b0b 100%); }
+@media(prefers-reduced-motion:reduce) {
+  .vault-rays { animation: none; }
+  .vault-dust { animation: none; opacity: .5 !important; }
+}

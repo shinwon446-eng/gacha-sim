@@ -211,7 +211,7 @@ export default function BoxesPage() {
       </section>
 
       <DetailModal pending={openingPending} onDeposit={(box, count) => openDepositForPurchase(box.price * count)} box={detail} onClose={() => setDetail(null)} onOpen={openBox} onAutoplay={(b, cfg) => { if (useWalletStore.getState().balance < b.price) { openDepositForPurchase(b.price); return; } const ready = primeUnboxingAudio(); setDetail(null); void ready.then(() => setUnbox({ box: b, count: 1, auto: cfg })); }} />
-      <BulkOpenModal prepared={bulk?.prepared} box={bulk?.box ?? null} count={bulk?.count ?? 0} funding={bulk?.funding} onClose={() => setBulk(null)} onSellBack={(ids, amount, split) => { if (split) creditSplit(split.toCrypto, split.toCard); else credit(amount); addTransaction({ type: "sellback", amountUsdt: amount, ref: ids.join(",") }); pushToast({ title: t("unbox.sold", { amount: fmt(amount) }), tone: "#E6CA65" }); }} />
+      <BulkOpenModal prepared={bulk?.prepared} box={bulk?.box ?? null} count={bulk?.count ?? 0} funding={bulk?.funding} onClose={() => setBulk(null)} onRetry={(b, c) => { setBulk(null); setTimeout(() => void openBox(b, c), 60); }} onSellBack={(ids, amount, split) => { if (split) creditSplit(split.toCrypto, split.toCard); else credit(amount); addTransaction({ type: "sellback", amountUsdt: amount, ref: ids.join(",") }); pushToast({ title: t("unbox.sold", { amount: fmt(amount) }), tone: "#E6CA65" }); }} />
 
       <DepositModal
         open={depositOpen}
@@ -227,7 +227,7 @@ export default function BoxesPage() {
       <DailyFreeBoxModal open={dailyOpen} onClose={() => setDailyOpen(false)} onCredited={(amount) => pushToast({ title: t("daily.creditedToast", { amount: fmt(amount) }), tone: "#E6CA65" })} />
 
 
-      <UnboxingRoulette prepared={unbox?.prepared} onDeposit={() => { setUnbox(null); setWalletTab("usdt"); setDepositOpen(true); }} box={unbox?.box ?? null} count={unbox?.count ?? 1} funding={unbox?.funding} demo={unbox?.demo} welcomeClaimed={welcomeClaimed} auto={unbox?.auto} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} onRespin={(b) => { setUnbox(null); setTimeout(() => openBox(b, 1), 60); }} />
+      <UnboxingRoulette prepared={unbox?.prepared} onDeposit={() => { setUnbox(null); setWalletTab("usdt"); setDepositOpen(true); }} box={unbox?.box ?? null} count={unbox?.count ?? 1} funding={unbox?.funding} demo={unbox?.demo} welcomeClaimed={welcomeClaimed} auto={unbox?.auto} onClose={() => setUnbox(null)} onSellBack={onSellBack} onShip={onShip} onRespin={(b, c = unbox?.count ?? 1) => { setUnbox(null); setTimeout(() => void openBox(b, c), 60); }} />
 
       {/* 토스트 */}
       <div className="pointer-events-none fixed bottom-20 right-4 z-[120] flex w-80 max-w-full flex-col gap-2 md:bottom-4">
