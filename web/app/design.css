@@ -319,3 +319,30 @@
   .workspace-button,.vault-product,.proof-live-card { transition:none; }
   .proof-live-value,.proof-live-dot,.proof-feed-row { animation:none; }
 }
+
+/* Home copy: subtle editorial motion and deliberate reading rhythm. */
+@keyframes home-copy-rise {
+  from { opacity:0; transform:translateY(10px); }
+  to { opacity:1; transform:translateY(0); }
+}
+.editorial-hero .hero-copy > * { animation:home-copy-rise 620ms cubic-bezier(.22,.61,.36,1) both; }
+.editorial-hero .hero-copy .eyebrow { animation-delay:60ms; }
+.editorial-hero .hero-copy h1 { animation-delay:140ms; text-wrap:balance; letter-spacing:-.052em; }
+.editorial-hero .hero-copy .hero-description { animation-delay:220ms; max-width:34rem; text-wrap:pretty; }
+.editorial-hero .hero-copy .hero-actions { animation-delay:300ms; }
+.editorial-hero .hero-copy .hero-note,.editorial-hero .hero-copy .hero-signature { animation-delay:360ms; }
+.editorial-hero .hero-copy h1 span { background:linear-gradient(105deg,#f2dfad 0%,#bd9354 48%,#f5e9c8 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.collection-heading > div,.home-reviews > div:first-child > div,.discovery-guide .guide-heading > div,.page-shell .guide-heading > div { animation:home-copy-rise 580ms cubic-bezier(.22,.61,.36,1) both; }
+.collection-heading h2,.home-reviews h2,.discovery-guide h2,.page-shell .guide-heading h2 { text-wrap:balance; letter-spacing:-.032em; }
+.collection-heading .eyebrow,.page-shell .guide-heading .eyebrow { max-width:42rem; line-height:1.55; text-wrap:balance; }
+.collection-intro,.home-reviews .text-muted,.guide-intro { max-width:42rem; text-wrap:pretty; }
+.guide-step h3 { text-wrap:balance; letter-spacing:-.02em; }
+.guide-step p { text-wrap:pretty; }
+@media(max-width:640px) {
+  .editorial-hero .hero-copy h1 { letter-spacing:-.045em; }
+  .editorial-hero .hero-copy .hero-description { max-width:31rem; }
+  .collection-heading .eyebrow,.page-shell .guide-heading .eyebrow { max-width:25rem; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .editorial-hero .hero-copy > *,.collection-heading > div,.home-reviews > div:first-child > div,.discovery-guide .guide-heading > div,.page-shell .guide-heading > div { animation:none; }
+}
