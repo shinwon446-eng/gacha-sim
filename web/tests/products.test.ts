@@ -102,17 +102,34 @@ test("12개 박스의 슬롯 파동과 현금 하우스 엣지는 백만 슬롯 
     for (const multiple of [0.5, 0.8, 0.99, 2, 5, 15]) {
       assert.ok(at(multiple).length > 0, `${box.slug}: ${multiple}x 티어 누락`);
     }
-    assert.equal(at(0.5)[0].dropRate, 46, box.slug);
-    assert.equal(at(0.8)[0].dropRate, 26, box.slug);
-    assert.equal(at(0.99)[0].dropRate, 17, box.slug);
+    const waveAt = (multiple: number, role: "cashback" | "gift" | "drop") =>
+      at(multiple).find(i => i.id.startsWith(`wave-${role}-`))!;
+    const half = waveAt(0.5, "cashback");
+    const buffer = waveAt(0.8, "cashback");
+    const near = waveAt(0.99, "cashback");
+    const two = waveAt(2, "gift");
+    const five = waveAt(5, "drop");
+    const mid = waveAt(15, "gift");
+    assert.equal(half.dropRate, 50, box.slug);
+    assert.equal(buffer.dropRate, 22, box.slug);
+    assert.equal(near.dropRate, 17, box.slug);
+    assert.ok(half.dropRate > buffer.dropRate && buffer.dropRate > near.dropRate &&
+      near.dropRate > two.dropRate && two.dropRate > five.dropRate &&
+      five.dropRate > mid.dropRate, `${box.slug}: 파동 확률 단조 감소`);
+    assert.ok(box.items.filter(i => !i.id.startsWith("wave-")).every(i => mid.dropRate > i.dropRate), `${box.slug}: 프리미엄 확률`);
     const recovery = box.items.filter(i => i.value >= box.price * 2 && i.value <= box.price * 5);
     assert.ok(recovery.reduce((sum, i) => sum + i.dropRate, 0) >= 10, `${box.slug}: 복구 구간`);
-    const surge = box.items.filter(i => i.value >= box.price * 15);
-    assert.ok(surge.reduce((sum, i) => sum + i.dropRate, 0) >= 0.8, `${box.slug}: 중박 구간`);
+    assert.equal(Math.round((two.dropRate + five.dropRate) * 10_000), 105_000, `${box.slug}: 복구 슬롯`);
+    const premium = box.items.filter(i => !i.id.startsWith("wave-"));
+    assert.equal(premium.length, 6, `${box.slug}: 프리미엄 상품 수`);
+    assert.equal(Math.round(mid.dropRate * 10_000) + premium.length, 5_000, `${box.slug}: 중박·프리미엄 슬롯`);
+    const atLeast15 = box.items.filter(i => i.value >= box.price * 15)
+      .reduce((sum, i) => sum + Math.round(i.dropRate * 10_000), 0);
+    assert.ok(atLeast15 >= 4_994 && atLeast15 <= 5_000, `${box.slug}: 정가 15배 이상 슬롯 ${atLeast15}`);
     const hitSlots = box.items.filter(i => i.value >= box.price * 0.99)
       .reduce((sum, i) => sum + Math.round(i.dropRate * 10_000), 0);
-    assert.ok(hitSlots >= 280_000 && hitSlots <= 320_000, `${box.slug}: 적중 슬롯 ${hitSlots}`);
-    assert.ok(cashReturn(box) >= 0.945 && cashReturn(box) <= 0.955, `${box.slug}: cash RTP ${cashReturn(box)}`);
+    assert.equal(hitSlots, 280_000, `${box.slug}: 적중 슬롯 ${hitSlots}`);
+    assert.ok(Math.abs(cashReturn(box) - 0.95) <= 0.0005, `${box.slug}: cash RTP ${cashReturn(box)}`);
     assert.ok(retailReturn(box) >= RETAIL_RTP_MIN && retailReturn(box) < RETAIL_RTP_MAX, `${box.slug}: retail RTP ${retailReturn(box)}`);
   }
 });

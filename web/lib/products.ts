@@ -416,18 +416,17 @@ const SPECS: BoxSpec[] = [
   },
 ];
 
-export const CATALOG_ODDS_VERSION = "2026-09-30-wave-95-v1";
+export const CATALOG_ODDS_VERSION = "2026-09-30-wave-95-v2";
 
 // One unit is one outcome in a million, or 0.0001%. The fixed bands leave 28%
 // of outcomes at or above 0.99x. Existing catalogue prizes each keep one slot;
-// the 15x digital prize takes the rest of the 1% surge band.
+// the 15x digital prize takes the rest of the 0.5% surge band.
 const SLOTS = 1_000_000;
-const FLOOR_SLOTS = [460_000, 260_000, 170_000] as const;
-const RECOVERY_SLOTS = 100_000;
-const SURGE_SLOTS = 10_000;
+const FLOOR_SLOTS = [500_000, 220_000, 170_000] as const;
+const RECOVERY_SLOTS = 105_000;
+const SURGE_SLOTS = 5_000;
 const TARGET_CASH_RTP = 0.95;
-const CASH_RTP_MIN = 0.945;
-const CASH_RTP_MAX = 0.955;
+const CASH_RTP_TOLERANCE = 0.0005;
 
 function waveItem(value: number, kind: "cash" | "digital", role: "cashback" | "drop" | "gift", slots: number): ProductItem {
   const amount = +value.toFixed(2);
@@ -442,33 +441,41 @@ function waveItem(value: number, kind: "cash" | "digital", role: "cashback" | "d
 function withWaveSchedule(box: ProductBox): ProductBox {
   const price = box.price;
   const premium = box.items.map((item) => ({ ...item, dropRate: 1 / 10_000 }));
+  if (premium.length !== 6) throw new Error(`${box.slug}: expected six catalogue prizes`);
   if (premium.length >= SURGE_SLOTS) throw new Error(`${box.slug}: too many catalogue prizes`);
-  const fixed = [
+  const floor = [
     waveItem(price * 0.5, "cash", "cashback", FLOOR_SLOTS[0]),
     waveItem(price * 0.8, "cash", "cashback", FLOOR_SLOTS[1]),
     waveItem(price * 0.99, "cash", "cashback", FLOOR_SLOTS[2]),
-    waveItem(price * 15, "digital", "gift", SURGE_SLOTS - premium.length),
-    ...premium,
   ];
+  const mid = waveItem(price * 15, "digital", "gift", SURGE_SLOTS - premium.length);
+  const fixed = [...floor, mid, ...premium];
   const fixedReturn = fixed.reduce((sum, item) => sum + sellValueOf(item) * item.dropRate / 100, 0) / price;
   // A 2x gift card pays 1.9x cash equivalent; a 5x instant drop pays 5x.
   // Solve the remaining 10% recovery budget against the actual prize values.
   const recoveryTwoValue = sellValueOf({ kind: "digital", value: price * 2 }) / price;
   const recoveryFiveValue = 5;
   const fiveSlots = Math.max(1, Math.min(RECOVERY_SLOTS - 1,
-    Math.round((TARGET_CASH_RTP - fixedReturn - 0.1 * recoveryTwoValue)
+    Math.round((TARGET_CASH_RTP - fixedReturn - (RECOVERY_SLOTS / SLOTS) * recoveryTwoValue)
       * SLOTS / (recoveryFiveValue - recoveryTwoValue))));
+  const two = waveItem(price * 2, "digital", "gift", RECOVERY_SLOTS - fiveSlots);
+  const five = waveItem(price * 5, "cash", "drop", fiveSlots);
   const items = [
     ...fixed,
-    waveItem(price * 2, "digital", "gift", RECOVERY_SLOTS - fiveSlots),
-    waveItem(price * 5, "cash", "drop", fiveSlots),
+    two,
+    five,
   ].sort((a, b) => a.dropRate - b.dropRate || b.value - a.value);
   const slots = items.reduce((sum, item) => sum + Math.round(item.dropRate * 10_000), 0);
   const cashRtp = items.reduce((sum, item) => sum + sellValueOf(item) * item.dropRate / 100, 0) / price;
   const retailRtp = items.reduce((sum, item) => sum + item.value * item.dropRate / 100, 0) / price;
   const ids = new Set(items.map((item) => item.id));
   if (slots !== SLOTS || ids.size !== items.length) violations.push(`${box.slug}: invalid slot total or duplicate item id`);
-  if (cashRtp < CASH_RTP_MIN || cashRtp > CASH_RTP_MAX) violations.push(`${box.slug}: cash RTP ${cashRtp}`);
+  const tierRates = [...floor.map((item) => item.dropRate), two.dropRate, five.dropRate, mid.dropRate];
+  if (!tierRates.every((rate, index) => index === 0 || tierRates[index - 1] > rate) ||
+    !premium.every((item) => mid.dropRate > item.dropRate && item.dropRate === 0.0001)) {
+    violations.push(`${box.slug}: wave probabilities are not monotonic`);
+  }
+  if (Math.abs(cashRtp - TARGET_CASH_RTP) > CASH_RTP_TOLERANCE) violations.push(`${box.slug}: cash RTP ${cashRtp}`);
   if (retailRtp < RETAIL_RTP_MIN || retailRtp >= RETAIL_RTP_MAX) violations.push(`${box.slug}: retail RTP ${retailRtp}`);
   return { ...box, guaranteedMin: price * 0.5, items };
 }
