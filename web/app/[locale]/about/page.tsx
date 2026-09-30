@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 import { ArrowRight, ArrowUpRight, ChevronDown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { IsometricStage } from "@/components/about/IsometricStage";
 import { DiscoveryMatrix, ScenarioShowcase, TrustGuardrails } from "@/components/about/AboutSections";
 import { TIERS } from "@/lib/tiers";
 
@@ -70,7 +69,7 @@ export default function AboutPage() {
       <SiteHeader />
 
       {/* ① 시네마틱 중앙 히어로 */}
-      <section className="overflow-hidden pt-14 md:pt-20">
+      <section className="overflow-hidden py-14 md:py-20">
         <div className="mx-auto max-w-[1440px] px-6 text-center lg:px-14">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold-champagne">THE WORLD OF VOILA</p>
           <h1 className="mx-auto mt-6 max-w-3xl whitespace-pre-line break-keep text-center text-4xl font-semibold leading-[1.14] tracking-[-0.04em] text-white md:text-[64px]">
@@ -85,16 +84,8 @@ export default function AboutPage() {
               {t("explore")}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
-            {/* 핵심 신뢰 요약 — 점선 밑줄 마이크로 노트.
-                border-b 로 그리면 블록 폭 전체에 선이 깔려 모바일에서 줄바꿈될 때 구분선처럼 보인다(375px 실측).
-                text-decoration 으로 그리면 줄마다 글자 아래에만 붙는다. */}
-            <p className="mt-4 max-w-[30rem] break-keep text-center text-[13px] leading-6 text-muted underline decoration-white/30 decoration-dashed underline-offset-[6px]">
-              {t("heroNote")}
-            </p>
           </div>
         </div>
-        {/* 아이소메트릭 볼트 스테이지 */}
-        <IsometricStage />
       </section>
 
       <div className="mx-auto max-w-[1440px] px-6 lg:px-14">
@@ -106,7 +97,7 @@ export default function AboutPage() {
 
         {/* ④-1 HOW IT WORKS 3단계 + 미니 UI */}
         <section className="border-t border-hairline py-14 md:py-20">
-          <div className="max-w-2xl">
+          <div className="mx-auto max-w-2xl text-center">
             <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">HOW IT WORKS</p>
             <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("stepsTitle")}</h2>
             <p className="mt-4 break-keep text-base leading-7 text-muted">{t("stepsBody")}</p>
@@ -137,11 +128,11 @@ export default function AboutPage() {
 
         {/* ⑤ FAQ */}
         <section className="border-t border-hairline py-16 md:py-24">
-          <div className="max-w-2xl">
+          <div className="mx-auto max-w-2xl text-center">
             <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">GOOD TO KNOW</p>
             <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("faqTitle")}</h2>
           </div>
-          <div className="mt-8 max-w-3xl border-t border-hairline">
+          <div className="mx-auto mt-8 max-w-3xl border-t border-hairline">
             {[1, 2, 3].map((n) => (
               <details key={n} className="group border-b border-hairline">
                 <summary className="flex min-h-20 cursor-pointer list-none items-center justify-between gap-5 py-5 text-base font-medium text-white [&::-webkit-details-marker]:hidden">

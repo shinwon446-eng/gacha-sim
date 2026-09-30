@@ -42,8 +42,8 @@ export function DiscoveryMatrix() {
 
   return (
     <section className="border-t border-hairline py-14 md:py-20">
-      {/* 섹션 머리 — 아이브로·제목·본문을 한 축에 세운다(2열 그리드는 아이브로만 떠 보여 정렬이 어긋났다) */}
-      <div className="max-w-2xl">
+      {/* 섹션 머리 — 최상단 히어로와 같은 중앙 정렬 축(mx-auto text-center) */}
+      <div className="mx-auto max-w-2xl text-center">
         <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">BUILT FOR DISCOVERY</p>
         <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("matrixTitle")}</h2>
         <p className="mt-4 break-keep text-base leading-7 text-muted">{t("matrixBody")}</p>
@@ -243,7 +243,7 @@ export function ScenarioShowcase() {
 
   return (
     <section className="border-t border-hairline py-14 md:py-20">
-      <div className="max-w-2xl">
+      <div className="mx-auto max-w-2xl text-center">
         <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">IN PRACTICE</p>
         <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("nowTitle")}</h2>
         <p className="mt-4 break-keep text-base leading-7 text-muted">{t("nowBody")}</p>
@@ -264,14 +264,15 @@ const GUARDS = [ShieldCheck, Hash, Truck, Coins] as const;
 export function TrustGuardrails({ action }: { action: ReactNode }) {
   const t = useTranslations("editorialPages");
   return (
-    <section className="grid gap-9 border-t border-hairline py-14 md:py-20 lg:grid-cols-12 lg:gap-16">
-      <div className="lg:col-span-5">
+    <section className="border-t border-hairline py-14 md:py-20">
+      {/* 히어로와 같은 중앙 축 — 머리는 가운데, 체크리스트는 그 아래 한 폭으로 */}
+      <div className="mx-auto max-w-2xl text-center">
         <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">TRUST</p>
         <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("trustTitle")}</h2>
         <p className="mt-4 whitespace-pre-line break-keep text-base leading-7 text-muted">{t("trustBody")}</p>
-        <div className="mt-6">{action}</div>
+        <div className="mt-6 flex justify-center">{action}</div>
       </div>
-      <ul className="border-t border-hairline lg:col-span-7">
+      <ul className="mx-auto mt-10 max-w-3xl border-t border-hairline">
         {GUARDS.map((Icon, i) => (
           <li key={i} className="grid grid-cols-[28px_1fr] gap-x-3.5 border-b border-hairline py-5">
             <Icon className="mt-0.5 h-[18px] w-[18px] text-gold-champagne" strokeWidth={1.7} />
