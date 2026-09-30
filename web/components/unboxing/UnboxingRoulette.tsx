@@ -218,6 +218,8 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
         item = res.item;
       }
       if (skipRef.current || cancelled.current) return res;
+      // Each opening in a 5/10-pack or autoplay run gets its own lid sound.
+      if (!useSettingsStore.getState().muted) playTaDum();
 
       const built = buildStrip(item, items, unitRandom);
       const jitter = 0;
@@ -321,7 +323,6 @@ export function UnboxingRoulette({ box, count, onClose, onSellBack, onShip, onRe
         await waitPresentation(GATE_TOTAL_MS);
         if (cancelled.current) return;
       }
-      if (!muted) playTaDum();
       const out: UnboxResult[] = [];
       if (auto) {
         // ── 오토플레이: 스핀마다 차감 → 스핀 → (자동 환전) → 정지 규칙 ──

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { BOXES, SORTS, byCategory, heroBox, sortBoxes, type ProductBox, type SortKey } from "@/lib/products";
 import { createOpeningPurchase, InsufficientOpeningBalance, type OpeningResult } from "@/lib/opening";
+import { preloadUnboxingAudio, primeUnboxingAudio } from "@/lib/audio";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { DiscoveryGuide } from "@/components/home/DiscoveryGuide";
 import { LiveReviewsSection } from "@/components/home/LiveReviewsSection";
@@ -54,6 +55,7 @@ export default function BoxesPage() {
   const t = useTranslations();
   const { fmt } = useCurrency();
   const [detail, setDetail] = useState<ProductBox | null>(null);
+  useEffect(() => { if (detail) preloadUnboxingAudio(); }, [detail]);
   const [category, setCategory] = useState<CategoryTab>("all");
   const gridRef = useRef<HTMLElement>(null);
   const internalHashUpdate = useRef(false);
@@ -135,6 +137,9 @@ export default function BoxesPage() {
     if (purchasePending.current) return;
     const cost = +(box.price * count).toFixed(2);
     if (useWalletStore.getState().balance < cost) { openDepositForPurchase(cost); return; }
+    // Unlock the audio context inside the confirmation click, before the
+    // asynchronous purchase and reveal presentation begin.
+    primeUnboxingAudio();
     purchasePending.current = true;
     setOpeningPending(true);
     try {
@@ -202,7 +207,7 @@ export default function BoxesPage() {
         <ProofFeed limit={4} />
       </section>
 
-      <DetailModal pending={openingPending} onDeposit={(box, count) => openDepositForPurchase(box.price * count)} box={detail} onClose={() => setDetail(null)} onOpen={openBox} onAutoplay={(b, cfg) => { if (useWalletStore.getState().balance < b.price) { openDepositForPurchase(b.price); return; } setDetail(null); setUnbox({ box: b, count: 1, auto: cfg }); }} />
+      <DetailModal pending={openingPending} onDeposit={(box, count) => openDepositForPurchase(box.price * count)} box={detail} onClose={() => setDetail(null)} onOpen={openBox} onAutoplay={(b, cfg) => { if (useWalletStore.getState().balance < b.price) { openDepositForPurchase(b.price); return; } primeUnboxingAudio(); setDetail(null); setUnbox({ box: b, count: 1, auto: cfg }); }} />
       <BulkOpenModal prepared={bulk?.prepared} box={bulk?.box ?? null} count={bulk?.count ?? 0} funding={bulk?.funding} onClose={() => setBulk(null)} onSellBack={(ids, amount, split) => { if (split) creditSplit(split.toCrypto, split.toCard); else credit(amount); addTransaction({ type: "sellback", amountUsdt: amount, ref: ids.join(",") }); pushToast({ title: t("unbox.sold", { amount: fmt(amount) }), tone: "#E6CA65" }); }} />
 
       <DepositModal

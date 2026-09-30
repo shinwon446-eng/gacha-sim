@@ -1,5 +1,5 @@
 // Web Audio API 기반 효과음 + 배경 음악 컨트롤러
-// 효과음은 합성(외부 에셋 없음), 배경 음악만 /audio/velvet-vault.wav 를 쓴다.
+// 개봉·결과 효과음은 직접 제작한 PCM 샘플을, 짧은 UI 틱은 Web Audio 합성을 쓴다.
 // 모든 진입점은 SSR 에서 아무 일도 하지 않는다(window 가 없으면 즉시 반환).
 import type { Line } from "./types";
 
@@ -13,6 +13,72 @@ let ctx: AudioContext | null = null;
 let sfxBus: GainNode | null = null;
 let noiseBuffer: AudioBuffer | null = null;
 let activeVoices = 0;
+
+const SFX_BASE = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/audio/sfx/`;
+type UnboxingSample = "latch-click" | "lid-open" | "reveal" | "bulk-open" | "rare-jackpot";
+const sampleCache = new Map<UnboxingSample, AudioBuffer>();
+const sampleLoading = new Map<UnboxingSample, Promise<AudioBuffer | null>>();
+const sampleBytes = new Map<UnboxingSample, Promise<ArrayBuffer | null>>();
+
+function fetchSample(name: UnboxingSample): Promise<ArrayBuffer | null> {
+  const pending = sampleBytes.get(name);
+  if (pending) return pending;
+  const request = fetch(`${SFX_BASE}${name}.wav`, { cache: "force-cache" })
+    .then((response) => {
+      if (!response.ok) throw new Error(`Audio ${name}: ${response.status}`);
+      return response.arrayBuffer();
+    })
+    .catch(() => { sampleBytes.delete(name); return null; });
+  sampleBytes.set(name, request);
+  return request;
+}
+
+function loadSample(name: UnboxingSample, ac: AudioContext): Promise<AudioBuffer | null> {
+  const cached = sampleCache.get(name);
+  if (cached) return Promise.resolve(cached);
+  const pending = sampleLoading.get(name);
+  if (pending) return pending;
+  const request = fetchSample(name)
+    .then((bytes) => bytes ? ac.decodeAudioData(bytes.slice(0)) : null)
+    .then((buffer) => { if (buffer) sampleCache.set(name, buffer); return buffer; })
+    .catch(() => null)
+    .finally(() => sampleLoading.delete(name));
+  sampleLoading.set(name, request);
+  return request;
+}
+
+/** Fetch when a box detail opens, so the first reveal is ready to decode. */
+export function preloadUnboxingAudio(): void {
+  if (typeof window === "undefined") return;
+  for (const name of ["latch-click", "lid-open", "reveal", "bulk-open", "rare-jackpot"] as const) {
+    void fetchSample(name);
+  }
+}
+
+/** Call synchronously from the box-confirmation gesture, before any purchase awaits. */
+export function primeUnboxingAudio(): void {
+  const ac = getCtx();
+  if (!ac) return;
+  if (ac.state === "suspended") void ac.resume().catch(() => {});
+  preloadUnboxingAudio();
+}
+
+function playUnboxingSample(name: UnboxingSample, level: number, latestMs = 900): void {
+  const ac = sfxCtx();
+  if (!ac) return;
+  const requestedAt = performance.now();
+  void loadSample(name, ac).then((buffer) => {
+    if (!buffer || (typeof document !== "undefined" && document.hidden)) return;
+    if (performance.now() - requestedAt > latestMs) return;
+    const src = ac.createBufferSource();
+    const gain = ac.createGain();
+    src.buffer = buffer;
+    gain.gain.value = level;
+    src.connect(gain).connect(sfxBus as GainNode);
+    track(src, [src, gain]);
+    src.start();
+  });
+}
 
 function getCtx(): AudioContext | null {
   if (typeof window === "undefined") return null;
@@ -180,18 +246,16 @@ function pad(ac: AudioContext, freqs: number[], start: number, duration: number,
 
 // ───────────────────────── 효과음 ─────────────────────────
 
-/** 극장 조명이 꺼질 때 — 부드러운 저음 말렛 + 따뜻한 패드 스웰 */
+/** 실제 상자를 열 때 — 잠금 해제 뒤 뚜껑 마찰, 공기감, 둔탁한 착지 */
 export function playTaDum() {
-  const ac = sfxCtx();
-  if (!ac) return;
-  const t = ac.currentTime + 0.01;
   duckBgm(0.4, 1800);
-  noise(ac, t, 0.07, { freq: 180, q: 1.2, gain: 0.12 });
-  tone(ac, 73.42, t, 0.9, { gain: 0.28, attack: 0.008, lowpass: 500, slideTo: 70 });
-  tone(ac, 146.83, t, 0.6, { gain: 0.06, attack: 0.008, lowpass: 700 });
-  pad(ac, [146.83, 220, 329.63], t + 0.4, 2.2, 0.028);
-  tone(ac, 73.42, t + 0.4, 2.0, { gain: 0.14, attack: 0.3, lowpass: 260 });
-  bell(ac, 587.33, t + 0.55, 1.6, 0.03);
+  playUnboxingSample("lid-open", 1.25);
+}
+
+/** 50/100개 개봉 전용 — 빠른 다중 뚜껑/래치 연타와 마지막 착지 */
+export function playBulkOpen() {
+  duckBgm(0.3, 2400);
+  playUnboxingSample("bulk-open", 1.15);
 }
 
 /** 릴이 한 칸 지날 때 — 짧은 기계식 클릭(초당 최대 ~28회) */
@@ -204,30 +268,11 @@ export function playTick() {
   tone(ac, 2400, t, 0.018, { gain: 0.012, attack: 0.001, slideTo: 1900 });
 }
 
-/** 당첨, 라인업별 벨 아르페지오 (D 리디안 계열 보이싱) */
+/** 결과 공개 — 실제 음원으로 만든 질감 있는 리빌 스팅어 */
 export function playWin(line: Line) {
   if (rateLimited("win", 120)) return;
-  const ac = sfxCtx();
-  if (!ac) return;
-  const t = ac.currentTime + 0.01;
-  const chords: Record<Line, number[]> = {
-    jackpot: [440, 587.33, 739.99, 880, 1108.73, 1318.51],
-    value: [587.33, 739.99, 880, 1108.73],
-    start: [587.33, 880],
-  };
-  const notes = chords[line];
-  const step = line === "jackpot" ? 0.085 : 0.07;
-  const level = line === "jackpot" ? 0.055 : line === "value" ? 0.05 : 0.045;
   duckBgm(line === "jackpot" ? 0.3 : 0.55, line === "jackpot" ? 2600 : 1000);
-  notes.forEach((f, i) => {
-    const pan = notes.length > 1 ? (i / (notes.length - 1)) * 0.5 - 0.25 : 0;
-    bell(ac, f, t + i * step, line === "jackpot" ? 1.6 : 1.0, level, pan);
-  });
-  if (line === "jackpot") {
-    pad(ac, [146.83, 220, 277.18], t, 2.8, 0.03);
-    tone(ac, 73.42, t, 2.4, { gain: 0.12, attack: 0.25, lowpass: 240 });
-    noise(ac, t + 0.2, 1.4, { freq: 6000, sweepTo: 9000, q: 0.8, gain: 0.018, attack: 0.4 });
-  }
+  playUnboxingSample(line === "jackpot" ? "rare-jackpot" : "reveal", line === "jackpot" ? 1.2 : line === "value" ? 1.1 : 0.9);
 }
 
 /** 결제/충전 완료 — 두 음 벨 */
@@ -240,15 +285,10 @@ export function playChime() {
   bell(ac, 1760, t + 0.09, 0.9, 0.045, 0.1);
 }
 
-/** 3단계 문지기 1단계, 금고 휠 '찰칵' — 금속 래치 두 번 + 둔탁한 몸통음 */
+/** 3단계 문지기 1단계 — 녹음형 질감의 금속 래치 */
 export function playGearClick() {
   if (rateLimited("gear", 60)) return;
-  const ac = sfxCtx();
-  if (!ac) return;
-  const t = ac.currentTime;
-  noise(ac, t, 0.03, { freq: 2500, q: 6, gain: 0.1 });
-  noise(ac, t + 0.035, 0.025, { freq: 1500, q: 5, gain: 0.07 });
-  tone(ac, 150, t, 0.09, { gain: 0.1, attack: 0.002, lowpass: 600, slideTo: 95 });
+  playUnboxingSample("latch-click", 0.7);
 }
 
 /** 3단계 문지기 3단계, 암전 속 심장 박동 '쿵... 쿵...' */

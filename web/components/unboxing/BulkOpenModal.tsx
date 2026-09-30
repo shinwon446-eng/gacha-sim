@@ -14,7 +14,7 @@ import { JACKPOT_TIERS } from "@/lib/autoplay";
 import { useInventoryStore } from "@/stores/inventoryStore";
 import { useWalletStore } from "@/stores/walletStore";
 import { useSettingsStore } from "@/stores/settingsStore";
-import { playWin, playTaDum } from "@/lib/audio";
+import { playWin, playBulkOpen } from "@/lib/audio";
 import { ProductArt } from "@/components/box/ProductArt";
 import { Money } from "@/components/ui/Money";
 import { MegaWinFX } from "@/components/unboxing/MegaWinFX";
@@ -86,7 +86,7 @@ export function BulkOpenModal({ box, count, onClose, onSellBack, funding = CRYPT
     ran.current = true;
     let alive = true;
     (async () => {
-      if (!useSettingsStore.getState().muted) playTaDum();
+      if (!useSettingsStore.getState().muted) playBulkOpen();
       const t0 = performance.now();
       const out: BulkResult[] = prepared ?? [];
       const elapsed = performance.now() - t0;
