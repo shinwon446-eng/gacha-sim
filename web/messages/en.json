@@ -53,7 +53,7 @@
     "heroSlogan": "You never know what’s next., OPEN IT, OWN IT",
     "heroCta": "Go open a box",
     "heroLine1": "Real luxury, for just one dollar.",
-    "heroSub": "A draw sealed before it opens, so nobody can change the outcome. 95% instant payback that turns any result into another try. And 100% authentic free express shipping with every duty and tax covered.",
+    "heroSub": "A draw sealed before it opens, so nobody can change the outcome. 90% instant payback that turns any result into another try. And 100% authentic free express shipping with every duty and tax covered.",
     "lineupTitle": "The high-end collection that is yours the moment it opens",
     "lineupSub": "From Swiss watches to supercars: {categories} premium categories, {boxes} collections",
     "lineupPrice": "Price per open",
@@ -62,15 +62,15 @@
     "catTech": "⚡ High-End Tech",
     "catFashion": "👜 Luxury Boutique",
     "catSuper": "🚗 Supercars & Gold",
-    "s1Eyebrow": "The run never ends, 95% instant payback",
+    "s1Eyebrow": "The run never ends, 90% instant payback",
     "s1Title": "Not the item you wanted? That is fine. It becomes another shot.",
-    "s1Body": "With an ordinary random box, an unwanted freebie ends the run right there. Here, whatever you get converts to 95% of its value in your balance instantly, so you can keep going until you land the item you actually came for.",
+    "s1Body": "With an ordinary random box, an unwanted freebie ends the run right there. Here, whatever you get converts to 90% of its value in your balance instantly, so you can keep going until you land the item you actually came for.",
     "s1RivalLabel": "Ordinary random box (an unwanted freebie ends the run)",
-    "s1OursLabel": "VOILA payback (take 95% back into your balance and go again)",
+    "s1OursLabel": "VOILA payback (take 90% back into your balance and go again)",
     "s1Attempts": "{n}x",
     "s1AttemptsNote": "Openings on the same budget",
     "mockUnboxed": "UNBOXED",
-    "mockPayback": "💰 Take 95% back",
+    "mockPayback": "💰 Take 90% back",
     "mockWalletAfter": "Balance after payback",
     "mockSeedHash": "① Result code, locked before opening",
     "mockClientSeed": "② Draw number made on my device",
@@ -93,7 +93,7 @@
     "globalTitle": "Seoul to New York, Tokyo to Dubai. Luxury unboxing without borders.",
     "globalSub": "Tap a city. We show you exactly how the real thing leaves for it and who pays the tax.",
     "globalCap1": "Unbox → receive the real thing",
-    "globalCap2": "95% instant payback",
+    "globalCap2": "90% instant payback",
     "globalCap3": "Free express, duties covered",
     "globalNet": "USDT TRC-20, BEP-20, one-second transfers",
     "globalShip": "Free express to {n} countries",
@@ -121,7 +121,7 @@
     "faqQ2": "What if an item turns out to be fake?",
     "faqA2": "Only items that pass a professional authentication lab ship out, and if one is confirmed fake you are compensated {n}x its value.",
     "faqQ3": "How fast is a cashout?",
-    "faqA3": "Hit [Take 95% back] in your vault and it lands in your balance immediately. There is no approval queue.",
+    "faqA3": "Hit [Take 90% back] in your vault and it lands in your balance immediately. There is no approval queue.",
     "faqQ4": "How does withdrawal work?",
     "faqA4": "USDT top-ups withdraw over TRC-20 or BEP-20 once the usage rule is met. Card top-ups never leave on-chain; they are for opening, shipping and card refunds only.",
     "faqQ5": "How do I know the results are not rigged?",
@@ -137,7 +137,7 @@
     "heroRoll3": "Make the 1kg pure gold bar yours.",
     "heroRoll4": "Make the Hermes Birkin yours.",
     "s1Step1": "① Open the box",
-    "s1Step2": "② 95% payback, instantly",
+    "s1Step2": "② 90% payback, instantly",
     "s1Step3": "③ Back on your wishlist!",
     "mockOpened": "You opened a {price} box",
     "mockRetry": "That balance funds {n} more tries",
@@ -203,9 +203,9 @@
     "headline": "Open a Rolex or an iPhone, from $1.",
     "headline1": "Open a Rolex or an iPhone,",
     "headline2": "from $1.",
-    "sub": "Win it and it ships free, 100% authentic. Get a different item and take 95% straight back.",
+    "sub": "Win it and it ships free, 100% authentic. Get a different item and take 90% straight back.",
     "sub1": "Win it and it ships free, 100% authentic.",
-    "sub2": "Get a different item and take 95% straight back.",
+    "sub2": "Get a different item and take 90% straight back.",
     "freeTry": "Try an unboxing, free",
     "openFor": "📦 Open a box for {price}",
     "badge": "Luxury unboxing from $1",
@@ -223,8 +223,8 @@
     "guaranteedMinShort": "Min {value}",
     "noBlankBadge": "100% No Blanks, Min {value} guaranteed",
     "noBlankShort": "No blanks, Min {value}",
-    "settleBadge": "Every item pays back 95% instantly",
-    "settleShort": "95% payback",
+    "settleBadge": "Every item pays back 90% instantly",
+    "settleShort": "90% payback",
     "upTo": "Up to {n}",
     "rtp": "RTP {rate}%",
     "floorPct": "Min {pct}% back",
@@ -287,7 +287,7 @@
   },
   "aboutBanner": {
     "title": "How does VOILA work?",
-    "body": "Provably fair, 95% payback, authentic, free shipping",
+    "body": "Provably fair, 90% payback, authentic, free shipping",
     "cta": "About"
   },
   "hot": {
@@ -361,8 +361,8 @@
     "explain": "Tiers are not stored values, they derive from market value ÷ open price. Expected market value per open is {ev}, which is {retail} of the open price. Instant sell-back pays {refund} of market value, so the cash-basis return is {cash}, below the open price.",
     "guaranteedYes": "This box's floor tier is a {min} instant cashback, credited 100% the moment you open.",
     "guaranteedNo": "This box's floor tier is a {min} instant cashback, credited 100% to your balance the moment you open.",
-    "settleBadge": "⚡ Every item pays back 95% in one click, withdraw to your own wallet, guaranteed",
-    "settleBody": "Physical items and gift cards pay back 95% of market value in one click; USDT cashback and instant drops are credited at 100% on open. Balance withdraws to your TRC-20 / BEP-20 wallet.",
+    "settleBadge": "⚡ Every item pays back 90% in one click, withdraw to your own wallet, guaranteed",
+    "settleBody": "Physical items and gift cards pay back 90% of market value in one click; USDT cashback and instant drops are credited at 100% on open. Balance withdraws to your TRC-20 / BEP-20 wallet.",
     "allPrizes": "All possible prizes",
     "count": "{n} items",
     "sortedByValue": "By market value, descending",
@@ -501,9 +501,9 @@
     "results": "{n} results",
     "total": "Total value",
     "paid": "Paid {price}",
-    "sellBack": "Take 95% back, {amount}",
-    "sellBackAll": "Take 95% back on all, {amount}",
-    "cashoutCta": "💰 Take 95% back",
+    "sellBack": "Take 90% back, {amount}",
+    "sellBackAll": "Take 90% back on all, {amount}",
+    "cashoutCta": "💰 Take 90% back",
     "noFee": "0% fee",
     "shipSub": "Physical, free shipping",
     "cashCredited": "{amount} credited to your balance",
@@ -658,7 +658,7 @@
     "tabDone": "Settled ({n})",
     "cashableValue": "Total you can take back now",
     "withdrawBalance": "🚀 Withdraw balance",
-    "doneSold": "95% paid back +{amount}",
+    "doneSold": "90% paid back +{amount}",
     "doneCash": "Cashback credited +{amount}",
     "archived": "Settled",
     "doneShipping": "Shipped",
@@ -676,10 +676,10 @@
     "soldFor": "Refunded {amount}",
     "tracking": "Tracking",
     "trackingPending": "Awaiting tracking number",
-    "sell": "💰 Take 95% back",
+    "sell": "💰 Take 90% back",
     "noFee": "0% fee",
     "ship": "📦 Ship to my door",
-    "sellShort": "💰 95% back",
+    "sellShort": "💰 90% back",
     "shipShort": "📦 Ship home",
     "verify": "Verify this result",
     "select": "Select",
@@ -690,7 +690,7 @@
     "selectedValue": "Total value:",
     "soldForLabel": "Refunded",
     "totalValue": "Total vault value",
-    "sellAll": "Take 95% back on all",
+    "sellAll": "Take 90% back on all",
     "sort": "Sort",
     "sorts": {
       "newest": "Newest",
@@ -719,7 +719,7 @@
     "stepCurrent": "Current step",
     "trackingNote": "Once the parcel ships, the carrier and tracking number appear here with a live tracking link.",
     "trackingIssuedNote": "Your tracking number is issued. Follow the parcel live on the official {carrier} tracking page.",
-    "sellTitle": "💰 Take 95% back",
+    "sellTitle": "💰 Take 90% back",
     "sellBody": "Sell this item back? {rate} of market value, {amount}, lands in your balance right away.",
     "sellBodyMulti": "Sell {n} items back? {rate} of market value, {amount}, lands in your balance right away.",
     "confirm": "Confirm",
@@ -825,8 +825,8 @@
     "spins": "How many to open",
     "times": "{n}",
     "budget": "Max stake {amount}",
-    "autoSell": "⚡ Auto sell back every win at 95% (balance auto-refills)",
-    "autoSellBody": "Physical items and gift cards are sold back at 95% of market value right away. USDT cashback is credited 100% as always.",
+    "autoSell": "⚡ Auto sell back every win at 90% (balance auto-refills)",
+    "autoSellBody": "Physical items and gift cards are sold back at 90% of market value right away. USDT cashback is credited 100% as always.",
     "smartStop": "Auto-stop rules",
     "stopJackpot": "👑 Stop when a top-tier item lands",
     "stopMultiple": "Stop when the target value is reached",
@@ -842,7 +842,7 @@
     "spent": "Total stake",
     "won": "Total value won",
     "net": "Net",
-    "sellAll": "💰 Take 95% back on {n}",
+    "sellAll": "💰 Take 90% back on {n}",
     "keep": "Keep in vault"
   },
   "ticker": {
@@ -860,7 +860,7 @@
     "step1Desc": "From $1. Rolex, Tesla, Apple.",
     "step2Title": "Open it fair",
     "step2Desc": "Sealed by SHA-256. No tampering.",
-    "step3Title": "Ship it or take 95% back",
+    "step3Title": "Ship it or take 90% back",
     "step3Desc": "Free shipping, or USDT in a second."
   },
   "counters": {
@@ -902,7 +902,7 @@
     "emptyShipments": "No shipments recorded yet.",
     "emptyCta": "Open a box",
     "factVerify": "Every result is sealed by a SHA-256 hash published before the box opens; once the server seed is revealed anyone can reproduce it.",
-    "factRefund": "Physical wins pay back 95% of market value right away; USDT payback is credited at 100%.",
+    "factRefund": "Physical wins pay back 90% of market value right away; USDT payback is credited at 100%.",
     "factFee": "Withdrawals cost only the network fee, 1 USDT on TRC-20, 0.5 USDT on BEP-20, and domestic shipping is free during the current event.",
     "pendingTx": "Awaiting broadcast",
     "settledInstant": "Paid back instantly"
@@ -1024,7 +1024,7 @@
       "discord": "Official Discord",
       "notice": "Announcements"
     },
-    "disclaimer": "VOILA is a global e-commerce mystery box platform. Every opening result is published transparently through a tamper-proof SHA-256 algorithm, and every winning item is guaranteed to ship free as a genuine physical product or to pay back 95% instantly."
+    "disclaimer": "VOILA is a global e-commerce mystery box platform. Every opening result is published transparently through a tamper-proof SHA-256 algorithm, and every winning item is guaranteed to ship free as a genuine physical product or to pay back 90% instantly."
   },
   "legalDocs": {
     "terms": {
@@ -1103,7 +1103,7 @@
         },
         {
           "h": "Item handling and cashback",
-          "p": "A winning item may be delivered free after authentication, or converted to 95% instant cashback if you do not want it. An item left unused in storage automatically converts to cashback after 30 days and is reflected in wallet balance."
+          "p": "A winning item may be delivered free after authentication, or converted to 90% instant cashback if you do not want it. An item left unused in storage automatically converts to cashback after 30 days and is reflected in wallet balance."
         },
         {
           "h": "Mistaken and duplicate deposits",
@@ -1263,7 +1263,7 @@
         },
         {
           "h": "Resale values and confirming a choice",
-          "p": "Optional resale applies 95% to the displayed valuation of physical or digital items; balance results are automatically credited at their full displayed amount. This is not a 95% refund of the purchase price or principal protection. Disclose the valuation basis and time, condition, currency and actual resale amount before confirmation. Delivery and resale cannot proceed simultaneously for the same item; separate error, non-performance and statutory remedies remain available."
+          "p": "Optional resale applies 90% to the displayed valuation of physical or digital items; balance results are automatically credited at their full displayed amount. This is not a 90% refund of the purchase price or principal protection. Disclose the valuation basis and time, condition, currency and actual resale amount before confirmation. Delivery and resale cannot proceed simultaneously for the same item; separate error, non-performance and statutory remedies remain available."
         },
         {
           "h": "Digital codes, non-receipt and storage",
@@ -1419,7 +1419,7 @@
         },
         {
           "h": "Countries, payments, delivery and fund protection",
-          "p": "USDT on-chain deposits are supported on TRC-20, BEP-20 and ERC-20 with a minimum deposit of {minDeposit} USDT. Items may be delivered free after authentication or converted to 95% cashback. Stored items automatically convert to cashback after 30 days without use."
+          "p": "USDT on-chain deposits are supported on TRC-20, BEP-20 and ERC-20 with a minimum deposit of {minDeposit} USDT. Items may be delivered free after authentication or converted to 90% cashback. Stored items automatically convert to cashback after 30 days without use."
         },
         {
           "h": "Operating conditions and policy application",
@@ -1440,7 +1440,7 @@
           "p": "Payment, withdrawal and delivery availability is shown on the relevant screen. Unconnected services are unavailable; unprocessed requests are never shown as completed. See Business and service information for operator details and supported regions."
         },
         {
-          "h": "Is 95% resale the same as a refund?",
+          "h": "Is 90% resale the same as a refund?",
           "p": "No. Optional resale based on item valuation is distinct from cancellation, defects and unused-fund return. Statutory refunds must not automatically incur a 5% deduction."
         },
         {
@@ -1463,7 +1463,7 @@
     }
   },
   "actions": {
-    "sellBack": "💰 Take 95% back",
+    "sellBack": "💰 Take 90% back",
     "claimShipping": "Ship to me",
     "provablyFair": "Provably Fair"
   },
@@ -1695,10 +1695,10 @@
     "communityNote": "Review reward"
   },
   "design": {
-    "heroLine1": "A little curiosity.",
-    "heroLine2": "A new possibility.",
-    "heroBody": "From coveted timepieces to everyday tech. Find a collection that speaks to you, and discover what comes next.",
-    "explore": "Explore collections",
+    "heroLine1": "The moment you open,",
+    "heroLine2": "new possibilities.",
+    "heroBody": "From the watch you have wanted to the tech you use every day. Choose a box that fits your taste and discover what comes next.",
+    "explore": "Choose a box",
     "preview": "Free preview",
     "previewNote": "Preview is a visual experience. It does not change your balance or inventory.",
     "featured": "The monthly edit",
@@ -1707,28 +1707,34 @@
     "details": "Contents & odds",
     "selectFeature": "Select featured collection",
     "upTo": "Up to {n}×",
-    "trustOdds": "Know the odds first",
-    "trustOddsBody": "Every item. Every probability.",
-    "trustShipping": "Make it yours",
-    "trustShippingBody": "Request delivery from your inventory",
-    "trustChoice": "Your discovery. Your choice.",
-    "trustChoiceBody": "Review the refund value before exchanging",
-    "collectionTitle": "Your next discovery",
-    "collectionBody": "Small beginnings. Extraordinary collections.",
+    "trustOdds": "Expect more.",
+    "trustOddsBody": "See what could be inside and what it is worth before you open.",
+    "trustShipping": "Verify every detail.",
+    "trustShippingBody": "Compare the pre-open seed hash with the opening record and check the result yourself.",
+    "trustChoice": "The final choice is yours.",
+    "trustChoiceBody": "Request physical delivery or convert your item to the listed cashback amount.",
+    "collectionTitle": "Is your wishlist staying on the screen?",
+    "collectionBody": "Start light and take your first step with ease.",
     "collectionCount": "{count} collections",
     "resultsCount": "{count} boxes",
-    "guideTitle": "From discovery to ownership.",
-    "guideMore": "Meet VOILA",
-    "step1Title": "Find your collection",
-    "step1Body": "Compare the price, contents and probabilities, then choose your box.",
-    "step2Title": "See what unfolds",
-    "step2Body": "Review the total before opening. Find your results in your inventory.",
-    "step3Title": "Make your next move",
-    "step3Body": "Request delivery or exchange the item for its displayed refund value.",
-    "proofTitle": "Confidence comes from clarity.",
-    "verify": "Verify fairness",
-    "fairnessCta": "Understand verification",
-    "purchaseNote": "Review the price and odds before buying. Check each result yourself."
+    "guideTitle": "Now it is your turn to open.",
+    "guideMore": "How it works",
+    "step1Title": "Which box holds the item you want?",
+    "step1Body": "Check the price, contents, and item-by-item odds, then choose the box that catches your eye.",
+    "step2Title": "Could it be yours? Open it to find out.",
+    "step2Body": "Review the total purchase amount before opening, then meet your result. You can revisit it anytime in your inventory.",
+    "step3Title": "Physical delivery or cashback?",
+    "step3Body": "Request delivery for your item or convert it to the listed cashback amount. The final choice is yours.",
+    "proofTitle": "Trust you can verify.",
+    "verify": "Verify it yourself",
+    "fairnessCta": "Verify it yourself",
+    "purchaseNote": "Review the price and odds before buying. Check each result yourself.",
+    "guideBody": "Choose, open, and decide. Three simple steps.",
+    "proofBody": "Compare the pre-open seed hash with the opening record. Use the fairness verifier to confirm that identical inputs produce the same result.",
+    "heroEyebrow": "YOUR NEXT DISCOVERY",
+    "collectionEyebrow": "BOX COLLECTION",
+    "guideEyebrow": "HOW VOILA WORKS",
+    "proofEyebrow": "FAIRNESS, VERIFIED"
   },
   "legalCenter": {
     "title": "Policies & your rights",
@@ -1913,9 +1919,7 @@
     "storageError": "Could not save. Check browser storage space and permissions. Existing reviews are not automatically removed.",
     "requestDelivery": "Delivery",
     "withdrawUnavailable": "Withdrawal requests are not open yet. No request is accepted and no balance is debited until the withdrawal service is connected.",
-    "autoCashbackNotice": "Items kept for 30 days without a delivery request or resale are automatically credited at 95% of their stated value to the original payment balance.",
-    "settlementMethod": "Settlement method",
-    "autoCashbackRecord": "30-day unused automatic cashback (95%)"
+    "settlementMethod": "Settlement method"
   },
   "cancellation": {
     "title": "Cancel this shipment request?",
@@ -2293,7 +2297,7 @@
     "shipping": "Track deliveries",
     "reviews": "Manage reviews",
     "eligibleReviews": "Items eligible for review",
-    "inventoryNote": "30-day storage, unused items receive 95% automatic cashback",
+    "inventoryNote": "30-day storage, unused items receive 90% automatic cashback",
     "reviewNote": "Check review eligibility for items worth at least 100 USDT.",
     "logout": "Sign out",
     "logoutDone": "You have signed out.",

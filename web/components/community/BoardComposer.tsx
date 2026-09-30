@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { X } from "lucide-react";
+import { ImagePlus, X } from "lucide-react";
 import { useModal } from "@/lib/useModal";
 import { validateDraft, type BoardDraft, type BoardPost } from "@/lib/board";
+import { assertCommunityImageFile } from "@/lib/communityModeration";
 export const CATEGORY_LABELS = { general: "자유", question: "질문", tips: "정보, 팁", notice: "공지사항" };
 export function BoardComposer({ userId, editing, canPublishNotice, busy, error, onClose, onSave }: {
   userId: string; editing?: BoardPost; canPublishNotice: boolean; busy: boolean; error: string;
@@ -11,11 +12,21 @@ export function BoardComposer({ userId, editing, canPublishNotice, busy, error, 
   const key = `voila.board-draft.${userId}.${editing?.id ?? "new"}`;
   const [draft, setDraft] = useState<BoardDraft>(() => {
     try { const saved = JSON.parse(sessionStorage.getItem(key) ?? "null"); if (saved && typeof saved.title === "string" && typeof saved.body === "string" && Object.keys(CATEGORY_LABELS).includes(saved.category)) return { ...saved, pinned: saved.pinned === true }; } catch { /* The form is still usable when draft storage is unavailable. */ }
-    return { title: editing?.title ?? "", body: editing?.body ?? "", category: editing?.category ?? "general", pinned: editing?.pinned ?? false };
+    return { title: editing?.title ?? "", body: editing?.body ?? "", category: editing?.category ?? "general", pinned: editing?.pinned ?? false, images: editing?.images ?? [] };
   });
   const [draftStatus, setDraftStatus] = useState("");
   const [validation, setValidation] = useState("");
   const [discard, setDiscard] = useState(false);
+  const addImages = async (files: FileList | File[]) => {
+    const list = Array.from(files).slice(0, Math.max(0, 3 - (draft.images?.length ?? 0)));
+    try {
+      const images = await Promise.all(list.map(async file => {
+        assertCommunityImageFile(file);
+        return await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => typeof reader.result === "string" ? resolve(reader.result) : reject(new Error("image")); reader.onerror = () => reject(reader.error); reader.readAsDataURL(file); });
+      }));
+      setDraft(current => ({ ...current, images: [...(current.images ?? []), ...images] })); setValidation("");
+    } catch { setValidation("이미지는 JPG, PNG, WebP 형식의 안전한 파일만 최대 3장까지 첨부할 수 있습니다."); }
+  };
   const panel = useRef<HTMLDivElement>(null);
   const saved = useRef(false);
   const close = () => { if (!busy) onClose(); };
@@ -39,7 +50,7 @@ export function BoardComposer({ userId, editing, canPublishNotice, busy, error, 
         {draft.category === "notice" && canPublishNotice && <label className="flex gap-2 text-sm"><input type="checkbox" checked={draft.pinned} disabled={busy} onChange={e => setDraft({ ...draft, pinned: e.target.checked })} />목록 상단에 고정</label>}
         <label className="text-sm text-secondary">제목<input aria-label="제목" autoComplete="off" required minLength={2} maxLength={100} value={draft.title} disabled={busy} onChange={e => setDraft({ ...draft, title: e.target.value })} className="mt-2 w-full rounded-xl border border-hairline bg-obsidian p-3 text-white" /><span className="mt-1 block text-right text-xs text-muted">{draft.title.length} / 100</span></label>
         <label className="text-sm text-secondary">본문<textarea aria-label="본문" required minLength={5} maxLength={10000} rows={10} value={draft.body} disabled={busy} onChange={e => setDraft({ ...draft, body: e.target.value })} className="mt-2 w-full rounded-xl border border-hairline bg-obsidian p-4 leading-7 text-white" /><span className="mt-1 block text-right text-xs text-muted">{draft.body.length.toLocaleString()} / 10,000</span></label>
-        <p className="text-xs text-muted" role="status">{draftStatus}</p>
+        <div onDragOver={event => event.preventDefault()} onDrop={event => { event.preventDefault(); void addImages(event.dataTransfer.files); }} className="rounded-xl border border-dashed border-hairline bg-obsidian/50 p-4"><p className="text-sm text-secondary">이미지 첨부 <span className="text-muted">({draft.images?.length ?? 0}/3)</span></p><div className="mt-3 flex flex-wrap gap-3">{draft.images?.map((image, index) => <div key={image} className="relative"><img src={image} alt="첨부 이미지 미리보기" className="h-20 w-20 rounded-lg object-cover" /><button type="button" aria-label="이미지 삭제" onClick={() => setDraft(current => ({ ...current, images: current.images?.filter((_, i) => i !== index) }))} className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full bg-obsidian text-white"><X className="h-3 w-3" /></button></div>)}<label className="workspace-button cursor-pointer"><ImagePlus className="h-4 w-4" />드래그하거나 선택<input type="file" accept="image/jpeg,image/png,image/webp" multiple className="sr-only" onChange={event => { void addImages(event.target.files ?? []); event.target.value = ""; }} /></label></div><p className="mt-3 text-xs text-muted">JPG, PNG, WebP만 가능하며 부적절하거나 광고성인 이미지는 등록할 수 없습니다.</p></div>        <p className="text-xs text-muted" role="status">{draftStatus}</p>
         {(error || validation) && <p role="alert" className="text-sm text-[#f3ad9e]">{error || validation}</p>}
         <div className="flex flex-wrap gap-3"><button type="submit" disabled={busy} className="workspace-button primary">{busy ? "저장 중…" : editing ? "수정 완료" : "게시하기"}</button><button type="button" disabled={busy} onClick={close} className="workspace-button">닫기</button><button type="button" disabled={busy} className="workspace-text-link ml-auto" onClick={() => setDiscard(true)}>임시 글 삭제</button></div>
         {discard && <div className="rounded-xl border border-hairline p-4"><p className="text-sm">작성 중인 내용을 삭제하고 닫을까요?</p><div className="mt-3 flex gap-3"><button type="button" className="workspace-button" onClick={() => setDiscard(false)}>계속 작성</button><button type="button" className="workspace-button" onClick={() => { try { sessionStorage.removeItem(key); saved.current = true; onClose(); } catch { setDraftStatus("임시 글을 삭제하지 못했습니다. 다시 시도해 주세요."); } }}>삭제하고 닫기</button></div></div>}

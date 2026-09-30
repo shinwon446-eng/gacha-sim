@@ -21,7 +21,7 @@ export const useSettingsStore = create<SettingsState>()(
     (set) => ({
       muted: false,
       toggleMuted: () => set((s) => ({ muted: !s.muted })),
-      bgmEnabled: false,
+      bgmEnabled: true,
       bgmVolume: 0.45,
       bgmPlaying: false,
       setBgmEnabled: (bgmEnabled) => set({ bgmEnabled }),

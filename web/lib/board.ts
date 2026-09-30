@@ -7,9 +7,10 @@ export interface BoardPost {
   id: string; authorId: string; authorName: string; category: BoardCategory;
   title: string; body: string; pinned: boolean; createdAt: string; updatedAt?: string;
   revision: number; comments: BoardComment[];
+  images?: string[];
   source?: "member" | "example";
 }
-export interface BoardDraft { title: string; body: string; category: BoardCategory; pinned: boolean }
+export interface BoardDraft { title: string; body: string; category: BoardCategory; pinned: boolean; images?: string[] }
 export interface BoardSnapshot { posts: BoardPost[]; canPublishNotice: boolean }
 export type BoardCommand =
   | { type: "create"; draft: BoardDraft }
@@ -19,14 +20,16 @@ export type BoardCommand =
   | { type: "editComment"; id: string; commentId: string; body: string; revision: number }
   | { type: "deleteComment"; id: string; commentId: string; revision: number };
 export class BoardError extends Error {}
+import { assertCommunityImages, assertCommunitySafeText } from "./communityModeration";
 export const isExampleBoardContent = (content: { id: string; source?: string }) => content.source === "example" || content.id.startsWith("board_example_v1_");
 export function validateDraft(draft: BoardDraft, actor: BoardActor): BoardDraft {
   if (!BOARD_CATEGORIES.includes(draft.category) || typeof draft.title !== "string" || typeof draft.body !== "string" || typeof draft.pinned !== "boolean") throw new BoardError("invalid");
   const title = draft.title.trim(); const body = draft.body.trim();
   if (title.length < 2 || title.length > 100 || body.length < 5 || body.length > 10000) throw new BoardError("length");
+  try { assertCommunitySafeText(title, body); assertCommunityImages(draft.images); } catch { throw new BoardError("content_blocked"); }
   if ((draft.category === "notice" || draft.pinned) && !actor.canPublishNotice) throw new BoardError("forbidden");
   if (draft.pinned && draft.category !== "notice") throw new BoardError("invalid");
-  return { title, body, category: draft.category, pinned: draft.pinned };
+  return { title, body, category: draft.category, pinned: draft.pinned, ...(draft.images?.length ? { images: draft.images } : {}) };
 }
 function commentText(body: string) {
   if (typeof body !== "string" || !body.trim() || body.trim().length > 1000) throw new BoardError("comment_length");
@@ -71,6 +74,7 @@ export function parseBoardPosts(value: unknown): BoardPost[] {
   const ids = new Set<string>();
   for (const p of value) {
     if (!p || !string(p.id) || !p.id || ids.has(p.id) || !string(p.authorId) || !string(p.authorName) || !BOARD_CATEGORIES.includes(p.category) || !string(p.title) || p.title.length > 100 || !string(p.body) || p.body.length > 10000 || typeof p.pinned !== "boolean" || !date(p.createdAt) || (p.updatedAt !== undefined && !date(p.updatedAt)) || !Number.isInteger(p.revision) || p.revision < 1 || !Array.isArray(p.comments) || p.comments.length > 500) throw new BoardError("invalid_response");
+    try { assertCommunitySafeText(p.title, p.body); assertCommunityImages(p.images); } catch { throw new BoardError("invalid_response"); }
     ids.add(p.id);
     if (p.source !== undefined && !["member", "example"].includes(p.source)) throw new BoardError("invalid_response");
     const comments = new Set<string>();
@@ -98,7 +102,7 @@ export function createBoardExamples(): BoardPost[] {
     ["tips", "사진 후기 쓰면 이런 순서가 읽기 편할 듯", "상품 전체 사진 → 마음에 드는 부분 → 아쉬운 부분 순으로 쓰면 보기 편하더라고요. 무조건 좋다는 말보다 내 사용 목적에 맞았는지가 더 궁금함.", ["단점 한 줄이 오히려 정보량 많음.", "크기 비교할 물건 옆에 놓는 것도 좋죠.", "사진에 다른 사람 얼굴 나오면 가려야 하고.", "배경 복잡하면 정작 상품이 안 보이더라."]],
     ["general", "아이패드 고르는 기준이 점점 바뀌는 중", "처음엔 큰 화면이면 다 좋을 줄 알았는데 책상보다 소파에서 보는 시간이 더 많음. 결국 무게랑 손으로 들고 쓰는 시간을 생각하게 되네.", ["사용 장소부터 정하면 선택 쉬워짐.", "가끔 들고 나갈 거면 가방 크기도 중요.", "키보드까지 붙이면 무게가 또 달라짐.", "스펙표만 볼 때랑 실제 용도가 다르죠.", "나도 화면 크기만 보던 습관 바꿔야겠네."]],
     ["question", "실물 신청 전에 배송 조건 어디까지 확인하세요?", "관부가세나 배송 가능 지역은 상품하고 받는 곳에 따라 다를 수 있잖아요. 게시판 답만 믿기보다 신청 화면이랑 배송 정책을 같이 보는 게 맞겠죠?", ["네, 내 주소 기준 안내가 제일 중요해요.", "예전에 본 댓글이 현재 조건이랑 같다는 보장은 없으니까.", "보증이나 반품 조건도 같이 확인하면 좋겠네요.", "정확한 건 해당 주문 정보로 문의하는 편이 낫겠죠.", "국가 바뀌면 조건도 다시 확인해야 함.", "질문할 땐 주소 전체 말고 국가 정도만 적는 게 안전해요."]],
-    ["tips", "페이백 기준이 구매 금액인지 상품 가치인지 먼저 확인", "95%라는 숫자만 보면 헷갈릴 수 있어서 적어봄. 어떤 금액을 기준으로 계산하는지 확인하고, 예상 금액이랑 실제 확인 화면의 금액을 비교하는 게 좋겠어요.", ["기준 금액 안 보고 비율만 보면 착각하기 쉬움.", "반복하면 차감되는 금액도 누적되니 총액으로 봐야겠네요."]],
+    ["tips", "페이백 기준이 구매 금액인지 상품 가치인지 먼저 확인", "90%라는 숫자만 보면 헷갈릴 수 있어서 적어봄. 어떤 금액을 기준으로 계산하는지 확인하고, 예상 금액이랑 실제 확인 화면의 금액을 비교하는 게 좋겠어요.", ["기준 금액 안 보고 비율만 보면 착각하기 쉬움.", "반복하면 차감되는 금액도 누적되니 총액으로 봐야겠네요."]],
     ["general", "맥북은 성능보다 들고 다닐 무게부터 고민", "영상 작업도 안 하는데 고성능 모델 보면 괜히 눈길 감 ㅋㅋ 근데 매일 들고 다닐 거면 가벼운 모델이 내 용도에는 더 맞을 수도 있겠네.", ["사용하는 프로그램부터 적어보면 정리됨.", "충전기 무게도 같이 계산해야 함.", "성능 숫자가 높다고 무조건 나한테 좋은 건 아니니까."]],
     ["question", "PS5 놓을 자리는 어디가 나을까요?", "TV장 안에 넣으려 했는데 공간이 좀 좁아 보이네요. 깔끔하게 두는 것도 좋지만 통풍 생각하면 밖에 두는 쪽이 나을지 고민 중.", ["제조사 설치 안내의 여유 공간부터 확인해보세요.", "케이블 나오는 자리까지 생각해야 깔끔함.", "먼지 청소하기 편한 위치도 중요하죠.", "사진만 보고 배치했다가 선 때문에 다시 옮기기도 함."]],
     ["tips", "질문 글 제목에 이것만 적어도 답하기 편함", "상품 이름 / 궁금한 기능 / 확인한 화면. 세 가지가 있으면 같은 질문을 다시 물을 일이 줄어들 듯. 계정 정보나 비밀번호는 글에 쓰지 말고요.", ["제목이 질문입니다 한 줄이면 뭘 봐야 할지 모르겠음 ㅋㅋ", "오류 메시지는 개인정보 가리고 옮기면 좋죠.", "언제부터 그랬는지도 도움 됨.", "모바일인지 PC인지도 같이 적으면 더 좋고.", "해결되면 해결 방법도 남겨주면 다음 사람이 편해요."]],

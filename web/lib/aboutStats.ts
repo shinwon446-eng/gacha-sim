@@ -8,7 +8,7 @@
 import { BOXES, dropTable, floorRatio, retailReturn } from "@/lib/products";
 import { REFUND_RATE } from "@/lib/types";
 
-/** 즉시 회수 비율, 실제로 지급되는 비율(95%). 정책이자 코드가 쓰는 값이다. */
+/** 즉시 회수 비율, 실제로 지급되는 비율(90%). 정책이자 코드가 쓰는 값이다. */
 export const INSTANT_SELLBACK_RATE = REFUND_RATE;
 
 /** 정품이 아닐 경우 보상 배율, 운영자 정책. 집행하지 않을 거면 이 상수를 내린다. */

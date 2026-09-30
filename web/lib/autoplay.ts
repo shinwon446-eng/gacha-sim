@@ -2,7 +2,7 @@
  * 오토플레이 규칙, 순수 함수. 컴포넌트는 스핀만 돌리고 여기서 "계속할지"를 묻는다.
  *
  *   , 회전 수: 10 / 25 / 50 / 100 / 무제한(Infinity)
- *   , 자동 환전: 실물, 디지털 당첨을 95% USDT 로 즉시 회수해 잔고를 재충전한다 (캐시백은 원래 100% 즉시 적립)
+ *   , 자동 환전: 실물, 디지털 당첨을 90% USDT 로 즉시 회수해 잔고를 재충전한다 (캐시백은 원래 100% 즉시 적립)
  *   , 스마트 정지: 잭팟(ROYAL/PRESTIGE) 당첨 , 단일 승리 N배 이상 , 손실 한도(Stop Loss) 도달 , 잔고 부족
  */
 import type { TierKey } from "./tiers";
@@ -15,7 +15,7 @@ export const OPEN_PRESETS = [1, 5, 10, 50, 100] as const;
 export interface AutoplayConfig {
   /** 총 회전 수. Infinity = 무제한 */
   spins: number;
-  /** 모든 당첨품 95% USDT 즉시 자동 환전 */
+  /** 모든 당첨품 90% USDT 즉시 자동 환전 */
   autoSell: boolean;
   /** 에픽/레전더리(잭팟) 당첨 시 즉시 멈춤 */
   stopOnJackpot: boolean;

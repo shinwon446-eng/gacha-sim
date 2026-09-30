@@ -67,7 +67,7 @@ export function LiveReviewsSection() {
 
   return <section className="home-reviews page-shell" aria-labelledby="live-reviews-heading">
     <div className="mb-6 flex flex-wrap items-end justify-between gap-5">
-      <div><p className="eyebrow">PRODUCT REVIEWS</p><h2 id="live-reviews-heading" className="mt-3 text-2xl font-medium tracking-tight text-white md:text-3xl">{copy.title}</h2><p className="mt-3 max-w-2xl text-sm leading-7 text-muted">{copy.description}</p></div>
+      <div><p className="eyebrow">{copy.eyebrow}</p><h2 id="live-reviews-heading" className="mt-3 text-2xl font-medium tracking-tight text-white md:text-3xl">{copy.title}</h2><p className="mt-3 max-w-2xl text-sm leading-7 text-muted">{copy.description}</p></div>
       <Link href="/community?tab=public" className="workspace-text-link">{copy.all}<ArrowUpRight className="h-4 w-4" aria-hidden="true" /></Link>
     </div>
     <div className="mb-5 flex items-center gap-2 text-xs text-secondary"><span aria-hidden="true" className="h-2 w-2 rounded-full bg-gold-champagne motion-safe:animate-pulse" />{copy.auto}</div>

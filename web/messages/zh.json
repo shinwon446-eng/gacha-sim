@@ -53,7 +53,7 @@
     "heroSlogan": "You never know what’s next., OPEN IT, OWN IT",
     "heroCta": "去开一箱",
     "heroLine1": "仅需 1 美元，开启真正的奢侈品，",
-    "heroSub": "开箱前就已封存、任何人都无法更改的抽选；95% 即时返现，让不如意的商品也能变成下一次机会；关税全免的 100% 正品免费特快配送。",
+    "heroSub": "开箱前就已封存、任何人都无法更改的抽选；90% 即时返现，让不如意的商品也能变成下一次机会；关税全免的 100% 正品免费特快配送。",
     "lineupTitle": "开箱即归你所有的高端系列",
     "lineupSub": "从瑞士名表到超跑，{categories} 大高端类别, {boxes} 款系列",
     "lineupPrice": "单次开启价格",
@@ -62,15 +62,15 @@
     "catTech": "⚡ 高端科技",
     "catFashion": "👜 奢品精品店",
     "catSuper": "🚗 超跑与足金",
-    "s1Eyebrow": "挑战永不结束, 95% 即时返现",
+    "s1Eyebrow": "挑战永不结束, 90% 即时返现",
     "s1Title": "不是想要的商品也没关系，因为它会变成下一次机会。",
-    "s1Body": "普通盲盒开到不想要的赠品，挑战就在那里结束了。在 VOILA，无论开到什么，都能立刻把价值的 95% 返回余额，让你一直挑战下去，直到拿下真正想要的心愿单。",
+    "s1Body": "普通盲盒开到不想要的赠品，挑战就在那里结束了。在 VOILA，无论开到什么，都能立刻把价值的 90% 返回余额，让你一直挑战下去，直到拿下真正想要的心愿单。",
     "s1RivalLabel": "普通盲盒（开到不想要的赠品就此结束）",
-    "s1OursLabel": "VOILA 返现机制（把 95% 拿回余额，再次挑战）",
+    "s1OursLabel": "VOILA 返现机制（把 90% 拿回余额，再次挑战）",
     "s1Attempts": "{n} 倍",
     "s1AttemptsNote": "同样预算下能开的次数",
     "mockUnboxed": "UNBOXED",
-    "mockPayback": "💰 立即拿回 95%",
+    "mockPayback": "💰 立即拿回 90%",
     "mockWalletAfter": "返现后余额",
     "mockSeedHash": "① 开箱前已锁定的结果密码表",
     "mockClientSeed": "② 我的设备生成的抽选号码",
@@ -93,7 +93,7 @@
     "globalTitle": "从首尔到纽约，从东京到迪拜。没有国界的奢品开箱。",
     "globalSub": "点一下城市。我们会如实展示实物如何发往那里、税费由谁承担。",
     "globalCap1": "开箱 → 实物到手",
-    "globalCap2": "95% 即时返现",
+    "globalCap2": "90% 即时返现",
     "globalCap3": "含关税免费特快",
     "globalNet": "USDT TRC-20, BEP-20 一秒出入金",
     "globalShip": "{n} 个国家免费特快",
@@ -121,7 +121,7 @@
     "faqQ2": "如果商品不是正品怎么办？",
     "faqA2": "只有通过专业鉴定机构检验的商品才会发出；一旦确认为仿品，按商品价值的 {n} 倍赔付。",
     "faqQ3": "兑现有多快？",
-    "faqA3": "在仓库点击［立即拿回 95%］，余额立刻到账，没有审批排队。",
+    "faqA3": "在仓库点击［立即拿回 90%］，余额立刻到账，没有审批排队。",
     "faqQ4": "提现流程是怎样的？",
     "faqA4": "USDT 余额可通过 TRC-20 或 BEP-20 网络提现，申请前可确认手续费和实际到账金额。",
     "faqQ5": "怎么确信结果没有被操纵？",
@@ -137,7 +137,7 @@
     "heroRoll3": "成为 1 公斤足金金条的主人。",
     "heroRoll4": "成为爱马仕铂金包的主人。",
     "s1Step1": "① 开启盲盒",
-    "s1Step2": "② 95% 即时返现",
+    "s1Step2": "② 90% 即时返现",
     "s1Step3": "③ 再战心愿单！",
     "mockOpened": "你开启了 {price} 的盲盒",
     "mockRetry": "返回的余额还能再挑战 {n} 次",
@@ -203,9 +203,9 @@
     "headline": "1 美元开启劳力士与 iPhone，现在就开箱。",
     "headline1": "1 美元开启劳力士与 iPhone，",
     "headline2": "现在就开箱。",
-    "sub": "中奖即 100% 正品免费送到家，开到其他商品也能立即拿回 95%。",
+    "sub": "中奖即 100% 正品免费送到家，开到其他商品也能立即拿回 90%。",
     "sub1": "中奖即 100% 正品免费送到家，",
-    "sub2": "开到其他商品也能立即拿回 95%。",
+    "sub2": "开到其他商品也能立即拿回 90%。",
     "freeTry": "免费试开一箱",
     "openFor": "📦 {price} 开启盲盒",
     "badge": "1 美元起的奢品开箱",
@@ -223,8 +223,8 @@
     "guaranteedMinShort": "保底 {value}",
     "noBlankBadge": "100% 不落空, 最低 {value} 保底",
     "noBlankShort": "不落空, 保底 {value}",
-    "settleBadge": "全品类 95% 即时返现保障",
-    "settleShort": "95% 即时返现",
+    "settleBadge": "全品类 90% 即时返现保障",
+    "settleShort": "90% 即时返现",
     "upTo": "最高 {n}",
     "rtp": "RTP {rate}%",
     "floorPct": "最低 {pct}% 返还",
@@ -287,7 +287,7 @@
   },
   "aboutBanner": {
     "title": "VOILA 是怎么运作的？",
-    "body": "链上公平, 95% 返现, 正品免费配送",
+    "body": "链上公平, 90% 返现, 正品免费配送",
     "cta": "平台介绍"
   },
   "hot": {
@@ -361,8 +361,8 @@
     "explain": "等级并非存储值，而是由市场价 ÷ 盲盒价格的倍数推导。每次开启的期望市场价为 {ev}，相当于盲盒价格的 {retail}。若即时返现，仅按市场价的 {refund} 支付，因此按现金计算的回收率为 {cash}，低于开启价。",
     "guaranteedYes": "本盲盒的保底档为 {min} 即时返现,, 开箱即刻 100% 计入余额。",
     "guaranteedNo": "本盲盒的保底档为 {min} 即时返现,, 开箱即刻 100% 计入余额。",
-    "settleBadge": "⚡ 全品类一键 95% 即时返现, 保证可提现至个人钱包",
-    "settleBody": "实物与礼品卡可一键按市场价 95% 返现；USDT 返现与即时到账在开箱时 100% 计入余额。余额可提现至 TRC-20 / BEP-20 个人钱包。",
+    "settleBadge": "⚡ 全品类一键 90% 即时返现, 保证可提现至个人钱包",
+    "settleBody": "实物与礼品卡可一键按市场价 90% 返现；USDT 返现与即时到账在开箱时 100% 计入余额。余额可提现至 TRC-20 / BEP-20 个人钱包。",
     "allPrizes": "全部可得商品",
     "count": "{n} 件",
     "sortedByValue": "按市场价降序",
@@ -501,9 +501,9 @@
     "results": "{n} 次结果",
     "total": "总价值",
     "paid": "已支付 {price}",
-    "sellBack": "立即拿回 95%, {amount}",
-    "sellBackAll": "全部 立即拿回 95%, {amount}",
-    "cashoutCta": "💰 立即拿回 95%",
+    "sellBack": "立即拿回 90%, {amount}",
+    "sellBackAll": "全部 立即拿回 90%, {amount}",
+    "cashoutCta": "💰 立即拿回 90%",
     "noFee": "0 手续费",
     "shipSub": "实物, 免费配送",
     "cashCredited": "{amount} 已即时计入余额",
@@ -658,7 +658,7 @@
     "tabDone": "已处理 ({n})",
     "cashableValue": "可立即拿回的总金额",
     "withdrawBalance": "🚀 提现余额",
-    "doneSold": "95% 返现完成 +{amount}",
+    "doneSold": "90% 返现完成 +{amount}",
     "doneCash": "返现已计入 +{amount}",
     "archived": "已处理",
     "doneShipping": "已发货",
@@ -676,10 +676,10 @@
     "soldFor": "已退回 {amount}",
     "tracking": "运单号",
     "trackingPending": "等待运单号",
-    "sell": "💰 立即拿回 95%",
+    "sell": "💰 立即拿回 90%",
     "noFee": "0 手续费",
     "ship": "📦 寄到我家",
-    "sellShort": "💰 拿回 95%",
+    "sellShort": "💰 拿回 90%",
     "shipShort": "📦 寄到家",
     "verify": "验证此结果",
     "select": "选择",
@@ -690,7 +690,7 @@
     "selectedValue": "总价值：",
     "soldForLabel": "已退回",
     "totalValue": "仓库总资产",
-    "sellAll": "全部立即拿回 95%",
+    "sellAll": "全部立即拿回 90%",
     "sort": "排序",
     "sorts": {
       "newest": "最新",
@@ -719,7 +719,7 @@
     "stepCurrent": "当前环节",
     "trackingNote": "出库完成后，物流公司与运单号会显示在此，并开放实时查询链接。",
     "trackingIssuedNote": "运单已生成。可在 {carrier} 官方查询页面实时查看配送状态。",
-    "sellTitle": "💰 立即拿回 95%",
+    "sellTitle": "💰 立即拿回 90%",
     "sellBody": "确定回售该商品？市场价的 {rate}（{amount}）将立即计入余额。",
     "sellBodyMulti": "确定回售 {n} 件商品？市场价的 {rate}（{amount}）将立即计入余额。",
     "confirm": "确认",
@@ -825,8 +825,8 @@
     "spins": "开箱次数",
     "times": "{n} 次",
     "budget": "最多投入 {amount}",
-    "autoSell": "⚡ 中奖商品 95% 自动回售（余额自动返现）",
-    "autoSellBody": "实物与礼品卡按市场价 95% 立即回售补充余额。USDT 返现一如既往 100% 即时计入。",
+    "autoSell": "⚡ 中奖商品 90% 自动回售（余额自动返现）",
+    "autoSellBody": "实物与礼品卡按市场价 90% 立即回售补充余额。USDT 返现一如既往 100% 即时计入。",
     "smartStop": "自动停止条件",
     "stopJackpot": "👑 开出最高等级商品时自动停止",
     "stopMultiple": "达到目标价值（倍数）时自动停止",
@@ -842,7 +842,7 @@
     "spent": "总投入",
     "won": "总获得价值",
     "net": "净损益",
-    "sellAll": "💰 {n} 件立即拿回 95%",
+    "sellAll": "💰 {n} 件立即拿回 90%",
     "keep": "留在仓库"
   },
   "ticker": {
@@ -860,7 +860,7 @@
     "step1Desc": "1 美元起。劳力士、特斯拉、苹果。",
     "step2Title": "公平开箱",
     "step2Desc": "SHA-256 封存，无法篡改。",
-    "step3Title": "发货或拿回 95%",
+    "step3Title": "发货或拿回 90%",
     "step3Desc": "免费寄到家，或 1 秒拿回 USDT。"
   },
   "counters": {
@@ -902,7 +902,7 @@
     "emptyShipments": "暂无发货记录。",
     "emptyCta": "去开盲盒",
     "factVerify": "每次开箱结果都由开箱前公开的 SHA-256 哈希封存；公开服务器种子后任何人都可复现。",
-    "factRefund": "中奖实物可按市场价 95% 立即拿回 USDT，USDT 返现 100% 即时入账。",
+    "factRefund": "中奖实物可按市场价 90% 立即拿回 USDT，USDT 返现 100% 即时入账。",
     "factFee": "提现仅收网络实费,, TRC-20 1 USDT / BEP-20 0.5 USDT；境内运费当前免费。",
     "pendingTx": "等待广播",
     "settledInstant": "即时返现"
@@ -1024,7 +1024,7 @@
       "discord": "官方 Discord",
       "notice": "公告频道"
     },
-    "disclaimer": "VOILA 是面向全球用户的电商盲盒平台。所有开箱结果均通过不可篡改的 SHA-256 算法透明公开，中奖商品保证 100% 实物免费配送或 95% 即时返现。"
+    "disclaimer": "VOILA 是面向全球用户的电商盲盒平台。所有开箱结果均通过不可篡改的 SHA-256 算法透明公开，中奖商品保证 100% 实物免费配送或 90% 即时返现。"
   },
   "legalDocs": {
     "terms": {
@@ -1103,7 +1103,7 @@
         },
         {
           "h": "商品处理与返现",
-          "p": "中奖商品通过正品检验后可免费配送；不想保留时可立即转换为95%返现。保管商品连续30天未使用时会自动转换为返现并计入钱包余额。"
+          "p": "中奖商品通过正品检验后可免费配送；不想保留时可立即转换为90%返现。保管商品连续30天未使用时会自动转换为返现并计入钱包余额。"
         },
         {
           "h": "误转与重复充值",
@@ -1263,7 +1263,7 @@
         },
         {
           "h": "回售金额与选择确认",
-          "p": "自愿回售按实物或数字商品显示估值的 95% 计算；余额类结果按显示金额全额自动入账。这不等于退还购买价格的 95%，也不构成本金保障。确认前应告知估值依据和时间、商品状态、币种及实际回售金额。同一商品不能同时配送和回售；错误、未履约及法定退款的独立救济权利仍予保留。"
+          "p": "自愿回售按实物或数字商品显示估值的 90% 计算；余额类结果按显示金额全额自动入账。这不等于退还购买价格的 90%，也不构成本金保障。确认前应告知估值依据和时间、商品状态、币种及实际回售金额。同一商品不能同时配送和回售；错误、未履约及法定退款的独立救济权利仍予保留。"
         },
         {
           "h": "数字码、未收货与长期保管",
@@ -1419,7 +1419,7 @@
         },
         {
           "h": "国家、支付、配送与资金保护",
-          "p": "支持 USDT TRC-20、BEP-20 和 ERC-20 链上充值，最低充值金额为 {minDeposit} USDT。商品通过正品检验后可免费配送或转换为 95% 返现；保管商品连续30天未使用时将自动转换为返现。"
+          "p": "支持 USDT TRC-20、BEP-20 和 ERC-20 链上充值，最低充值金额为 {minDeposit} USDT。商品通过正品检验后可免费配送或转换为 90% 返现；保管商品连续30天未使用时将自动转换为返现。"
         },
         {
           "h": "运营条件与政策适用",
@@ -1440,7 +1440,7 @@
           "p": "支付、提现和配送是否可用，以相应页面显示为准。未接入的服务无法使用，未处理的申请不会显示为完成。运营主体和支持地区请参阅经营者与服务信息。"
         },
         {
-          "h": "95%回售等于退款吗？",
+          "h": "90%回售等于退款吗？",
           "p": "不同。按商品估值自愿回售，与撤销合同、瑕疵及未使用资金返还是不同流程。法定退款不得统一扣5%。"
         },
         {
@@ -1463,7 +1463,7 @@
     }
   },
   "actions": {
-    "sellBack": "💰 立即拿回 95%",
+    "sellBack": "💰 立即拿回 90%",
     "claimShipping": "寄到家",
     "provablyFair": "公平性验证"
   },
@@ -1695,10 +1695,10 @@
     "communityNote": "评价奖励"
   },
   "design": {
-    "heroLine1": "开启好奇，",
-    "heroLine2": "遇见新可能。",
-    "heroBody": "从心仪腕表到日常科技，选择合你心意的系列，发现下一份惊喜。",
-    "explore": "探索精选系列",
+    "heroLine1": "??????",
+    "heroLine2": "?????",
+    "heroBody": "????????????????????????????????",
+    "explore": "????",
     "preview": "免费预览",
     "previewNote": "预览仅为视觉体验，不会改变余额或库存。",
     "featured": "本月精选",
@@ -1707,28 +1707,34 @@
     "details": "查看内容与概率",
     "selectFeature": "选择推荐系列",
     "upTo": "最高 {n}倍",
-    "trustOdds": "先了解概率",
-    "trustOddsBody": "公开每件商品的获取概率",
-    "trustShipping": "让心仪好物属于你",
-    "trustShippingBody": "在库存中申请实物配送",
-    "trustChoice": "发现之后，由你选择",
-    "trustChoiceBody": "确认返还金额后再兑换余额",
-    "collectionTitle": "你的下一次发现",
-    "collectionBody": "从轻松尝试，到非凡珍藏。",
+    "trustOdds": "?????",
+    "trustOddsBody": "??????????????????",
+    "trustShipping": "?????",
+    "trustShippingBody": "???????????????????????",
+    "trustChoice": "???????",
+    "trustChoiceBody": "?????????????????????",
+    "collectionTitle": "???????????????",
+    "collectionBody": "????????????????",
     "collectionCount": "{count} 个系列",
     "resultsCount": "{count} 个宝箱",
-    "guideTitle": "从发现到拥有，只需三步。",
-    "guideMore": "了解 VOILA",
-    "step1Title": "选择心仪系列",
-    "step1Body": "查看价格、商品及概率，选择适合你的宝箱。",
-    "step2Title": "揭晓你的发现",
-    "step2Body": "开启前确认总金额，结果可在库存中查看。",
-    "step3Title": "决定下一步",
-    "step3Body": "申请实物配送，或按显示的返还金额兑换余额。",
-    "proofTitle": "每一份信任，都有据可查。",
-    "verify": "验证公平性",
-    "fairnessCta": "了解抽取验证",
-    "purchaseNote": "购买前查看价格和概率，并自行核对每次结果。"
+    "guideTitle": "?????????",
+    "guideMore": "????",
+    "step1Title": "?????????????",
+    "step1Body": "????????????????????????????",
+    "step2Title": "???????????",
+    "step2Body": "????????????????????????????????",
+    "step3Title": "?????????????",
+    "step3Body": "??????????????????????????????????",
+    "proofTitle": "???????",
+    "verify": "????",
+    "fairnessCta": "????",
+    "purchaseNote": "购买前查看价格和概率，并自行核对每次结果。",
+    "guideBody": "??????????????",
+    "proofBody": "??????????????????????????????????????????",
+    "heroEyebrow": "???????",
+    "collectionEyebrow": "????",
+    "guideEyebrow": "VOILA ????",
+    "proofEyebrow": "?????"
   },
   "legalCenter": {
     "title": "政策与使用指南",
@@ -1913,9 +1919,7 @@
     "storageError": "保存失败，请检查浏览器存储空间与权限。不会自动删除已有评价。",
     "requestDelivery": "申请配送",
     "withdrawUnavailable": "提现申请尚未开放。实际提现服务接入前不会受理申请，也不会扣减余额。",
-    "autoCashbackNotice": "商品未申请配送或回售而保管满 30 天后，将自动按标示价值的 95%返现至原支付余额。",
-    "settlementMethod": "处理方式",
-    "autoCashbackRecord": "30 天未使用自动返现（95%）"
+    "settlementMethod": "处理方式"
   },
   "cancellation": {
     "title": "取消此配送申请？",
@@ -2293,7 +2297,7 @@
     "shipping": "查看配送",
     "reviews": "管理我的评价",
     "eligibleReviews": "可评价商品",
-    "inventoryNote": "保管30天, 未使用商品自动返现95%",
+    "inventoryNote": "保管30天, 未使用商品自动返现90%",
     "reviewNote": "查看价值100 USDT以上商品的评价条件。",
     "logout": "退出登录",
     "logoutDone": "已退出登录。",

@@ -1,7 +1,7 @@
 // 보관함 상태 전이 + 배송 규칙
 import test from "node:test";
 import assert from "node:assert/strict";
-import { useInventoryStore, summarize, EXPIRE_MS, cashbackExpiresAt, daysUntilCashback, sweepReadyInventory, type OwnedItem } from "../stores/inventoryStore";
+import { useInventoryStore, summarize, type OwnedItem } from "../stores/inventoryStore";
 import { useWalletStore } from "../stores/walletStore";
 import { useAuthStore } from "../stores/authStore";
 import { COUNTRIES, FREE_SHIPPING_EVENT, SHIPPING_FEE_USDT, customsKindFor, isValidPccc, isValidResidentId, shippingFee, validateAddress } from "../lib/shipping";
@@ -17,103 +17,10 @@ const base = (over: Partial<Omit<OwnedItem, "id" | "status" | "acquiredAt">> = {
 
 const addr = { recipient: "홍길동", country: "KR" as const, phone: "+82 10-1234-5678", postalCode: "06236", address: "서울 강남구 테헤란로 123, 4층", customsId: "P123456789012" };
 
-test("expiry uses exactly 30 days across months, leap years and timezone offsets", () => {
-  assert.equal(cashbackExpiresAt("2026-01-31T12:00:00+09:00"), "2026-03-02T03:00:00.000Z");
-  assert.equal(cashbackExpiresAt("2024-02-01T00:00:00Z"), "2024-03-02T00:00:00.000Z");
-  assert.equal(cashbackExpiresAt("invalid"), null);
-  assert.equal(cashbackExpiresAt("+275760-09-13T00:00:00.000Z"), null);
-  assert.equal(daysUntilCashback("2026-01-31T12:00:00+09:00", Date.parse("2026-03-02T02:59:59.999Z")), 1);
-  assert.equal(daysUntilCashback("2026-01-31T12:00:00+09:00", Date.parse("2026-03-02T03:00:00Z")), 0);
-});
-
-test("30-day boundary: sweep credits 95% once, preserves timestamps, records one batch", () => {
-  const acquired = Date.parse("2026-08-01T00:00:00Z");
-  useInventoryStore.setState({ items: [
-    { ...base({ valueUsdt: 100 }), id: "expired", status: "IN_STORAGE", acquiredAt: new Date(acquired).toISOString() },
-    { ...base({ valueUsdt: 10.01 }), id: "rounded", status: "IN_STORAGE", acquiredAt: new Date(acquired).toISOString() },
-  ] });
-  useWalletStore.setState({ balance: 0, cryptoBalance: 0, cardBalance: 0, transactions: [] });
-  assert.equal(useInventoryStore.getState().sweepExpired(acquired + EXPIRE_MS - 1).ids.length, 0);
-  const result = useInventoryStore.getState().sweepExpired(acquired + EXPIRE_MS);
-  assert.deepEqual(result, { ids: ["expired", "rounded"], totalUsdt: 104.51 });
-  assert.equal(useWalletStore.getState().cryptoBalance, 104.51);
-  assert.equal(useWalletStore.getState().cardBalance, 0);
-  const tx = useWalletStore.getState().transactions[0];
-  assert.equal(tx.type, "sellback");
-  assert.equal(tx.ref, "auto_cashback_30d");
-  assert.equal(tx.amountUsdt, 104.51);
-  const item = useInventoryStore.getState().items[0];
-  assert.equal(item.status, "SOLD");
-  assert.equal(item.autoCashbackAt, new Date(acquired + EXPIRE_MS).toISOString());
-  assert.equal(item.soldAt, item.autoCashbackAt);
-  assert.equal(item.soldForUsdt, 95);
-  assert.equal(item.acquiredAt, new Date(acquired).toISOString());
-  assert.equal(useInventoryStore.getState().sweepExpired(acquired + EXPIRE_MS * 2).ids.length, 0);
-  assert.equal(useWalletStore.getState().transactions.length, 1);
-  assert.equal(useInventoryStore.getState().sell([item.id], 0.95).totalUsdt, 0);
-});
-
-test("automatic cashback preserves the original funding buckets of legacy items", () => {
-  const now = Date.now();
-  useInventoryStore.setState({ items: [{ ...base({ valueUsdt: 100, fundingRatio: { crypto: 0.4, card: 0.6 }, fundingSource: "mixed" }), id: "mixed-expiry", status: "IN_STORAGE", acquiredAt: new Date(now - EXPIRE_MS).toISOString() }] });
-  useWalletStore.setState({ balance: 0, cryptoBalance: 0, cardBalance: 0, transactions: [] });
-  assert.equal(useInventoryStore.getState().sweepExpired(now).totalUsdt, 95);
-  assert.equal(useWalletStore.getState().cryptoBalance, 38);
-  assert.equal(useWalletStore.getState().cardBalance, 57);
-  assert.equal(useWalletStore.getState().balance, 95);
-});
-
-test("sweep skips active shipping, delivered, sold, invalid values and invalid dates", () => {
-  const now = Date.parse("2026-09-30T00:00:00Z");
-  const old = new Date(now - EXPIRE_MS - 1).toISOString();
-  const make = (id: string, overrides: Partial<OwnedItem> = {}): OwnedItem => ({ ...base(), id, acquiredAt: old, status: "IN_STORAGE", ...overrides });
-  useInventoryStore.setState({ items: [
-    ...(["SHIPPING_REQUESTED", "SHIPPING", "DELIVERED", "SOLD"] as const).map(status => make(status, { status })),
-    make("bad-date", { acquiredAt: "invalid" }), make("negative", { valueUsdt: -1 }),
-    make("infinity", { valueUsdt: Infinity }), make("nan", { valueUsdt: NaN }),
-    make("future", { acquiredAt: new Date(now + 1).toISOString() }),
-  ] });
-  assert.deepEqual(useInventoryStore.getState().sweepExpired(now), { ids: [], totalUsdt: 0 });
-  assert.deepEqual(useInventoryStore.getState().sweepExpired(NaN), { ids: [], totalUsdt: 0 });
-  assert.equal(daysUntilCashback(old, now), 0);
-  assert.equal(daysUntilCashback(new Date(now).toISOString(), now), 30);
-  assert.equal(daysUntilCashback(new Date(now - EXPIRE_MS + 1).toISOString(), now), 1);
-  assert.equal(daysUntilCashback("invalid", now), null);
-});
-
-test("automatic sweep waits for matching hydrated account stores and announces one settlement", () => {
-  // Zustand omits its persist API in Node when localStorage is unavailable.
-  const inventoryPersist = useInventoryStore.persist;
-  const walletPersist = useWalletStore.persist;
-  let inventoryName = "voila.browser-inventory.guest";
-  let walletName = "voila.browser-wallet.another-account";
-  Object.defineProperty(useInventoryStore, "persist", { configurable: true, value: {
-    getOptions: () => ({ name: inventoryName }), setOptions: (o: { name: string }) => { inventoryName = o.name; },
-  } });
-  Object.defineProperty(useWalletStore, "persist", { configurable: true, value: {
-    getOptions: () => ({ name: walletName }), setOptions: (o: { name: string }) => { walletName = o.name; },
-  } });
-  const now = Date.now();
-  try {
-    useAuthStore.setState({ user: null, hydrated: true, toast: null });
-    useInventoryStore.setState({ hydrated: true, items: [{ ...base({ valueUsdt: 100 }), id: "due", status: "IN_STORAGE", acquiredAt: new Date(now - EXPIRE_MS).toISOString() }] });
-    useWalletStore.setState({ hydrated: false, balance: 0, cryptoBalance: 0, cardBalance: 0, transactions: [] });
-    useInventoryStore.persist.setOptions({ name: "voila.browser-inventory.guest" });
-    useWalletStore.persist.setOptions({ name: "voila.browser-wallet.another-account" });
-    sweepReadyInventory(now);
-    useWalletStore.setState({ hydrated: true });
-    sweepReadyInventory(now);
-    assert.equal(useInventoryStore.getState().items[0].status, "IN_STORAGE");
-    useWalletStore.persist.setOptions({ name: "voila.browser-wallet.guest" });
-    sweepReadyInventory(now);
-    assert.equal(useWalletStore.getState().balance, 95);
-    assert.match(useAuthStore.getState().toast?.text ?? "", /1건이 95.00 USDT/);
-    sweepReadyInventory(now);
-    assert.equal(useWalletStore.getState().transactions.length, 1);
-  } finally {
-    Object.defineProperty(useInventoryStore, "persist", { configurable: true, value: inventoryPersist });
-    Object.defineProperty(useWalletStore, "persist", { configurable: true, value: walletPersist });
-  }
+test("stored items are never automatically sold", () => {
+  useInventoryStore.setState({ items: [{ ...base({ valueUsdt: 100 }), id: "stored", status: "IN_STORAGE", acquiredAt: "2020-01-01T00:00:00Z" }] });
+  assert.deepEqual(useInventoryStore.getState().sweepExpired(Date.now()), { ids: [], totalUsdt: 0 });
+  assert.equal(useInventoryStore.getState().items[0].status, "IN_STORAGE");
 });
 
 test("add → IN_STORAGE, sell → SOLD 환급액 = 가치 × 환급률, 이미 판 것은 다시 못 판다", () => {

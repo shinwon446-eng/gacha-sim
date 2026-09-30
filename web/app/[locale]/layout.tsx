@@ -19,9 +19,9 @@ const TITLE = "VOILA, You never know what’s next.";
 const OG_IMAGE = `${SITE}/assets/photography/photo-1610375461246-83df859d849d.webp`;
 /** 로케일별 메타 설명, /en/, /zh/ 에 한국어가 새지 않게 여기서 분기한다 */
 const DESCRIPTION: Record<Locale, string> = {
-  ko: "롤렉스부터 하이엔드 테크까지, 1달러에 여는 럭셔리 언박싱. 정품 무료 배송 또는 95% 즉시 페이백.",
-  en: "From Rolex to high-end tech, luxury unboxing from $1. Free authentic shipping or 95% instant payback.",
-  zh: "从劳力士到高端科技，1美元开启奢华开箱。正品免费配送或 95% 即时返现。",
+  ko: "롤렉스부터 하이엔드 테크까지, 1달러에 여는 럭셔리 언박싱. 정품 무료 배송 또는 90% 즉시 페이백.",
+  en: "From Rolex to high-end tech, luxury unboxing from $1. Free authentic shipping or 90% instant payback.",
+  zh: "从劳力士到高端科技，1美元开启奢华开箱。正品免费配送或 90% 即时返现。",
 };
 const OG_LOCALE: Record<Locale, string> = { ko: "ko_KR", en: "en_US", zh: "zh_CN" };
 

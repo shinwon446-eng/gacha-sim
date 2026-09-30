@@ -20,7 +20,7 @@ import { useProductText } from "@/lib/useProductText";
 import { BOX_BY_SLUG, REFUND_RATE } from "@/lib/products";
 import { productOf, processedAt, recordKind, resaleEstimate, vaultTab, type VaultTab } from "@/lib/vault";
 import type { ShippingAddress } from "@/lib/shipping";
-import { useInventoryStore, daysUntilCashback, sweepReadyInventory, type OwnedItem } from "@/stores/inventoryStore";
+import { useInventoryStore, type OwnedItem } from "@/stores/inventoryStore";
 import { useWalletStore } from "@/stores/walletStore";
 import { API_BASE, isLive } from "@/lib/runtime";
 import { accountRequest } from "@/lib/account";
@@ -53,20 +53,7 @@ export default function InventoryPage() {
   const [verify, setVerify] = useState<OwnedItem | null>(null);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [toast, setToast] = useState("");
-  const [now, setNow] = useState<number | null>(null);
   const shippingRequestKey = useRef("");
-  const retentionNotice = locale === "ko"
-    ? "보관함 상품은 획득 후 30일(1개월) 동안 미사용 시 자동으로 캐시백 전환되어 잔액으로 지급됩니다. 전환 금액은 상품 가치의 95%입니다."
-    : locale === "zh" ? "获得商品后30天（1个月）内未申请配送或返现，商品价值的95%将自动转换为钱包返现（USDT）。"
-    : "Items kept for 30 days (1 month) after acquisition without a shipping or sellback request are automatically converted to wallet cashback (USDT) at 95% of their value.";
-  useEffect(() => {
-    const tick = () => { const time = Date.now(); setNow(time); sweepReadyInventory(time); };
-    tick();
-    const timer = setInterval(tick, 60_000);
-    window.addEventListener("focus", tick);
-    return () => { clearInterval(timer); window.removeEventListener("focus", tick); };
-  }, []);
-
   useEffect(() => {
     const value = new URLSearchParams(window.location.search).get("tab");
     if (value === "shipping" || value === "done") setTab(value);
@@ -136,12 +123,10 @@ export default function InventoryPage() {
         <div><p className="workspace-eyebrow">MY VAULT</p><h1>{t("title")}</h1><p className="workspace-description">{r("vaultIntro")}</p></div>
         <Link href="/legal/refunds" className="workspace-text-link">{r("transactionGuide")}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></Link>
       </header>
-      <p className="mb-6 rounded-xl border border-gold-champagne/30 bg-gold-champagne/5 p-4 text-sm leading-7 text-secondary">{retentionNotice}</p>
       {tab === "held" && <div className="vault-summary">
         <div><span className="summary-label"><Wallet className="h-4 w-4" aria-hidden="true" />{r("walletBalance")}</span><Money value={balance} size="lg" className="mt-3" /><button onClick={() => setWithdrawOpen(true)} className="workspace-text-link mt-2">{r("manageBalance")}<ArrowUpRight className="h-4 w-4" aria-hidden="true" /></button></div>
         <div><span className="summary-label"><Package className="h-4 w-4" aria-hidden="true" />{r("resaleEstimate")}</span><Money value={resaleEstimate(items)} size="lg" className="mt-3" numberClassName="text-gold-champagne" /><p className="mt-3 text-xs leading-5 text-muted">{r("estimateNote")}</p></div>
       </div>}
-      {tab === "held" && <p className="mt-4 rounded-lg border border-gold-champagne/30 bg-gold-champagne/5 px-4 py-3 text-sm leading-6 text-secondary">{r("autoCashbackNotice")}</p>}
       <nav className="workspace-tabs" aria-label={t("title")}>
         {(["held", "shipping", "done"] as const).map(key => <button key={key} aria-current={tab === key ? "page" : undefined} onClick={() => switchTab(key)}>{r(`tabs.${key}`)}<span>{counts[key]}</span></button>)}
       </nav>
@@ -165,13 +150,12 @@ export default function InventoryPage() {
       </div> : tab === "held" ? <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {visible.slice(0, shown).map(item => {
           const product = productOf(item); const chosen = selected.has(item.id);
-          const days = now === null ? null : daysUntilCashback(item.acquiredAt, now);
           return <li key={item.id} className={cn("vault-product", chosen && "is-selected")}>
             <div className="relative aspect-[16/10] bg-[#151718]">
               {product && <ProductArt image={product.image} alt={itemName(product)} fallbackSize="md" />}
               <button aria-label={r("selectItem", { name: product ? itemName(product) : item.itemId })} aria-pressed={chosen} className="absolute left-3 top-3 flex h-11 w-11 items-center justify-center rounded-full border border-hairline bg-obsidian/90" onClick={() => setSelected(prev => { const next = new Set(prev); next.has(item.id) ? next.delete(item.id) : next.add(item.id); return next; })}><span className={cn("selection-check", chosen && "is-selected")}>{chosen && <Check className="h-3 w-3" />}</span></button>
             </div>
-            <div className="p-5">{days !== null && <p className="mb-3 inline-flex rounded-full bg-gold-champagne/10 px-3 py-1 text-xs font-semibold text-gold-champagne">{locale === "ko" ? `⏳ 자동 캐시백까지 D-${days}일` : locale === "zh" ? `⏳ 自动返现倒计时 D-${days}天` : `⏳ Automatic cashback in ${days} days`}</p>}<p className="text-xs text-muted">{date(item.acquiredAt)}</p><h2 className="mt-2 text-base font-medium text-white">{product ? itemName(product) : item.itemId}</h2>
+            <div className="p-5"><p className="text-xs text-muted">{date(item.acquiredAt)}</p><h2 className="mt-2 text-base font-medium text-white">{product ? itemName(product) : item.itemId}</h2>
               <p className="mt-1 text-xs leading-5 text-muted">{BOX_BY_SLUG[item.boxSlug] ? boxTitle(BOX_BY_SLUG[item.boxSlug]) : item.boxSlug}</p>
               <div className="my-5 flex flex-wrap items-baseline justify-between gap-2"><span className="text-xs text-muted">{r("resaleValue")}</span><Money value={resaleEstimate([item])} size="md" /></div>
               {canReview(item, reviews) && <Link href={`/community?tab=eligible&item=${encodeURIComponent(item.id)}`} className="workspace-text-link mb-4">{r("writeReview")}<ArrowUpRight className="h-4 w-4" /></Link>}
@@ -186,7 +170,7 @@ export default function InventoryPage() {
           return <li key={item.id} className="record-item">
             <div className="record-main">
               <div className="record-product"><div className="record-thumbnail">{type === "cash" ? <Coins className="h-6 w-6 text-gold-champagne" aria-hidden="true" /> : product && <ProductArt image={product.image} alt="" fallbackSize="sm" />}</div><div className="min-w-0"><h2>{product ? itemName(product) : item.itemId}</h2><p>{BOX_BY_SLUG[item.boxSlug] ? boxTitle(BOX_BY_SLUG[item.boxSlug]) : item.boxSlug}</p></div></div>
-              <span className="record-type">{item.autoCashbackAt ? (locale === "ko" ? "30일 자동 캐시백" : locale === "zh" ? "30天自动返现" : "30-day automatic cashback") : r(`kinds.${type}`)}</span>
+              <span className="record-type">{r(`kinds.${type}`)}</span>
               <div className="record-value">{tab === "done" ? typeof item.soldForUsdt === "number" ? <Money value={item.soldForUsdt} size="md" sign="+" numberClassName="text-gold-champagne" /> : <span>{r("amountUnknown")}</span> : <span className={cn("status-pill", type === "delivered" && "is-complete")}>{type === "delivered" ? <Check /> : <Truck />}{t(`status.${item.status}`)}</span>}</div>
               <time className="record-date" dateTime={at}>{date(at)}</time>
             </div>
@@ -195,7 +179,7 @@ export default function InventoryPage() {
                 <div><dt>{r("recordId")}</dt><dd className="break-all font-mono">{item.id}</dd></div>
                 <div><dt>{r("acquiredDate")}</dt><dd>{date(item.acquiredAt)}</dd></div>
                 <div><dt>{r("processedDate")}</dt><dd>{at ? new Date(at).toLocaleString(locale) : r("unknownDate")}</dd></div>
-                {tab === "done" && <><div><dt>{r("originalValue")}</dt><dd><Money value={item.valueUsdt} size="sm" /></dd></div><div><dt>{r("settledAmount")}</dt><dd>{typeof item.soldForUsdt === "number" ? <Money value={item.soldForUsdt} size="sm" /> : r("amountUnknown")}</dd></div>{item.autoCashback && <div><dt>{r("settlementMethod")}</dt><dd>{r("autoCashbackRecord")}</dd></div>}<div><dt>{r("funding")}</dt><dd>{r(`fundingTypes.${item.fundingSource ?? "unknown"}`)}</dd></div></>}
+                {tab === "done" && <><div><dt>{r("originalValue")}</dt><dd><Money value={item.valueUsdt} size="sm" /></dd></div><div><dt>{r("settledAmount")}</dt><dd>{typeof item.soldForUsdt === "number" ? <Money value={item.soldForUsdt} size="sm" /> : r("amountUnknown")}</dd></div><div><dt>{r("funding")}</dt><dd>{r(`fundingTypes.${item.fundingSource ?? "unknown"}`)}</dd></div></>}
               </dl><div className="flex flex-wrap gap-3">{tab === "shipping" && <button className="workspace-button" onClick={() => setTrack(item)}><Truck className="h-4 w-4" />{t("track")}</button>}{item.status === "SHIPPING_REQUESTED" && <button className="workspace-button" onClick={() => setCancelTarget(item)}>{tc("confirm")}</button>}{canReview(item, reviews) && <Link href={`/community?tab=eligible&item=${encodeURIComponent(item.id)}`} className="workspace-button">{r("writeReview")}</Link>}<button className="workspace-button" onClick={() => setVerify(item)}><ShieldCheck className="h-4 w-4" />{t("verify")}</button></div>{item.status === "SHIPPING" && <p className="mt-4 text-xs leading-6 text-muted">{tc("inTransit")} <Link href="/legal/refunds" className="text-gold-champagne underline">{tc("refundPolicy")}</Link></p>}</div>
             </details>
           </li>;

@@ -64,8 +64,13 @@ export function SiteHeader({ onWallet, onDaily }: { onWallet?: (tab: WalletTab) 
     const resume = () => { disarm(); const s = useSettingsStore.getState(); if (s.bgmEnabled && !s.bgmPlaying) void requestBgm(); };
     const disarm = () => { if (!armed) return; armed = false; events.forEach((e) => window.removeEventListener(e, resume, true)); };
     const arm = () => { const s = useSettingsStore.getState(); if (armed || !s.bgmEnabled || s.bgmPlaying) return; armed = true; events.forEach((e) => window.addEventListener(e, resume, true)); };
-    if (useSettingsStore.persist.hasHydrated()) arm();
-    const unsub = useSettingsStore.persist.onFinishHydration(arm);
+    const begin = () => {
+      const s = useSettingsStore.getState();
+      if (s.bgmEnabled && !s.bgmPlaying) void requestBgm();
+      arm();
+    };
+    if (useSettingsStore.persist.hasHydrated()) begin();
+    const unsub = useSettingsStore.persist.onFinishHydration(begin);
     return () => { unsub(); disarm(); };
   }, []);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -94,7 +99,6 @@ export function SiteHeader({ onWallet, onDaily }: { onWallet?: (tab: WalletTab) 
       <BrandLogo className="site-header-logo" /><nav aria-label={t("mobileNav.aria")} className="hidden items-center gap-5 xl:flex">{navigation()}</nav>
       <div className="ml-auto flex min-w-0 items-center gap-2">
         <button type="button" onClick={() => wallet("usdt")} aria-label={`${t("header.balance")}: ${fmt(balance)}. ${t("mobileNav.wallet")}`} className="flex h-11 min-w-0 max-w-[132px] items-center justify-center gap-1.5 rounded-lg border border-hairline bg-surface px-2 text-xs font-semibold tabular-nums text-white hover:border-gold-champagne/50 min-[400px]:max-w-[160px] sm:gap-2 sm:px-3"><Wallet className="h-4 w-4 shrink-0 text-gold-champagne" aria-hidden="true" /><span className="min-w-0 truncate">{fmt(balance)}</span></button>
-        <button type="button" onClick={() => { if (bgmPlaying) haltBgm(); else void requestBgm(); }} aria-pressed={bgmPlaying} aria-label={bgmPlaying ? bgmText.off : bgmText.on} title={bgmPlaying ? bgmText.off : bgmText.on} className={cn("flex h-11 min-w-[44px] shrink-0 items-center justify-center gap-1.5 rounded-lg border px-2.5 text-xs font-semibold hover:bg-surface", bgmPlaying ? "border-gold-champagne/60 text-gold-champagne" : "border-hairline text-secondary")}><Music className="h-4 w-4 shrink-0" aria-hidden="true" /><span className="hidden 2xl:inline" aria-hidden="true">{bgmText.name}</span></button>
         <div className="hidden items-center gap-1.5 xl:flex">{onDaily && <button type="button" onClick={onDaily} aria-label={t("daily.title")} title={t("daily.title")} className="flex h-11 w-11 items-center justify-center rounded-lg text-gold-champagne hover:bg-surface"><Gift className="h-4 w-4" aria-hidden="true" /></button>}<LanguageSelector /><CurrencySelector /><HeaderAuthControl /></div>
         <button ref={toggleRef} type="button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="site-menu" aria-label={open ? t("auth.close") : t("mobileNav.aria")} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-hairline text-white hover:bg-surface xl:hidden">{open ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}</button>
       </div>
@@ -105,5 +109,6 @@ export function SiteHeader({ onWallet, onDaily }: { onWallet?: (tab: WalletTab) 
       {onDaily && <button type="button" onClick={() => { setOpen(false); onDaily(); }} className="mt-3 flex min-h-11 items-center gap-2 text-sm text-gold-champagne"><Gift className="h-4 w-4" aria-hidden="true" />{t("daily.title")}</button>}
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-hairline pt-5"><div className="flex gap-2"><LanguageSelector /><CurrencySelector /></div><HeaderAuthControl /></div>
     </div>}
+    <button type="button" onClick={() => { if (bgmPlaying) haltBgm(); else void requestBgm(); }} aria-pressed={bgmPlaying} aria-label={bgmPlaying ? bgmText.off : bgmText.on} title={bgmPlaying ? bgmText.off : bgmText.on} className={cn("fixed right-2 top-1/2 z-[75] flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border bg-obsidian/95 shadow-lg backdrop-blur-xl transition-colors hover:bg-surface sm:right-4 sm:h-11 sm:w-11", bgmPlaying ? "border-gold-champagne/60 text-gold-champagne" : "border-hairline text-secondary")}><Music className="h-4 w-4" aria-hidden="true" /><span className="sr-only">{bgmText.name}</span></button>
   </header>;
 }

@@ -190,7 +190,7 @@ export default function BoxesPage() {
 
       <section ref={gridRef} id="boxes" className="collection-section page-shell" aria-labelledby="collection-title">
         <div className="collection-heading">
-          <div><p className="eyebrow">CURATED COLLECTIONS</p><h2 id="collection-title">{t("design.collectionTitle")}</h2><p className="collection-intro">{t("design.collectionBody")}</p></div>
+          <div><p className="eyebrow">{t("design.collectionEyebrow")}</p><h2 id="collection-title">{t("design.collectionTitle")}</h2><p className="collection-intro">{t("design.collectionBody")}</p></div>
           <span className="collection-count">{t("design.collectionCount", { count: BOXES.length })}</span>
         </div>
         <div className="collection-toolbar">
@@ -204,7 +204,7 @@ export default function BoxesPage() {
       <LiveReviewsSection />
       <DiscoveryGuide />
       <section className="page-shell pb-20" aria-labelledby="proof-section-title">
-        <div className="guide-heading"><div><p className="eyebrow">TRANSPARENCY, BY DESIGN</p><h2 id="proof-section-title">{t("design.proofTitle")}</h2></div><Link href="/fairness" className="text-link">{t("design.verify")}<ArrowUpRight size={16} aria-hidden /></Link></div>
+        <div className="guide-heading"><div><p className="eyebrow">{t("design.proofEyebrow")}</p><h2 id="proof-section-title">{t("design.proofTitle")}</h2><p className="guide-intro max-w-2xl">{t("design.proofBody")}</p></div><Link href="/fairness" className="text-link">{t("design.verify")}<ArrowUpRight size={16} aria-hidden /></Link></div>
         <ProofFeed limit={4} />
       </section>
 

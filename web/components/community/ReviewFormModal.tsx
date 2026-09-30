@@ -14,9 +14,10 @@ import { reviewValueNotice } from "./reviewValueNotice";
 import { browserAccountsEnabled } from "@/lib/account";
 import { submitCommunityReview } from "@/lib/communityReviewApi";
 import { announcePublishedReviews } from "@/stores/usePublishedReviews";
+import { assertCommunityImageFile, assertCommunitySafeText } from "@/lib/communityModeration";
 
 async function shrinkImage(file: File): Promise<string> {
-  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 8 * 1024 * 1024) throw new Error("photo");
+  assertCommunityImageFile(file);
   const url = URL.createObjectURL(file);
   try {
     const img = await new Promise<HTMLImageElement>((resolve, reject) => { const image = new Image(); image.onload = () => resolve(image); image.onerror = reject; image.src = url; });
@@ -64,6 +65,7 @@ export function ReviewFormModal({ open, onClose, onSubmitted, initialOwnedId, ed
   const submit = async () => {
     if (busy) return;
     if (text.trim().length < REVIEW_MIN_CHARS || text.trim().length > REVIEW_MAX_CHARS) return setError("textError");
+    try { assertCommunitySafeText(text); } catch { return setError("textError"); }
     if (rating < 1 || rating > 5) return setError("ratingError");
     setBusy(true);
     let createdId: string | undefined;
