@@ -23,12 +23,15 @@ const sampleBytes = new Map<UnboxingSample, Promise<ArrayBuffer | null>>();
 function fetchSample(name: UnboxingSample): Promise<ArrayBuffer | null> {
   const pending = sampleBytes.get(name);
   if (pending) return pending;
-  const request = fetch(`${SFX_BASE}${name}.wav`, { cache: "force-cache" })
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 3000);
+  const request = fetch(`${SFX_BASE}${name}.wav`, { cache: "force-cache", signal: controller.signal })
     .then((response) => {
       if (!response.ok) throw new Error(`Audio ${name}: ${response.status}`);
       return response.arrayBuffer();
     })
-    .catch(() => { sampleBytes.delete(name); return null; });
+    .catch(() => { sampleBytes.delete(name); return null; })
+    .finally(() => window.clearTimeout(timeout));
   sampleBytes.set(name, request);
   return request;
 }
@@ -55,12 +58,15 @@ export function preloadUnboxingAudio(): void {
   }
 }
 
-/** Call synchronously from the box-confirmation gesture, before any purchase awaits. */
-export function primeUnboxingAudio(): void {
+/** Resume inside the confirmation gesture and finish decoding before reveal. */
+export function primeUnboxingAudio(): Promise<boolean> {
   const ac = getCtx();
-  if (!ac) return;
+  if (!ac) return Promise.resolve(false);
   if (ac.state === "suspended") void ac.resume().catch(() => {});
   preloadUnboxingAudio();
+  return Promise.all(
+    (["latch-click", "lid-open", "reveal", "bulk-open", "rare-jackpot"] as const).map((name) => loadSample(name, ac)),
+  ).then((buffers) => buffers.every(Boolean));
 }
 
 function playUnboxingSample(name: UnboxingSample, level: number, latestMs = 900): void {

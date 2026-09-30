@@ -31,7 +31,7 @@ test("the confirmation gesture unlocks distinct real samples for single, bulk, a
   const oldWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
   const oldDocument = Object.getOwnPropertyDescriptor(globalThis, "document");
   const oldFetch = globalThis.fetch;
-  Object.defineProperty(globalThis, "window", { configurable: true, value: { AudioContext: FakeAudioContext, addEventListener() {} } });
+  Object.defineProperty(globalThis, "window", { configurable: true, value: { AudioContext: FakeAudioContext, addEventListener() {}, setTimeout, clearTimeout } });
   Object.defineProperty(globalThis, "document", { configurable: true, value: { hidden: false, addEventListener() {} } });
   globalThis.fetch = (async (url: string | URL | Request) => {
     const name = names.find((item) => String(url).endsWith(`${item}.wav`));
@@ -43,8 +43,9 @@ test("the confirmation gesture unlocks distinct real samples for single, bulk, a
   try {
     preloadUnboxingAudio();
     assert.equal(resumes, 0, "viewing a box must not unlock sound");
-    primeUnboxingAudio();
+    const ready = primeUnboxingAudio();
     assert.equal(resumes, 1, "the confirm click must resume Web Audio before awaiting purchase");
+    assert.equal(await ready, true, "all five box sounds must be decoded before opening the presentation");
     playGearClick();
     playTaDum();
     playBulkOpen();

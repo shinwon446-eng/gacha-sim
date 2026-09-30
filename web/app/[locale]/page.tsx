@@ -139,11 +139,12 @@ export default function BoxesPage() {
     if (useWalletStore.getState().balance < cost) { openDepositForPurchase(cost); return; }
     // Unlock the audio context inside the confirmation click, before the
     // asynchronous purchase and reveal presentation begin.
-    primeUnboxingAudio();
+    const audioReady = primeUnboxingAudio();
     purchasePending.current = true;
     setOpeningPending(true);
     try {
       const prepared = await createOpeningPurchase(box, count)();
+      await audioReady;
       setDetail(null);
       if (count >= BULK_THRESHOLD) setBulk({ box, count, prepared });
       else setUnbox({ box, count, prepared });
@@ -207,7 +208,7 @@ export default function BoxesPage() {
         <ProofFeed limit={4} />
       </section>
 
-      <DetailModal pending={openingPending} onDeposit={(box, count) => openDepositForPurchase(box.price * count)} box={detail} onClose={() => setDetail(null)} onOpen={openBox} onAutoplay={(b, cfg) => { if (useWalletStore.getState().balance < b.price) { openDepositForPurchase(b.price); return; } primeUnboxingAudio(); setDetail(null); setUnbox({ box: b, count: 1, auto: cfg }); }} />
+      <DetailModal pending={openingPending} onDeposit={(box, count) => openDepositForPurchase(box.price * count)} box={detail} onClose={() => setDetail(null)} onOpen={openBox} onAutoplay={(b, cfg) => { if (useWalletStore.getState().balance < b.price) { openDepositForPurchase(b.price); return; } const ready = primeUnboxingAudio(); setDetail(null); void ready.then(() => setUnbox({ box: b, count: 1, auto: cfg })); }} />
       <BulkOpenModal prepared={bulk?.prepared} box={bulk?.box ?? null} count={bulk?.count ?? 0} funding={bulk?.funding} onClose={() => setBulk(null)} onSellBack={(ids, amount, split) => { if (split) creditSplit(split.toCrypto, split.toCard); else credit(amount); addTransaction({ type: "sellback", amountUsdt: amount, ref: ids.join(",") }); pushToast({ title: t("unbox.sold", { amount: fmt(amount) }), tone: "#E6CA65" }); }} />
 
       <DepositModal
