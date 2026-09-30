@@ -31,7 +31,7 @@ export function BillboardHero({ boxes, onInspect, className }: BillboardHeroProp
       <div className="hero-copy min-w-0">
         <span className="eyebrow"><span className="h-1.5 w-1.5 rounded-full bg-gold-champagne" /> {copy.heroEyebrow}</span>
         <h1 id="hero-title">{copy.heroLine1}<br /><span>{copy.heroLine2}</span></h1>
-        <p className="hero-description">{copy.heroBody}</p>
+        <p className="hero-description whitespace-pre-line">{copy.heroBody}</p>
         <div className="hero-actions">
           <a href="#boxes" className="btn-primary">{copy.explore}<ArrowDown size={17} aria-hidden /></a>
           <Link href="/fairness" className="btn-secondary"><ArrowUpRight size={15} aria-hidden />{t("fairnessCta")}</Link>
