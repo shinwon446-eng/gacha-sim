@@ -353,25 +353,32 @@
   .editorial-hero .hero-copy > *,.collection-heading > div,.home-reviews > div:first-child > div,.discovery-guide .guide-heading > div,.page-shell .guide-heading > div { animation:none; }
 }
 
-/* /about 아이소메트릭 스테이지.
+/* /about 아이소메트릭 쇼룸 스테이지.
    사각 테두리가 보이지 않도록 가로/세로 마스크를 교차(intersect)시킨다.
    두 linear-gradient 를 겹쳐 합성하므로 -webkit- 접두사와 표준 속성을 함께 적는다. */
 .iso-stage {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 68%, transparent 100%),
-                      linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 88%, transparent 100%),
+                      linear-gradient(to right, transparent 0%, #000 5%, #000 95%, transparent 100%);
   -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 68%, transparent 100%),
-              linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 88%, transparent 100%),
+              linear-gradient(to right, transparent 0%, #000 5%, #000 95%, transparent 100%);
   mask-composite: intersect;
 }
-/* 기울어진 타일 평면. 자식 타일이 같은 원근을 공유하도록 평면 하나에만 변환을 건다 */
+/* 기울어진 타일 평면. 자식이 같은 3D 공간을 공유하도록 preserve-3d 를 끝까지 이어 준다 */
 .iso-plane {
-  transform: perspective(1100px) rotateX(58deg) rotateZ(-45deg);
+  transform: perspective(1400px) rotateX(58deg) rotateZ(-45deg);
+  transform-style: preserve-3d;
+}
+.iso-cell { transform-style: preserve-3d; }
+/* 카드를 세운다 — 평면 변환(rotateX 58 · rotateZ −45)을 역순으로 되돌려 화면과 평행하게 만들고,
+   밑변이 타일 중심에 오도록 자기 높이의 절반만큼 올린다 */
+.iso-stand {
+  transform: translate(-50%, -50%) rotateZ(45deg) rotateX(-58deg) translateY(-50%);
   transform-style: preserve-3d;
 }
 /* 샴페인 광원이 평면을 천천히 가로지른다 */
 .iso-sweep {
-  background: linear-gradient(115deg, transparent 38%, rgba(217, 195, 154, .2) 50%, transparent 62%);
+  background: linear-gradient(115deg, transparent 38%, rgba(217, 195, 154, .16) 50%, transparent 62%);
   background-size: 260% 260%;
   animation: iso-sweep 9s linear infinite;
 }
@@ -382,7 +389,7 @@
 .iso-plate { animation: iso-float 7s ease-in-out infinite; }
 @keyframes iso-float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-6px); }
 }
 @media(prefers-reduced-motion:reduce) {
   .iso-sweep, .iso-plate { animation: none; }
