@@ -148,7 +148,7 @@
   .collection-image-action { width: 28px; height: 28px; bottom: 8px; right: 8px; }
   .collection-image-action svg { width: 15px; }
   .collection-card-body { padding: 12px; }
-  .collection-card-title { font-size: 14px; min-height: 42px; }
+  .collection-card-title { font-size: 14px; min-height: 42px; -webkit-line-clamp: 3; }
   .collection-card-meta { display: block; margin-top: 7px; }
   .collection-price { gap: 4px; }
   .collection-price > span:last-child { font-size: 11px; }

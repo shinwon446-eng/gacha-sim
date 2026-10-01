@@ -176,9 +176,8 @@ export function IsometricStage({ className }: { className?: string }) {
                           <div className="relative aspect-square">
                             <ProductArt image={plate.box.image} alt={boxTitle(plate.box)} accent="#d9c39a" glowStrength={0.06} bordered={false} />
                           </div>
-                          <figcaption className="flex items-center justify-between gap-2 border-t border-white/10 px-2.5 py-1.5">
-                            <span className="truncate text-[10px] leading-none text-muted">{boxTitle(plate.box)}</span>
-                            <span className="flex-none rounded bg-gold-champagne/15 px-1.5 py-0.5 text-[10px] font-semibold leading-none tabular-nums text-gold-champagne">
+                          <figcaption className="flex items-center justify-center border-t border-white/10 px-2 py-1.5">
+                            <span className="rounded bg-gold-champagne/15 px-2 py-0.5 text-[10.5px] font-bold leading-none tabular-nums tracking-wide text-gold-champagne sm:text-[11px]">
                               {plate.multiple}x
                             </span>
                           </figcaption>

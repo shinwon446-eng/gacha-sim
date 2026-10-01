@@ -96,7 +96,7 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
             </div>
 
             {/* 탭 */}
-            <div aria-label={t("title")} className="mt-5 flex gap-1 rounded-lg bg-obsidian p-1">
+            <div aria-label={t("title")} className="mt-5 grid grid-cols-3 gap-1 rounded-lg bg-obsidian p-1">
               {(
                 [
                   { key: "usdt", label: t("tabUsdt"), Icon: Coins },
@@ -110,12 +110,12 @@ export function DepositModal({ open, onClose, onCredited, onWithdrawn, onWithdra
                   aria-pressed={tab === key}
                   onClick={() => setTab(key)}
                   className={cn(
-                    "flex min-h-12 flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-md px-1.5 text-xs font-semibold transition-colors sm:gap-2 sm:px-2 sm:text-sm",
+                    "flex min-h-12 min-w-0 flex-col items-center justify-center gap-1 rounded-md px-1 py-1.5 text-center text-[11px] font-semibold leading-tight transition-colors sm:flex-row sm:gap-2 sm:px-2 sm:text-sm",
                     tab === key ? "bg-[#f1eee7] text-obsidian" : "text-muted hover:text-white",
                   )}
                 >
                   <Icon className="h-4 w-4 flex-none" strokeWidth={2} />
-                  <span className="truncate">{label}</span>
+                  <span className="min-w-0 break-keep">{label}</span>
                 </button>
               ))}
             </div>

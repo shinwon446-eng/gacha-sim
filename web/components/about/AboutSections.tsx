@@ -244,7 +244,7 @@ function DrawCard() {
             <span className="relative h-10 w-10 flex-none overflow-hidden rounded-lg">
               <ProductArt image={prize.image} alt={itemName(prize)} accent="#d9c39a" glowStrength={0.02} bordered={false} fallbackSize="sm" kind={prize.kind} />
             </span>
-            <span className="min-w-0 truncate text-[13px] font-medium text-white">{itemName(prize)}</span>
+            <span className="min-w-0 break-keep text-[13px] font-medium leading-snug text-white">{itemName(prize)}</span>
           </div>
         )}
       </div>
@@ -379,7 +379,7 @@ function CashCard() {
               <ProductArt image={item.image} alt={itemName(item)} accent="#d9c39a" glowStrength={0.04} bordered={false} fallbackSize="sm" kind={item.kind} />
             </span>
             <span className="min-w-0">
-              <span className="block truncate text-[14px] font-medium text-white">{itemName(item)}</span>
+              <span className="block break-keep text-[14px] font-medium leading-snug text-white">{itemName(item)}</span>
               <span className="mt-0.5 block text-[12px] text-muted">
                 <Money value={item.value} size="xs" numberClassName="text-muted" />
               </span>
@@ -427,7 +427,7 @@ function CashCard() {
               onClick={() => pick(m)}
               onMouseEnter={() => pick(m)}
               className={cn(
-                "relative z-10 min-h-10 truncate rounded-full px-2 text-[12px] font-semibold transition-colors sm:text-[12.5px]",
+                "relative z-10 min-h-10 rounded-full px-1.5 py-1 text-[11.5px] font-semibold leading-tight transition-colors sm:px-2 sm:text-[12.5px]",
                 mode === m ? (m === "cash" ? "text-obsidian" : "text-white") : "text-muted hover:text-white",
               )}
             >

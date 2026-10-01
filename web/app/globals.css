@@ -54,6 +54,11 @@ html[lang="en"] body {
 html[lang^="zh"] body {
   word-break: break-all;
 }
+/* 중국어는 공백이 없어 keep-all(break-keep)이면 한 문장이 한 덩어리가 되어 카드 밖으로 넘친다.
+   한국어 어절 보호용 break-keep 이 붙은 요소도 중국어에서는 글자 단위로 줄바꿈한다. */
+html[lang^="zh"] .break-keep {
+  word-break: break-all;
+}
 
 /* 얇은 스크롤바 — 무채색 */
 ::-webkit-scrollbar {
