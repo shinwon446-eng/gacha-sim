@@ -4,17 +4,18 @@ import { useTranslations } from "next-intl";
 import { ArrowRight, ArrowUpRight, ChevronDown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { DiscoveryMatrix, ScenarioShowcase, TrustGuardrails } from "@/components/about/AboutSections";
+import { InteractiveCoreCards, LineupStrip, LiveScenarioHUD, TrustGuardrails, TrustTelemetryStrip } from "@/components/about/AboutSections";
 import { IsometricStage } from "@/components/about/IsometricStage";
 import { TIERS } from "@/lib/tiers";
 
 /**
- * /about — 에디토리얼 소개 페이지.
+ * /about — 다크 럭셔리 랜딩.
  *
- *   ① 중앙 히어로 + 아이소메트릭 볼트 스테이지   ② 3열 발견/신뢰 매트릭스
- *   ③ 실전 시나리오 2열(숫자 띠 + 용어 툴팁)      ④ 3단계 + 5:7 신뢰 가드레일   ⑤ FAQ
+ *   ① 중앙 히어로 + 아이소메트릭 쇼룸 스테이지   ② 신뢰 지표 4열 스탯 바   ③ 라인업 3타일
+ *   ④ 인터랙티브 핵심 가치 카드 3종(추첨 HUD · 정품 배송 · 95% 환급 토글)   ⑤ 3단계 이용 방식
+ *   ⑥ 실전 쇼케이스 2열 영수증 HUD   ⑦ 신뢰 가드레일 2×2   ⑧ FAQ
  *
- * 화면에 뜨는 숫자(배수·정가·캐시백)는 전부 카탈로그에서 계산한다 — 상수로 적어 두지 않는다.
+ * 화면에 뜨는 숫자(배수·정가·환급액)는 전부 카탈로그에서 계산한다 — 상수로 적어 두지 않는다.
  */
 
 /** 01 단계 미니 UI — 등급 색 바. 실제 `lib/tiers.ts` 의 등급과 색을 그대로 쓴다 */
@@ -31,13 +32,13 @@ function TierPreview() {
   );
 }
 
-/** 02 단계 미니 UI — 봉인된 해시에서 당첨 번호가 나오는 흐름 */
+/** 02 단계 미니 UI — 추첨 코드 생성 → 당첨 번호 */
 function SealPreview() {
   const t = useTranslations("editorialPages");
   return (
     <div className="flex h-full flex-col justify-center gap-2 font-mono text-[10.5px]">
       <span className="flex items-center gap-2 text-muted">
-        <span className="rounded border border-white/12 px-1.5 py-0.5 text-gold-champagne">SHA-256</span>
+        <span className="flex items-center gap-1 rounded border border-white/12 px-1.5 py-0.5 text-gold-champagne"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />LIVE</span>
         {t("miniSealed")}
       </span>
       <span className="h-px w-full bg-hairline" />
@@ -73,7 +74,7 @@ export default function AboutPage() {
       <section className="overflow-hidden pt-14 md:pt-20">
         <div className="mx-auto max-w-[1440px] px-6 text-center lg:px-14">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold-champagne">THE WORLD OF VOILA</p>
-          <h1 className="mx-auto mt-6 max-w-3xl whitespace-pre-line break-keep text-center text-4xl font-semibold leading-[1.14] tracking-[-0.04em] text-white md:text-[64px]">
+          <h1 className="mx-auto mt-6 max-w-3xl whitespace-pre-line break-keep text-center text-4xl font-semibold leading-[1.14] tracking-[-0.04em] text-white md:text-[68px]">
             {t("aboutTitle")}
           </h1>
           <p className="mx-auto mt-6 max-w-[520px] break-keep text-center text-base leading-[1.75] text-secondary md:text-[17px]">{t("aboutBody")}</p>
@@ -92,24 +93,26 @@ export default function AboutPage() {
       </section>
 
       <div className="mx-auto max-w-[1440px] px-6 lg:px-14">
-        {/* ② 3열 매트릭스 */}
-        <DiscoveryMatrix />
+        {/* ② 신뢰 지표 4열 스탯 바 */}
+        <TrustTelemetryStrip />
 
-        {/* ③ 실전 시나리오 */}
-        <ScenarioShowcase />
+        {/* ③ 라인업 3타일 */}
+        <LineupStrip />
 
-        {/* ④-1 HOW IT WORKS 3단계 + 미니 UI */}
+        {/* ④ 인터랙티브 핵심 가치 카드 */}
+        <InteractiveCoreCards />
+
+        {/* ⑤ HOW IT WORKS 3단계 + 미니 UI */}
         <section className="border-t border-hairline py-14 md:py-20">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">HOW IT WORKS</p>
-            <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("stepsTitle")}</h2>
+            <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-[44px] md:leading-[1.15]">{t("stepsTitle")}</h2>
             <p className="mt-4 break-keep text-base leading-7 text-muted">{t("stepsBody")}</p>
           </div>
-          <ol className="mt-10 grid gap-8 md:mt-14 md:grid-cols-3 md:gap-10">
+          <ol className="mt-10 grid gap-4 md:mt-14 md:grid-cols-3 md:gap-5">
             {STEP_PREVIEWS.map((Preview, i) => (
-              <li key={i} className="border-t border-hairline pt-6">
-                <span className="text-xs tabular-nums text-muted">0{i + 1}</span>
-                <div className="mb-6 mt-4 h-28 rounded-md border border-hairline bg-obsidian/70 p-3.5">
+              <li key={i} className="relative min-w-0 overflow-hidden rounded-[22px] border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl sm:p-6">
+                <div className="mb-6 h-28 rounded-xl border border-white/10 bg-obsidian/70 p-3.5">
                   <Preview />
                 </div>
                 <h3 className="text-xl font-medium text-white">{t(`step${i + 1}Title` as "step1Title")}</h3>
@@ -119,7 +122,10 @@ export default function AboutPage() {
           </ol>
         </section>
 
-        {/* ④-2 5:7 신뢰 가드레일 */}
+        {/* ⑥ 실전 쇼케이스 */}
+        <LiveScenarioHUD />
+
+        {/* ⑦ 신뢰 가드레일 */}
         <TrustGuardrails
           action={
             <Link href="/fairness" className="inline-flex min-h-11 items-center gap-3 text-sm font-medium text-gold-champagne">
@@ -133,7 +139,7 @@ export default function AboutPage() {
         <section className="border-t border-hairline py-16 md:py-24">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">GOOD TO KNOW</p>
-            <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-4xl">{t("faqTitle")}</h2>
+            <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-[44px] md:leading-[1.15]">{t("faqTitle")}</h2>
           </div>
           <div className="mx-auto mt-8 max-w-3xl border-t border-hairline">
             {[1, 2, 3].map((n) => (

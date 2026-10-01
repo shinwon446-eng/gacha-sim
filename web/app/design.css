@@ -391,6 +391,41 @@
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
+/* 카드 틸트 — 부모(.iso-plate)가 원근을 주고, 카드는 포인터를 따라 기운다 */
+.iso-plate { perspective: 700px; }
+.iso-tilt { transition: transform .45s cubic-bezier(.2,.7,.2,1); transform-style: preserve-3d; will-change: transform; }
+.iso-tilt:hover { transition-duration: .12s; }
+.iso-glare {
+  background: radial-gradient(120px circle at var(--glare-x, 50%) var(--glare-y, 30%), rgba(255, 240, 210, .28), transparent 65%);
+  opacity: 0;
+  transition: opacity .3s;
+  mix-blend-mode: screen;
+}
+.iso-tilt:hover .iso-glare { opacity: 1; }
+/* 바닥에서 피어오르는 골드 라이트 레이 */
+.iso-rays {
+  background: conic-gradient(from 180deg at 50% 100%, transparent 0deg, rgba(217,195,154,.13) 18deg, transparent 34deg, rgba(217,195,154,.08) 54deg, transparent 76deg, rgba(217,195,154,.13) 98deg, transparent 120deg, rgba(217,195,154,.08) 142deg, transparent 162deg, rgba(217,195,154,.12) 180deg);
+  filter: blur(18px);
+  mix-blend-mode: screen;
+  transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 35%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 0%, #000 35%, transparent 100%);
+  animation: iso-rays 14s ease-in-out infinite alternate;
+}
+@keyframes iso-rays {
+  from { transform: rotate(-3deg) scaleY(.96); opacity: .75; }
+  to { transform: rotate(3deg) scaleY(1.04); opacity: 1; }
+}
+/* 골드 더스트 */
+.iso-dust { opacity: 0; box-shadow: 0 0 6px rgba(241,220,174,.9); animation: iso-dust 6.5s ease-in-out infinite; }
+@keyframes iso-dust {
+  0% { transform: translateY(10px); opacity: 0; }
+  30% { opacity: .9; }
+  75% { opacity: .45; }
+  100% { transform: translateY(-46px); opacity: 0; }
+}
 @media(prefers-reduced-motion:reduce) {
-  .iso-sweep, .iso-plate { animation: none; }
+  .iso-sweep, .iso-plate, .iso-rays { animation: none; }
+  .iso-dust { animation: none; opacity: .5; }
+  .iso-tilt { transition: none; }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef, type PointerEvent, type ReactNode } from "react";
 import { cn } from "@/lib/format";
 import { BOX_BY_SLUG, dropTable, type ProductBox } from "@/lib/products";
 import { useProductText } from "@/lib/useProductText";
@@ -32,6 +32,40 @@ const FEATURED: { slug: string; r: number; c: number; width: string; delay: stri
   { slug: "jackpot-supercar", r: 3, c: 5, width: "clamp(92px, 12vw, 164px)", delay: "3.6s" }, // 뒤·오른쪽
   { slug: "vault-gold", r: 6, c: 3, width: "clamp(112px, 15vw, 200px)", delay: "5.4s" }, // 앞·오른쪽
 ];
+
+/** 골드 더스트 — 고정 좌표(랜덤 금지: SSR/CSR 하이드레이션) */
+const DUST = [
+  { l: "18%", t: "70%", d: "0s", s: 3 }, { l: "26%", t: "58%", d: "1.4s", s: 2 }, { l: "34%", t: "76%", d: "2.6s", s: 2 },
+  { l: "41%", t: "52%", d: "0.8s", s: 3 }, { l: "47%", t: "68%", d: "3.4s", s: 2 }, { l: "53%", t: "48%", d: "1.9s", s: 2 },
+  { l: "58%", t: "74%", d: "4.2s", s: 3 }, { l: "64%", t: "56%", d: "0.4s", s: 2 }, { l: "71%", t: "66%", d: "2.2s", s: 2 },
+  { l: "78%", t: "54%", d: "3.8s", s: 3 }, { l: "84%", t: "72%", d: "1.1s", s: 2 }, { l: "30%", t: "44%", d: "4.8s", s: 2 },
+  { l: "68%", t: "40%", d: "5.4s", s: 2 }, { l: "50%", t: "36%", d: "2.9s", s: 3 },
+] as const;
+
+/** 포인터를 따라 기우는 카드. 리렌더 없이 style 만 바꾼다 */
+function TiltCard({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const move = (e: PointerEvent<HTMLDivElement>) => {
+    const el = ref.current;
+    if (!el || e.pointerType !== "mouse") return;
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `rotateX(${(-y * 16).toFixed(2)}deg) rotateY(${(x * 18).toFixed(2)}deg) translateZ(18px)`;
+    el.style.setProperty("--glare-x", `${((x + 0.5) * 100).toFixed(1)}%`);
+    el.style.setProperty("--glare-y", `${((y + 0.5) * 100).toFixed(1)}%`);
+  };
+  const leave = () => {
+    const el = ref.current;
+    if (el) el.style.transform = "";
+  };
+  return (
+    <div ref={ref} onPointerMove={move} onPointerLeave={leave} className="iso-tilt relative">
+      {children}
+      <span aria-hidden className="iso-glare pointer-events-none absolute inset-0 rounded-xl" />
+    </div>
+  );
+}
 
 interface Plate {
   box: ProductBox;
@@ -84,6 +118,8 @@ export function IsometricStage({ className }: { className?: string }) {
       className={cn("iso-stage relative -mt-4 h-[clamp(360px,41vw,580px)] w-full overflow-hidden md:-mt-6", className)}
       aria-hidden="true"
     >
+      {/* 바닥에서 피어오르는 골드 라이트 레이 */}
+      <span className="iso-rays pointer-events-none absolute inset-x-[10%] bottom-[8%] top-[-10%]" />
       {/* 바닥 앰비언트 — 평면 중앙에 무게중심 */}
       <span
         className="pointer-events-none absolute inset-0"
@@ -132,6 +168,7 @@ export function IsometricStage({ className }: { className?: string }) {
                         style={{ background: "radial-gradient(60% 70% at 50% 100%, rgba(217,195,154,0.22) 0%, transparent 70%)" }}
                       />
                       <figure className="iso-plate relative" style={{ animationDelay: plate.delay }}>
+                        <TiltCard>
                         <div
                           className="overflow-hidden rounded-xl border border-white/15 bg-surface/90 backdrop-blur-sm"
                           style={{ boxShadow: "0 30px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(217,195,154,0.12)" }}
@@ -146,6 +183,7 @@ export function IsometricStage({ className }: { className?: string }) {
                             </span>
                           </figcaption>
                         </div>
+                        </TiltCard>
                         {/* 바닥 반사 */}
                         <span
                           className="pointer-events-none absolute inset-x-[10%] top-full h-[38%] rounded-b-xl opacity-40"
@@ -167,6 +205,18 @@ export function IsometricStage({ className }: { className?: string }) {
 
       {/* 평면 위를 지나가는 샴페인 광원 */}
       <span className="iso-sweep pointer-events-none absolute inset-0" />
+
+      {/* 골드 더스트 */}
+      {DUST.map((p, i) => (
+        <span
+          key={i}
+          className="iso-dust pointer-events-none absolute rounded-full bg-[#f1dcae]"
+          style={{ left: p.l, top: p.t, width: p.s, height: p.s, animationDelay: p.d }}
+        />
+      ))}
+
+      {/* 비네팅 — 가장자리를 눌러 시선을 가운데로 */}
+      <span className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(70% 80% at 50% 55%, transparent 55%, rgba(11,11,11,0.75) 100%)" }} />
     </div>
   );
 }
