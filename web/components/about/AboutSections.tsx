@@ -7,7 +7,7 @@ import { ArrowRight, BadgeCheck, Check, Coins, Home, Info, Package, PackageCheck
 import { cn } from "@/lib/format";
 import { BOXES, BOX_BY_SLUG, dropTable, sellValueOf, type ProductItem } from "@/lib/products";
 import { ROLL_RANGE, determineItem } from "@/lib/fairness";
-import { INSTANT_SELLBACK_RATE } from "@/lib/aboutStats";
+import { INSTANT_SELLBACK_RATE, publishedOddsRows } from "@/lib/aboutStats";
 import { useProductText } from "@/lib/useProductText";
 import { ProductArt } from "@/components/box/ProductArt";
 import { Money } from "@/components/ui/Money";
@@ -25,6 +25,10 @@ const SECTION_HEAD = "mx-auto max-w-2xl text-center";
 const EYEBROW = "text-xs font-medium uppercase tracking-[0.2em] text-gold-champagne";
 const H2 = "mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-[44px] md:leading-[1.15]";
 const GLASS = "relative min-w-0 overflow-hidden rounded-[22px] border border-white/10 bg-white/[0.03] backdrop-blur-xl";
+
+/** 모바일(sm 미만)은 가로 스와이프 캐러셀, sm 이상은 그리드 */
+const SNAP_ROW = "-mx-6 flex snap-x snap-mandatory gap-3 overflow-x-auto px-6 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:overflow-visible sm:px-0 sm:pb-0";
+const SNAP_ITEM = "w-[80%] flex-none snap-center sm:w-auto";
 
 const ALL_ITEMS = BOXES.flatMap((b) => b.items);
 const itemById = (id: string): ProductItem | undefined => ALL_ITEMS.find((x) => x.id === id);
@@ -69,12 +73,12 @@ export function TrustTelemetryStrip() {
   const t = useTranslations("editorialPages");
   const stats = [
     { value: "100%", label: t("teleDraw"), Icon: ShieldCheck },
-    { value: `${100 / ROLL_RANGE}%`, label: t("teleOdds"), Icon: Sparkles },
+    { value: t("teleOddsValue", { n: publishedOddsRows().toLocaleString("en-US") }), label: t("teleOdds"), Icon: Sparkles },
     { value: `${Math.round(INSTANT_SELLBACK_RATE * 100)}%`, label: t("teleCash"), Icon: Zap },
     { value: t("teleFree"), label: t("teleShip"), Icon: Truck },
   ];
   return (
-    <section className="py-6 md:py-10">
+    <section className="pb-2 pt-4 md:py-10">
       <div className={cn(GLASS, "grid grid-cols-2 lg:grid-cols-4")}>
         <GoldLine />
         {stats.map(({ value, label, Icon }, i) => (
@@ -111,9 +115,9 @@ export function LineupStrip() {
   const t = useTranslations("editorialPages");
   const { itemName } = useProductText();
   return (
-    <section className="py-10 md:py-14">
+    <section className="py-8 md:py-14">
       <p className={cn(EYEBROW, "text-center")}>{t("matrixCol1")}</p>
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-5">
+      <div className={cn("mt-6", SNAP_ROW, "sm:grid-cols-3 sm:gap-4 md:gap-5")}>
         {LINEUP.map(({ n, item: id, box: slug }) => {
           const item = itemById(id);
           const box = BOX_BY_SLUG[slug];
@@ -121,7 +125,7 @@ export function LineupStrip() {
           const top = dropTable(box)[0];
           const multiple = top ? Math.round(top.value / box.price) : 0;
           return (
-            <article key={n} className={cn(GLASS, "group")}>
+            <article key={n} className={cn(GLASS, SNAP_ITEM, "group")}>
               <div className="relative aspect-[16/11] overflow-hidden">
                 <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.05]">
                   <ProductArt image={item.image} alt={itemName(item)} accent="#d9c39a" glowStrength={0.06} bordered={false} kind={item.kind} />
@@ -256,7 +260,7 @@ function DrawCard() {
           type="button"
           onClick={() => setSeedOpen((v) => !v)}
           aria-expanded={seedOpen}
-          className="inline-flex items-center gap-1 rounded-full border border-gold-champagne/30 px-3 py-1 text-[11.5px] text-gold-champagne hover:bg-gold-champagne/10"
+          className="inline-flex min-h-9 items-center gap-1 rounded-full border border-gold-champagne/30 px-3 text-[12px] text-gold-champagne hover:bg-gold-champagne/10"
         >
           <Info className="h-3 w-3" aria-hidden />
           {t("termSeedLabel")}
@@ -447,13 +451,13 @@ function CashCard() {
 export function InteractiveCoreCards() {
   const t = useTranslations("editorialPages");
   return (
-    <section className="border-t border-hairline py-14 md:py-20">
+    <section className="border-t border-hairline py-12 md:py-20">
       <div className={SECTION_HEAD}>
         <p className={EYEBROW}>THE VOILA STANDARD</p>
         <h2 className={H2}>{t("matrixTitle")}</h2>
         <p className="mt-4 break-keep text-base leading-7 text-muted">{t("matrixBody")}</p>
       </div>
-      <div className="mt-10 grid grid-cols-1 gap-4 md:mt-14 md:gap-5 lg:grid-cols-3">
+      <div className="mt-8 grid grid-cols-1 gap-4 md:mt-14 md:gap-5 lg:grid-cols-3">
         <DrawCard />
         <ShipCard />
         <CashCard />
@@ -641,13 +645,13 @@ export function LiveScenarioHUD() {
   }, [t]);
 
   return (
-    <section className="border-t border-hairline py-14 md:py-20">
+    <section className="border-t border-hairline py-12 md:py-20">
       <div className={SECTION_HEAD}>
         <p className={EYEBROW}>LIVE SHOWCASE</p>
         <h2 className={H2}>{t("nowTitle")}</h2>
         <p className="mt-4 break-keep text-base leading-7 text-muted">{t("nowBody")}</p>
       </div>
-      <div className="mt-10 grid grid-cols-1 gap-4 md:mt-14 md:gap-5 lg:grid-cols-2">
+      <div className="mt-8 grid grid-cols-1 gap-4 md:mt-14 md:gap-5 lg:grid-cols-2">
         {receipts.map((r, i) => (
           <ReceiptCard key={r.key} receipt={r} index={i} />
         ))}
@@ -663,21 +667,23 @@ const GUARDS = [ShieldCheck, Sparkles, Truck, Coins] as const;
 export function TrustGuardrails({ action }: { action: ReactNode }) {
   const t = useTranslations("editorialPages");
   return (
-    <section className="border-t border-hairline py-14 md:py-20">
+    <section className="border-t border-hairline py-12 md:py-20">
       <div className={SECTION_HEAD}>
         <p className={EYEBROW}>TRUST</p>
         <h2 className={H2}>{t("trustTitle")}</h2>
         <p className="mt-4 break-keep text-base leading-7 text-muted">{t("trustBody")}</p>
         <div className="mt-6 flex justify-center">{action}</div>
       </div>
-      <ul className="mx-auto mt-10 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 md:mt-12">
+      <ul className="mx-auto mt-8 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:mt-12">
         {GUARDS.map((Icon, i) => (
-          <li key={i} className={cn(GLASS, "p-5 sm:p-6")}>
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-gold-champagne/30 bg-gold-champagne/[0.08]">
+          <li key={i} className={cn(GLASS, "flex gap-4 p-4 sm:block sm:p-6")}>
+            <span className="flex h-10 w-10 flex-none items-center justify-center rounded-xl border border-gold-champagne/30 bg-gold-champagne/[0.08]">
               <Icon className="h-[18px] w-[18px] text-gold-champagne" strokeWidth={1.7} aria-hidden />
             </span>
-            <b className="mt-4 block text-[16px] font-semibold leading-[1.4] text-white">{t(`guard${i + 1}Title` as "guard1Title")}</b>
-            <span className="mt-1.5 block break-keep text-[13.5px] leading-[1.6] text-muted">{t(`guard${i + 1}Body` as "guard1Body")}</span>
+            <span className="min-w-0">
+              <b className="block text-[15px] font-semibold leading-[1.4] text-white sm:mt-4 sm:text-[16px]">{t(`guard${i + 1}Title` as "guard1Title")}</b>
+              <span className="mt-1 block break-keep text-[13px] leading-[1.6] text-muted sm:mt-1.5 sm:text-[13.5px]">{t(`guard${i + 1}Body` as "guard1Body")}</span>
+            </span>
           </li>
         ))}
       </ul>

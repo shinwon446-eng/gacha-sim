@@ -36,7 +36,7 @@ export default function FairnessPage() {
           <h2 id="fairness-scope" className="text-lg font-medium text-white">{t("scopeTitle")}</h2>
           <div className="mt-4 grid gap-5 md:grid-cols-2">
             <div><p className="flex items-center gap-2 text-sm font-medium text-gold-champagne"><Check aria-hidden className="h-4 w-4" />{t("scopeCanTitle")}</p><p className="mt-2 whitespace-pre-line text-sm leading-7 text-muted">{t("scopeCan")}</p></div>
-            <div><p className="text-sm font-medium text-white">{t("scopeCannotTitle")}</p><p className="mt-2 whitespace-pre-line text-sm leading-7 text-muted">{t("scopeCannot")}</p></div>
+            <div><p className="flex items-center gap-2 text-sm font-medium text-gold-champagne"><Check aria-hidden className="h-4 w-4" />{t("scopeCannotTitle")}</p><p className="mt-2 whitespace-pre-line text-sm leading-7 text-muted">{t("scopeCannot")}</p></div>
           </div>
           <p className="mt-5 border-t border-hairline pt-5 text-sm leading-7 text-secondary">{t("recordSource")}</p>
         </section>

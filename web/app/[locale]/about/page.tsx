@@ -71,17 +71,17 @@ export default function AboutPage() {
       <SiteHeader />
 
       {/* ① 시네마틱 중앙 히어로 */}
-      <section className="overflow-hidden pt-14 md:pt-20">
+      <section className="overflow-hidden pt-10 md:pt-20">
         <div className="mx-auto max-w-[1440px] px-6 text-center lg:px-14">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold-champagne">THE WORLD OF VOILA</p>
-          <h1 className="mx-auto mt-6 max-w-3xl whitespace-pre-line break-keep text-center text-4xl font-semibold leading-[1.14] tracking-[-0.04em] text-white md:text-[68px]">
+          <h1 className="mx-auto mt-5 max-w-3xl whitespace-pre-line break-keep text-center text-[32px] font-semibold sm:text-4xl leading-[1.14] tracking-[-0.04em] text-white md:text-[68px]">
             {t("aboutTitle")}
           </h1>
           <p className="mx-auto mt-6 max-w-[520px] break-keep text-center text-base leading-[1.75] text-secondary md:text-[17px]">{t("aboutBody")}</p>
           <div className="mt-9 flex flex-col items-center">
             <Link
               href="/#boxes"
-              className="inline-flex h-[52px] items-center gap-3 rounded-full bg-[#f1eee7] px-8 text-sm font-semibold text-obsidian transition-colors hover:bg-white"
+              className="inline-flex h-[52px] w-full max-w-[320px] items-center justify-center gap-3 rounded-full sm:w-auto sm:max-w-none bg-[#f1eee7] px-8 text-sm font-semibold text-obsidian transition-colors hover:bg-white"
             >
               {t("explore")}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -103,15 +103,15 @@ export default function AboutPage() {
         <InteractiveCoreCards />
 
         {/* ⑤ HOW IT WORKS 3단계 + 미니 UI */}
-        <section className="border-t border-hairline py-14 md:py-20">
+        <section className="border-t border-hairline py-12 md:py-20">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">HOW IT WORKS</p>
             <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-[44px] md:leading-[1.15]">{t("stepsTitle")}</h2>
             <p className="mt-4 break-keep text-base leading-7 text-muted">{t("stepsBody")}</p>
           </div>
-          <ol className="mt-10 grid gap-4 md:mt-14 md:grid-cols-3 md:gap-5">
+          <ol className="-mx-6 mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto px-6 pb-2 [scrollbar-width:none] md:mx-0 md:mt-14 md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
             {STEP_PREVIEWS.map((Preview, i) => (
-              <li key={i} className="relative min-w-0 overflow-hidden rounded-[22px] border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl sm:p-6">
+              <li key={i} className="relative w-[80%] min-w-0 flex-none snap-center overflow-hidden rounded-[22px] border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl sm:w-[46%] sm:p-6 md:w-auto">
                 <div className="mb-6 h-28 rounded-xl border border-white/10 bg-obsidian/70 p-3.5">
                   <Preview />
                 </div>
@@ -136,7 +136,7 @@ export default function AboutPage() {
         />
 
         {/* ⑤ FAQ */}
-        <section className="border-t border-hairline py-16 md:py-24">
+        <section className="border-t border-hairline py-12 md:py-24">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-xs uppercase tracking-[0.2em] text-gold-champagne">GOOD TO KNOW</p>
             <h2 className="mt-4 break-keep text-3xl font-semibold tracking-[-0.035em] text-white md:text-[44px] md:leading-[1.15]">{t("faqTitle")}</h2>
