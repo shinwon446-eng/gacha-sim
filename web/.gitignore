@@ -1,0 +1,9 @@
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+.env*
+
+# gen-messages.py 입력 — scripts/dump-products.ts 가 생성
+.dump.txt
