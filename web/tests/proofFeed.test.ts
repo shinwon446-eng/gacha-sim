@@ -2,32 +2,44 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { buildProofFeed, buildLocalPayouts, buildLocalShipments, maskRecipient } from "../lib/proofFeed";
-import { proofMetrics, publicProofSnapshot } from "../components/home/ProofFeed";
-import { BOXES } from "../lib/products";
+import { latestOpenings, proofMetrics, verifyOpening } from "../components/home/ProofFeed";
+import { BOXES, dropTable } from "../lib/products";
+import { calculateRollResult, determineItem, hashServerSeed } from "../lib/fairness";
 import type { OwnedItem } from "../stores/inventoryStore";
 import type { Transaction } from "../stores/walletStore";
 
-test("home proof metrics use catalogue odds and recorded openings and payback", () => {
-  const metrics = proofMetrics([{} as OwnedItem, {} as OwnedItem], [
-    { type: "sellback", amountUsdt: 95 } as Transaction,
-    { type: "open", amountUsdt: -100 } as Transaction,
-  ]);
+test("home proof metrics come from one opening record list — openings, payback and recent stay in step", () => {
+  const items = [
+    { id: "a", status: "SOLD", soldForUsdt: 95, acquiredAt: "2026-10-01T10:00:00.000Z" },
+    { id: "b", status: "IN_STORAGE", acquiredAt: "2026-10-01T10:05:00.000Z" },
+    { id: "c", status: "SOLD", soldForUsdt: 0.85, acquiredAt: "2026-10-01T09:00:00.000Z" },
+  ] as OwnedItem[];
+  const metrics = proofMetrics(items);
   assert.equal(metrics.publishedOdds, BOXES.reduce((sum, box) => sum + box.items.length, 0));
-  assert.equal(metrics.openings, 2);
-  assert.equal(metrics.paybackUsdt, 95);
+  assert.equal(metrics.openings, 3);
+  assert.equal(metrics.paybackUsdt, 95.85);
+  assert.deepEqual(latestOpenings(items, 2).map((i) => i.id), ["b", "a"]);
+  // 페이백이 일어나면 같은 기록 배열에서 누적이 함께 바뀐다
+  const after = items.map((i) => (i.id === "b" ? { ...i, status: "SOLD" as const, soldForUsdt: 4.4 } : i));
+  assert.equal(proofMetrics(after).openings, 3);
+  assert.equal(proofMetrics(after).paybackUsdt, 100.25);
   assert.equal("shipments" in metrics, false);
 });
 
-test("public proof snapshot is shared per five-second UTC bucket, updates continuously and includes a premium opening", () => {
-  const at = Date.UTC(2026, 9, 1, 12, 0, 5);
-  const sameA = publicProofSnapshot(at, 4);
-  const sameB = publicProofSnapshot(at + 2_000, 4);
-  const next = publicProofSnapshot(at + 5_000, 4);
-  assert.deepEqual(sameA, sameB);
-  assert.ok(next.openings > sameA.openings);
-  assert.ok(next.paybackUsdt > sameA.paybackUsdt);
-  assert.ok(sameA.openingsFeed.some(row => row.amountUsdt >= 1_000));
-  assert.equal(sameA.openingsFeed.length, 4);
+test("an opening counts as verified only when hash, roll and prize all recompute", async () => {
+  const box = BOXES[0];
+  const serverSeed = "a".repeat(64);
+  const clientSeed = "client-seed";
+  const nonce = 3;
+  const serverSeedHash = await hashServerSeed(serverSeed);
+  const { roll } = await calculateRollResult(serverSeed, clientSeed, nonce);
+  const table = dropTable(box).map(({ id, dropRate }) => ({ id, dropRate }));
+  const itemId = determineItem(roll, table).id;
+  const base = { id: "x", itemId, boxSlug: box.slug, status: "IN_STORAGE", acquiredAt: new Date(0).toISOString(), fair: { serverSeed, serverSeedHash, clientSeed, nonce, roll, dropTable: table } } as OwnedItem;
+  assert.equal(await verifyOpening(base), true);
+  assert.equal(await verifyOpening({ ...base, fair: { ...base.fair, serverSeedHash: "0".repeat(64) } }), false);
+  assert.equal(await verifyOpening({ ...base, fair: { ...base.fair, roll: (roll + 1) % 1_000_000 } }), false);
+  assert.equal(await verifyOpening({ ...base, itemId: "not-the-prize" }), false);
 });
 
 test("single feed uses actual transactions only, sorts before limiting and keeps actual statuses", () => {

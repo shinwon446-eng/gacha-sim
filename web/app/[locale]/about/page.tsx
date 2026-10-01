@@ -74,7 +74,7 @@ export default function AboutPage() {
       <section className="overflow-hidden pt-10 md:pt-20">
         <div className="mx-auto max-w-[1440px] px-6 text-center lg:px-14">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold-champagne">THE WORLD OF VOILA</p>
-          <h1 className="mx-auto mt-5 max-w-3xl whitespace-pre-line break-keep text-center text-[32px] font-semibold sm:text-4xl leading-[1.14] tracking-[-0.04em] text-white md:text-[68px]">
+          <h1 className="mx-auto mt-5 max-w-3xl whitespace-pre-line break-keep text-center text-[32px] font-semibold sm:text-[40px] leading-[1.14] tracking-[-0.04em] text-white md:text-[68px]">
             {t("aboutTitle")}
           </h1>
           <p className="mx-auto mt-6 max-w-[520px] break-keep text-center text-base leading-[1.75] text-secondary md:text-[17px]">{t("aboutBody")}</p>
